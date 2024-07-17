@@ -65,16 +65,6 @@ def browseFiles():
     button_restart_file.configure(text = filename)
     inpd = filename
 
-# Variable to store the dir of the output file
-outd = ""
-'''
-Folder explorer for output folder location
-'''
-def browseFolders():
-    foldername = filedialog.askdirectory(title = "Select Output Location")
-    button_output_folder.configure(text = foldername)
-    outd = foldername
-
 '''
 Display Timestep Widget
 '''
@@ -132,14 +122,6 @@ button_restart_file.grid(column = 1, row = 1)
 
 ### Make sure the button is in the correct state to start
 FileCallback()
-
-## Create Output Restart File?
-label_output_folder = ttk.Label(mainframe,
-                                text = "Output Restart File Location (optional): ").grid(column = 0, row = 2)
-button_output_folder = ttk.Button(mainframe,
-                                  text = "Browse Files",
-                                  command = browseFolders)
-button_output_folder.grid(column = 1, row = 2)
 
 ## Numsteps
 label_numsteps = ttk.Label(mainframe,
