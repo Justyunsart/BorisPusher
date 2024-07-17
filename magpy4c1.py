@@ -160,41 +160,34 @@ for w in rframe.winfo_children():
 
 root.mainloop()
 
-##################
-# PARTICLE CLASS #
-##################
-'''
-The output file is essentially a dataframe containing all particle data.
-So we track every single data point separately by creating instances of this class.
-'''
-class particle:
-    # Starting Conditions
-    pos_st = [0.,0.,0.]
-    vel_st = [0.,0.,0.]
-
-    # Simulation Data
-    positions = []
-    velocities = []
-    accelerations = []
-
-
-###########
-# HELPERS #
-###########
-
+###################
+# INPUT FILE JUNK #
+###################
+#======#
+# VARS #
+#======#
+cwd = os.getcwd() # Gets the current working directory, so we can find the Inputs folder easily. 
 #=================================#
 # HELPERS FOR READING INPUT FILES #
 #=================================#
 '''
+From the GUI: 
 1. Determine if we're reading input data or not.
 2. Populate the dataframe accordingly.
 
-FAQ:
+For each dataframe row:
+1. Create a Particle object
+2. Apply the data from the input file to its fields
+3. Store the Particle object in an array
+
+IMPORTANT:
     > Whether we read input data or not comes from the 'do_file' var from the GUI.
     > The dataframe is a table of Particle classes.
+        - row # = particle index
+        - column = attribute
     > 'inpd' is set whenever the input file dir is updated, to the file's dir.
 '''
-cwd = os.getcwd()
+
 def InitializeData():
     if(do_file.get() == False):
         data = pd.read_csv(cwd + "/Inputs/Default_Input.txt")
@@ -202,12 +195,15 @@ def InitializeData():
         data = pd.read_csv(inpd)
     return data
 
+'''
+Prints out the resulting dataframe from the InitializeData() to debug
+'''
 def TestInitialization():  
     frame = InitializeData()
     print(frame)
 
 ## Uncomment below to check if the dataframe is being set properly.
-# TestInitialization()
+TestInitialization()
 
 # creates a square box of Loop coils
 def Circle(a, dia, d, gap):
