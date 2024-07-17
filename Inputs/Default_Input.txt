@@ -1,2 +1,2 @@
 Xpos, Ypos, Zpos, VelX, VelY, VelZ, positions, vels, accels
-0., 0., 120., 5.8e-5/1.5, 5.8e-5, 5.8e-5, "", "", ""
+0., 0., 120., 5.8e-5, 5.8e-5, 5.8e-5, "", "", ""

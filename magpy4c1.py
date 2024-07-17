@@ -51,8 +51,7 @@ rframe.grid(column=1, row=0, sticky = (N, W, E, S))
 
 # this is the call that begins the calculation of the coils
 def RunSim():
-    make_vf_3d_boris(x_lim, y_lim, z_lim, yNot[0], num_points)
-
+    return 0
 
 '''
 File explorer for restart files
@@ -152,12 +151,13 @@ button_calculate = ttk.Button(mainframe,
                               text = "Calculate",
                               command = RunSim)
 
-# Display widgets
+# Display the widgets
 for w in mainframe.winfo_children():
     w.grid_configure(padx = 5, pady = 5)
 for w in rframe.winfo_children():
     w.grid_configure(padx=5,pady=5)
 
+# Run GUI loop
 root.mainloop()
 
 ###################
@@ -166,7 +166,7 @@ root.mainloop()
 #======#
 # VARS #
 #======#
-cwd = os.getcwd() # Gets the current working directory, so we can find the Inputs folder easily. 
+cwd = os.getcwd() # Gets the current working directory, so we can find the Inputs, Outputs folder easily. 
 #=================================#
 # HELPERS FOR READING INPUT FILES #
 #=================================#
@@ -203,7 +203,7 @@ def TestInitialization():
     print(frame)
 
 ## Uncomment below to check if the dataframe is being set properly.
-TestInitialization()
+# TestInitialization()
 
 # creates a square box of Loop coils
 def Circle(a, dia, d, gap):
@@ -566,3 +566,6 @@ z_val = "n"
 # asking if the user wants to calculate particle confinement
 # part_val = input("Calculate particle confinement y/n: ")
 part_val = input("calculate particles? y/n: ")
+
+data = InitializeData()
+make_vf_3d_boris(x_lim, y_lim, z_lim, data.loc[0].values.tolist(), num_points)
