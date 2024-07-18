@@ -194,12 +194,24 @@ def InitializeData():
         data = pd.read_csv(inpd)
     return data
 
+df = InitializeData() # Populate this ASAP lol
+
 '''
 Prints out the resulting dataframe from the InitializeData() to debug
 '''
 def TestInitialization():  
     frame = InitializeData()
     print(frame)
+
+'''
+Creates the output file
+'''
+def CreateOutput():
+    global outd
+    global df
+
+    df.to_csv(outd + "/out.txt", index = False)
+
 
 ## Uncomment below to check if the dataframe is being set properly.
 # TestInitialization()
@@ -425,6 +437,7 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, y0, num_points):
     if part_val == 'y':
         # testing the boris push method for particle movement
         A, B, ending, ft, accelList = borisPush(y0, q, m, num_points, B0List, dt, accelList, gradList)
+        CreateOutput()
 
         # setting x,y,z from the travel points
         x, y, z = [i[0] for i in A], \
