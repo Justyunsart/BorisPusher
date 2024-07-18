@@ -49,10 +49,6 @@ rframe.grid(column=1, row=0, sticky = (N, W, E, S))
 #=============#
 # HELPERS
 
-# this is the call that begins the calculation of the coils
-def RunSim():
-    return 0
-
 '''
 File explorer for restart files
 '''
@@ -69,14 +65,16 @@ Display Timestep Widget
 '''
 def CalcTimestep(time, numsteps):
     ## Display Calculated Timestep
-    v = (time.get()) / (numsteps.get()) * (1.e-3)
+    v = (time.get()) / (numsteps.get())
     return v
 
 '''
 Update Timestep value and label in the GUI when numsteps/sim time are updated
 '''
 def DTcallback():
+    global time_step_value
     val = CalcTimestep(entry_sim_time_value, entry_numsteps_value)
+    time_step_value = val
     label_time_step.configure(text = "Timestep: " + str(val))
     return True
 
@@ -143,13 +141,13 @@ entry_sim_time = ttk.Entry(mainframe,
                            validatecommand = DTcallback).grid(column = 1, row = 4)
 
 ## Display Calculated Timestep
-time_step_value = (entry_sim_time_value.get()) / (entry_numsteps_value.get()) * (1.e-3)
+time_step_value = (entry_sim_time_value.get()) / (entry_numsteps_value.get())
 label_time_step = ttk.Label(rframe,
                             text = "Time step: " + str(time_step_value))
 ## Caclulate button
 button_calculate = ttk.Button(mainframe,
                               text = "Calculate",
-                              command = RunSim)
+                              command = root.destroy) # Close the window so the rest of the program can run
 
 # Display the widgets
 for w in mainframe.winfo_children():
@@ -166,7 +164,8 @@ root.mainloop()
 #======#
 # VARS #
 #======#
-cwd = os.getcwd() # Gets the current working directory, so we can find the Inputs, Outputs folder easily. 
+cwd = os.getcwd() # Gets the current working directory, so we can find the Inputs, Outputs folder easily.
+outd = cwd + "/Outputs" 
 #=================================#
 # HELPERS FOR READING INPUT FILES #
 #=================================#
@@ -311,13 +310,14 @@ y_lim = (-limS, limS)
 z_lim = (-limS, limS)
 radi = 200
 plot_pick = None
-num_points = 3500000
+#num_points = 3500000
+
 corner = 1 # sets octagonal corner size (cannot be 0)
 side = limS # max range for plot
 gap = 15 # sets space between coils
 coilLength = 1000
 # dt = coilLength / (math.sqrt(VelX**2 + VelY**2 + VelZ**2) * num_points)
-dt = 1.e-6
+dt = time_step_value
 print(dt)
 
 # comment in coils array you wish to use from the above definitions
@@ -344,6 +344,8 @@ def borisPush(y, q, m, num_points, B0List, dt, accelList, gradList):
     # assumes parameter for velocity was in mm/s, converts it to m/s
     v = np.array([y[3]*mm, y[4]*mm, y[5]*mm])
     x = np.array([y[0], y[1], y[2]])
+    # print(f"velocity: {v}")
+    # print(f"coords: {x}")
 
     E = np.array([0., 0., 0.])
 
@@ -364,6 +366,7 @@ def borisPush(y, q, m, num_points, B0List, dt, accelList, gradList):
 
         # creating a gradient of resolution based on the acceleration and velocity for dt
         vel = math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
+        # print(f"velocity: {vel}")
         accelVec = (v_plus - v_minus) / dt
         accel = math.sqrt(accelVec[0]**2 + accelVec[1]**2 + accelVec[2]**2)
         '''
@@ -397,6 +400,7 @@ def borisPush(y, q, m, num_points, B0List, dt, accelList, gradList):
 # 3D plotting of the vector fields
 def make_vf_3d_boris(x_lim, y_lim, z_lim, y0, num_points):
     global path
+    #print(y0)
     B0List = []
     accelList = np.zeros((1,4))
     # gradList = {'1e8': 0, '8e7': 0, '5e7': 0, '1e7': 0, '5e6': 0, '1e6': 0, '5e5': 0}
@@ -568,4 +572,4 @@ z_val = "n"
 part_val = input("calculate particles? y/n: ")
 
 data = InitializeData()
-make_vf_3d_boris(x_lim, y_lim, z_lim, data.loc[0].values.tolist(), num_points)
+make_vf_3d_boris(x_lim, y_lim, z_lim, data.loc[0].values.tolist(), entry_numsteps_value.get())
