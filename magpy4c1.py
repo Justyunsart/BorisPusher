@@ -169,6 +169,9 @@ outd = cwd + "/Outputs"
 #=================================#
 # HELPERS FOR READING INPUT FILES #
 #=================================#
+def StrToArr(text):
+    return np.fromstring(text, sep = ' ')
+
 '''
 From the GUI: 
 1. Determine if we're reading input data or not.
@@ -189,9 +192,18 @@ IMPORTANT:
 
 def InitializeData():
     if(do_file.get() == False):
-        data = pd.read_csv(cwd + "/Inputs/Default_Input.txt")
+        data = pd.read_csv(cwd + "/Inputs/Default_Input.txt", dtype = {"positions" : str, "vels" : str, "accels" : str})
+        # Convert columns to Arrays
+        data["positions"] = data['positions'].apply(StrToArr)
+        data["vels"] = data["vels"].apply(StrToArr)
+        data["accels"] = data["accels"].apply(StrToArr)
     else:
-        data = pd.read_csv(inpd)
+        data = pd.read_csv(inpd, dtype = {"positions" : str, "vels" : str, "accels" : str})
+        
+        # Convert columns to Arrays
+        data["positions"] = data['positions'].apply(StrToArr)
+        data["vels"] = data["vels"].apply(StrToArr)
+        data["accels"] = data["accels"].apply(StrToArr)
     return data
 
 df = InitializeData() # Populate this ASAP lol
@@ -210,7 +222,7 @@ def CreateOutput():
     global outd
     global df
 
-    df.to_csv(outd + "/out.txt", index = False)
+    df.to_csv(outd + "/out2.txt", index = False)
 
 
 ## Uncomment below to check if the dataframe is being set properly.
@@ -395,7 +407,14 @@ def borisPush(y, q, m, num_points, B0List, dt, accelList, gradList):
             '''
         accelList = np.append(accelList, [[accelVec[0], accelVec[1], accelVec[2], accel]], axis=0)
         X[time, :] = x
+        # print(y[6])
+        y[6] = np.append([y[6]],[x])
+
         V[time, :] = v
+        y[7] = np.append([y[7]],[v])
+        y[8] = np.append([y[8]],[accelVec])
+
+        #print(y[6])
         dTimer += 1
         ft += dt
         if dTimer % 1000 == 0:
