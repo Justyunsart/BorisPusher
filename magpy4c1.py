@@ -194,9 +194,9 @@ def InitializeData():
     if(do_file.get() == False):
         data = pd.read_csv(cwd + "/Inputs/Default_Input.txt", dtype = {"positions" : str, "vels" : str, "accels" : str})
         # Convert columns to Arrays
-        data["positions"] = data['positions'].apply(StrToArr)
-        data["vels"] = data["vels"].apply(StrToArr)
-        data["accels"] = data["accels"].apply(StrToArr)
+        data["positions"] = data['positions'].str.split(" ")
+        data["vels"] = data["vels"].str.split(" ")
+        data["accels"] = data["accels"].str.split(" ")
     else:
         data = pd.read_csv(inpd, dtype = {"positions" : str, "vels" : str, "accels" : str})
         
@@ -218,11 +218,10 @@ def TestInitialization():
 '''
 Creates the output file
 '''
-def CreateOutput():
+def CreateOutput(df):
     global outd
-    global df
 
-    df.to_csv(outd + "/out2.txt", index = False)
+    df.to_csv(outd + "/out3.txt", index = False)
 
 
 ## Uncomment below to check if the dataframe is being set properly.
@@ -366,6 +365,7 @@ def borisPush(y, q, m, num_points, B0List, dt, accelList, gradList):
     duration = num_points
     # duration = int(time)
     # assumes parameter for velocity was in mm/s, converts it to m/s
+    # print(f"y in borisPush is: {y}")
     v = np.array([y[3]*mm, y[4]*mm, y[5]*mm])
     x = np.array([y[0], y[1], y[2]])
     # print(f"velocity: {v}")
@@ -408,11 +408,11 @@ def borisPush(y, q, m, num_points, B0List, dt, accelList, gradList):
         accelList = np.append(accelList, [[accelVec[0], accelVec[1], accelVec[2], accel]], axis=0)
         X[time, :] = x
         # print(y[6])
-        y[6] = np.append([y[6]],[x])
+        y.iloc[6] = np.append([y.iloc[6]],[x])
 
         V[time, :] = v
-        y[7] = np.append([y[7]],[v])
-        y[8] = np.append([y[8]],[accelVec])
+        y.iloc[7] = np.append([y.iloc[7]],[v])
+        y.iloc[8] = np.append([y.iloc[8]],[accelVec])
 
         #print(y[6])
         dTimer += 1
@@ -425,11 +425,11 @@ def borisPush(y, q, m, num_points, B0List, dt, accelList, gradList):
             break
     print(ft*(10**-5))
     ft = ft*(10**-5)
-    return X, V, dTimer, ft, accelList
+    return X, V, dTimer, ft, accelList, y
 
 
 # 3D plotting of the vector fields
-def make_vf_3d_boris(x_lim, y_lim, z_lim, y0, num_points):
+def make_vf_3d_boris(x_lim, y_lim, z_lim, yd, num_points):
     global path
     #print(y0)
     B0List = []
@@ -454,14 +454,17 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, y0, num_points):
 
     print("plotting done")
     if part_val == 'y':
-        # testing the boris push method for particle movement
-        A, B, ending, ft, accelList = borisPush(y0, q, m, num_points, B0List, dt, accelList, gradList)
-        CreateOutput()
+        for indx, row in yd.iterrows():
+            print(row)
+            # testing the boris push method for particle movement
+            A, B, ending, ft, accelList, yd = borisPush(row, q, m, num_points, B0List, dt, accelList, gradList)
+        print(yd)
+        CreateOutput(yd)
 
         # setting x,y,z from the travel points
         x, y, z = [i[0] for i in A], \
-                  [i[1] for i in A], \
-                  [i[2] for i in A]
+                    [i[1] for i in A], \
+                    [i[2] for i in A]
 
         # setting colors for the magnitude at each point used
         #setting up colors
@@ -544,8 +547,8 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, y0, num_points):
                       "End Velocity : Vx={:.5e}, Vy={:.5e}, Vz={:.5e} \n "
                       "V^2 Start: {:.5e}, End: {:.5e}, Loss%: {:.5e} \n "
                       "Magnetic Moment Start: {:.5e}, End: {:.5e}, Loss%: {:.5e} ".format
-                      (y0[0], y0[1], y0[2],
-                       y0[3], y0[4], y0[5],
+                      (yd.iloc[0], yd.iloc[1], yd.iloc[2],
+                       yd.iloc[3], yd.iloc[4], yd.iloc[5],
                        B[-1][0], B[-1][1], B[-1][2],
                        velS, velE, vDiv,
                        magMomentS, magMomentE, bDiv))
@@ -604,4 +607,4 @@ z_val = "n"
 part_val = input("calculate particles? y/n: ")
 
 data = InitializeData()
-make_vf_3d_boris(x_lim, y_lim, z_lim, data.loc[0].values.tolist(), entry_numsteps_value.get())
+make_vf_3d_boris(x_lim, y_lim, z_lim, data, entry_numsteps_value.get())
