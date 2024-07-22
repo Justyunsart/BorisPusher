@@ -80,7 +80,7 @@ def DTcallback():
     return True
 
 '''
-Toggle
+Toggles
 '''
 def FileCallback():
     if(do_file.get() == False):
@@ -165,8 +165,11 @@ root.mainloop()
 #======#
 # VARS #
 #======#
+initialized = False # Ensure initialization only happens once : failsafe
 cwd = os.getcwd() # Gets the current working directory, so we can find the Inputs, Outputs folder easily.
 outd = cwd + "/Outputs" 
+
+psensors = magpy.Collection()
 #=================================#
 # HELPERS FOR READING INPUT FILES #
 #=================================#
@@ -183,6 +186,10 @@ For each dataframe row:
 2. Apply the data from the input file to its fields
 3. Store the Particle object in an array
 
+Magpy integration:
+1. Create a magpy.collection of magpy.sensors corresponding to each particle
+    > The index of each sensor will correspond to the index of the particle
+
 IMPORTANT:
     > Whether we read input data or not comes from the 'do_file' var from the GUI.
     > The dataframe is a table of Particle classes.
@@ -192,6 +199,10 @@ IMPORTANT:
 '''
 
 def InitializeData():
+    # Making sure initialization only happens once
+    assert initialized == False
+    initialized = True
+
     if(do_file.get() == False):
         data = pd.read_csv(cwd + "/Inputs/Default_Input.txt", dtype = {"positions" : str, "vels" : str, "accels" : str})
     else:
@@ -209,9 +220,14 @@ def InitializeData():
     # Convert all data to numerical
     # data = data.astype(np.float64)
 
+    # print(data["starting_pos"])
+    # Create sensors
+    for p in data["starting_pos"]:
+        sensor = magpy.Sensor(position = p)
+        psensors.add(sensor)
+
     return data
 
-# DATAFRAME VAR
 '''
 Functions access it directly
 '''
@@ -221,8 +237,8 @@ df = InitializeData() # Populate this ASAP lol
 Prints out the resulting dataframe from the InitializeData() to debug
 '''
 def TestInitialization():  
-    frame = InitializeData()
-    print(frame)
+    print(f"Dataframe: {df}")
+    print(f"Sensors: {psensors.children}")
 
 '''
 Creates the output file
@@ -265,18 +281,17 @@ def Helmholtz(a, dia, d):
 '''
 TODO:
 - Make this work on an entire nested array instead of one array at a time.
+- Possible multithreading?
 Input: Array of (nparticle x pos(3)) dim
 Output: Array of (nparticle x bf(3)) dim
 
-Ensure the code is vectorized because the whole point of these operations is to increase computational speed
+Ensure the code is efficient because the whole point of these operations is to increase computational speed
 '''
 
 # using magpylib, this calculates the b-field affecting the particle
 # unless it is outside of the bounds given by 'side'
 def Bfield(y):
     global side
-    # setting a sensor to be used on the magpylib b-field calculations
-    sens = magpy.Sensor(position=(float(y[0]), float(y[1]), float(y[2])))
 
     # base statement set for stopping calculations outside of the given area
     if not y[0] > side:
@@ -387,15 +402,11 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
     duration = num_points
     # duration = int(time)
     # assumes parameter for velocity was in mm/s, converts it to m/s
-    # print(f"y in borisPush is: {y}")
 
     v = df.at["starting_vel"].copy() * mm
     x = df.at["starting_pos"].copy() * mm
 
 
-    #print(f"row : {row}")
-    #print(f"velocity: {v} with a len of: {len(v)}")
-    #print(f"coords: {x} with a len of: {len(x)}")
     E = np.array([0., 0., 0.])
 
     # X = np.zeros((duration, 3))
