@@ -4,6 +4,7 @@ Scratchpad to see what kind of data structure operations are the best.
 
 import timeit
 import numpy as np
+import pandas as pd
 
 ############
 # CASE ONE #
@@ -104,4 +105,11 @@ Sol2_Case2(m, 3)'''
 
     print(f"Case 2: {two}")
 
+##########
+# CASE 2 #
+##########
+
+
+
+# Testing
 Test_Case1()

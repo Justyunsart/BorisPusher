@@ -165,6 +165,9 @@ root.mainloop()
 #======#
 # VARS #
 #======#
+simDf = pd.DataFrame(columns=["pind", "step", "position", "velocity", "acceleration"])
+simDict = {}
+
 initialized = False # Ensure initialization only happens once : failsafe
 cwd = os.getcwd() # Gets the current working directory, so we can find the Inputs, Outputs folder easily.
 outd = cwd + "/Outputs" 
@@ -199,6 +202,8 @@ IMPORTANT:
 '''
 
 def InitializeData():
+    global initialized
+    global simDf
     # Making sure initialization only happens once
     assert initialized == False
     initialized = True
@@ -217,14 +222,17 @@ def InitializeData():
     data["vels"] = data["vels"].str.split(" ").apply(pd.to_numeric, errors = "coerce")
     data["accels"] = data["accels"].str.split(" ").apply(pd.to_numeric, errors = "coerce")
 
-    # Convert all data to numerical
-    # data = data.astype(np.float64)
-
     # print(data["starting_pos"])
+
     # Create sensors
-    for p in data["starting_pos"]:
-        sensor = magpy.Sensor(position = p)
+    i = 0
+    for r in data.to_numpy():
+        print("creating sensor for ", r)
+        sensor = magpy.Sensor(position = r[0])
         psensors.add(sensor)
+
+        simDict[i] = [0, r[0], r[1]]
+        i += 1
 
     return data
 
@@ -238,6 +246,7 @@ Prints out the resulting dataframe from the InitializeData() to debug
 '''
 def TestInitialization():  
     print(f"Dataframe: {df}")
+    print(f"simDict: {simDict}")
     print(f"Sensors: {psensors.children}")
 
 '''
@@ -292,28 +301,27 @@ Ensure the code is efficient because the whole point of these operations is to i
 # unless it is outside of the bounds given by 'side'
 def Bfield(y):
     global side
+    # Create out array
+    out = np.empty(len(y), dtype= np.ndarray)
+
+    # Update sensor positions
+    for p in range(len(y)):
+        pos = y[p]
+        isBounds = pos.any() > side
+        Bf = [0., 0., 0.]
+
+        if(not isBounds):
+            sens = psensors.sensors[p]
+            sens.position = pos
+            Bf = c.getB(sens, squeeze=True)
+
+        out[p] = Bf
+    
+    return Bf
+
 
     # base statement set for stopping calculations outside of the given area
-    if not y[0] > side:
-        if not y[0] < -side:
-            if not y[1] > side:
-                if not y[1] < -side:
-                    if not y[2] > side:
-                        if not y[2] < -side:
-                            # takes the b-field at the given point
-                            f = c.getB(sens, squeeze=True)
-                        else:
-                            f = np.array([0,0,0])
-                    else:
-                        f = np.array([0,0,0])
-                else:
-                    f = np.array([0,0,0])
-            else:
-                f = np.array([0,0,0])
-        else:
-            f = np.array([0,0,0])
-    else:
-        f = np.array([0,0,0])
+
 
     # returning the b-field at the given point, or [0,0,0] if outside of the given area
     return f
@@ -403,9 +411,13 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
     # duration = int(time)
     # assumes parameter for velocity was in mm/s, converts it to m/s
 
-    v = df.at["starting_vel"].copy() * mm
-    x = df.at["starting_pos"].copy() * mm
+    v = df["starting_vel"].to_numpy() * mm
+    x = df["starting_pos"].to_numpy() * mm
 
+    v = v[0]
+    print(f"v has a len of {len(v)}")
+    print(v, x)
+    print(x[0])
 
     E = np.array([0., 0., 0.])
 
@@ -416,6 +428,7 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
     for time in range(duration):
         Bf = Bfield(x)
         B0List.append(Bf)
+        # print("bf: ", Bf)
 
         tt = charge / mass * Bf * 0.5 * dt
         ss = 2. * tt / (1. + tt * tt)
@@ -423,7 +436,8 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
         v_prime = v_minus + np.cross(v_minus, tt)
         v_plus = v_minus + np.cross(v_prime, ss)
         v = v_plus + charge / (mass * vAc) * E * 0.5 * dt
-        x += v * dt
+
+        x[0] += v * dt
 
         # creating a gradient of resolution based on the acceleration and velocity for dt
         vel = math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
@@ -442,11 +456,12 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
             dt = (coilLength / vel) / 1e3
             gradList['L/V'] += 1
             '''
+        print(x[0])
         accelList = np.append(accelList, [[accelVec[0], accelVec[1], accelVec[2], accel]], axis=0)
         # X[time, :] = x
-        df["positions"] = np.append([df["positions"]], [[x]]) # positions array
+        df["positions"] = np.append([df["positions"]], [x[0]]) # positions array
         # V[time, :] = v
-        df["vels"] = np.append([df["vels"]], [[x]]) # velocity array
+        df["vels"] = np.append([df["vels"]], [x[0]]) # velocity array
         df["accels"] = np.append([df["accels"]],[[accelVec]]) # acceleration array
         # print(row)
 
@@ -455,7 +470,7 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
         if dTimer % 1000 == 0:
             print("boris calc * " + str(dTimer))
             print("total time: ", ft, dt)
-        if x[0] > side or x[1] > side or x[2] > side:
+        if x[0][0] > side or x[0][1] > side or x[0][2] > side:
             print('Exited Boris Push Early')
             break
     print(ft*(10**-5))
