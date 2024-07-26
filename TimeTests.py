@@ -3,8 +3,11 @@ Scratchpad to see what kind of data structure operations are the best.
 '''
 
 import timeit
+import time
 import numpy as np
 import pandas as pd
+
+from collections import namedtuple
 
 ############
 # CASE ONE #
@@ -108,8 +111,66 @@ Sol2_Case2(m, 3)'''
 ##########
 # CASE 2 #
 ##########
+'''
+Speed of creating myriad entries for namedtuples vs. dictionaries.
+'''
+lst = [1, 2, 3]
+
+def Dict_Case2(num:int):
+    out = {}
+    for i in range(num):
+        temp = {}
+        temp['a'] = i
+        temp['b'] = lst
+        out[i] = temp
+    return out
+
+def NamedTuple_Case2(num:int):
+    NTuple = namedtuple("NTuple", ["a", "b"])
+    out = []
+    for i in range(num):
+        out.append(NTuple(i, lst))
+    return out
+
+def Test_Cases(num:int):
+    start = time.time()
+    a = Dict_Case2(num)
+    a1 = a[0]["b"][0]
+
+    end = time.time()
+    print(f"Dict took {end-start}")
+
+    start = time.time()
+    a = NamedTuple_Case2(num)
+    a1 = a[0][1][0]
+    end = time.time()
+    print(f"Ntuple took {end-start}")    
+
+##########
+# CASE 3 #
+##########
+'''
+How do Cross Products work on higher dim arrays
+'''
+def Case3():
+    arr = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+    arr2 = np.array([[5, 7, 5], [2, 7, 4], [32, 6, 2]])
+
+    print(np.cross(arr, arr2))
+    print(np.cross(arr[1], arr2[1]))
+
+
+def Case4():
+    df = pd.DataFrame([[[1, 1, 1],2,3], [[1, 1, 1],2,3]], columns = ["a", "b", "c"])
+    # print(df)
+    a = np.array((df["a"].tolist()))
+    print(a)
+    print(a[:-1,0])
 
 
 
 # Testing
-Test_Case1()
+# Test_Case1()
+# Test_Cases(5000000)
+# Case3()
+Case4()

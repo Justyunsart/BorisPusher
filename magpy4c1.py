@@ -1,3 +1,4 @@
+from collections import namedtuple
 import math
 import time
 import numpy as np
@@ -166,7 +167,10 @@ root.mainloop()
 # VARS #
 #======#
 simDf = pd.DataFrame(columns=["pind", "step", "position", "velocity", "acceleration"])
-simDict = {}
+Df = pd.DataFrame()
+# simDict = {}
+SimStep = namedtuple("SimStep", ["pind", "nstep", "position", "velocity", "acceleration"])
+SimSteps = []
 
 initialized = False # Ensure initialization only happens once : failsafe
 cwd = os.getcwd() # Gets the current working directory, so we can find the Inputs, Outputs folder easily.
@@ -231,7 +235,8 @@ def InitializeData():
         sensor = magpy.Sensor(position = r[0])
         psensors.add(sensor)
 
-        simDict[i] = [0, r[0], r[1]]
+        SimSteps.append(SimStep(i, 0, r[0], r[1], [0.0,0.0,0.0]))
+        # simDict[i] = [0, r[0], r[1]]
         i += 1
 
     return data
@@ -246,16 +251,17 @@ Prints out the resulting dataframe from the InitializeData() to debug
 '''
 def TestInitialization():  
     print(f"Dataframe: {df}")
-    print(f"simDict: {simDict}")
+    print(f"simsteps: {SimSteps}")
     print(f"Sensors: {psensors.children}")
 
 '''
 Creates the output file
 '''
-def CreateOutput(df):
+def CreateOutput():
     global outd
-    print(df)
-    df.to_csv(outd + "/out3.txt", index = False)
+    global Df
+    print(Df)
+    Df.to_csv(outd + "/out3.txt", index = False)
 
 
 ## Uncomment below to check if the dataframe is being set properly.
@@ -317,7 +323,7 @@ def Bfield(y):
 
         out[p] = Bf
     
-    return Bf
+    return out
 
 
     # base statement set for stopping calculations outside of the given area
@@ -398,6 +404,7 @@ print(c.getB([450, 0, 0]))
 def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
     global side
     global df
+    global Df
 
     # print(f"Dataframe inside Boris: {df}")
     mass = m
@@ -413,11 +420,12 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
 
     v = df["starting_vel"].to_numpy() * mm
     x = df["starting_pos"].to_numpy() * mm
+    print(x, v)
 
     v = v[0]
-    print(f"v has a len of {len(v)}")
-    print(v, x)
-    print(x[0])
+    #print(f"v has a len of {len(v)}")
+    #print(v, x)
+    #print(x[0])
 
     E = np.array([0., 0., 0.])
 
@@ -425,8 +433,11 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
     # V = np.zeros((duration, 3))
 
     dTimer = 0
+    cdm = charge / mass
+    mac = mass * vAc
     for time in range(duration):
         Bf = Bfield(x)
+        Bf = Bf[0]
         B0List.append(Bf)
         # print("bf: ", Bf)
 
@@ -440,10 +451,15 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
         x[0] += v * dt
 
         # creating a gradient of resolution based on the acceleration and velocity for dt
-        vel = math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
+        # vel = math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
         # print(f"velocity: {vel}")
         accelVec = (v_plus - v_minus) / dt
-        accel = math.sqrt(accelVec[0]**2 + accelVec[1]**2 + accelVec[2]**2)
+        # accel = math.sqrt(accelVec[0]**2 + accelVec[1]**2 + accelVec[2]**2)
+        
+        for i in range(len(x)):
+            temp = SimStep(i, time + 1, x[i], v, accelVec[i])
+            SimSteps.append(temp)
+        
         '''
         if not accel == 0:
             if (vel/accel)/1e3 < dt:
@@ -456,13 +472,13 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
             dt = (coilLength / vel) / 1e3
             gradList['L/V'] += 1
             '''
-        print(x[0])
+        # print(x[0])
         accelList = np.append(accelList, [[accelVec[0], accelVec[1], accelVec[2], accel]], axis=0)
         # X[time, :] = x
-        df["positions"] = np.append([df["positions"]], [x[0]]) # positions array
+        # df["positions"] = np.append([df["positions"]], [x[0]]) # positions array
         # V[time, :] = v
-        df["vels"] = np.append([df["vels"]], [x[0]]) # velocity array
-        df["accels"] = np.append([df["accels"]],[[accelVec]]) # acceleration array
+        # df["vels"] = np.append([df["vels"]], [x[0]]) # velocity array
+        # df["accels"] = np.append([df["accels"]],[[accelVec]]) # acceleration array
         # print(row)
 
         dTimer += 1
@@ -475,6 +491,10 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
             break
     print(ft*(10**-5))
     ft = ft*(10**-5)
+    # print(SimSteps)
+    Df = pd.DataFrame(SimSteps)
+    #print(SimSteps)
+    #print(Df)
     return dTimer, ft, accelList
 
 #=============#
@@ -483,6 +503,7 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
     global path
     global df
+    global Df
     #print(y0)
     B0List = []
     accelList = np.zeros((1,4))
@@ -509,9 +530,11 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
         # testing the boris push method for particle movement
 
         ending, ft, accelList = borisPush(q, m, num_points, B0List, dt, accelList, gradList)
-        print(f"Dataframe: {df}")
-        A = df.get("positions")
-        B = df.get("vels")
+        CreateOutput()
+        
+        #print(f"Dataframe: {df}")
+        A = np.array(Df["position"].tolist())
+        B = np.array(Df["velocity"].tolist())
         print(f"positions: {A}")
         print(f"velocities: {B}")
 
@@ -557,7 +580,7 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
         # Bf = np.squeeze(np.where((A[:, 0] < 0.21) & (A[:, 0] > -0.21)))  # used for finding index of closest values to x==0
 
         Bf = np.asarray(B[:-1, 0]*B[1:, 0] < 0).nonzero()[0]  # used for finding index of bounce points
-        print(Bf)
+        # print(Bf)
 
 
         BfS = Bf[0]
@@ -567,7 +590,7 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
         MagMoment = []
 
         # getting a list of B magnitudes and perpendicular velocity for bounce points
-        for x1 in Bf:
+        for x1 in range(len(Bf)):
             BfMag1 = (math.sqrt(B0List[x1][0] ** 2 +
                                 B0List[x1][1] ** 2 +
                                 B0List[x1][2] ** 2)) / 1000
@@ -596,16 +619,18 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
         ax1.xaxis.set_major_locator(ticks), ax1.yaxis.set_major_locator(ticks), ax1.zaxis.set_major_locator(ticks)
         ax1.set_xlim([-lim, lim]), ax1.set_ylim([-lim, lim]), ax1.set_zlim([-lim, lim])
         ax1.set_xlabel('x'), ax1.set_ylabel('y'), ax1.set_zlabel('z')  # label axes
+        '''
         ax1.set_title("Start point: Xx={:.5e},Xy={:.5e}, Xz={:.5e} \n "
                       "Start Velocity: Vx={:.5e}, Vy={:.5e}, Vz={:.5e} \n "
                       "End Velocity : Vx={:.5e}, Vy={:.5e}, Vz={:.5e} \n "
                       "V^2 Start: {:.5e}, End: {:.5e}, Loss%: {:.5e} \n "
                       "Magnetic Moment Start: {:.5e}, End: {:.5e}, Loss%: {:.5e} ".format
-                      (df.iloc[0], df.iloc[1], df.iloc[2],
-                       df.iloc[3], df.iloc[4], df.iloc[5],
+                      (Df.iloc[0], Df.iloc[1], Df.iloc[2],
+                       Df.iloc[3], Df.iloc[4], Df.iloc[5],
                        B[-1][0], B[-1][1], B[-1][2],
                        velS, velE, vDiv,
                        magMomentS, magMomentE, bDiv))
+        '''
         cbar = fig2.colorbar(cm.ScalarMappable(norm=norm, cmap=colormap), ax=ax1, fraction=0.040, pad=0.04)
         cbar.ax.set_ylabel("Timestep (out of " + str(ft) + " seconds)")
 
@@ -651,6 +676,7 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
         # ax.scatter(x,y,z, s=0.01)
         # plt.show(block=True)
         # plt.close()
+        
 
 
 x_val = "n"
