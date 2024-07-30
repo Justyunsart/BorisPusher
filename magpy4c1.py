@@ -231,7 +231,7 @@ def InitializeData():
     # Create sensors
     i = 0
     for r in data.to_numpy():
-        print("creating sensor for ", r)
+        print("creating sensor for ", r[0])
         sensor = magpy.Sensor(position = r[0])
         psensors.add(sensor)
 
@@ -311,19 +311,28 @@ def Bfield(y):
     out = np.empty(len(y), dtype= np.ndarray)
 
     # Update sensor positions
+    '''
     for p in range(len(y)):
         pos = y[p]
+        # print(pos)
         isBounds = pos.any() > side
         Bf = [0., 0., 0.]
 
         if(not isBounds):
             sens = psensors.sensors[p]
             sens.position = pos
+            # print(sens.position)
             Bf = c.getB(sens, squeeze=True)
-
-        out[p] = Bf
-    
-    return out
+    '''
+    isBounds = y.any() > side
+    Bf = [0.,0.,0.]
+    if(not isBounds):
+        sens = psensors.sensors[0]
+        sens.position = y
+        # print(sens.position)
+        Bf = c.getB(sens, squeeze=True)
+    # print(Bf)
+    return Bf
 
 
     # base statement set for stopping calculations outside of the given area
@@ -419,10 +428,11 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
     # assumes parameter for velocity was in mm/s, converts it to m/s
 
     v = df["starting_vel"].to_numpy() * mm
-    x = df["starting_pos"].to_numpy() * mm
+    x = df["starting_pos"].to_numpy()
     print(x, v)
 
     v = v[0]
+    x = x[0]
     #print(f"v has a len of {len(v)}")
     #print(v, x)
     #print(x[0])
@@ -433,11 +443,8 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
     # V = np.zeros((duration, 3))
 
     dTimer = 0
-    cdm = charge / mass
-    mac = mass * vAc
     for time in range(duration):
         Bf = Bfield(x)
-        Bf = Bf[0]
         B0List.append(Bf)
         # print("bf: ", Bf)
 
@@ -448,7 +455,7 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
         v_plus = v_minus + np.cross(v_prime, ss)
         v = v_plus + charge / (mass * vAc) * E * 0.5 * dt
 
-        x[0] += v * dt
+        x += v * dt
 
         # creating a gradient of resolution based on the acceleration and velocity for dt
         # vel = math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
@@ -456,7 +463,7 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
         accelVec = (v_plus - v_minus) / dt
         # accel = math.sqrt(accelVec[0]**2 + accelVec[1]**2 + accelVec[2]**2)
         
-        for i in range(len(x)):
+        for i in range(1):
             temp = SimStep(i, time + 1, x[i], v, accelVec[i])
             SimSteps.append(temp)
         
@@ -486,7 +493,7 @@ def borisPush(q, m, num_points, B0List, dt, accelList, gradList):
         if dTimer % 1000 == 0:
             print("boris calc * " + str(dTimer))
             print("total time: ", ft, dt)
-        if x[0][0] > side or x[0][1] > side or x[0][2] > side:
+        if x[0] > side or x[1] > side or x[2] > side:
             print('Exited Boris Push Early')
             break
     print(ft*(10**-5))
