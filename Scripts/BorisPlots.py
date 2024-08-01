@@ -3,6 +3,8 @@ import magpylib as magpy
 
 from magpylib.current import Loop
 from magpylib import Collection
+
+from matplotlib import pyplot as plt
 from matplotlib import ticker
 from matplotlib.colors import Normalize
 from matplotlib import cm
@@ -15,17 +17,11 @@ from mpl_toolkits.mplot3d import Axes3D
 #=============#
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
     global path
-    global df
-    global Df
-    #print(y0)
-    B0List = []
-    accelList = np.zeros((1,4))
-    # gradList = {'1e8': 0, '8e7': 0, '5e7': 0, '1e7': 0, '5e6': 0, '1e6': 0, '5e5': 0}
-    gradList = {'V/A': 0, 'L/V': 0}
-    q = 1.602e-19
-    m = 1.67e-27
-
+    #------------------------#
+    # set visuals for figure #
+    #------------------------#
     fig2 = plt.figure(figsize=(10, 20))
+    
     # 3d projection
     ax1 = fig2.add_subplot(1, 2, 1, projection='3d')
     ax2 = fig2.add_subplot(1, 2, 2)
@@ -38,21 +34,8 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
     lineSens = magpy.Sensor()
     lineSens.move(np.linspace((x_lim[0], 0, 0), (x_lim[1], 0, 0), 1000), start=0)
 
-    print("plotting done")
-    # testing the boris push method for particle movement
-    
-    # ending, ft, accelList = borisPush(q, m, num_points, B0List, dt, accelList, gradList)
-    
-    #print(f"Dataframe: {df}")
-    A = np.array(Df["position"].tolist())
-    B = np.array(Df["velocity"].tolist())
-    print(f"positions: {A}")
-    print(f"velocities: {B}")
-
     # setting x,y,z from the travel points
-    x, y, z = [i[0] for i in A], \
-                [i[1] for i in A], \
-                [i[2] for i in A]
+
 
     # setting colors for the magnitude at each point used
     #setting up colors
@@ -63,11 +46,6 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
     norm.autoscale(colRes)
     colormap = cm.inferno
 
-    # plotting the 3d path of the particle
-    # removing 0's to show a better visual
-    # x = [float('nan') if h == 0 else h for h in x]
-    # y = [float('nan') if h == 0 else h for h in y]
-    # z = [float('nan') if h == 0 else h for h in z]
     for point in range(0,num_points,2000):
         if not (x[point] > x_lim[1]) and not (x[point] < x_lim[0]) and not (y[point] > y_lim[1]) and not (y[point] < y_lim[0]) and not (z[point] > z_lim[1]) and not (z[point] < z_lim[0]) and not (x[point] == 0.0):
             ax1.plot(x[point:point+2001:1],

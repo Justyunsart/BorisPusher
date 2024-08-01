@@ -24,6 +24,23 @@ root.rowconfigure(0, weight = 1)
 rframe = ttk.Frame(root, padding = "3 3 12 12")
 rframe.grid(column=1, row=0, sticky = (N, W, E, S))
 
+#======#
+# MENU #
+#======#
+# CREATION
+menubar = Menu(root)
+
+# FILE TAB
+file = Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Edit", menu=file)
+## commands
+file.add_command(label="Preferences")
+
+## helpers
+def PrefCallback():
+    # TODO: Create a popup window that allows users to set default output dirs and other options.
+    return 0
+
 #=============#
 # GUI WIDGETS #
 #=============#

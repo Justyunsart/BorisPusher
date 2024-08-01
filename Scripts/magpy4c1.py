@@ -11,13 +11,12 @@ import os
 
 # parallelization
 import ray
-# ray.init()
+ray.init()
 
 # used to create output restart file
 import pandas as pd
 
 # gui stuff
-import tkinter
 from BorisGui import root, do_file, inpd, entry_numsteps_value, time_step_value
 
 # magpy and plots
@@ -94,16 +93,7 @@ def InitializeData():
     # print(data["starting_pos"])
     return data
 
-'''
-Functions access it directly
-'''
 df = InitializeData() # Populate this ASAP lol
-
-'''
-Prints out the resulting dataframe from the InitializeData() to debug
-'''
-def TestInitialization():  
-    print(f"Dataframe: {df}")
 
 '''
 Creates the output file
@@ -114,9 +104,6 @@ def CreateOutput():
     Df = pd.DataFrame(AoS)
     Df.to_csv(outd + "/out3.txt", index = False, header = False)
 
-
-## Uncomment below to check if the dataframe is being set properly.
-# TestInitialization()
 
 ####################
 # PHYSICS SETTINGS #
@@ -199,52 +186,13 @@ dia = 500. # coil diameter
 d = 800. # coil placement
 l = 600 # line space(x, y, z variables)
 r = 100 # line space increments
-VelX = 5.8e5 # velocity in the 'X' direction for the particle In mm/s
-VelY = VelX # velocity in the 'Y' direction for the particle In mm/s
-VelZ = 0.0 # velocity in the 'Z' direction for the particle In mm/s
-t1 = -10.
-t2 = -10.
-
-######################
-# DEFAULT PARAMETERS #
-######################
-'''
-If some elements in the GUI are not populated, the sim will use these conditions.
-'''
-
-# the initial starting point and velocity vectors in a list
-yNot = np.array([[0., 0., 120., VelX/1.5, VelY, VelZ],
-                 [0., 0.,-120., -VelX, VelY/1.5, VelZ],
-                 [0., 0., 0., -VelX, -VelY, VelZ],
-                 [0., 0., 0., -VelX, VelY, -VelZ],
-                 [0., 0., 0., VelX, -VelY, -VelZ],
-                 [0., 0., 0., -VelX, -VelY, -VelZ]])
-
-# E = np.array([0.0, 0.0, 0.0])  # Volts/m
-# B = [18000, 0, 0]
-s,t = 450,30
 
 # plotting variables
-step = 50 # vector density
-smLine = 1
-edge = 125 # sets square coil length
-limS = 600 # vector graph area
-print(limS)
-
-# setting limit space to cancel calculations outside of it
-x_lim = (-limS, limS)
-y_lim = (-limS, limS)
-z_lim = (-limS, limS)
-radi = 200
-plot_pick = None
-
 corner = 1 # sets octagonal corner size (cannot be 0)
-side = limS # max range for plot
+side = 600 # max range for plot
 gap = 15 # sets space between coils
 coilLength = 1000
-# dt = coilLength / (math.sqrt(VelX**2 + VelY**2 + VelZ**2) * num_points)
 dt = time_step_value
-
 
 # comment in coils array you wish to use from the above definitions
 # c = Helmholtz(a, dia, d)
@@ -255,7 +203,7 @@ c = Circle(a, dia, d, gap)
 # boris push calculation
 # this is used to move the particle in a way that simulates movement from a magnetic field
 # mass and charge are set to 1, and input as 'm' and 'q' respectively
-# @ray.remote
+@ray.remote
 def borisPush(num_points, dt):
     global side
     global df
@@ -299,14 +247,6 @@ def borisPush(num_points, dt):
             # Update particle information with the pos and vel
             AoS[i][time + 1] = particle(position = x + v * dt, velocity = v_plus + charge / (mass * vAc) * E * 0.5 * dt, B = [0,0,0])
 
-        # creating a gradient of resolution based on the acceleration and velocity for dt
-        # vel = math.sqrt(v[0] ** 2 + v[1] ** 2 + v[2] ** 2)
-        # accelVec = (v_plus - v_minus) / dt
-        # accel = math.sqrt(accelVec[0]**2 + accelVec[1]**2 + accelVec[2]**2)
-        
-        # print(x[0])
-        # accelList = np.append(accelList, [[accelVec[0], accelVec[1], accelVec[2], accel]], axis=0)
-
         ft += dt # total time spent simulating
         if time % 1000 == 0:
             print("boris calc * " + str(time))
@@ -320,4 +260,5 @@ def borisPush(num_points, dt):
     CreateOutput()
 
         
-borisPush(entry_numsteps_value.get(), time_step_value)
+future = borisPush.remote(entry_numsteps_value.get(), time_step_value)
+result = ray.get(future)
