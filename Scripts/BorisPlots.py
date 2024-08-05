@@ -1,5 +1,11 @@
+import os
+import sys
+
+from dataclasses import asdict, dataclass
+
 import numpy as np
 import magpylib as magpy
+import pandas as pd
 
 from magpylib.current import Loop
 from magpylib import Collection
@@ -10,11 +16,69 @@ from matplotlib.colors import Normalize
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 
-# TODO: make this function read data instead of generating it
+
+from magpy4c1 import particle, c
+
+# data
+# For the future, if implementing logic that graphs right after calculating.
+
+#===================#
+# READ RESTART FILE #
+#===================#
+def ReadAoS(dir):
+    dirc = os.listdir(dir)
+    nump = len(dirc)
+
+    AoS = np.empty(nump, dtype=particle)
+    for i in range(nump):
+        AoS[i] = np.load(os.path.join(dir, dirc[i]), allow_pickle=True)
+
+    return AoS
+
+#==================#
+# CREATE DATAFRAME #
+#==================#
+df = pd.DataFrame()
+'''
+Make a large dataframe that aggregates the AoS to a more exploitable format. 
+     > We have to do these conversions to utilize arrays' strength of O(1) lookup and adding, as well as to avoid excessive amendments to a dataframe (costly)
+
+To keep track of particles, we will add an 'id' categorical variable alongside the usual 'particle' class attributes.
+'''
+def InitializeAoSDf(AoS:np.ndarray):
+    global df
+    flat = np.hstack(AoS)
+    df = pd.json_normalize(asdict(i) for i in flat)
 
 #=============#
 # 3D PLOTTING #
 #=============#
+def graph_trajectory(lim, data):
+    # create the graph to add to
+    fig1 = plt.figure(figsize=(10, 20))
+
+    traj = fig1.add_subplot(1,2,1, projection='3d')
+    traj.set_xlim3d(lim)
+    traj.set_zlim3d(lim)
+    # traj.set_yslim3d(lim)
+
+    l_np = data["position"].to_list()
+    l_np = np.asarray(l_np)
+    traj.plot(l_np[:,0], l_np[:,1], l_np[:,2])
+
+    plt.show()
+
+
+root = os.getcwd()
+outd = root + "\Outputs"
+# print(outd)
+
+AoS = ReadAoS(f"{outd}/boris_500000_20.0_2_(5)")
+InitializeAoSDf(AoS)
+
+graph_trajectory(500, df)
+
+'''
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
     global path
     #------------------------#
@@ -109,6 +173,7 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
     ax1.set_xlim([-lim, lim]), ax1.set_ylim([-lim, lim]), ax1.set_zlim([-lim, lim])
     ax1.set_xlabel('x'), ax1.set_ylabel('y'), ax1.set_zlabel('z')  # label axes
     '''
+'''
     ax1.set_title("Start point: Xx={:.5e},Xy={:.5e}, Xz={:.5e} \n "
                     "Start Velocity: Vx={:.5e}, Vy={:.5e}, Vz={:.5e} \n "
                     "End Velocity : Vx={:.5e}, Vy={:.5e}, Vz={:.5e} \n "
@@ -120,6 +185,7 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
                     velS, velE, vDiv,
                     magMomentS, magMomentE, bDiv))
     '''
+'''
     cbar = fig2.colorbar(cm.ScalarMappable(norm=norm, cmap=colormap), ax=ax1, fraction=0.040, pad=0.04)
     cbar.ax.set_ylabel("Timestep (out of " + str(ft) + " seconds)")
 
@@ -165,3 +231,4 @@ def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
     # ax.scatter(x,y,z, s=0.01)
     # plt.show(block=True)
     # plt.close()
+    '''

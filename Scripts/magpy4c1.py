@@ -1,3 +1,13 @@
+##########################################################################
+# BORIS PUSHER, UX FLOW                                                  #
+#     - Calls functions from other scripts to construct the Boris push   #
+# Andrew Egly, Yoon Roh, Bob Terry                                       #
+##########################################################################
+
+# get particle's angular momentum along the gyroradius. components of p (perpen to magnetic vector) cross w/ r gives axial direction.
+#     > angular momentum along the field line. 
+
+
 from collections import namedtuple
 from dataclasses import dataclass
 
@@ -11,14 +21,13 @@ import os
 
 # parallelization
 import ray
-ray.init()
+# ray.init()
 
 # used to create output restart file
 import pandas as pd
 
 # gui stuff
-from BorisGui import root, do_file, inpd, entry_numsteps_value, time_step_value
-
+from BorisGui import root, do_file, inpd, entry_numsteps_value, time_step_value, entry_sim_time_value
 # magpy and plots
 from magpylib.current import Loop
 from magpylib import Collection
@@ -29,7 +38,6 @@ from mpl_toolkits.mplot3d import Axes3D
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
-
 # Run GUI loop
 root.mainloop()
 
@@ -101,8 +109,45 @@ Creates the output file
 def CreateOutput():
     global outd
 
-    Df = pd.DataFrame(AoS)
-    Df.to_csv(outd + "/out3.txt", index = False, header = False)
+    # MAKE NEW FILE FOR EACH PARTICLE
+    # First, make the dir for these files.
+    dir = CreateOutDir()
+    temp = None
+
+    # Next, create a new file for each particle
+    for i in range(df.shape[0]):
+        temp = os.path.join(dir, f"{i}.npy")
+        print("saving, ", AoS[i])
+        np.save(temp, AoS[i])
+
+'''
+What will the folder for each output be called?
+     > Might be able to make this from a user input, otherwise will make a default name.
+
+Default name: "boris_nsteps_nsecs_nparticles"
+
+* when facing duplicate names, add (1), (2), etc.
+     1 - attempt to create the dir with the name
+     3 - except when an error comes from 1.
+        3a - in case of an error, have the os list the outd contents, and use counter() to see the num of occurances of the duplicate name
+        3b - make the new dir the name + (n) occurances 
+    return the name
+'''
+def CreateOutDir():
+    global outd
+    dName = "boris_" + str(entry_numsteps_value.get()) + "_" + str(entry_sim_time_value.get()) + "_" + str(df.shape[0])  
+    path = os.path.join(outd, dName)
+    
+    counter = 0
+    temp = ""
+    while os.path.exists(path):
+        counter += 1
+        temp = f"{dName}_({counter})"
+        path = os.path.join(outd, temp)
+
+    os.makedirs(path)
+    
+    return path
 
 
 ####################
@@ -114,9 +159,12 @@ def CreateOutput():
 #===========#
 '''
 The struct-like data class that will be stored inside an array (Array of structs data structure, or AoS)
+Makes the data, code more intuitive.
 '''
 @dataclass
 class particle:
+    id: int
+    step: int
     position: np.ndarray
     velocity: np.ndarray
     B: np.ndarray
@@ -172,7 +220,7 @@ def Bfield(y):
     Bf = [0.,0.,0.]
     if(not isBounds):
         Bf = c.getB(y, squeeze=True)
-        out.append(Bf)
+        out = Bf
     return np.array(out)
 
 # global variables
@@ -203,8 +251,9 @@ c = Circle(a, dia, d, gap)
 # boris push calculation
 # this is used to move the particle in a way that simulates movement from a magnetic field
 # mass and charge are set to 1, and input as 'm' and 'q' respectively
-@ray.remote
+# @ray.remote
 def borisPush(num_points, dt):
+    global AoS
     global side
     global df
 
@@ -219,7 +268,7 @@ def borisPush(num_points, dt):
     # Step 1: populate AoS (Array of Structures) with initial conditions
     #     > These conditions are read from inp file, currently stored in df.
     for i in range(num_parts):
-        AoS[i][0] = particle(position = df["starting_pos"].to_numpy()[i] * mm, velocity = df["starting_vel"].to_numpy()[i], B = [0,0,0])
+        AoS[i][0] = particle(position = df["starting_pos"].to_numpy()[i], velocity = df["starting_vel"].to_numpy()[i] * mm, B = [0,0,0], id = i, step = 0)
 
 
     E = np.array([0., 0., 0.])
@@ -229,7 +278,7 @@ def borisPush(num_points, dt):
         for i in range(num_parts): # i: particle index
             # AoS is actually an AoAoS (Array of Array of Structs)
             #     > AoS[i]: particle id's own array
-            #     > AoS[i][time]: particle 'i' at step 'time'
+            #   /  > AoS[i][time]: particle 'i' at step 'time'
 
             x = AoS[i][time].position
             v = AoS[i][time].velocity
@@ -245,7 +294,7 @@ def borisPush(num_points, dt):
             v_plus = v_minus + np.cross(v_prime, ss)
 
             # Update particle information with the pos and vel
-            AoS[i][time + 1] = particle(position = x + v * dt, velocity = v_plus + charge / (mass * vAc) * E * 0.5 * dt, B = [0,0,0])
+            AoS[i][time + 1] = particle(position = x + v * dt, velocity = v_plus + charge / (mass * vAc) * E * 0.5 * dt, B = [0,0,0], id = i, step = time)
 
         ft += dt # total time spent simulating
         if time % 1000 == 0:
@@ -253,12 +302,18 @@ def borisPush(num_points, dt):
             print("total time: ", ft, dt)
         if x.any() > side:
             print('Exited Boris Push Early')
-            CreateOutput()
             break
     print(ft*(10**-5))
     ft = ft*(10**-5)
-    CreateOutput()
 
-        
-future = borisPush.remote(entry_numsteps_value.get(), time_step_value)
-result = ray.get(future)
+#calc = True
+# if(calc):       
+#     future = borisPush.remote(entry_numsteps_value.get(), time_step_value)
+#     result = ray.get(future)
+#     CreateOutput()
+# ray.shutdown()
+
+calc = True
+if(calc):
+    borisPush(entry_numsteps_value.get(), time_step_value)
+    CreateOutput()
