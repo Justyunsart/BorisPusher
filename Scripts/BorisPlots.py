@@ -1,7 +1,7 @@
 import os
-import sys
+import json
 
-from dataclasses import asdict, dataclass
+from ast import literal_eval
 
 import numpy as np
 import magpylib as magpy
@@ -17,38 +17,8 @@ from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 
 
-from magpy4c1 import particle, c
+# from magpy4c1 import particle, c
 
-# data
-# For the future, if implementing logic that graphs right after calculating.
-
-#===================#
-# READ RESTART FILE #
-#===================#
-def ReadAoS(dir):
-    dirc = os.listdir(dir)
-    nump = len(dirc)
-
-    AoS = np.empty(nump, dtype=particle)
-    for i in range(nump):
-        AoS[i] = np.load(os.path.join(dir, dirc[i]), allow_pickle=True)
-
-    return AoS
-
-#==================#
-# CREATE DATAFRAME #
-#==================#
-df = pd.DataFrame()
-'''
-Make a large dataframe that aggregates the AoS to a more exploitable format. 
-     > We have to do these conversions to utilize arrays' strength of O(1) lookup and adding, as well as to avoid excessive amendments to a dataframe (costly)
-
-To keep track of particles, we will add an 'id' categorical variable alongside the usual 'particle' class attributes.
-'''
-def InitializeAoSDf(AoS:np.ndarray):
-    global df
-    flat = np.hstack(AoS)
-    df = pd.json_normalize(asdict(i) for i in flat)
 
 #=============#
 # 3D PLOTTING #
@@ -62,19 +32,18 @@ def graph_trajectory(lim, data):
     traj.set_zlim3d(lim)
     # traj.set_yslim3d(lim)
 
-    l_np = data["position"].to_list()
-    l_np = np.asarray(l_np)
-    traj.plot(l_np[:,0], l_np[:,1], l_np[:,2])
+    x, y, z = data["px"].to_list(), data["py"].to_list(), data["pz"].to_list()
 
+    traj.plot(x,y,z)
     plt.show()
 
 
 root = os.getcwd()
-outd = root + "\Outputs"
-# print(outd)
+outd = root + "/Outputs/boris_2000000_120.0_2/dataframe.json"
 
-AoS = ReadAoS(f"{outd}/boris_500000_20.0_2_(5)")
-InitializeAoSDf(AoS)
+df = pd.read_json(outd, orient="table")
+df = df.apply(pd.to_numeric)
+print(df)
 
 graph_trajectory(500, df)
 

@@ -8,14 +8,9 @@
 #     > angular momentum along the field line. 
 
 
-from collections import namedtuple
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
-import math
-import time
 import numpy as np
-import matplotlib.pyplot as plt
-import mpl_toolkits.mplot3d
 import magpylib as magpy
 import os
 
@@ -31,10 +26,6 @@ from BorisGui import root, do_file, inpd, entry_numsteps_value, time_step_value,
 # magpy and plots
 from magpylib.current import Loop
 from magpylib import Collection
-from matplotlib import ticker
-from matplotlib.colors import Normalize
-from matplotlib import cm
-from mpl_toolkits.mplot3d import Axes3D
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
@@ -106,20 +97,37 @@ df = InitializeData() # Populate this ASAP lol
 '''
 Creates the output file
 '''
+#==================#
+# CREATE DATAFRAME #
+#==================#
+'''
+Make a large dataframe that aggregates the AoS to a more exploitable format. 
+     > We have to do these conversions to utilize arrays' strength of O(1) lookup and adding, as well as to avoid excessive amendments to a dataframe (costly)
+
+To keep track of particles, we will add an 'id' categorical variable alongside the usual 'particle' class attributes.
+'''
+def InitializeAoSDf(AoS:np.ndarray):
+    flat = np.hstack(AoS)
+    df = pd.json_normalize(asdict(i) for i in flat)
+
+    return df
+
 def CreateOutput():
     global outd
 
     # MAKE NEW FILE FOR EACH PARTICLE
     # First, make the dir for these files.
     dir = CreateOutDir()
-    temp = None
+    df = InitializeAoSDf(AoS)
 
     # Next, create a new file for each particle
-    for i in range(df.shape[0]):
-        temp = os.path.join(dir, f"{i}.npy")
-        print("saving, ", AoS[i])
-        np.save(temp, AoS[i])
+   #for i in range(df.shape[0]):
+    #    temp = os.path.join(dir, f"{i}.txt")
+        # print("saving, ", AoS[i])
+        # np.save(temp, AoS[i])
 
+    temp = os.path.join(dir, f"dataframe.json")
+    df.to_json(temp, orient="table")
 '''
 What will the folder for each output be called?
      > Might be able to make this from a user input, otherwise will make a default name.
@@ -160,14 +168,29 @@ def CreateOutDir():
 '''
 The struct-like data class that will be stored inside an array (Array of structs data structure, or AoS)
 Makes the data, code more intuitive.
+
+I made the pos, vel, and b fields separate floats because pandas really hates it when cells are containers; doing any manipulation of data
+was causing me immense agony and pain. It makes particle instantiation really ugly... Too bad!
 '''
 @dataclass
 class particle:
     id: int
     step: int
-    position: np.ndarray
-    velocity: np.ndarray
-    B: np.ndarray
+    
+    #position
+    px: np.float64
+    py: np.float64
+    pz: np.float64
+
+    # Velocity
+    vx: np.float64
+    vy: np.float64
+    vz: np.float64
+
+    # B field
+    bx: np.float64
+    by: np.float64
+    bz: np.float64
 
 # preallocate the array in memory
 AoS = np.empty(dtype=particle, shape=((df.shape[0], entry_numsteps_value.get() + 1)))  # there will be {(numsteps + 1), numparticles} entries, with one added to account for initial conditions.
@@ -268,7 +291,19 @@ def borisPush(num_points, dt):
     # Step 1: populate AoS (Array of Structures) with initial conditions
     #     > These conditions are read from inp file, currently stored in df.
     for i in range(num_parts):
-        AoS[i][0] = particle(position = df["starting_pos"].to_numpy()[i], velocity = df["starting_vel"].to_numpy()[i] * mm, B = [0,0,0], id = i, step = 0)
+        temp = df["starting_pos"].to_numpy()[i]
+        temp1 = df["starting_vel"].to_numpy()[i] * mm
+        AoS[i][0] = particle(px = temp[0], 
+                             py = temp[1],
+                             pz = temp[2],
+                             vx = temp1[0],
+                             vy = temp1[1],
+                             vz = temp1[2],
+                             bx = 0,
+                             by = 0,
+                             bz = 0,
+                             id = i,
+                             step = 0)
 
 
     E = np.array([0., 0., 0.])
@@ -280,11 +315,11 @@ def borisPush(num_points, dt):
             #     > AoS[i]: particle id's own array
             #   /  > AoS[i][time]: particle 'i' at step 'time'
 
-            x = AoS[i][time].position
-            v = AoS[i][time].velocity
+            x = np.array([AoS[i][time].px, AoS[i][time].py, AoS[i][time].pz])
+            v = np.array([AoS[i][time].vx, AoS[i][time].vy, AoS[i][time].vz])
 
             Bf = Bfield(x)
-            AoS[i][time].B = Bf # update B field for particle we just found
+            AoS[i][time].bx, AoS[i][time].by, AoS[i][time].bz = Bf # update B field for particle we just found
 
             # Boris logic
             tt = charge / mass * Bf * 0.5 * dt
@@ -294,7 +329,19 @@ def borisPush(num_points, dt):
             v_plus = v_minus + np.cross(v_prime, ss)
 
             # Update particle information with the pos and vel
-            AoS[i][time + 1] = particle(position = x + v * dt, velocity = v_plus + charge / (mass * vAc) * E * 0.5 * dt, B = [0,0,0], id = i, step = time)
+            position = x + v * dt 
+            velocity = v_plus + charge / (mass * vAc) * E * 0.5 * dt
+            AoS[i][time + 1] = particle(px = position[0], 
+                             py = position[1],
+                             pz = position[2],
+                             vx = velocity[0],
+                             vy = velocity[1],
+                             vz = velocity[2],
+                             bx = 0,
+                             by = 0,
+                             bz = 0,
+                             id = i,
+                             step = time)
 
         ft += dt # total time spent simulating
         if time % 1000 == 0:

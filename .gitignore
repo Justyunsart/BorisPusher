@@ -12,3 +12,9 @@ Outputs/boris_500000_20.0_2_(5)/0.npy
 Outputs/boris_500000_20.0_2_(5)/1.npy
 Outputs/boris_500000_20.0_2_(8)/0.npy
 Outputs/boris_500000_20.0_2_(8)/1.npy
+Outputs/boris_1000000_20.0_2/dataframe.json
+Outputs/boris_1000000_30.0_2/dataframe.txt
+Outputs/boris_2000000_120.0_2/dataframe.json
+Outputs/boris_500000_20.0_2_(6)/dataframe.txt
+Outputs/boris_500000_20.0_2_(7)/dataframe.json
+Outputs/boris_500000_20.0_2_(9)/dataframe.json
