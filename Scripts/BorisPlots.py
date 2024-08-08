@@ -1,8 +1,6 @@
 import os
 import json
 
-from ast import literal_eval
-
 import numpy as np
 import magpylib as magpy
 import pandas as pd
@@ -26,15 +24,26 @@ from mpl_toolkits.mplot3d import Axes3D
 def graph_trajectory(lim, data):
     # create the graph to add to
     fig1 = plt.figure(figsize=(10, 20))
+    traj = fig1.add_subplot(1,1,1, projection='3d')
 
-    traj = fig1.add_subplot(1,2,1, projection='3d')
-    traj.set_xlim3d(lim)
-    traj.set_zlim3d(lim)
-    # traj.set_yslim3d(lim)
+    # Set 3D plot bounds
+    traj.set_xlim3d(0,lim)
+    traj.set_ylim3d(0,lim)
+    traj.set_zlim3d(0,lim)
+    
+    # Extract the positional data from the dataframe
+    x, y, z = data["px"].to_numpy(), data["py"].to_numpy(), data["pz"].to_numpy()
 
-    x, y, z = data["px"].to_list(), data["py"].to_list(), data["pz"].to_list()
+    # Get the smallest index of when to stop graphing
+    # This feels kinda ugly I'm not going to lie.
+    xs = np.asarray((x>lim) | (y > lim) | (z > lim)).nonzero()
 
-    traj.plot(x,y,z)
+    ind = xs[0][0]
+    
+    # Plot it to the index
+    traj.plot(x[:ind],y[:ind],z[:ind])
+
+    # Enjoy the fruits of your labor
     plt.show()
 
 
