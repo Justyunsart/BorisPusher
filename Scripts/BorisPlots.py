@@ -1,11 +1,9 @@
 import os
-import json
 
 import numpy as np
 import magpylib as magpy
 import pandas as pd
 
-from magpylib.current import Loop
 from magpylib import Collection
 
 from matplotlib import pyplot as plt
@@ -15,7 +13,7 @@ from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 
 
-# from magpy4c1 import particle, c
+from MakeCurrent import current as c
 
 
 #=============#
@@ -27,9 +25,9 @@ def graph_trajectory(lim, data):
     traj = fig1.add_subplot(1,1,1, projection='3d')
 
     # Set 3D plot bounds
-    traj.set_xlim3d(0,lim)
-    traj.set_ylim3d(0,lim)
-    traj.set_zlim3d(0,lim)
+    traj.set_xlim3d(-lim,lim)
+    traj.set_ylim3d(-lim,lim)
+    traj.set_zlim3d(-lim,lim)
     
     # Extract the positional data from the dataframe
     x, y, z = data["px"].to_numpy(), data["py"].to_numpy(), data["pz"].to_numpy()
@@ -41,7 +39,8 @@ def graph_trajectory(lim, data):
     ind = xs[0][0]
     
     # Plot it to the index
-    traj.plot(x[:ind],y[:ind],z[:ind])
+    traj.plot(x[:ind], y[:ind], z[:ind])
+    magpy.show(c, canvas=traj)
 
     # Enjoy the fruits of your labor
     plt.show()
