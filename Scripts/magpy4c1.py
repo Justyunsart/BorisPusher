@@ -20,6 +20,7 @@ from dataclasses import asdict
 import numpy as np
 import magpylib as magpy
 import os
+from pathlib import Path
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
@@ -34,8 +35,11 @@ pd.set_option('display.max_columns', None)
 #======#
 
 initialized = False # Ensure initialization only happens once : failsafe
-cwd = os.getcwd() # Gets the current working directory, so we can find the Inputs, Outputs folder easily.
-outd = cwd + "/Outputs" 
+
+
+cwd = str(Path(__file__).resolve().parents[1]) # Gets the current working directory, so we can find the Inputs, Outputs folder easily.
+outd = cwd + "/Outputs"
+
 
 #=================================#
 # HELPERS FOR READING INPUT FILES #
@@ -283,7 +287,7 @@ def run(isRun: bool):
 
     if(isRun):
         with concurrent.futures.ProcessPoolExecutor() as executor:
-            values = [0,1]
+            values = range(num_parts)
             futures = executor.map(borisPush, values)
 
         out = []
