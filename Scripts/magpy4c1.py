@@ -4,13 +4,6 @@
 # Andrew Egly, Yoon Roh, Bob Terry                                       #
 ##########################################################################
 
-
-from dataclasses import asdict
-
-import numpy as np
-import magpylib as magpy
-import os
-
 # parallelization
 import concurrent.futures #multiprocessing
 
@@ -20,18 +13,18 @@ import pandas as pd
 # gui stuff
 from BorisGui import root, do_file, inpd, entry_numsteps_value, time_step_value, entry_sim_time_value
 
-# magpy and plots
-from magpylib.current import Loop
-from magpylib import Collection
-
+# Pusher specific stuff
 from PusherClasses import particle
 from MakeCurrent import current as c
-
+from dataclasses import asdict
+import numpy as np
+import magpylib as magpy
+import os
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
 # Run GUI loop
-root.mainloop()
+# root.mainloop()
 
 ###################
 # INPUT FILE JUNK #
@@ -119,7 +112,7 @@ def CreateOutput():
     # MAKE NEW FILE FOR EACH PARTICLE
     # First, make the dir for these files.
     dir = CreateOutDir()
-    df = InitializeAoSDf(AoS)
+    # data = InitializeAoSDf(AoS)
 
     # Next, create a new file for each particle
    #for i in range(df.shape[0]):
@@ -128,7 +121,7 @@ def CreateOutput():
         # np.save(temp, AoS[i])
 
     temp = os.path.join(dir, f"dataframe.json")
-    df.to_json(temp, orient="table")
+    # df.to_json(temp, orient="table")
 '''
 What will the folder for each output be called?
      > Might be able to make this from a user input, otherwise will make a default name.
@@ -164,7 +157,8 @@ def CreateOutDir():
 ####################
 
 # preallocate the array in memory
-AoS = np.empty(dtype=particle, shape=((df.shape[0], entry_numsteps_value.get() + 1)))  # there will be {(numsteps + 1), numparticles} entries, with one added to account for initial conditions.
+# AoS = np.empty(dtype=particle, shape=((df.shape[0], entry_numsteps_value.get() + 1)))  # there will be {(numsteps + 1), numparticles} entries, with one added to account for initial conditions.
+
 
 
 #=========#
@@ -203,92 +197,97 @@ corner = 1 # sets octagonal corner size (cannot be 0)
 side = 600 # max range for plot
 gap = 15 # sets space between coils
 coilLength = 1000
+
 dt = time_step_value
+num_points = entry_numsteps_value.get()
+num_parts = df.shape[0]
+
 
 # boris push calculation
 # this is used to move the particle in a way that simulates movement from a magnetic field
-# mass and charge are set to 1, and input as 'm' and 'q' respectively
-# @ray.remote
-def borisPush(num_points, dt):
-    global AoS
-    global side
-    global df
-
-    num_parts = df.shape[0] # the number of particles in the simulation
+def borisPush(id:int):
+    global num_points, num_parts, dt, side, df  # Should be fine in multiprocessing because these values are only read,,,
+    assert id <= (num_parts - 1), f"Input parameter 'id' received a value greater than the number of particles, {num_parts}"
 
     mass = 1.67e-27
     charge = 1.602e-19
+
     vAc = 1
     mm = 0.001
-    ft = 0 
+    ft = 0 # tracker for total simulation time
 
-    # Step 1: populate AoS (Array of Structures) with initial conditions
+    # Step 1: Create the AoS the process will work with
     #     > These conditions are read from inp file, currently stored in df.
-    for i in range(num_parts):
-        temp = df["starting_pos"].to_numpy()[i]
-        temp1 = df["starting_vel"].to_numpy()[i] * mm
-        AoS[i][0] = particle(px = temp[0], 
-                             py = temp[1],
-                             pz = temp[2],
-                             vx = temp1[0],
-                             vy = temp1[1],
-                             vz = temp1[2],
-                             bx = 0,
-                             by = 0,
-                             bz = 0,
-                             id = i,
-                             step = 0)
+
+    out = np.empty(num_points + 1, dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
+
+    temp = df["starting_pos"].to_numpy()[id] # Populate it with the initial conditions at index 0.
+    temp1 = df["starting_vel"].to_numpy()[id] * mm
+    out[0] = particle(px = temp[0], 
+                            py = temp[1],
+                            pz = temp[2],
+                            vx = temp1[0],
+                            vy = temp1[1],
+                            vz = temp1[2],
+                            bx = 0,
+                            by = 0,
+                            bz = 0,
+                            id = id,
+                            step = 0)
 
 
     E = np.array([0., 0., 0.])
 
     # Step 2: do the actual boris logic
-    for time in range(num_points): # time: step number
-        for i in range(num_parts): # i: particle index
-            # AoS is actually an AoAoS (Array of Array of Structs)
-            #     > AoS[i]: particle id's own array
-            #   /  > AoS[i][time]: particle 'i' at step 'time'
+    for time in range(1, num_points + 1): # time: step number
+        x = np.array([out[time - 1].px, out[time - 1].py, out[time - 1].pz])
+        v = np.array([out[time - 1].vx, out[time - 1].vy, out[time - 1].vz])
 
-            x = np.array([AoS[i][time].px, AoS[i][time].py, AoS[i][time].pz])
-            v = np.array([AoS[i][time].vx, AoS[i][time].vy, AoS[i][time].vz])
+        Bf = Bfield(x)
+        out[time - 1].bx, out[time - 1].by,out[time - 1].bz = Bf # update B field for particle we just found
 
-            Bf = Bfield(x)
-            AoS[i][time].bx, AoS[i][time].by, AoS[i][time].bz = Bf # update B field for particle we just found
+        # Boris logic
+        tt = charge / mass * Bf * 0.5 * dt
+        ss = 2. * tt / (1. + tt * tt)
+        v_minus = v + charge / (mass * vAc) * E * 0.5 * dt
+        v_prime = v_minus + np.cross(v_minus, tt)
+        v_plus = v_minus + np.cross(v_prime, ss)
 
-            # Boris logic
-            tt = charge / mass * Bf * 0.5 * dt
-            ss = 2. * tt / (1. + tt * tt)
-            v_minus = v + charge / (mass * vAc) * E * 0.5 * dt
-            v_prime = v_minus + np.cross(v_minus, tt)
-            v_plus = v_minus + np.cross(v_prime, ss)
-
-            # Update particle information with the pos and vel
-            position = x + v * dt 
-            velocity = v_plus + charge / (mass * vAc) * E * 0.5 * dt
-            AoS[i][time + 1] = particle(px = position[0], 
-                             py = position[1],
-                             pz = position[2],
-                             vx = velocity[0],
-                             vy = velocity[1],
-                             vz = velocity[2],
-                             bx = 0,
-                             by = 0,
-                             bz = 0,
-                             id = i,
-                             step = time)
+        # Update particle information with the pos and vel
+        position = x + v * dt 
+        velocity = v_plus + charge / (mass * vAc) * E * 0.5 * dt
+        out[time] = particle(px = position[0], 
+                            py = position[1],
+                            pz = position[2],
+                            vx = velocity[0],
+                            vy = velocity[1],
+                            vz = velocity[2],
+                            bx = 0,
+                            by = 0,
+                            bz = 0,
+                            id = id,
+                            step = time)
 
         ft += dt # total time spent simulating
         if time % 1000 == 0:
-            print("boris calc * " + str(time))
+            print(f"boris calc * {time} for particle {id}")
             print("total time: ", ft, dt)
         if x.any() > side:
             print('Exited Boris Push Early')
             break
-    print(ft*(10**-5))
-    ft = ft*(10**-5)
+    # ft = ft*(10**-5)
+    return out
 
-calc = True
 
-if(calc):
-    borisPush(entry_numsteps_value.get(), time_step_value)
-    CreateOutput()
+def run(isRun: bool):
+
+    if(isRun):
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            values = [0,1]
+            futures = executor.map(borisPush, values)
+
+        out = []
+        for future in futures:
+            out.append(future)
+        
+        # CreateOutput()
