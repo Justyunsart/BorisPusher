@@ -71,7 +71,6 @@ IMPORTANT:
 
 def InitializeData():
     global initialized
-    global simDf
     # Making sure initialization only happens once
     assert initialized == False
     initialized = True
@@ -106,17 +105,17 @@ To keep track of particles, we will add an 'id' categorical variable alongside t
 '''
 def InitializeAoSDf(AoS:np.ndarray):
     flat = np.hstack(AoS)
-    df = pd.json_normalize(asdict(i) for i in flat)
+    dfo = pd.json_normalize(asdict(i) for i in flat)
 
-    return df
+    return dfo
 
-def CreateOutput():
+def CreateOutput(inp):
     global outd
 
     # MAKE NEW FILE FOR EACH PARTICLE
     # First, make the dir for these files.
     dir = CreateOutDir()
-    # data = InitializeAoSDf(AoS)
+    data = InitializeAoSDf(inp)
 
     # Next, create a new file for each particle
    #for i in range(df.shape[0]):
@@ -125,7 +124,7 @@ def CreateOutput():
         # np.save(temp, AoS[i])
 
     temp = os.path.join(dir, f"dataframe.json")
-    # df.to_json(temp, orient="table")
+    data.to_json(temp, orient="table")
 '''
 What will the folder for each output be called?
      > Might be able to make this from a user input, otherwise will make a default name.
@@ -173,7 +172,6 @@ TODO:
 - Make this work on an entire nested array instead of one array at a time.
 - Possible multithreading?
 Input: Array of (nparticle x pos(3)) dim
-Output: Array of (nparticle x bf(3)) dim
 
 Ensure the code is efficient because the whole point of these operations is to increase computational speed
 '''
@@ -223,7 +221,7 @@ def borisPush(id:int):
     # Step 1: Create the AoS the process will work with
     #     > These conditions are read from inp file, currently stored in df.
 
-    out = np.empty(num_points + 1, dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
+    out = np.empty(shape = (num_points + 1), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
 
     temp = df["starting_pos"].to_numpy()[id] # Populate it with the initial conditions at index 0.
     temp1 = df["starting_vel"].to_numpy()[id] * mm
@@ -293,5 +291,6 @@ def run(isRun: bool):
         out = []
         for future in futures:
             out.append(future)
-        
-        # CreateOutput()
+
+        out = np.asarray(out)
+        CreateOutput(out)

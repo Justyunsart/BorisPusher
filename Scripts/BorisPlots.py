@@ -14,6 +14,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
 from MakeCurrent import current as c
+from pathlib import Path
 
 
 #=============#
@@ -36,7 +37,10 @@ def graph_trajectory(lim, data):
     # This feels kinda ugly I'm not going to lie.
     xs = np.asarray((x>lim) | (y > lim) | (z > lim)).nonzero()
 
-    ind = xs[0][0]
+    if(len(xs[0]) != 0):
+         ind = xs[0][0] 
+    else: 
+        ind = -1
     
     # Plot it to the index
     traj.plot(x[:ind], y[:ind], z[:ind])
@@ -46,8 +50,8 @@ def graph_trajectory(lim, data):
     plt.show()
 
 
-root = os.getcwd()
-outd = root + "/Outputs/boris_2000000_120.0_2/dataframe.json"
+root = str(Path(__file__).resolve().parents[1])
+outd = root + "/Outputs/boris_500000_20.0_2_(12)/dataframe.json"
 
 df = pd.read_json(outd, orient="table")
 df = df.apply(pd.to_numeric)
