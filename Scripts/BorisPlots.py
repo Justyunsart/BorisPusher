@@ -11,7 +11,7 @@ from matplotlib import ticker
 from matplotlib.colors import Normalize
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
-
+import plotly.graph_objects as go
 
 from MakeCurrent import current as c
 from pathlib import Path
@@ -20,6 +20,23 @@ from pathlib import Path
 #=============#
 # 3D PLOTTING #
 #=============#
+
+# This is to show that we can get the coil center coordinates from the magpy current's position property. 
+# This way, we can create a series of points on the perimeter of the coils to function as point charges for electric field calculations.
+def graph_coil_centers():
+    points = []
+    for current in c.children:
+        points.append(current.position) 
+    points=np.asarray(points)
+    fig = go.Figure()
+    fig.add_trace(go.Scatter3d(x=points[:,0],
+                               y=points[:,1],
+                               z=points[:,2], mode="markers"))
+
+    magpy.show(c, canvas=fig)
+
+    fig.show()
+
 def graph_trajectory(lim, data):
     # create the graph to add to
     fig1 = plt.figure(figsize=(10, 20))
@@ -55,9 +72,10 @@ outd = root + "/Outputs/boris_500000_20.0_2_(12)/dataframe.json"
 
 df = pd.read_json(outd, orient="table")
 df = df.apply(pd.to_numeric)
-print(df)
+#print(df)
 
-graph_trajectory(500, df)
+#graph_trajectory(500, df)
+graph_coil_centers()
 
 '''
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
