@@ -6,6 +6,8 @@ import timeit
 import time
 import numpy as np
 import pandas as pd
+import magpylib as mp
+from math import sqrt
 
 from collections import namedtuple
 
@@ -178,3 +180,11 @@ def Case5(n:int):
 # Case3()
 # Case4()
 # Case5(50000000)
+
+s1 = mp.current.Circle(diameter=3)
+s2 = mp.current.Circle(diameter=3).rotate_from_angax(90, [0, 1, 0])
+s3 = mp.current.Circle(diameter=3).rotate_from_angax(90, [1, 0, 0])
+s4 = mp.current.Circle(diameter=3).rotate_from_angax(90, [0, 0, 1])
+# mp.show(s1, s2)
+
+print(sqrt(4))

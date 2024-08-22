@@ -15,6 +15,10 @@ import plotly.graph_objects as go
 
 from MakeCurrent import current as c
 from pathlib import Path
+from scipy.spatial.transform import Rotation
+
+from sympy import solve, Eq, symbols, Float
+from math import sqrt
 
 
 #=============#
@@ -36,6 +40,63 @@ def graph_coil_centers():
     magpy.show(c, canvas=fig)
 
     fig.show()
+
+def graph_coil_points(dia, res:int):
+    # need to figure out what axis the slices are
+    orientations = []
+    points = []
+    for current in c.children:
+        # Find the direction the circle is facing, for science.
+        orientation = current.orientation.as_euler('xyz', degrees=True)
+        orientations.append(orientation)
+
+        # Find the interval to plug into the circle formula.
+        axis = np.where(orientation > 0) # shows where the circle is facing??
+        
+        # set local x and y axes (these are indexes of 0 = x, 1 = y, 2 = z)
+        if axis[0] == 2:
+            xl = 1
+            yl = 0
+            zl = 2
+        elif axis[0] == 0:
+            xl = axis[0]
+            yl = 2
+            zl = 1
+        else:
+            xl = 1
+            yl = 2
+            zl = 0
+
+        center = current.position # centerpoint of circle
+
+        span = np.linspace(center[xl] - dia, center[xl] + dia, res) # evenly spaced intervals on the circle's major axis to create the points.
+        for s in span:
+            y = symbols('y')
+            eq1 = Eq((Float(s) - Float(center[xl]))**2 + (y - Float(center[yl]))**2, dia**2)
+            sol = solve(eq1) # this will give us all the local y axis values for the circle.
+
+            # this is a placeholder just to see if this works dont bite me for 3rd nested loop
+            for j in sol:
+                point = np.zeros(3, dtype=float)
+                point[xl] = s
+                point[yl] = j
+                point[zl] = center[zl]
+
+                points.append(point)
+    
+    points = np.asarray(points)
+    fig = go.Figure()
+    fig.add_trace(go.Scatter3d(x=points[:,0],
+                               y=points[:,1],
+                               z=points[:,2], mode="markers"))
+    magpy.show(c, canvas=fig)
+    fig.show()
+            
+
+
+    orientations = np.asarray(orientations)
+
+    # span = np.linspace()
 
 def graph_trajectory(lim, data):
     # create the graph to add to
@@ -75,7 +136,8 @@ df = df.apply(pd.to_numeric)
 #print(df)
 
 #graph_trajectory(500, df)
-graph_coil_centers()
+# graph_coil_centers()
+graph_coil_points(dia = 250, res = 10)
 
 '''
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
