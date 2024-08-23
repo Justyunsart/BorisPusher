@@ -5,4 +5,4 @@ import magpy4c1
 
 if __name__ == "__main__":
     root.mainloop()
-    magpy4c1.run(True)
+    magpy4c1.runsim(True)

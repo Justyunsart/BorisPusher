@@ -1,5 +1,5 @@
 ##########################################################################
-# BORIS PUSHER, UX FLOW                                                  #
+# BORIS PUSHER                                                           #
 #     - Calls functions from other scripts to construct the Boris push   #
 # Andrew Egly, Yoon Roh, Bob Terry                                       #
 ##########################################################################
@@ -9,23 +9,26 @@ import concurrent.futures #multiprocessing
 
 # used to create output restart file
 import pandas as pd
+import os
+from pathlib import Path
 
 # gui stuff
 from BorisGui import root, do_file, inpd, entry_numsteps_value, time_step_value, entry_sim_time_value
 
 # Pusher specific stuff
+## Currents, dataclasses
 from PusherClasses import particle
+from PusherClasses import GetCurrentTrace
 from MakeCurrent import current as c
+from MakeCurrent import dia
 from dataclasses import asdict
+## Calculations
 import numpy as np
 import magpylib as magpy
-import os
-from pathlib import Path
+import pycharge as pc
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
-# Run GUI loop
-# root.mainloop()
 
 ###################
 # INPUT FILE JUNK #
@@ -35,8 +38,6 @@ pd.set_option('display.max_columns', None)
 #======#
 
 initialized = False # Ensure initialization only happens once : failsafe
-
-
 cwd = str(Path(__file__).resolve().parents[1]) # Gets the current working directory, so we can find the Inputs, Outputs folder easily.
 outd = cwd + "/Outputs"
 
@@ -158,12 +159,6 @@ def CreateOutDir():
 ####################
 # PHYSICS SETTINGS #
 ####################
-
-# preallocate the array in memory
-# AoS = np.empty(dtype=particle, shape=((df.shape[0], entry_numsteps_value.get() + 1)))  # there will be {(numsteps + 1), numparticles} entries, with one added to account for initial conditions.
-
-
-
 #=========#
 # B FIELD #
 #=========#
@@ -191,6 +186,32 @@ def Bfield(y):
 # global variables
 magpy.graphics.style.CurrentStyle(arrow=None)
 accel = None
+
+#=========#
+# E FIELD #
+#=========#
+# TODO: add making E field calculations a toggle
+# TODO: add customization option for the resolution
+sources = GetCurrentTrace(c, dia, res=10)
+sources = list(map(lambda x: pc.StationaryCharge(position=x.position, q=x.q), sources))
+simulation = pc.Simulation(sources=sources)
+'''
+Calculates the E Field at point 'p' from the list of charge source coordinates given.
+'''
+def Efield(p:np.ndarray):
+    X = np.array([p[0]])
+    Y = np.array([p[1]])
+    Z = np.array([p[2]])
+
+    E = np.zeros(3,dtype=float)
+    for charge in simulation.all_charges:
+        E_ind = simulation._calculate_individual_E(charge=charge, x=X, y=Y, z=Z, pcharge_field="Total", tr=np.zeros(1))
+        E[0] += E_ind[0]
+        E[1] += E_ind[1]
+        E[2] += E_ind[2]
+
+    return E
+
 
 # physics variables
 
@@ -244,7 +265,8 @@ def borisPush(id:int):
     for time in range(1, num_points + 1): # time: step number
         x = np.array([out[time - 1].px, out[time - 1].py, out[time - 1].pz])
         v = np.array([out[time - 1].vx, out[time - 1].vy, out[time - 1].vz])
-
+        # print("x for particle: ", id, " at time ", time, ": ", x)
+        E = Efield(x)
         Bf = Bfield(x)
         out[time - 1].bx, out[time - 1].by,out[time - 1].bz = Bf # update B field for particle we just found
 
@@ -254,16 +276,17 @@ def borisPush(id:int):
         v_minus = v + charge / (mass * vAc) * E * 0.5 * dt
         v_prime = v_minus + np.cross(v_minus, tt)
         v_plus = v_minus + np.cross(v_prime, ss)
+        v = v_plus + charge / (mass) * E * 0.5 * dt
 
         # Update particle information with the pos and vel
         position = x + v * dt 
-        velocity = v_plus + charge / (mass * vAc) * E * 0.5 * dt
+        # velocity = v_plus + charge / (mass * vAc) * E * 0.5 * dt
         out[time] = particle(px = position[0], 
                             py = position[1],
                             pz = position[2],
-                            vx = velocity[0],
-                            vy = velocity[1],
-                            vz = velocity[2],
+                            vx = v[0],
+                            vy = v[1],
+                            vz = v[2],
                             bx = 0,
                             by = 0,
                             bz = 0,
@@ -281,7 +304,7 @@ def borisPush(id:int):
     return out
 
 
-def run(isRun: bool):
+def runsim(isRun: bool):
 
     if(isRun):
         with concurrent.futures.ProcessPoolExecutor() as executor:

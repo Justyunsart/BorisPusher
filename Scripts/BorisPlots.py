@@ -18,7 +18,6 @@ from pathlib import Path
 from scipy.spatial.transform import Rotation
 
 from sympy import solve, Eq, symbols, Float
-from math import sqrt
 
 
 #=============#
@@ -41,7 +40,9 @@ def graph_coil_centers():
 
     fig.show()
 
+# This traces the coil(with diameter=dia) and graphs points around its circumference.
 def graph_coil_points(dia, res:int):
+    rad = dia/2
     # need to figure out what axis the slices are
     orientations = []
     points = []
@@ -69,20 +70,27 @@ def graph_coil_points(dia, res:int):
 
         center = current.position # centerpoint of circle
 
-        span = np.linspace(center[xl] - dia, center[xl] + dia, res) # evenly spaced intervals on the circle's major axis to create the points.
+        span = np.linspace(center[xl] - rad, center[xl] + rad, res) # evenly spaced intervals on the circle's major axis to create the points.
         for s in span:
             y = symbols('y')
-            eq1 = Eq((Float(s) - Float(center[xl]))**2 + (y - Float(center[yl]))**2, dia**2)
+            eq1 = Eq((Float(s) - Float(center[xl]))**2 + (y - Float(center[yl]))**2, rad**2)
             sol = solve(eq1) # this will give us all the local y axis values for the circle.
 
-            # this is a placeholder just to see if this works dont bite me for 3rd nested loop
             for j in sol:
+                # trace the circle with the points we just found
                 point = np.zeros(3, dtype=float)
                 point[xl] = s
                 point[yl] = j
                 point[zl] = center[zl]
 
+                # rotate!!! for more! points!
+                point1 = np.zeros(3, dtype=float)
+                point1[xl] = j
+                point1[yl] = s
+                point1[zl] = center[zl]
+
                 points.append(point)
+                points.append(point1)
     
     points = np.asarray(points)
     fig = go.Figure()
@@ -137,7 +145,7 @@ df = df.apply(pd.to_numeric)
 
 #graph_trajectory(500, df)
 # graph_coil_centers()
-graph_coil_points(dia = 250, res = 10)
+graph_coil_points(dia = 500, res = 10)
 
 '''
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
