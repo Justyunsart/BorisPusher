@@ -40,6 +40,8 @@ tab_calc.columnconfigure(0, weight = 1)
 tab_calc.rowconfigure(1, weight = 1)
 
 tab_plot = ttk.Frame(tabControl, padding="4 12 12 4")
+tab_plot.columnconfigure(0, weight = 1)
+tab_plot.rowconfigure(1, weight = 1)
 
 
 # CREATION
@@ -61,14 +63,45 @@ def PrefCallback():
 #=============#
 # GUI WIDGETS #
 #=============#
+## SUBFRAMES
+plot_title_LFrame = ttk.LabelFrame(tab_plot,
+                                   text="Plotting")
+plot_title_LFrame.grid(row=0, sticky="NWES", padx=10, pady=10)
 
-label_out_file = ttk.Label(tab_plot,
+plot_out_file = ttk.LabelFrame(plot_title_LFrame,
+                               text="Data Source")
+plot_out_file.grid(row = 0, padx=10, pady=10)
+
+
+## WIDGETS
+### Output Files
+label_out_file = ttk.Label(plot_out_file,
                                text = "Output File Dir:")#.grid(column = 0, row = 1, sticky=(W))
-button_out_file = ttk.Button(tab_plot,
+label_out_file.grid(row = 0, column= 0, padx=10, pady=10)
+
+button_out_file = ttk.Button(plot_out_file,
                                  text = "Browse Files")
-name_out_file = ttk.Label(tab_plot,
+button_out_file.grid(row = 0, column=1, pady=10)
+
+name_out_file = ttk.Label(plot_out_file,
                           text="No Output File Selected")
-button_out_file.config(command=partial(browseFiles, name_out_file))
+name_out_file.grid(row = 0, column=2, pady=10)
+
+#button_out_file.config(command=partial(browseFiles, name_out_file))
+
+### Confirm Button
+'''
+We need to keep watch on the selected data file value, and ensure that this button is active only when
+there is a valid data file selected.
+'''
+plot_confirm = ttk.Button(tab_plot,
+                          text="Create Plot",
+                          state="disabled")
+button_out_file.config(command=partial(PlotFileCallback, name_out_file, plot_confirm))
+plot_confirm.config(command=partial(PlotConfirmCallback, name_out_file, root))
+
+
+plot_confirm.grid(sticky=S)
 
 
 
@@ -98,10 +131,10 @@ CalcContainer = tk.LabelFrame(calc_title_LFrame, bg="gray", text="Parameters")
 CalcContainer.grid(row=3,column=0)
 
 CalcCheckBoxFrame = tk.Frame(calc_title_LFrame, bg="light gray")
-CalcCheckBoxFrame.grid(row=1, pady=5, padx=5, sticky="N")
+CalcCheckBoxFrame.grid(row=1, pady=10, padx=10, sticky="N")
 
 CalcRestartFileFrame = tk.Frame(calc_title_LFrame)
-CalcRestartFileFrame.grid(row=2, pady=5, padx=5)
+CalcRestartFileFrame.grid(row=2, pady=10, padx=10)
 
 
 CalcTimeStepFrame = tk.Frame(CalcContainer, bg="light gray")
@@ -143,7 +176,7 @@ check_restart_file = ttk.Checkbutton(CalcCheckBoxFrame,
                                      onvalue = True,
                                      offvalue = False,
                                      style="LG.TCheckbutton")
-check_restart_file.config(command=partial(FileCallback, do_file, button_restart_file))
+check_restart_file.config(command=partial(FileCallback, do_file.get(), button_restart_file))
 check_restart_file.grid(row=0, column=1)
 
 

@@ -110,6 +110,8 @@ def graph_coil_points(dia, res:int):
     # span = np.linspace()
 
 def graph_trajectory(lim, data):
+    df = pd.read_json(data, orient="table")
+    df = df.apply(pd.to_numeric)
     # create the graph to add to
     fig1 = plt.figure(figsize=(10, 20))
     traj = fig1.add_subplot(1,1,1, projection='3d')
@@ -120,7 +122,7 @@ def graph_trajectory(lim, data):
     traj.set_zlim3d(-lim,lim)
     
     # Extract the positional data from the dataframe
-    x, y, z = data["px"].to_numpy(), data["py"].to_numpy(), data["pz"].to_numpy()
+    x, y, z = df["px"].to_numpy(), df["py"].to_numpy(), df["pz"].to_numpy()
 
     # Get the smallest index of when to stop graphing
     # This feels kinda ugly I'm not going to lie.
@@ -139,11 +141,11 @@ def graph_trajectory(lim, data):
     plt.show()
 
 
-root = str(Path(__file__).resolve().parents[1])
-outd = root + "/Outputs/boris_500000_20.0_2_(13)/dataframe.json"
+#root = str(Path(__file__).resolve().parents[1])
+#outd = root + "/Outputs/boris_500000_20.0_2_(13)/dataframe.json"
 
-df = pd.read_json(outd, orient="table")
-df = df.apply(pd.to_numeric)
+#df = pd.read_json(outd, orient="table")
+#df = df.apply(pd.to_numeric)
 #print(df)
 
 # graph_trajectory(500, df)

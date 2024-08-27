@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 
 # gui stuff
-from BorisGui import root, do_file, inpd, entry_numsteps_value, time_step_value, entry_sim_time_value
+from BorisGui import root, do_file, entry_numsteps_value, time_step_value, entry_sim_time_value
 
 # Pusher specific stuff
 ## Currents, dataclasses
@@ -40,6 +40,7 @@ pd.set_option('display.max_columns', None)
 initialized = False # Ensure initialization only happens once : failsafe
 cwd = str(Path(__file__).resolve().parents[1]) # Gets the current working directory, so we can find the Inputs, Outputs folder easily.
 outd = cwd + "/Outputs"
+inpd = cwd + "/Inputs"
 
 
 #=================================#
