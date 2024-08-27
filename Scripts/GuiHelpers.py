@@ -8,9 +8,10 @@ File explorer for restart files
 
 # Variable to store the dir of the input file
 inpd = ""
-def browseFiles(button:ttk.Button):
+def browseFiles(name:ttk.Label):
     filename = filedialog.askopenfilename(title = "Select a Restart File")
-    button.configure(text = filename)
+    if(filename != ""):
+        name.configure(text = filename)
     inpd = filename
 
 # HELPERS
