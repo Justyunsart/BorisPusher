@@ -6,6 +6,8 @@ import pandas as pd
 
 from magpylib import Collection
 
+import matplotlib as mpl
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from matplotlib import pyplot as plt
 from matplotlib import ticker
 from matplotlib.colors import Normalize
@@ -23,6 +25,7 @@ from sympy import solve, Eq, symbols, Float
 #=============#
 # 3D PLOTTING #
 #=============#
+
 
 # This is to show that we can get the coil center coordinates from the magpy current's position property. 
 # This way, we can create a series of points on the perimeter of the coils to function as point charges for electric field calculations.
@@ -137,15 +140,15 @@ def graph_trajectory(lim, data):
 
 
 root = str(Path(__file__).resolve().parents[1])
-outd = root + "/Outputs/boris_500000_20.0_2_(12)/dataframe.json"
+outd = root + "/Outputs/boris_500000_20.0_2_(13)/dataframe.json"
 
 df = pd.read_json(outd, orient="table")
 df = df.apply(pd.to_numeric)
 #print(df)
 
-#graph_trajectory(500, df)
+# graph_trajectory(500, df)
 # graph_coil_centers()
-graph_coil_points(dia = 500, res = 10)
+# graph_coil_points(dia = 500, res = 10)
 
 '''
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
