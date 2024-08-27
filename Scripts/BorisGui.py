@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 from GuiHelpers import *
+from functools import partial
 
 #######
 # GUI #
@@ -65,11 +66,10 @@ def PrefCallback():
 # GUI WIDGETS #
 #=============#
 
-label_out_file = ttk.Label(tab_calc,
+label_out_file = ttk.Label(tab_plot,
                                text = "Output File Dir:")#.grid(column = 0, row = 1, sticky=(W))
-button_out_file = ttk.Button(tab_calc,
-                                 text = "Browse Files",
-                                 command = browseFiles)
+button_out_file = ttk.Button(tab_plot,
+                                 text = "Browse Files")
 
 
 
@@ -89,55 +89,61 @@ checkDisplay = ttk.Checkbutton(tab_calc,
 
 ## Read restart file?
 do_file = BooleanVar(value = False)
+
+button_restart_file = ttk.Button(tab_calc,
+                                 text = "Browse Files")
+button_restart_file.config(command=partial(browseFiles, button_restart_file))
+
 check_restart_file = ttk.Checkbutton(tab_calc,
                                      variable = do_file,
                                      text = "Read Input File?",
                                      onvalue = True,
-                                     offvalue = False,
-                                     command = FileCallback(do_file))
+                                     offvalue = False)
+check_restart_file.config(command=partial(FileCallback, do_file, button_restart_file))
 
 
 label_restart_file = ttk.Label(tab_calc,
                                text = "Restart File Dir:")#.grid(column = 0, row = 1, sticky=(W))
-button_restart_file = ttk.Button(tab_calc,
-                                 text = "Browse Files",
-                                 command = browseFiles)
+
 #button_restart_file.grid(column = 1, row = 1)
 
 ### Make sure the button is in the correct state to start
 FileCallback(do_file, button_restart_file)
+
 
 ## Numsteps
 label_numsteps = ttk.Label(tab_calc,
                            text = "Number of Steps: ")#.grid(column = 0, row = 3)
 
 entry_numsteps_value = IntVar(value = 500000)
-entry_numsteps = ttk.Entry(tab_calc,
-                           textvariable = entry_numsteps_value,
-                           validate = "focusout",
-                           validatecommand = DTcallback)
-#entry_numsteps.grid(column = 1, row = 3)
-
-## Total Time to Simulate - Simulation Time
-label_sim_time = ttk.Label(tab_calc,
-                           text = "Sim Time: ")#.grid(column = 0, row = 4)
 entry_sim_time_value = DoubleVar(value = 20.0)
-entry_sim_time = ttk.Entry(tab_calc,
-                           textvariable = entry_sim_time_value,
-                           validate = "focusout",
-                           validatecommand = DTcallback(entry_sim_time_value, entry_numsteps_value))#.grid(column = 1, row = 4)
 
 ## Display Calculated Timestep
 time_step_value = (entry_sim_time_value.get()) / (entry_numsteps_value.get())
 label_time_step = ttk.Label(tab_calc,
                             text = "Time step: " + str(time_step_value))
+
+entry_numsteps = ttk.Entry(tab_calc,
+                           textvariable = entry_numsteps_value,
+                           validate = "focusout")
+entry_numsteps.configure(validatecommand=partial(DTcallback, entry_sim_time_value, entry_numsteps_value, label_time_step))
+#entry_numsteps.grid(column = 1, row = 3)
+
+## Total Time to Simulate - Simulation Time
+label_sim_time = ttk.Label(tab_calc,
+                           text = "Sim Time: ")#.grid(column = 0, row = 4)
+entry_sim_time = ttk.Entry(tab_calc,
+                           textvariable = entry_sim_time_value,
+                           validate = "focusout")#.grid(column = 1, row = 4)
+entry_sim_time.config(validatecommand=partial(DTcallback, entry_sim_time_value, entry_numsteps_value, label_time_step))
+
 ## Caclulate button
 isRun = BooleanVar(value=False)
 
     
 button_calculate = ttk.Button(tab_calc,
-                              text = "Calculate",
-                              command = CalculateCallback(isRun, root)) # Close the window so the rest of the program can run
+                              text = "Calculate") # Close the window so the rest of the program can run
+button_calculate.config(command=partial(CalculateCallback, isRun, root))
 
 # Display the widgets
 for w in tab_calc.winfo_children():
