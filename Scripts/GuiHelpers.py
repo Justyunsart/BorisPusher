@@ -57,3 +57,35 @@ def FileCallback(do_file:bool, button_restart_file:ttk.Button):
 def CalculateCallback(isRun:BooleanVar, root:Tk):
     isRun.set(True)
     root.destroy()
+
+'''
+value: the string name of the method of field calculation
+
+This field callback runs every time a value is selected from a field GUI's dropdown.
+
+It should:
+    > make the X, Y, Z entry boxes in the details frame active, if it's "static"
+    > make these values 0 if it's either "zeros" or "calculate", and disable.
+    
+'''
+def FieldCallback(event, value:ttk.Combobox, xcontainer:Entry, ycontainer:Entry, zcontainer:Entry):
+    value = value.get()
+    match value:
+        case "Zero" | "Calculated":
+            #print("case in 1")
+            #print(value)
+            xcontainer.config(state="disabled",
+                              text = "0.0")
+            ycontainer.config(state="disabled",
+                              text = "0.0")
+            zcontainer.config(state="disabled",
+                              text = "0.0")
+        case "Static":
+            #print("case in 2")
+            #print(value)
+            xcontainer.config(state="normal",
+                              text = "0.0")
+            ycontainer.config(state="normal",
+                              text = "0.0")
+            zcontainer.config(state="normal",
+                              text = "0.0")

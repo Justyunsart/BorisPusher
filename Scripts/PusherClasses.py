@@ -43,6 +43,12 @@ class charge:
     position: np.ndarray
     q: float
 
+#========#
+# Fields #
+#========#
+EfOptions = np.array(["Zero", "Static", "Calculated"])
+BfOptions = np.array(["Zero", "Static", "Calculated"])
+
 #=========#
 # Current #
 #=========#

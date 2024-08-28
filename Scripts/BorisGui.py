@@ -3,6 +3,7 @@ from tkinter import ttk
 import tkinter as tk
 from GuiHelpers import *
 from functools import partial
+from PusherClasses import EfOptions, BfOptions
 
 #######
 # GUI #
@@ -31,7 +32,7 @@ root.title("Configure Sim")
 #======#
 
 # PLOT OR CALCULATE?
-tabControl=ttk.Notebook(root, padding="4 12 12 4", width=400, height=400)
+tabControl=ttk.Notebook(root, padding="4 12 12 4", width=800, height=400)
 
 ## Create tab objects
 tab_calc = tk.Frame(tabControl)
@@ -121,14 +122,19 @@ style.configure("LG.TCheckbutton", background="light gray", foreground="black", 
 
 # FRAMES
 
+
 ## MAIN CONTAINER
 calc_title_LFrame = ttk.Labelframe(tab_calc,
                              text="Boris Push Calculation")
-calc_title_LFrame.grid(row=1, pady=10, padx=10, sticky="N")
+calc_title_LFrame.grid(row=1, column=0, pady=10, padx=10, sticky="W")
 
-## SUB CONTAINERS
+### SUB CONTAINERS
+
 CalcContainer = tk.LabelFrame(calc_title_LFrame, bg="gray", text="Parameters")
-CalcContainer.grid(row=3,column=0)
+CalcContainer.grid(row=4,column=0)
+
+FieldContainer = tk.LabelFrame(CalcContainer, bg="light gray", text="Fields")
+FieldContainer.grid(row=2)
 
 CalcCheckBoxFrame = tk.Frame(calc_title_LFrame, bg="light gray")
 CalcCheckBoxFrame.grid(row=1, pady=10, padx=10, sticky="N")
@@ -136,9 +142,33 @@ CalcCheckBoxFrame.grid(row=1, pady=10, padx=10, sticky="N")
 CalcRestartFileFrame = tk.Frame(calc_title_LFrame)
 CalcRestartFileFrame.grid(row=2, pady=10, padx=10)
 
+CalcEFrame = tk.Frame(FieldContainer, bg="light gray")
+CalcEFrame.grid(row=1, pady=5, padx=20)
 
-CalcTimeStepFrame = tk.Frame(CalcContainer, bg="light gray")
-CalcTimeStepFrame.grid(row=4, pady=5, padx=20)
+CalcBFrame = tk.Frame(FieldContainer, bg="light gray")
+CalcBFrame.grid(row=2, pady=5, padx=20)
+
+CalcTimeStepFrame = tk.LabelFrame(CalcContainer, bg="light gray", text="Time, Step")
+CalcTimeStepFrame.grid(row=1, pady=5, padx=20)
+
+## SIDE CONTAINER
+Calc_Detail_Frame = tk.LabelFrame(tab_calc,
+                                        text="Details",
+                                        bg="gray")
+Calc_Detail_Frame.grid(row=1, column=1, pady=10, padx=10, sticky="E")
+
+### SUB FRAMES
+Calc_Field_Detail_Frame = tk.LabelFrame(Calc_Detail_Frame,
+                               bg="light gray",
+                               text="Fields")
+Calc_Field_Detail_Frame.grid(row=0, column=0, pady=10, padx=10)
+
+Calc_E_Detail_Frame = tk.Frame(Calc_Field_Detail_Frame)
+Calc_E_Detail_Frame.grid(row=0, column=0, pady=10, padx=10)
+
+Calc_B_Detail_Frame = tk.Frame(Calc_Field_Detail_Frame)
+Calc_B_Detail_Frame.grid(row=1, column=0, pady=10, padx=10)
+
 
 doDisplay = BooleanVar(value = True)
 checkDisplay = ttk.Checkbutton(CalcCheckBoxFrame,
@@ -148,6 +178,79 @@ checkDisplay = ttk.Checkbutton(CalcCheckBoxFrame,
                                offvalue = False,
                                style="LG.TCheckbutton")
 checkDisplay.grid(row=0)
+
+## X, Y, Z field entries 
+### E FIELD
+calc_E_detail_label = tk.Label(Calc_E_Detail_Frame,
+                               text="E Field: ")
+calc_E_detail_label.grid(row=0, column=0)
+
+calc_E_detail_XVar = StringVar(value="0.0")
+calc_E_detail_YVar = StringVar(value="0.0")
+calc_E_detail_ZVar = StringVar(value="0.0")
+
+calc_E_detail_Xlab = tk.Label(Calc_E_Detail_Frame,
+                              text="X: ")
+calc_E_detail_Xlab.grid(row=1, column=0)
+calc_E_detail_XEnt = tk.Entry(Calc_E_Detail_Frame,
+                              textvariable = calc_E_detail_XVar,
+                              width=5,
+                              state="disabled")
+calc_E_detail_XEnt.grid(row=1, column = 1)
+
+calc_E_detail_Ylab = tk.Label(Calc_E_Detail_Frame,
+                              text="Y: ")
+calc_E_detail_Ylab.grid(row=1, column=2)
+calc_E_detail_YEnt = tk.Entry(Calc_E_Detail_Frame,
+                              textvariable = calc_E_detail_YVar,
+                              width=5,
+                              state="disabled")
+calc_E_detail_YEnt.grid(row=1, column = 3)
+
+calc_E_detail_Zlab = tk.Label(Calc_E_Detail_Frame,
+                              text="Z: ")
+calc_E_detail_Zlab.grid(row=1, column=4)
+calc_E_detail_ZEnt = tk.Entry(Calc_E_Detail_Frame,
+                              textvariable = calc_E_detail_ZVar,
+                              width=5,
+                              state="disabled")
+calc_E_detail_ZEnt.grid(row=1, column = 5)
+
+### B FIELD
+calc_B_detail_label = tk.Label(Calc_B_Detail_Frame,
+                               text="B Field: ")
+calc_B_detail_label.grid(row=0, column=0)
+
+calc_B_detail_XVar = StringVar(value="0.0")
+calc_B_detail_YVar = StringVar(value="0.0")
+calc_B_detail_ZVar = StringVar(value="0.0")
+
+calc_B_detail_Xlab = tk.Label(Calc_B_Detail_Frame,
+                              text="X: ")
+calc_B_detail_Xlab.grid(row=1, column=0)
+calc_B_detail_XEnt = tk.Entry(Calc_B_Detail_Frame,
+                              textvariable = calc_B_detail_XVar,
+                              width=5,
+                              state="disabled")
+calc_B_detail_XEnt.grid(row=1, column = 1)
+
+calc_B_detail_Ylab = tk.Label(Calc_B_Detail_Frame,
+                              text="Y: ")
+calc_B_detail_Ylab.grid(row=1, column=2)
+calc_B_detail_YEnt = tk.Entry(Calc_B_Detail_Frame,
+                              textvariable = calc_B_detail_YVar,
+                              width=5,
+                              state="disabled")
+calc_B_detail_YEnt.grid(row=1, column = 3)
+
+calc_B_detail_Zlab = tk.Label(Calc_B_Detail_Frame,
+                              text="Z: ")
+calc_B_detail_Zlab.grid(row=1, column=4)
+calc_B_detail_ZEnt = tk.Entry(Calc_B_Detail_Frame,
+                              textvariable = calc_B_detail_ZVar,
+                              width=5,
+                              state="disabled")
+calc_B_detail_ZEnt.grid(row=1, column = 5)
 
 
 ## Read restart file?
@@ -188,7 +291,7 @@ FileCallback(do_file, button_restart_file)
 
 ## Numsteps
 label_numsteps = ttk.Label(CalcTimeStepFrame,
-                           text = "Number of Steps: ")#.grid(column = 0, row = 3)
+                           text = "Step Count: ")#.grid(column = 0, row = 3)
 label_numsteps.grid(row=2, column=0)
 
 entry_numsteps_value = IntVar(value = 500000)
@@ -205,6 +308,54 @@ entry_numsteps = ttk.Entry(CalcTimeStepFrame,
                            validate = "focusout")
 entry_numsteps.configure(validatecommand=partial(DTcallback, entry_sim_time_value, entry_numsteps_value, label_time_step))
 entry_numsteps.grid(column = 1, row = 2)
+
+## E field calculation options
+### Label
+calc_E_label = ttk.Label(CalcEFrame,
+                         text="E field Method: ")
+calc_E_label.grid(row=0, column=0)
+
+### Dropdown
+calc_E_var = StringVar()
+calc_E_option = ttk.Combobox(CalcEFrame,
+                             textvariable=calc_E_var,
+                             width=20,
+                             state="readonly")
+calc_E_option['values'] = list(EfOptions)
+calc_E_option.current(0)
+calc_E_option.grid(row=0, column=1)
+
+
+'''
+Fields are below.
+
+Make sure that, whenever the value of each dropdown is validated,
+you run a callback function that updates the 'details' frame.
+'''
+## B field calculation options
+### Label
+calc_B_label = ttk.Label(CalcBFrame,
+                         text="B field Method: ")
+calc_B_label.grid(row=0, column=0)
+
+### Dropdown
+calc_B_var = StringVar()
+calc_B_option = ttk.Combobox(CalcBFrame,
+                             textvariable=calc_B_var,
+                             width=20,
+                             state="readonly")
+calc_B_option['values'] = list(BfOptions)
+calc_B_option.current(0)
+calc_B_option.grid(row=0, column=1)
+
+
+### FIELD DROPDOWN CALLBACKS
+calc_E_option.bind("<<ComboboxSelected>>", partial(FieldCallback, value = calc_E_option, xcontainer = calc_E_detail_XEnt, ycontainer = calc_E_detail_YEnt, zcontainer = calc_E_detail_ZEnt))
+calc_B_option.bind("<<ComboboxSelected>>", partial(FieldCallback, value = calc_B_option, xcontainer = calc_B_detail_XEnt, ycontainer = calc_B_detail_YEnt, zcontainer = calc_B_detail_ZEnt))
+
+#calc_E_option.config(validate = "focusout", validatecommand=partial(FieldCallback, calc_E_var.get(), calc_E_detail_XEnt, calc_E_detail_YEnt, calc_E_detail_ZEnt))
+#calc_B_option.config(validate = "focusout", validatecommand=partial(FieldCallback, calc_B_var.get(), calc_B_detail_XEnt, calc_B_detail_YEnt, calc_B_detail_ZEnt))
+
 
 ## Total Time to Simulate - Simulation Time
 label_sim_time = ttk.Label(CalcTimeStepFrame,
