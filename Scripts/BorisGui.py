@@ -374,7 +374,7 @@ isRun = BooleanVar(value=False)
 inpd = StringVar(value="")    
 button_calculate = ttk.Button(tab_calc,
                               text = "Calculate") # Close the window so the rest of the program can run
-button_calculate.config(command=partial(CalculateCallback, isRun, do_file, root, inpd, name_restart_file))
+button_calculate.config(command=partial(CalculateCallback, isRun, do_file, root, inpd, name_restart_file, time_step_value))
 button_calculate.grid(sticky="S")
 
 

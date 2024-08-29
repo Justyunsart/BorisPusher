@@ -171,19 +171,19 @@ def borisPush(id:int):
     # ft = ft*(10**-5)
     return out
 
-def init_process(data, n1, n2, t):
-    global df, num_parts, num_points, dt
+def init_process(data, n1, n2, t, t1):
+    global df, num_parts, num_points, dt, sim_time
     df = data
     num_parts = n1
     num_points = n2
     dt = t
+    sim_time = t1
     #print("data shared: ", data, n1, n2, t)
 
-def runsim(dfIn, numPa, numPo, tScale):
-    #data = tuple(dfIn, numPa, numPo, tScale)
-    #print(dfIn)
+def runsim(dfIn, numPa, numPo, tScale, time):
+    init_process(dfIn, numPa, numPo, tScale, time)
     values = range(numPa)
-    with ProcessPoolExecutor(initializer=init_process, initargs=(dfIn, numPa, numPo, tScale)) as executor:
+    with ProcessPoolExecutor(initializer=init_process, initargs=(dfIn, numPa, numPo, tScale, time)) as executor:
         futures = executor.map(borisPush, values)
 
     out = []
@@ -191,4 +191,4 @@ def runsim(dfIn, numPa, numPo, tScale):
         out.append(future)
 
     out = np.asarray(out)
-    CreateOutput(out)
+    CreateOutput(out, sim_time, num_points, num_parts)

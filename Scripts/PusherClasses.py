@@ -29,9 +29,9 @@ Default name: "boris_nsteps_nsecs_nparticles"
         3b - make the new dir the name + (n) occurances 
     return the name
 '''
-def CreateOutDir(numsteps:int, numtime:float, numparts:int):
+def CreateOutDir(numsteps, numtime, numparts):
     global outd
-    dName = "boris_" + str(numsteps) + "_" + str(numtime.get()) + "_" + str(numparts)  
+    dName = "boris_" + str(numsteps) + "_" + str(numtime) + "_" + str(numparts)  
     path = os.path.join(outd, dName)
     
     counter = 0
@@ -102,12 +102,12 @@ def InitializeAoSDf(AoS:np.ndarray):
 
     return dfo
 
-def CreateOutput(inp):
+def CreateOutput(inp, sim_time, num_points, num_parts):
     global outd
 
     # MAKE NEW FILE FOR EACH PARTICLE
     # First, make the dir for these files.
-    dir = CreateOutDir()
+    dir = CreateOutDir(numparts=num_parts, numsteps=num_points, numtime=sim_time)
     data = InitializeAoSDf(inp)
 
     # Next, create a new file for each particle

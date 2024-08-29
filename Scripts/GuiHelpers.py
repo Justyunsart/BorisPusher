@@ -59,13 +59,14 @@ def FileCallback(do_file:bool, button_restart_file:ttk.Button):
         return True
     
 # Run the simulation if you press calculate
-def CalculateCallback(isRun:BooleanVar, do_file:BooleanVar , root:Tk, inpd:StringVar, name:ttk.Label):
+def CalculateCallback(isRun:BooleanVar, do_file:BooleanVar , root:Tk, inpd:StringVar, name:ttk.Label, dtb:float):
     isRun.set(True)
+    dtb = dtb
     do_file.set(do_file.get())
     if(do_file.get()):
         inpd.set(name.cget("text"))
 
-    root.quit()
+    root.destroy()
 
 '''
 value: the string name of the method of field calculation

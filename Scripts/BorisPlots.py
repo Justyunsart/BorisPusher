@@ -112,18 +112,20 @@ def graph_coil_points(dia, res:int):
 def graph_trajectory(lim, data):
     df = pd.read_json(data, orient="table")
     df = df.apply(pd.to_numeric)
+    print(df)
+    df = df[df["id"] == 1]
     # create the graph to add to
     fig1 = plt.figure(figsize=(10, 20))
     traj = fig1.add_subplot(1,1,1, projection='3d')
 
     # Set 3D plot bounds
-    traj.set_xlim3d(-lim,lim)
-    traj.set_ylim3d(-lim,lim)
-    traj.set_zlim3d(-lim,lim)
+    #traj.set_xlim3d(-lim,lim)
+    #traj.set_ylim3d(-lim,lim)
+    #traj.set_zlim3d(-lim,lim)
     
     # Extract the positional data from the dataframe
     x, y, z = df["px"].to_numpy(), df["py"].to_numpy(), df["pz"].to_numpy()
-
+    
     # Get the smallest index of when to stop graphing
     # This feels kinda ugly I'm not going to lie.
     xs = np.asarray((x>lim) | (y > lim) | (z > lim)).nonzero()
@@ -134,7 +136,7 @@ def graph_trajectory(lim, data):
         ind = -1
     
     # Plot it to the index
-    traj.plot(x[:ind], y[:ind], z[:ind])
+    traj.plot(x, y, z)
     magpy.show(c, canvas=traj)
 
     # Enjoy the fruits of your labor

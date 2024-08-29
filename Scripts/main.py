@@ -10,10 +10,11 @@ if __name__ == "__main__":
     
     df = InitializeData(do_file.get(), inpd.get())
     num_parts = df.shape[0]
-    dt = time_step_value
     num_points = entry_numsteps_value.get()
 
+    dt = entry_sim_time_value.get()/num_points
+
     if(isRun.get()):
-        magpy4c1.runsim(df, num_parts, num_points,dt)
+        magpy4c1.runsim(df, num_parts, num_points,dt, entry_sim_time_value.get())
         
     
