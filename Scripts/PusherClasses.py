@@ -1,12 +1,124 @@
 # Global classes and structures that many scripts rely on.
 # Made to streamline coupling
 
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from magpylib.current import Circle as C
 from magpylib import Collection
 import numpy as np
 
 from sympy import solve, Eq, symbols, Float
+
+import pandas as pd
+
+from pathlib import Path
+import os
+# gui stuff
+cwd = str(Path(__file__).resolve().parents[1]) # Gets the current working directory, so we can find the Inputs, Outputs folder easily.
+outd = cwd + "/Outputs"
+
+'''
+What will the folder for each output be called?
+     > Might be able to make this from a user input, otherwise will make a default name.
+
+Default name: "boris_nsteps_nsecs_nparticles"
+
+* when facing duplicate names, add (1), (2), etc.
+     1 - attempt to create the dir with the name
+     3 - except when an error comes from 1.
+        3a - in case of an error, have the os list the outd contents, and use counter() to see the num of occurances of the duplicate name
+        3b - make the new dir the name + (n) occurances 
+    return the name
+'''
+def CreateOutDir(numsteps:int, numtime:float, numparts:int):
+    global outd
+    dName = "boris_" + str(numsteps) + "_" + str(numtime.get()) + "_" + str(numparts)  
+    path = os.path.join(outd, dName)
+    
+    counter = 0
+    temp = ""
+    while os.path.exists(path):
+        counter += 1
+        temp = f"{dName}_({counter})"
+        path = os.path.join(outd, temp)
+
+    os.makedirs(path)
+    
+    return path
+
+'''
+From the GUI: 
+1. Determine if we're reading input data or not.
+2. Populate the dataframe accordingly.
+
+For each dataframe row:
+1. Create a Particle object
+2. Apply the data from the input file to its fields
+3. Store the Particle object in an array
+
+Magpy integration:
+1. Create a magpy.collection of magpy.sensors corresponding to each particle
+    > The index of each sensor will correspond to the index of the particle
+
+IMPORTANT:
+    > Whether we read input data or not comes from the 'do_file' var from the GUI.
+    > The dataframe is a table of Particle classes.
+        - row # = particle index
+        - column = attribute
+    > 'inpd' is set whenever the input file dir is updated, to the file's dir.
+'''
+def InitializeData(do_file: bool, inpd:str):
+
+    if(do_file == False):
+        data = pd.read_csv(cwd + "/Inputs/Default_Input.txt", dtype = {"positions" : str, "vels" : str, "accels" : str})
+    else:
+        inp = inpd
+        if(inp != ""):
+            data = pd.read_csv(inp, dtype = {"positions" : str, "vels" : str, "accels" : str})
+        else:
+            print("path not found")
+    # CLEANING
+
+    # Convert columns to Arrays
+    data["starting_pos"] = data["starting_pos"].str.split(" ").apply(pd.to_numeric, errors = "coerce")
+    data["starting_vel"] = data["starting_vel"].str.split(" ").apply(pd.to_numeric, errors = "coerce")
+
+    # print(data["starting_pos"])
+    return data
+
+
+#==================#
+# CREATE DATAFRAME #
+#==================#
+
+'''
+Make a large dataframe that aggregates the AoS to a more exploitable format. 
+     > We have to do these conversions to utilize arrays' strength of O(1) lookup and adding, as well as to avoid excessive amendments to a dataframe (costly)
+
+To keep track of particles, we will add an 'id' categorical variable alongside the usual 'particle' class attributes.
+'''
+def InitializeAoSDf(AoS:np.ndarray):
+    flat = np.hstack(AoS)
+    dfo = pd.json_normalize(asdict(i) for i in flat)
+
+    return dfo
+
+def CreateOutput(inp):
+    global outd
+
+    # MAKE NEW FILE FOR EACH PARTICLE
+    # First, make the dir for these files.
+    dir = CreateOutDir()
+    data = InitializeAoSDf(inp)
+
+    # Next, create a new file for each particle
+   #for i in range(df.shape[0]):
+    #    temp = os.path.join(dir, f"{i}.txt")
+        # print("saving, ", AoS[i])
+        # np.save(temp, AoS[i])
+
+    temp = os.path.join(dir, f"dataframe.json")
+    data.to_json(temp, orient="table")
+
 
 #===========#
 # Dataclass #

@@ -255,7 +255,7 @@ calc_B_detail_ZEnt.grid(row=1, column = 5)
 
 ## Read restart file?
 
-do_file = BooleanVar(value = False)
+do_file = BooleanVar(master=CalcRestartFileFrame, value=False)
 
 label_restart_file = ttk.Label(CalcRestartFileFrame,
                                text = "Restart File Dir:",
@@ -279,14 +279,15 @@ check_restart_file = ttk.Checkbutton(CalcCheckBoxFrame,
                                      onvalue = True,
                                      offvalue = False,
                                      style="LG.TCheckbutton")
-check_restart_file.config(command=partial(FileCallback, do_file.get(), button_restart_file))
+check_restart_file.var = do_file
+check_restart_file.config(command=partial(RestartFile, do_file, button_restart_file))
 check_restart_file.grid(row=0, column=1)
 
 
 #button_restart_file.grid(column = 1, row = 1)
 
 ### Make sure the button is in the correct state to start
-FileCallback(do_file, button_restart_file)
+FileCallback(do_file.get(), button_restart_file)
 
 
 ## Numsteps
@@ -370,10 +371,10 @@ entry_sim_time.config(validatecommand=partial(DTcallback, entry_sim_time_value, 
 ## Caclulate button
 isRun = BooleanVar(value=False)
 
-    
+inpd = StringVar(value="")    
 button_calculate = ttk.Button(tab_calc,
                               text = "Calculate") # Close the window so the rest of the program can run
-button_calculate.config(command=partial(CalculateCallback, isRun, root))
+button_calculate.config(command=partial(CalculateCallback, isRun, do_file, root, inpd, name_restart_file))
 button_calculate.grid(sticky="S")
 
 

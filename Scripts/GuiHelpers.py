@@ -6,13 +6,13 @@ from BorisPlots import graph_trajectory
 '''
 File explorer for restart files
 '''
-
+inpd=""
 # Variable to store the dir of the input file
 def browseFiles(name:ttk.Label):
     filename = filedialog.askopenfilename(title = "Select a Restart File")
-    inpd = filename
     if(filename != ""): # If an actual file is selected
         name.configure(text = filename)
+        inpd = filename
     return True
 
 def PlotFileCallback(name:ttk.Label, button:ttk.Button):
@@ -20,7 +20,7 @@ def PlotFileCallback(name:ttk.Label, button:ttk.Button):
 
 def PlotConfirmCallback(name:ttk.Label, root:Tk):
     graph_trajectory(lim = 500, data = name.cget("text"))
-    root.destroy()
+    root.quit()
 
 
 # HELPERS
@@ -43,20 +43,29 @@ def DTcallback(entry_sim_time_value, entry_numsteps_value, label_time_step:ttk.L
 '''
 Toggles
 '''
+def RestartFile(cond:BooleanVar, button_restart_file:ttk.Button):
+    cond = cond.get()
+    print(cond)
+    FileCallback(cond, button_restart_file)
+
 def FileCallback(do_file:bool, button_restart_file:ttk.Button):
-    if(not do_file):
-        # print("button disabled")
+    if(do_file == False):
+        #print("button disabled")
         button_restart_file.configure(state = "disabled")
         return True
     else:
-        # print("button enabled")
+        #print("button enabled")
         button_restart_file.configure(state = "enabled")
         return True
     
 # Run the simulation if you press calculate
-def CalculateCallback(isRun:BooleanVar, root:Tk):
+def CalculateCallback(isRun:BooleanVar, do_file:BooleanVar , root:Tk, inpd:StringVar, name:ttk.Label):
     isRun.set(True)
-    root.destroy()
+    do_file.set(do_file.get())
+    if(do_file.get()):
+        inpd.set(name.cget("text"))
+
+    root.quit()
 
 '''
 value: the string name of the method of field calculation
