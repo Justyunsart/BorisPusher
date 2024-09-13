@@ -100,6 +100,7 @@ def borisPush(id:int):
     global num_points, num_parts, dt, side, df  # Should be fine in multiprocessing because these values are only read,,,
     assert id <= (num_parts - 1), f"Input parameter 'id' received a value greater than the number of particles, {num_parts}"
 
+    #print(df)
     mass = 1.67e-27
     charge = 1.602e-19
 
@@ -134,7 +135,7 @@ def borisPush(id:int):
         x = np.array([out[time - 1].px, out[time - 1].py, out[time - 1].pz])
         v = np.array([out[time - 1].vx, out[time - 1].vy, out[time - 1].vz])
         # print("x for particle: ", id, " at time ", time, ": ", x)
-        # E = Efield(x)
+        E = Efield(x)
         Bf = Bfield(x)
         out[time - 1].bx, out[time - 1].by,out[time - 1].bz = Bf # update B field for particle we just found
 

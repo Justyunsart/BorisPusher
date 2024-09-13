@@ -8,6 +8,7 @@ from magpylib import Collection
 
 import matplotlib as mpl
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from mpl_toolkits.mplot3d.art3d import Line3DCollection
 from matplotlib import pyplot as plt
 from matplotlib import ticker
 from matplotlib.colors import Normalize
@@ -110,13 +111,61 @@ def graph_coil_points(dia, res:int):
     # span = np.linspace()
 
 def graph_trajectory(lim, data):
+    '''
+    lim = numeric var that depicts the limit value for the chart
+    data = the .json output file
+    palettes: a list that contains the cmap palettes to use for each particle. 
+    '''
     df = pd.read_json(data, orient="table")
     df = df.apply(pd.to_numeric)
     print(df)
-    df = df[df["id"] == 1]
+    #df = df[df["id"] == 1]
     # create the graph to add to
     fig1 = plt.figure(figsize=(10, 20))
     traj = fig1.add_subplot(1,1,1, projection='3d')
+
+    palettes = ["copper", "gist_heat"]
+    nump = df["id"].max()
+    nums = int(df.shape[0] / (nump + 1))
+
+    #traj.set_prop_cycle(color=['red', 'green'])
+    stride = 1000
+
+    for part in range(nump + 1):
+        dfslice = df[df["id"] == part]
+        x, y, z = dfslice["px"].to_numpy(), dfslice["py"].to_numpy(), dfslice["pz"].to_numpy()
+
+        # boolean mask to decrease density of plotted points
+        mask = np.ones(len(x), dtype=bool)
+        mask[:] = False
+        mask[np.arange(0, len(x), stride)] = True
+
+        # update the x, y, z arrays with bool mask
+        x = x[mask]
+        y = y[mask]
+        z = z[mask]
+
+        colors = mpl.colormaps[palettes[part]]
+
+        # connecting lines
+        x1 = np.reshape(x, (len(x), 1))
+        y1 = np.reshape(y, (len(y), 1))
+        z1 = np.reshape(z, (len(z), 1))
+
+        #coordstack = np.hstack((x1,y1,z1))
+        segments=np.stack((np.c_[x[:-1], x[1:]], np.c_[y[:-1], y[1:]], np.c_[z[:-1], z[1:]]), axis=2)
+        #print(segments)
+        segmentcolors= colors(np.linspace(0,1,len(segments)))
+        lines = Line3DCollection(segments, linewidths=0.5, zorder=0, colors=segmentcolors) # TODO: How does line3dcollection work????????????????????????????????
+
+        # plot everything
+        traj.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
+        #traj.plot(x,y,z)
+        traj.add_collection(lines)
+        
+
+
+
 
     # Set 3D plot bounds
     #traj.set_xlim3d(-lim,lim)
@@ -124,19 +173,19 @@ def graph_trajectory(lim, data):
     #traj.set_zlim3d(-lim,lim)
     
     # Extract the positional data from the dataframe
-    x, y, z = df["px"].to_numpy(), df["py"].to_numpy(), df["pz"].to_numpy()
+    #x, y, z = df["px"].to_numpy(), df["py"].to_numpy(), df["pz"].to_numpy()
     
     # Get the smallest index of when to stop graphing
     # This feels kinda ugly I'm not going to lie.
-    xs = np.asarray((x>lim) | (y > lim) | (z > lim)).nonzero()
+    #xs = np.asarray((x>lim) | (y > lim) | (z > lim)).nonzero()
 
-    if(len(xs[0]) != 0):
-         ind = xs[0][0] 
-    else: 
-        ind = -1
+    #if(len(xs[0]) != 0):
+    #     ind = xs[0][0] 
+    #else: 
+    #    ind = -1
     
     # Plot it to the index
-    traj.plot(x, y, z)
+    #traj.plot(x, y, z)
     magpy.show(c, canvas=traj)
 
     # Enjoy the fruits of your labor

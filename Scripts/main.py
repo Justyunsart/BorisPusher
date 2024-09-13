@@ -13,7 +13,7 @@ if __name__ == "__main__":
     num_points = entry_numsteps_value.get()
 
     dt = entry_sim_time_value.get()/num_points
-
+    print(dt)
     if(isRun.get()):
         magpy4c1.runsim(df, num_parts, num_points,dt, entry_sim_time_value.get())
         

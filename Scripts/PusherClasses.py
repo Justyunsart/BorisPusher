@@ -227,7 +227,7 @@ def GetCurrentTrace(c:Collection, dia:int, res:int):
                 point[xl] = s
                 point[yl] = j
                 point[zl] = center[zl]
-                pointc = charge(position=point, q=current.current)
+                pointc = charge(position=point, q=1.602e-19)
                 points.append(pointc)
 
                 # rotate!!! for more! points!
@@ -235,7 +235,7 @@ def GetCurrentTrace(c:Collection, dia:int, res:int):
                 point[xl] = j
                 point[yl] = s
                 point[zl] = center[zl]
-                pointc = charge(position=point, q=current.current)
+                pointc = charge(position=point, q=1.602e-19)
                 points.append(pointc)
 
     return np.asarray(points)
