@@ -6,7 +6,7 @@ from magpylib.current import Circle as C
 from magpylib import Collection
 import numpy as np
 
-from sympy import solve, Eq, symbols, Float
+from math import pi, cos, sin
 
 import pandas as pd
 
@@ -190,10 +190,12 @@ def Helmholtz(a, dia, d):
 def GetCurrentTrace(c:Collection, dia:int, res:int):
     rad = dia/2
     # need to figure out what axis the slices are
+    orientations = []
     points = []
     for current in c.children:
         # Find the direction the circle is facing, for science.
         orientation = current.orientation.as_euler('xyz', degrees=True)
+        orientations.append(orientation)
 
         # Find the interval to plug into the circle formula.
         axis = np.where(orientation > 0) # shows where the circle is facing??
@@ -214,28 +216,50 @@ def GetCurrentTrace(c:Collection, dia:int, res:int):
 
         center = current.position # centerpoint of circle
 
-        span = np.linspace(center[xl] - rad, center[xl] + rad, res) # evenly spaced intervals on the circle's major axis to create the points.
-        for s in span:
-            y = symbols('y')
-            eq1 = Eq((Float(s) - Float(center[xl]))**2 + (y - Float(center[yl]))**2, rad**2)
-            sol = solve(eq1) # this will give us all the local y axis values for the circle.
+        theta = 0
+        dtheta = 2*pi/res
+        while theta <2*pi:
+            p1 = np.array([cos(theta), sin(theta), 0]) # generic circle
+            p1 = (p1 * rad) # circle with the trace's radius
 
-            for j in sol:
-                # trace the circle with the points we just found
+            # adjustments for the local x, y, z vars (based on orientation)
+            p2 = np.zeros(3)
+            p2[xl] = p1[0]
+            p2[yl] = p1[1]
+            p2[zl] = p1[2]
 
-                point = np.zeros(3, dtype=float)
-                point[xl] = s
-                point[yl] = j
-                point[zl] = center[zl]
-                pointc = charge(position=point, q=1.602e-19)
-                points.append(pointc)
+            p2 += center # move to circle's centers
+            #p3 = charge(position= np.array(p2), q=current.current)
+            points.append(p2)
 
-                # rotate!!! for more! points!
-                point = np.zeros(3, dtype=float)
-                point[xl] = j
-                point[yl] = s
-                point[zl] = center[zl]
-                pointc = charge(position=point, q=1.602e-19)
-                points.append(pointc)
+            theta += dtheta #increment circle angle
+    
+    points = np.asarray(points)
 
-    return np.asarray(points)
+    return points
+
+def GetDistSq(v1, v2):
+    '''
+    v1: an iterable with n, 3 shape, representing n observer coords
+    v2: an iterable container with len 3 representing coords
+    '''
+    difference = v1 - v2
+    differencesq = np.power(difference, 2)
+    #distsq = (v2[0] - v1[0])**2 + (v2[1] - v1[1])**2 + (v2[2] - v1[2])**2
+    #distsq = np.sum(differencesq, axis=1)
+    return(differencesq)
+
+def CalcPtE(obs, pt, q:float):
+    '''
+    obs: container with n, 3 shape representing the coords of all observers
+    pt: container with 3 shape representing the coords of the point to calculate at
+    q: the charge to calculate E with
+    '''
+    k = 8.99 * 10^9 #electrostatic constant
+
+    distances = GetDistSq(obs, pt)
+    E = np.multiply((np.divide(abs(q), distances)), k)
+    E1 = np.sum(E, axis=0)
+
+    print(E1)
+    return E1

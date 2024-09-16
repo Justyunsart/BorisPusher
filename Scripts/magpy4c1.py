@@ -13,7 +13,7 @@ import pandas as pd
 # Pusher specific stuff
 ## Currents, dataclasses
 from PusherClasses import particle
-from PusherClasses import GetCurrentTrace, CreateOutput
+from PusherClasses import GetCurrentTrace, CreateOutput, CalcPtE
 from MakeCurrent import current as c
 from MakeCurrent import dia
 ## Calculations
@@ -63,13 +63,14 @@ accel = None
 #=========#
 # TODO: add making E field calculations a toggle
 # TODO: add customization option for the resolution
-sources = GetCurrentTrace(c, dia, res=10)
-sources = list(map(lambda x: pc.StationaryCharge(position=x.position, q=x.q), sources))
-simulation = pc.Simulation(sources=sources)
+sources = GetCurrentTrace(c, dia, res=100)
+#sources = list(map(lambda x: pc.StationaryCharge(position=x.position, q=x.q), sources))
+#simulation = pc.Simulation(sources=sources)
 '''
 Calculates the E Field at point 'p' from the list of charge source coordinates given.
 '''
 def Efield(p:np.ndarray):
+    '''
     X = np.array([p[0]])
     Y = np.array([p[1]])
     Z = np.array([p[2]])
@@ -82,6 +83,8 @@ def Efield(p:np.ndarray):
         E[2] += E_ind[2]
 
     return E
+    '''
+    return CalcPtE(sources, p, 1.0e5)
 
 
 # physics variables

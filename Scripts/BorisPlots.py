@@ -21,7 +21,9 @@ from pathlib import Path
 from scipy.spatial.transform import Rotation
 
 from sympy import solve, Eq, symbols, Float
+from math import pi, cos, sin
 
+from BorisAnalysis import CalculateLoss
 
 #=============#
 # 3D PLOTTING #
@@ -74,27 +76,22 @@ def graph_coil_points(dia, res:int):
 
         center = current.position # centerpoint of circle
 
-        span = np.linspace(center[xl] - rad, center[xl] + rad, res) # evenly spaced intervals on the circle's major axis to create the points.
-        for s in span:
-            y = symbols('y')
-            eq1 = Eq((Float(s) - Float(center[xl]))**2 + (y - Float(center[yl]))**2, rad**2)
-            sol = solve(eq1) # this will give us all the local y axis values for the circle.
+        theta = 0
+        dtheta = 2*pi/res
+        while theta <2*pi:
+            p1 = np.array([cos(theta), sin(theta), 0]) # generic circle
+            p1 = (p1 * rad) # circle with the trace's radius
 
-            for j in sol:
-                # trace the circle with the points we just found
-                point = np.zeros(3, dtype=float)
-                point[xl] = s
-                point[yl] = j
-                point[zl] = center[zl]
+            # adjustments for the local x, y, z vars (based on orientation)
+            p2 = np.zeros(3)
+            p2[xl] = p1[0]
+            p2[yl] = p1[1]
+            p2[zl] = p1[2]
 
-                # rotate!!! for more! points!
-                point1 = np.zeros(3, dtype=float)
-                point1[xl] = j
-                point1[yl] = s
-                point1[zl] = center[zl]
+            p2 += center # move to circle's centers
+            points.append(p2)
 
-                points.append(point)
-                points.append(point1)
+            theta += dtheta #increment circle angle
     
     points = np.asarray(points)
     fig = go.Figure()
@@ -104,11 +101,7 @@ def graph_coil_points(dia, res:int):
     magpy.show(c, canvas=fig)
     fig.show()
             
-
-
     orientations = np.asarray(orientations)
-
-    # span = np.linspace()
 
 def graph_trajectory(lim, data):
     '''
@@ -116,25 +109,41 @@ def graph_trajectory(lim, data):
     data = the .json output file
     palettes: a list that contains the cmap palettes to use for each particle. 
     '''
+    # read the dataframe
     df = pd.read_json(data, orient="table")
     df = df.apply(pd.to_numeric)
-    print(df)
-    #df = df[df["id"] == 1]
+    #df = df[df["id"] == 0]
+
     # create the graph to add to
     fig1 = plt.figure(figsize=(10, 20))
-    traj = fig1.add_subplot(1,1,1, projection='3d')
-
+    traj = fig1.add_subplot(2,2,1, projection='3d')
+    energy = fig1.add_subplot(2,2,2)
+    energy2 = fig1.add_subplot(2,2,3)
+    bgraph = fig1.add_subplot(2,2,4)
+    
+    # graphing variables
     palettes = ["copper", "gist_heat"]
     nump = df["id"].max()
     nums = int(df.shape[0] / (nump + 1))
+    stride = 100 # controls resolution of graphed points
 
-    #traj.set_prop_cycle(color=['red', 'green'])
-    stride = 1000
-
-    for part in range(nump + 1):
-        dfslice = df[df["id"] == part]
+    for part in range(nump):
+        # extract data from dataframe
+        dfslice = df[df["id"] == 0]
         x, y, z = dfslice["px"].to_numpy(), dfslice["py"].to_numpy(), dfslice["pz"].to_numpy()
+        v = np.c_[dfslice["vx"].to_numpy(), dfslice["vy"].to_numpy(), dfslice["vz"].to_numpy()]
+        b = np.c_[dfslice["bx"].to_numpy(), dfslice["by"].to_numpy(), dfslice["bz"].to_numpy()]
 
+        vdotv = list(map(lambda x: np.dot(x, x), v))
+        bdotb = list(map(lambda x: np.dot(x, x), b))
+
+        print(v.shape)
+
+        # loss logic
+        vcrossmag = CalculateLoss(vels=v, bs=b)
+
+
+        # trajectory logic
         # boolean mask to decrease density of plotted points
         mask = np.ones(len(x), dtype=bool)
         mask[:] = False
@@ -148,25 +157,20 @@ def graph_trajectory(lim, data):
         colors = mpl.colormaps[palettes[part]]
 
         # connecting lines
-        x1 = np.reshape(x, (len(x), 1))
-        y1 = np.reshape(y, (len(y), 1))
-        z1 = np.reshape(z, (len(z), 1))
-
-        #coordstack = np.hstack((x1,y1,z1))
         segments=np.stack((np.c_[x[:-1], x[1:]], np.c_[y[:-1], y[1:]], np.c_[z[:-1], z[1:]]), axis=2)
         #print(segments)
         segmentcolors= colors(np.linspace(0,1,len(segments)))
-        lines = Line3DCollection(segments, linewidths=0.5, zorder=0, colors=segmentcolors) # TODO: How does line3dcollection work????????????????????????????????
+        lines = Line3DCollection(segments, linewidths=1, zorder=1, colors=segmentcolors) # TODO: How does line3dcollection work????????????????????????????????
 
         # plot everything
         traj.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
-        #traj.plot(x,y,z)
         traj.add_collection(lines)
+
+        energy.plot(vcrossmag)
+        energy2.plot(vdotv)
+        bgraph.plot(bdotb)
+
         
-
-
-
-
     # Set 3D plot bounds
     #traj.set_xlim3d(-lim,lim)
     #traj.set_ylim3d(-lim,lim)
@@ -201,7 +205,7 @@ def graph_trajectory(lim, data):
 
 # graph_trajectory(500, df)
 # graph_coil_centers()
-# graph_coil_points(dia = 500, res = 10)
+#graph_coil_points(dia = 500, res = 100)
 
 '''
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):

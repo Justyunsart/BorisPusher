@@ -187,4 +187,9 @@ s3 = mp.current.Circle(diameter=3).rotate_from_angax(90, [1, 0, 0])
 s4 = mp.current.Circle(diameter=3).rotate_from_angax(90, [0, 0, 1])
 # mp.show(s1, s2)
 
-print(sqrt(4))
+#print(sqrt(4))
+
+a = np.array([[1,2,3], [2,5,6]])
+#b = a - np.array([1,1,1])
+
+print(np.divide(2,a))
