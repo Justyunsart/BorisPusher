@@ -20,7 +20,6 @@ from MakeCurrent import current as c
 from pathlib import Path
 from scipy.spatial.transform import Rotation
 
-from sympy import solve, Eq, symbols, Float
 from math import pi, cos, sin
 
 from BorisAnalysis import CalculateLoss
@@ -116,16 +115,17 @@ def graph_trajectory(lim, data):
 
     # create the graph to add to
     fig1 = plt.figure(figsize=(10, 20))
-    traj = fig1.add_subplot(2,2,1, projection='3d')
-    energy = fig1.add_subplot(2,2,2)
-    energy2 = fig1.add_subplot(2,2,3)
-    bgraph = fig1.add_subplot(2,2,4)
+    traj = fig1.add_subplot(1,1,1, projection='3d')
+    #traj = fig1.add_subplot(2,2,1, projection='3d')
+    #energy = fig1.add_subplot(2,2,2)
+    #energy2 = fig1.add_subplot(2,2,3)
+    #bgraph = fig1.add_subplot(2,2,4)
     
     # graphing variables
     palettes = ["copper", "gist_heat"]
     nump = df["id"].max()
     nums = int(df.shape[0] / (nump + 1))
-    stride = 100 # controls resolution of graphed points
+    stride = 1 # controls resolution of graphed points
 
     for part in range(nump):
         # extract data from dataframe
@@ -153,6 +153,7 @@ def graph_trajectory(lim, data):
         x = x[mask]
         y = y[mask]
         z = z[mask]
+        z *= 0
 
         colors = mpl.colormaps[palettes[part]]
 
@@ -166,9 +167,9 @@ def graph_trajectory(lim, data):
         traj.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
         traj.add_collection(lines)
 
-        energy.plot(vcrossmag)
-        energy2.plot(vdotv)
-        bgraph.plot(bdotb)
+        #energy.plot(vcrossmag)
+        #energy2.plot(vdotv)
+        #bgraph.plot(bdotb)
 
         
     # Set 3D plot bounds

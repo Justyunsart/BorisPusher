@@ -63,18 +63,18 @@ accel = None
 #=========#
 # TODO: add making E field calculations a toggle
 # TODO: add customization option for the resolution
-sources = GetCurrentTrace(c, dia, res=100)
+#sources = GetCurrentTrace(c, dia, res=100)
 #sources = list(map(lambda x: pc.StationaryCharge(position=x.position, q=x.q), sources))
 #simulation = pc.Simulation(sources=sources)
 '''
 Calculates the E Field at point 'p' from the list of charge source coordinates given.
 '''
 def Efield(p:np.ndarray):
-    '''
-    X = np.array([p[0]])
-    Y = np.array([p[1]])
-    Z = np.array([p[2]])
 
+    #X = np.array([p[0]])
+    #Y = np.array([p[1]])
+    #Z = np.array([p[2]])
+    '''
     E = np.zeros(3,dtype=float)
     for charge in simulation.all_charges:
         E_ind = simulation._calculate_individual_E(charge=charge, x=X, y=Y, z=Z, pcharge_field="Total", tr=np.zeros(1))
@@ -84,7 +84,9 @@ def Efield(p:np.ndarray):
 
     return E
     '''
-    return CalcPtE(sources, p, 1.0e5)
+    return 0
+
+    #return CalcPtE(sources, p, 1.0e5)
 
 
 # physics variables
@@ -138,7 +140,7 @@ def borisPush(id:int):
         x = np.array([out[time - 1].px, out[time - 1].py, out[time - 1].pz])
         v = np.array([out[time - 1].vx, out[time - 1].vy, out[time - 1].vz])
         # print("x for particle: ", id, " at time ", time, ": ", x)
-        E = Efield(x)
+        #E = Efield(x)
         Bf = Bfield(x)
         out[time - 1].bx, out[time - 1].by,out[time - 1].bz = Bf # update B field for particle we just found
 
