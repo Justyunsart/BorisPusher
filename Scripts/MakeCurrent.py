@@ -1,23 +1,50 @@
-# Creates the current used in the simulation.
-# Idk if this should be its own file but oh well, at least we can access the current without running the boris pusher script.
+'''
+Script that handles the creation of the current coils used in the simulation.
 
-from PusherClasses import Circle, Helmholtz
+'''
+from magpylib.current import Circle as C
+from magpylib import Collection
 
-# physics variables
-a = 1.0e5 # current
-aa = a / 1.72 # triangle current
-dia = 500. # coil diameter
-d = 800. # coil placement
-l = 600 # line space(x, y, z variables)
-r = 100 # line space increments
-gap = 15 # sets space between coils
+#==============#
+# CONSTRUCTION #
+#==============#
+# creates a square box of Loop coils
+def Circle(a, dia, d, gap):
+    # current Loop creation, superimpose Loops and their fields
+    s1 = C(current=a, diameter=dia).move([-(d/2)-gap,0,0]).rotate_from_angax(90, [0, 1, 0])
+    s2 = C(current=-a, diameter=dia).move([(d/2)+gap,0,0]).rotate_from_angax(90, [0, 1, 0])
+    s3 = C(current=-a, diameter=dia).move([0,-(d/2)-gap,0]).rotate_from_angax(90, [1, 0, 0])
+    s4 = C(current=a, diameter=dia).move([0,(d/2)+gap,0]).rotate_from_angax(90, [1, 0, 0])
+    s5 = C(current=a, diameter=dia).move([0,0,-(d/2)-gap]).rotate_from_angax(90, [0, 0, 1])
+    s6 = C(current=-a, diameter=dia).move([0,0,(d/2)+gap]).rotate_from_angax(90, [0, 0, 1])
 
+    c = Collection(s1,s2,s3,s4,s5,s6, style_color='black')
+    return c
 
+# helmholtz setup for a test
+def Helmholtz(a, dia, d):
+    # helmholtz test
+    s7 = C(current=a, diameter=dia).move([-(d/2),0,0]).rotate_from_angax(90, [0, 1, 0])
+    s8 = C(current=a, diameter=dia).move([(d/2),0,0]).rotate_from_angax(90, [0, 1, 0])
+
+    c = Collection (s7, s8)
+    return c
+
+##############
+# PARAMETERS #
+##############
+a = 5 * 10e5 # current in terms of A
+dia = 2. # coil diameter
+d = 2. # coil placement
+
+###########
+# CURRENT #
+###########
+'''
+current: var that references a magpylib current/ collection object. This is passed to many different files that utilizes it.
+
+Note:
+Do not change the name of the var current; only change the function it calls. This is because the var is referenced by name.
+'''
 #current = Circle(a, dia, d, gap)
 current = Helmholtz(a, dia, d * 2) # mirror, since distance is far enough to not make helmholtz
-# helmholtz: d = dia/2
-
-# TODO: 
-# > mirror graph
-# > Graph with E plane on one side, watch it shoot out
-# > Graph with opposite E on both sides: watch it oscillate 

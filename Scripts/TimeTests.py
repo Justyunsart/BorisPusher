@@ -190,6 +190,24 @@ s4 = mp.current.Circle(diameter=3).rotate_from_angax(90, [0, 0, 1])
 #print(sqrt(4))
 
 a = np.array([[1,2,3], [2,5,6]])
-#b = a - np.array([1,1,1])
+b = a - np.array([1,1,1])
 
-print(np.divide(2,a))
+a = np.array([-800, 0, 0])
+b = np.array([2.2e-21, 2.2e-21, 2.2e-21])
+#print(np.divide(2,a))
+
+a = np.array(6.17654719e-03)
+b = np.array(1.63736781e-01)
+c = np.sqrt(a**2 + b**2)
+#print(np.subtract(a,b))
+
+def EfieldX(p:np.ndarray):
+    A = 1
+    #B = 1.44
+    B = .8
+
+    E = np.multiply(A * np.exp(-(p[0] / B)** 4), (p[0]/B)**15)
+    return np.array([E,0,0])
+
+position = np.array([0,0,0])
+print(EfieldX(position))

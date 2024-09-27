@@ -19,7 +19,6 @@ from MakeCurrent import dia
 ## Calculations
 import numpy as np
 import magpylib as magpy
-import pycharge as pc
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
@@ -61,42 +60,25 @@ accel = None
 #=========#
 # E FIELD #
 #=========#
-# TODO: add making E field calculations a toggle
-# TODO: add customization option for the resolution
-#sources = GetCurrentTrace(c, dia, res=100)
-#sources = list(map(lambda x: pc.StationaryCharge(position=x.position, q=x.q), sources))
-#simulation = pc.Simulation(sources=sources)
+
 '''
 Calculates the E Field at point 'p' from the list of charge source coordinates given.
 '''
-def Efield(p:np.ndarray):
+def EfieldX(p:np.ndarray):
+    A = -1
+    #B = 1.44
+    B = .8
 
-    #X = np.array([p[0]])
-    #Y = np.array([p[1]])
-    #Z = np.array([p[2]])
-    '''
-    E = np.zeros(3,dtype=float)
-    for charge in simulation.all_charges:
-        E_ind = simulation._calculate_individual_E(charge=charge, x=X, y=Y, z=Z, pcharge_field="Total", tr=np.zeros(1))
-        E[0] += E_ind[0]
-        E[1] += E_ind[1]
-        E[2] += E_ind[2]
+    E = np.multiply(A * np.exp(-(p[0] / B)** 4), (p[0]/B)**15)
+    return np.array([E,0,0])
 
-    return E
-    '''
-    return 0
-
-    #return CalcPtE(sources, p, 1.0e5)
-
-
-# physics variables
-
+'''
 # plotting variables
 corner = 1 # sets octagonal corner size (cannot be 0)
 side = 600 # max range for plot
 gap = 15 # sets space between coils
 coilLength = 1000
-
+'''
 
 
 # boris push calculation
@@ -110,7 +92,7 @@ def borisPush(id:int):
     charge = 1.602e-19
 
     vAc = 1
-    mm = 0.001
+    #mm = 0.001
     ft = 0 # tracker for total simulation time
 
     # Step 1: Create the AoS the process will work with
@@ -119,7 +101,7 @@ def borisPush(id:int):
     out = np.empty(shape = (num_points + 1), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
 
     temp = df["starting_pos"].to_numpy()[id] # Populate it with the initial conditions at index 0.
-    temp1 = df["starting_vel"].to_numpy()[id] * mm
+    temp1 = df["starting_vel"].to_numpy()[id] * 6
     out[0] = particle(px = temp[0], 
                             py = temp[1],
                             pz = temp[2],
@@ -139,9 +121,10 @@ def borisPush(id:int):
     for time in range(1, num_points + 1): # time: step number
         x = np.array([out[time - 1].px, out[time - 1].py, out[time - 1].pz])
         v = np.array([out[time - 1].vx, out[time - 1].vy, out[time - 1].vz])
-        # print("x for particle: ", id, " at time ", time, ": ", x)
-        #E = Efield(x)
+        #print("x for particle: ", id, " at time ", time, ": ", x)
+        E = EfieldX(x)
         Bf = Bfield(x)
+        #Bf = np.array([0.0, 0.0, 1])
         out[time - 1].bx, out[time - 1].by,out[time - 1].bz = Bf # update B field for particle we just found
 
         # Boris logic
@@ -170,7 +153,7 @@ def borisPush(id:int):
         ft += dt # total time spent simulating
         if time % 1000 == 0:
             print(f"boris calc * {time} for particle {id}")
-            print("total time: ", ft, dt)
+            print("total time: ", ft, dt, E)
         if x.any() > side:
             print('Exited Boris Push Early')
             break
@@ -178,12 +161,14 @@ def borisPush(id:int):
     return out
 
 def init_process(data, n1, n2, t, t1):
-    global df, num_parts, num_points, dt, sim_time
+    global df, num_parts, num_points, dt, sim_time, sources, side
     df = data
     num_parts = n1
     num_points = n2
     dt = t
     sim_time = t1
+    sources = GetCurrentTrace(c, dia, res=100, nsteps=100)
+    side=100
     #print("data shared: ", data, n1, n2, t)
 
 def runsim(dfIn, numPa, numPo, tScale, time):

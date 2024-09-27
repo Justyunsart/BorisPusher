@@ -44,7 +44,6 @@ tab_plot = ttk.Frame(tabControl, padding="4 12 12 4")
 tab_plot.columnconfigure(0, weight = 1)
 tab_plot.rowconfigure(1, weight = 1)
 
-
 # CREATION
 menubar = Menu(root)
 
@@ -295,8 +294,8 @@ label_numsteps = ttk.Label(CalcTimeStepFrame,
                            text = "Step Count: ")#.grid(column = 0, row = 3)
 label_numsteps.grid(row=2, column=0)
 
-entry_numsteps_value = IntVar(value = 500000)
-entry_sim_time_value = DoubleVar(value = 20.0)
+entry_numsteps_value = IntVar(value = 50000)
+entry_sim_time_value = DoubleVar(value = 0.00001)
 
 ## Display Calculated Timestep
 time_step_value = (entry_sim_time_value.get()) / (entry_numsteps_value.get())
@@ -387,3 +386,73 @@ tabControl.pack(expand=1, fill="both")
 
 #for w in rframe.winfo_children():
 #    w.grid_configure(padx=5,pady=5)
+
+#TODO: IMPLEMENT CURRENT CONFIG WITH GUI
+'''
+#===========================================================================================#
+########################
+# CURRENT MANIPULATION #
+########################
+'''
+#the place to see and change the configuration of the magnetic coils.
+#Will happen in a new window because why not
+'''
+root.update() # set info for positioning with other windows
+toplevel = tk.Toplevel(root)
+
+# toplevel positioning, based on the dimension and offset of the root window.
+toplevel_offsetx, toplevel_offsety = root.winfo_x() + root.winfo_width(), root.winfo_y()
+toplevel.geometry(f"+{toplevel_offsetx}+{toplevel_offsety}")
+
+#------------#
+# CONTAINERS # - FRAMES
+#------------#
+# The parent frame
+CurrentFrame = tk.LabelFrame(toplevel, text="Configure Current")
+CurrentFrame.grid(row = 0, padx=10, pady=10)
+
+# Child 1 - parameters
+CurrentParameterFrame = tk.LabelFrame(CurrentFrame, text="Parameters")
+CurrentParameterFrame.grid(row = 0, padx=10, pady=10)
+
+# Child 2 - the graph
+CurrentGraphFrame = tk.LabelFrame(CurrentFrame, text="Graph")
+CurrentGraphFrame.grid(row = 1, padx=10, pady=10)
+
+#---------#
+# WIDGETS #
+#---------#
+# PARAMETER VARS - PASSED TO PROGRAM
+Param_Amplitude = tk.DoubleVar()
+Param_Diameter = tk.DoubleVar()
+Param_Distance = tk.DoubleVar()
+
+# PARAMETER WIDGETS
+## Amplitude
+LABEL_Param_Amplitude= ttk.Label(CurrentParameterFrame,
+                           text = "Current (in units of A): ")
+LABEL_Param_Amplitude.grid(column = 0, row = 0)
+ENTRY_Param_Amplitude = ttk.Entry(CurrentParameterFrame,
+                           textvariable = Param_Amplitude)
+ENTRY_Param_Amplitude.grid(column = 1, row = 0)
+
+## Diameter
+LABEL_Param_Diameter= ttk.Label(CurrentParameterFrame,
+                           text = "Coil diameter (meters): ")
+LABEL_Param_Diameter.grid(column = 0, row = 1)
+ENTRY_Param_Diameter = ttk.Entry(CurrentParameterFrame,
+                           textvariable = Param_Diameter)
+ENTRY_Param_Diameter.grid(column = 1, row = 1)
+
+## Distance
+LABEL_Param_Distance= ttk.Label(CurrentParameterFrame,
+                           text = "Offset from Origin (m): ")
+LABEL_Param_Distance.grid(column = 0, row = 2)
+ENTRY_Param_Distance = ttk.Entry(CurrentParameterFrame,
+                           textvariable = Param_Distance)
+ENTRY_Param_Distance.grid(column = 1, row = 2)
+
+
+
+#GRAPH WIDGETS
+'''

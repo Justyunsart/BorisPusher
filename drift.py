@@ -9,7 +9,7 @@ charge = 1.
 vAc = 1
 duration = 10000
 
-v = np.array([0., 1., 0.])
+v = np.array([0., 4., 0.])
 x = np.array([-1., 0., 0.])
 
 B = np.array([0., 0., 1.])

@@ -2,7 +2,6 @@
 # Made to streamline coupling
 
 from dataclasses import dataclass, asdict
-from magpylib.current import Circle as C
 from magpylib import Collection
 import numpy as np
 
@@ -161,34 +160,20 @@ class charge:
 EfOptions = np.array(["Zero", "Static", "Calculated"])
 BfOptions = np.array(["Zero", "Static", "Calculated"])
 
-#=========#
-# Current #
-#=========#
-# creates a square box of Loop coils
-def Circle(a, dia, d, gap):
-    # current Loop creation, superimpose Loops and their fields
-    s1 = C(current=a, diameter=dia).move([-(d/2)-gap,0,0]).rotate_from_angax(90, [0, 1, 0])
-    s2 = C(current=-a, diameter=dia).move([(d/2)+gap,0,0]).rotate_from_angax(90, [0, 1, 0])
-    s3 = C(current=-a, diameter=dia).move([0,-(d/2)-gap,0]).rotate_from_angax(90, [1, 0, 0])
-    s4 = C(current=a, diameter=dia).move([0,(d/2)+gap,0]).rotate_from_angax(90, [1, 0, 0])
-    s5 = C(current=a, diameter=dia).move([0,0,-(d/2)-gap]).rotate_from_angax(90, [0, 0, 1])
-    s6 = C(current=-a, diameter=dia).move([0,0,(d/2)+gap]).rotate_from_angax(90, [0, 0, 1])
 
-    c = Collection(s1,s2,s3,s4,s5,s6, style_color='black')
-    return c
+def GetCurrentTrace(c:Collection, dia:int, res:int, nsteps:int):
+    '''
+    Gets the positional coordinates for points to estimate the circular plane when doing point charge calculations.
 
+    c: the magpy collection object that contains only circular traces
+    dia: the traces' diameter
+    res: the resolution of the trace for each circle (higher = more points; the better the circle gets simulated)
+    nsteps: the number of evenly spaced circles placed on the surface
 
-# helmholtz setup for a test
-def Helmholtz(a, dia, d):
-    # helmholtz test
-    s7 = C(current=a, diameter=dia).move([-(d/2),0,0]).rotate_from_angax(90, [0, 1, 0])
-    s8 = C(current=a, diameter=dia).move([(d/2),0,0]).rotate_from_angax(90, [0, 1, 0])
-
-    c = Collection (s7, s8)
-    return c
-
-def GetCurrentTrace(c:Collection, dia:int, res:int):
+    Returns an array containing all the coordinates
+    '''
     rad = dia/2
+    rads = np.linspace(0, rad, nsteps)
     # need to figure out what axis the slices are
     orientations = []
     points = []
@@ -215,21 +200,25 @@ def GetCurrentTrace(c:Collection, dia:int, res:int):
             zl = 0
 
         center = current.position # centerpoint of circle
+        #print(center)
 
         theta = 0
         dtheta = 2*pi/res
         while theta <2*pi:
             p1 = np.array([cos(theta), sin(theta), 0]) # generic circle
-            p1 = (p1 * rad) # circle with the trace's radius
+            p1arr = np.array(list(map(lambda x: np.multiply(x, p1, dtype=float), rads))).T
+            #print(p1arr)
+            #p1 = np.multiply(rads, p1).T # circle with the trace's radius
 
             # adjustments for the local x, y, z vars (based on orientation)
-            p2 = np.zeros(3)
-            p2[xl] = p1[0]
-            p2[yl] = p1[1]
-            p2[zl] = p1[2]
+            p2 = np.zeros((3, nsteps))
+            p2[xl] = p1arr[0]
+            p2[yl] = p1arr[1]
+            p2[zl] = p1arr[2]
 
+            p2 = p2.T
+            #print(p2.shape)
             p2 += center # move to circle's centers
-            #p3 = charge(position= np.array(p2), q=current.current)
             points.append(p2)
 
             theta += dtheta #increment circle angle
@@ -238,28 +227,38 @@ def GetCurrentTrace(c:Collection, dia:int, res:int):
 
     return points
 
-def GetDistSq(v1, v2):
+def GetDistSq(v1:np.ndarray, v2:np.ndarray):
     '''
     v1: an iterable with n, 3 shape, representing n observer coords
     v2: an iterable container with len 3 representing coords
     '''
-    difference = v1 - v2
+    shape = list(np.shape(v1))
+    v1 = np.array(v1.reshape((shape[0] * shape[1], 3)))
+    #print(v1)
+    #print(v2)
+
+    difference = np.array(v1 - v2)
     differencesq = np.power(difference, 2)
+    #differencesq = np.sum(differencesq, axis=1)
+    #print(np.shape(differencesq))
     #distsq = (v2[0] - v1[0])**2 + (v2[1] - v1[1])**2 + (v2[2] - v1[2])**2
     #distsq = np.sum(differencesq, axis=1)
-    return(differencesq)
+    #print(differencesq)
+    #print(v1[0], " of shape: ", np.shape(v1[0]))
+    #print(v2)
+    #print(v1[0], " minus", v2, " is: ", v1[0] - v2)
+    return(np.zeros(3))
 
-def CalcPtE(obs, pt, q:float):
+def CalcPtE(obs:np.ndarray, pt:np.ndarray, q:float):
     '''
     obs: container with n, 3 shape representing the coords of all observers
     pt: container with 3 shape representing the coords of the point to calculate at
     q: the charge to calculate E with
     '''
-    k = 8.99 * 10^9 #electrostatic constant
+    k = 8.99 * 10.0**9 #electrostatic constant
 
     distances = GetDistSq(obs, pt)
     E = np.multiply((np.divide(abs(q), distances)), k)
     E1 = np.sum(E, axis=0)
-
     print(E1)
     return E1

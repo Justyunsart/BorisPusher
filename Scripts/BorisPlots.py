@@ -1,12 +1,14 @@
-import os
 
 import numpy as np
 import magpylib as magpy
 import pandas as pd
 
+from magpy4c1 import EfieldX
+
 from magpylib import Collection
 
 import matplotlib as mpl
+import matplotlib.colors as colors
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from mpl_toolkits.mplot3d.art3d import Line3DCollection
 from matplotlib import pyplot as plt
@@ -17,8 +19,6 @@ from mpl_toolkits.mplot3d import Axes3D
 import plotly.graph_objects as go
 
 from MakeCurrent import current as c
-from pathlib import Path
-from scipy.spatial.transform import Rotation
 
 from math import pi, cos, sin
 
@@ -27,6 +27,51 @@ from BorisAnalysis import CalculateLoss
 #=============#
 # 3D PLOTTING #
 #=============#
+
+def graph_coil_B_cross(c:Collection, lim:int, step:int):
+    '''
+    Helper to visualize the B field of a current in a 2D space (take a cross section).
+    The cross section will go from the origin for now
+
+    c = collection of currents from magpylib
+    lim = axis boundaries of the graph
+    step = the total step count of the graph (higher = more points)
+    '''
+    # construct figure
+    fig = plt.figure(figsize=(10,5))
+    ax = fig.add_subplot(111)
+
+    # construct grid for the cross section
+    x = np.linspace(-lim, lim, step) # these represent LOCAL x and y for the 2D graph, not the 3D space.
+    y = np.linspace(-lim, lim, step)
+
+    # calculate B field for the entire grid
+    Bs = np.array([[c.getB([i, 0, j]) for i in x] for j in y]) # [bx, by, bz]
+    '''
+    Bs shape: (step, step, 3)
+    '''
+
+    #print(Bs)
+
+    # gather arguments for the streamplot
+    X, Z = np.meshgrid(x, y)
+    U, V = Bs[:, :, 0], Bs[:, :, 2]
+
+    #print(Bs[71,156])
+    #print(c.getB([x[156], 0, y[71]]))
+    Bamp = np.sqrt(U**2 + V**2)
+    #print(Bamp)
+    ind = np.unravel_index(np.argmax(Bamp, axis=None), Bamp.shape)
+    print(ind, Bamp[ind], "is at the location: ", x[ind[0]], y[ind[1]])
+    #print(U[71][156], V[71][156])
+
+    
+    stream = ax.streamplot(X, Z, U, V, color= Bamp, density=1)
+    #stream = ax.streamplot(X, Z, U, V, color= Bamp, density=5, norm=colors.LogNorm(vmin = Bamp.min(), vmax = Bamp.max()))
+    fig.colorbar(stream.lines)
+    
+    # ru-veal
+    plt.show()
 
 
 # This is to show that we can get the coil center coordinates from the magpy current's position property. 
@@ -44,10 +89,11 @@ def graph_coil_centers():
     magpy.show(c, canvas=fig)
 
     fig.show()
-
+    
 # This traces the coil(with diameter=dia) and graphs points around its circumference.
-def graph_coil_points(dia, res:int):
+def graph_coil_points(dia, res:int, nsteps:int):
     rad = dia/2
+    rads = np.linspace(0, rad, nsteps)
     # need to figure out what axis the slices are
     orientations = []
     points = []
@@ -74,29 +120,35 @@ def graph_coil_points(dia, res:int):
             zl = 0
 
         center = current.position # centerpoint of circle
+        #print(center)
 
         theta = 0
         dtheta = 2*pi/res
         while theta <2*pi:
             p1 = np.array([cos(theta), sin(theta), 0]) # generic circle
-            p1 = (p1 * rad) # circle with the trace's radius
+            p1arr = np.array(list(map(lambda x: np.multiply(x, p1, dtype=float), rads))).T
+            #print(p1arr)
+            #p1 = np.multiply(rads, p1).T # circle with the trace's radius
 
             # adjustments for the local x, y, z vars (based on orientation)
-            p2 = np.zeros(3)
-            p2[xl] = p1[0]
-            p2[yl] = p1[1]
-            p2[zl] = p1[2]
+            p2 = np.zeros((3, nsteps))
+            p2[xl] = p1arr[0]
+            p2[yl] = p1arr[1]
+            p2[zl] = p1arr[2]
 
+            p2 = p2.T
+            #print(p2.shape)
             p2 += center # move to circle's centers
             points.append(p2)
 
             theta += dtheta #increment circle angle
     
     points = np.asarray(points)
+    #print(points[:,:,0])
     fig = go.Figure()
-    fig.add_trace(go.Scatter3d(x=points[:,0],
-                               y=points[:,1],
-                               z=points[:,2], mode="markers"))
+    fig.add_trace(go.Scatter3d(x=points[:,:,0].flatten(),
+                               y=points[:,:,1].flatten(),
+                               z=points[:,:,2].flatten(), mode="markers"))
     magpy.show(c, canvas=fig)
     fig.show()
             
@@ -115,11 +167,12 @@ def graph_trajectory(lim, data):
 
     # create the graph to add to
     fig1 = plt.figure(figsize=(10, 20))
-    traj = fig1.add_subplot(1,1,1, projection='3d')
+    traj = fig1.add_subplot(1,2,1, projection='3d')
+    efig = fig1.add_subplot(1,2,2)
     #traj = fig1.add_subplot(2,2,1, projection='3d')
     #energy = fig1.add_subplot(2,2,2)
     #energy2 = fig1.add_subplot(2,2,3)
-    #bgraph = fig1.add_subplot(2,2,4)
+    #energy3 = fig1.add_subplot(2,2,4)
     
     # graphing variables
     palettes = ["copper", "gist_heat"]
@@ -127,20 +180,20 @@ def graph_trajectory(lim, data):
     nums = int(df.shape[0] / (nump + 1))
     stride = 1 # controls resolution of graphed points
 
-    for part in range(nump):
+    for part in range(1):
         # extract data from dataframe
         dfslice = df[df["id"] == 0]
         x, y, z = dfslice["px"].to_numpy(), dfslice["py"].to_numpy(), dfslice["pz"].to_numpy()
         v = np.c_[dfslice["vx"].to_numpy(), dfslice["vy"].to_numpy(), dfslice["vz"].to_numpy()]
         b = np.c_[dfslice["bx"].to_numpy(), dfslice["by"].to_numpy(), dfslice["bz"].to_numpy()]
 
-        vdotv = list(map(lambda x: np.dot(x, x), v))
-        bdotb = list(map(lambda x: np.dot(x, x), b))
+       #vdotv = list(map(lambda x: np.dot(x, x), v))
+        #bdotb = list(map(lambda x: np.dot(x, x), b))
 
         print(v.shape)
 
         # loss logic
-        vcrossmag = CalculateLoss(vels=v, bs=b)
+        vcrossmag, vcrossmagD1, vcrossmagD2 = CalculateLoss(vels=v, bs=b)
 
 
         # trajectory logic
@@ -153,7 +206,7 @@ def graph_trajectory(lim, data):
         x = x[mask]
         y = y[mask]
         z = z[mask]
-        z *= 0
+        #z *= 0
 
         colors = mpl.colormaps[palettes[part]]
 
@@ -161,15 +214,16 @@ def graph_trajectory(lim, data):
         segments=np.stack((np.c_[x[:-1], x[1:]], np.c_[y[:-1], y[1:]], np.c_[z[:-1], z[1:]]), axis=2)
         #print(segments)
         segmentcolors= colors(np.linspace(0,1,len(segments)))
-        lines = Line3DCollection(segments, linewidths=1, zorder=1, colors=segmentcolors) # TODO: How does line3dcollection work????????????????????????????????
+        lines = Line3DCollection(segments, linewidths=1, zorder=1, colors=segmentcolors) 
 
         # plot everything
         traj.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
-        traj.add_collection(lines)
+        graph_E_X(3, 100, efig)
+        #traj.add_collection(lines)
 
-        #energy.plot(vcrossmag)
-        #energy2.plot(vdotv)
-        #bgraph.plot(bdotb)
+        #energy.plot(vcrossmag[:-1])
+        #energy2.plot(vcrossmagD1[:-1])
+        #energy3.plot(vcrossmagD2[:-1])
 
         
     # Set 3D plot bounds
@@ -196,6 +250,17 @@ def graph_trajectory(lim, data):
     # Enjoy the fruits of your labor
     plt.show()
 
+def graph_E_X(lim:int, step:int, subplot):
+
+    # construct grid for the cross section
+    x = np.linspace(-lim, lim, step) # these represent LOCAL x and y for the 2D graph, not the 3D space.
+
+    A = -1
+    B = .8
+
+    E = np.multiply(A * np.exp(-(x / B)** 4), (x/B)**15)
+
+    subplot.plot(x,E)
 
 #root = str(Path(__file__).resolve().parents[1])
 #outd = root + "/Outputs/boris_500000_20.0_2_(13)/dataframe.json"
@@ -205,8 +270,12 @@ def graph_trajectory(lim, data):
 #print(df)
 
 # graph_trajectory(500, df)
-# graph_coil_centers()
-#graph_coil_points(dia = 500, res = 100)
+#graph_coil_centers()
+#graph_coil_points(dia = 500, res = 100, nsteps=100)
+#graph_coil_B_cross(c=c, lim=3, step=200)
+#print(c.getB((0,0,0)))
+#print(c.getB((-2,0,2)))
+
 
 '''
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
