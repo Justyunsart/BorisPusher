@@ -28,7 +28,7 @@ from BorisAnalysis import CalculateLoss
 # 3D PLOTTING #
 #=============#
 
-def graph_coil_B_cross(c:Collection, lim:int, step:int):
+def graph_coil_B_cross(c:Collection, lim:int, step:int, fig, root):
     '''
     Helper to visualize the B field of a current in a 2D space (take a cross section).
     The cross section will go from the origin for now
@@ -37,9 +37,6 @@ def graph_coil_B_cross(c:Collection, lim:int, step:int):
     lim = axis boundaries of the graph
     step = the total step count of the graph (higher = more points)
     '''
-    # construct figure
-    fig = plt.figure(figsize=(10,5))
-    ax = fig.add_subplot(111)
 
     # construct grid for the cross section
     x = np.linspace(-lim, lim, step) # these represent LOCAL x and y for the 2D graph, not the 3D space.
@@ -66,13 +63,10 @@ def graph_coil_B_cross(c:Collection, lim:int, step:int):
     #print(U[71][156], V[71][156])
 
     
-    stream = ax.streamplot(X, Z, U, V, color= Bamp, density=1)
+    stream = fig.streamplot(X, Z, U, V, color= Bamp, density=1)
     #stream = ax.streamplot(X, Z, U, V, color= Bamp, density=5, norm=colors.LogNorm(vmin = Bamp.min(), vmax = Bamp.max()))
-    fig.colorbar(stream.lines)
+    root.colorbar(stream.lines)
     
-    # ru-veal
-    plt.show()
-
 
 # This is to show that we can get the coil center coordinates from the magpy current's position property. 
 # This way, we can create a series of points on the perimeter of the coils to function as point charges for electric field calculations.
@@ -166,9 +160,10 @@ def graph_trajectory(lim, data):
     #df = df[df["id"] == 0]
 
     # create the graph to add to
-    fig1 = plt.figure(figsize=(10, 20))
-    traj = fig1.add_subplot(1,2,1, projection='3d')
-    efig = fig1.add_subplot(1,2,2)
+    fig1 = plt.figure(figsize=(20, 10))
+    traj = fig1.add_subplot(2,2,1, projection='3d')
+    efig = fig1.add_subplot(2,2,3)
+    bfig = fig1.add_subplot(2,2,4)
     #traj = fig1.add_subplot(2,2,1, projection='3d')
     #energy = fig1.add_subplot(2,2,2)
     #energy2 = fig1.add_subplot(2,2,3)
@@ -193,7 +188,7 @@ def graph_trajectory(lim, data):
         print(v.shape)
 
         # loss logic
-        vcrossmag, vcrossmagD1, vcrossmagD2 = CalculateLoss(vels=v, bs=b)
+        #vcrossmag, vcrossmagD1, vcrossmagD2 = CalculateLoss(vels=v, bs=b)
 
 
         # trajectory logic
@@ -219,6 +214,7 @@ def graph_trajectory(lim, data):
         # plot everything
         traj.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
         graph_E_X(3, 100, efig)
+        graph_coil_B_cross(c, 3, 100, bfig, fig1)
         #traj.add_collection(lines)
 
         #energy.plot(vcrossmag[:-1])
