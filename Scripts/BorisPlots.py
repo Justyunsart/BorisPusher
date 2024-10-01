@@ -19,6 +19,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import plotly.graph_objects as go
 
 from MakeCurrent import current as c
+from MakeCurrent import A, B
 
 from math import pi, cos, sin
 
@@ -250,9 +251,6 @@ def graph_E_X(lim:int, step:int, subplot):
 
     # construct grid for the cross section
     x = np.linspace(-lim, lim, step) # these represent LOCAL x and y for the 2D graph, not the 3D space.
-
-    A = -1
-    B = .8
 
     E = np.multiply(A * np.exp(-(x / B)** 4), (x/B)**15)
 
