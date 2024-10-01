@@ -37,6 +37,9 @@ a = 5 * 10e5 # current in terms of A
 dia = 2. # coil diameter
 d = 2. # coil placement
 
+A = -1
+B = .1
+
 ###########
 # CURRENT #
 ###########

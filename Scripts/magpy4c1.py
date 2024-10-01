@@ -15,7 +15,7 @@ import pandas as pd
 from PusherClasses import particle
 from PusherClasses import GetCurrentTrace, CreateOutput, CalcPtE
 from MakeCurrent import current as c
-from MakeCurrent import dia
+from MakeCurrent import dia, A, B
 ## Calculations
 import numpy as np
 import magpylib as magpy
@@ -65,9 +65,6 @@ accel = None
 Calculates the E Field at point 'p' from the list of charge source coordinates given.
 '''
 def EfieldX(p:np.ndarray):
-    A = -1
-    #B = 1.44
-    B = .8
 
     E = np.multiply(A * np.exp(-(p[0] / B)** 4), (p[0]/B)**15)
     return np.array([E,0,0])
