@@ -112,7 +112,8 @@ def borisPush(id:int):
                             step = 0)
 
 
-    E = np.array([0., 0., 0.])
+    #E = np.array([-9.5e5, 0., 0])
+    #Bf = np.array([0., 0., 1])
 
     # Step 2: do the actual boris logic
     for time in range(1, num_points + 1): # time: step number

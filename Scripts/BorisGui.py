@@ -4,6 +4,7 @@ import tkinter as tk
 from GuiHelpers import *
 from functools import partial
 from PusherClasses import EfOptions, BfOptions
+from CurrentGuiClasses import EntryTable, CircleCurrentConfig
 
 #######
 # GUI #
@@ -388,7 +389,7 @@ tabControl.pack(expand=1, fill="both")
 #    w.grid_configure(padx=5,pady=5)
 
 #TODO: IMPLEMENT CURRENT CONFIG WITH GUI
-'''
+
 #===========================================================================================#
 ########################
 # CURRENT MANIPULATION #
@@ -404,6 +405,12 @@ toplevel = tk.Toplevel(root)
 toplevel_offsetx, toplevel_offsety = root.winfo_x() + root.winfo_width(), root.winfo_y()
 toplevel.geometry(f"+{toplevel_offsetx}+{toplevel_offsety}")
 
+CurrentFrame = tk.LabelFrame(toplevel, text="Configure Current")
+CurrentFrame.grid(row = 0, padx=10, pady=10)
+
+table = EntryTable(CurrentFrame, CircleCurrentConfig)
+
+'''
 #------------#
 # CONTAINERS # - FRAMES
 #------------#

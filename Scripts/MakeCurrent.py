@@ -33,12 +33,19 @@ def Helmholtz(a, dia, d):
 ##############
 # PARAMETERS #
 ##############
-a = 5 * 10e5 # current in terms of A
+a = 7 * 10e5 # current in terms of A
 dia = 2. # coil diameter
 d = 2. # coil placement
 
-A = -1
-B = .1
+#A = -1e10
+#A= -1e5
+#A= -1e8
+#A=-1
+A = -10000000
+#B = 1.37
+B = .5
+#B = .25
+#B = .125
 
 ###########
 # CURRENT #
