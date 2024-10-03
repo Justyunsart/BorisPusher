@@ -4,7 +4,7 @@ import tkinter as tk
 from GuiHelpers import *
 from functools import partial
 from PusherClasses import EfOptions, BfOptions
-from CurrentGuiClasses import EntryTable, CircleCurrentConfig
+from CurrentGuiClasses import CurrentEntryTable, CircleCurrentConfig
 
 #######
 # GUI #
@@ -408,7 +408,7 @@ toplevel.geometry(f"+{toplevel_offsetx}+{toplevel_offsety}")
 CurrentFrame = tk.LabelFrame(toplevel, text="Configure Current")
 CurrentFrame.grid(row = 0, padx=10, pady=10)
 
-table = EntryTable(CurrentFrame, CircleCurrentConfig)
+table = CurrentEntryTable(CurrentFrame, CircleCurrentConfig)
 
 '''
 #------------#
