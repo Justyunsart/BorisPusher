@@ -98,15 +98,16 @@ class EntryTable:
 
         # Row index = self.entry index
         # Column index = field index
-        info = entry.grid_info()
+        widget = entry.widget
+        info = widget.grid_info()
         rowInd = info["row"] - 1    # minus one to account for the first row being titles, var names
         colInd = info["column"]
 
         # Now we extract the newly edited value to allow for examination.
-        entryValue = entry.get()
+        entryValue = widget.get()
         print(self.GetEntries(), rowInd, colInd, entryValue)
         
-        if(entry.isNum):
+        if(widget.isNum):
             self.GetEntries()[rowInd].__setattr__(self.fields[colInd], float(entryValue))
             print(self.GetEntries()[rowInd])
         return True
@@ -121,16 +122,12 @@ class EntryTable:
 
         for i in range(self.numcols):
             # create the respective entry box
-            self.entry = OnlyNumEntry(self.frame1,
-                                  validate="key")
+            self.entry = OnlyNumEntry(self.frame1)
 
             # populate entry with class default values
             self.entry.insert(0, defvals[i])
             self.entry.grid(row = len(self.entries), column=i)
-            self.entry.config(validatecommand=
-                              partial(self.EntryValidateCallback, entry=self.entry))
-    
-
+            self.entry.bind_class("OnlyNumEntry", "<Key>", self.EntryValidateCallback)
 
 class CurrentEntryTable(EntryTable):
     '''
@@ -180,11 +177,22 @@ class CurrentEntryTable(EntryTable):
         
         show(collection, canvas=self.plot)
 
-class OnlyNumEntry(tk.Entry):
-    def __init__(self, master=None, **kwargs):
+class OnlyNumEntry(tk.Entry, object):
+    def __init__(self, master, **kwargs):
+
+        # other initialization
         self.var = tk.StringVar(master)
         self.isNum = False
         tk.Entry.__init__(self, master, textvariable=self.var, **kwargs)
+
+        # event handling - make sure this class is included in bindtags
+        btags = list(self.bindtags())
+
+        btagInd = btags.index("Entry") + 1 # make this class's events go after the base class, so that we're working with the updated values
+        btags.insert(btagInd, "OnlyNumEntry")
+        self.bindtags(tuple(btags))
+
+        # add trace
         self.var.trace_add('write', self.validate)
 
     def validate(self, *args):
