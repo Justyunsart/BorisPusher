@@ -11,12 +11,12 @@ from magpylib import Collection
 # creates a square box of Loop coils
 def Circle(a, dia, d, gap):
     # current Loop creation, superimpose Loops and their fields
-    s1 = C(current=a, diameter=dia).move([-(d/2)-gap,0,0]).rotate_from_angax(90, [0, 1, 0])
-    s2 = C(current=-a, diameter=dia).move([(d/2)+gap,0,0]).rotate_from_angax(90, [0, 1, 0])
-    s3 = C(current=-a, diameter=dia).move([0,-(d/2)-gap,0]).rotate_from_angax(90, [1, 0, 0])
-    s4 = C(current=a, diameter=dia).move([0,(d/2)+gap,0]).rotate_from_angax(90, [1, 0, 0])
-    s5 = C(current=a, diameter=dia).move([0,0,-(d/2)-gap]).rotate_from_angax(90, [0, 0, 1])
-    s6 = C(current=-a, diameter=dia).move([0,0,(d/2)+gap]).rotate_from_angax(90, [0, 0, 1])
+    s1 = C(current=a, diameter=dia).move([-(d)-gap,0,0]).rotate_from_angax(90, [0, 1, 0])
+    s2 = C(current=-a, diameter=dia).move([(d)+gap,0,0]).rotate_from_angax(90, [0, 1, 0])
+    s3 = C(current=-a, diameter=dia).move([0,-(d)-gap,0]).rotate_from_angax(90, [1, 0, 0])
+    s4 = C(current=a, diameter=dia).move([0,(d)+gap,0]).rotate_from_angax(90, [1, 0, 0])
+    s5 = C(current=a, diameter=dia).move([0,0,-(d)-gap]).rotate_from_angax(90, [0, 0, 1])
+    s6 = C(current=-a, diameter=dia).move([0,0,(d)+gap]).rotate_from_angax(90, [0, 0, 1])
 
     c = Collection(s1,s2,s3,s4,s5,s6, style_color='black')
     return c
@@ -24,8 +24,8 @@ def Circle(a, dia, d, gap):
 # helmholtz setup for a test
 def Helmholtz(a, dia, d):
     # helmholtz test
-    s7 = C(current=a, diameter=dia).move([-(d/2),0,0]).rotate_from_angax(90, [0, 1, 0])
-    s8 = C(current=a, diameter=dia).move([(d/2),0,0]).rotate_from_angax(90, [0, 1, 0])
+    s7 = C(current=a, diameter=dia).move([-(d),0,0]).rotate_from_angax(90, [0, 1, 0])
+    s8 = C(current=a, diameter=dia).move([(d),0,0]).rotate_from_angax(90, [0, 1, 0])
 
     c = Collection (s7, s8)
     return c
@@ -33,9 +33,10 @@ def Helmholtz(a, dia, d):
 ##############
 # PARAMETERS #
 ##############
-a = 7 * 10e5 # current in terms of A
-dia = 2. # coil diameter
-d = 2. # coil placement
+a = 2.0215 * 10e7 # current in terms of A
+dia = 2 # coil diameter
+d = 1.5 # coil placement
+gap = 0.
 
 #A = -1e10
 #A= -1e5
@@ -56,5 +57,5 @@ current: var that references a magpylib current/ collection object. This is pass
 Note:
 Do not change the name of the var current; only change the function it calls. This is because the var is referenced by name.
 '''
-#current = Circle(a, dia, d, gap)
-current = Helmholtz(a, dia, d * 2) # mirror, since distance is far enough to not make helmholtz
+current = Circle(a, dia, d, gap)
+#current = Helmholtz(a, dia, d) # mirror, since distance is far enough to not make helmholtz

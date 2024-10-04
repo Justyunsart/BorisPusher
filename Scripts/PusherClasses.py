@@ -262,3 +262,16 @@ def CalcPtE(obs:np.ndarray, pt:np.ndarray, q:float):
     E1 = np.sum(E, axis=0)
     print(E1)
     return E1
+
+class Config():
+    '''
+    Contains all information used in the simulation. Used to keep track of the parameters used for each dataframe,
+    as well as knowing the previously used configuration.
+
+    Info to track:
+        - path to initial conditions file
+        - Numsteps
+        - Sim Time
+        - Coil setup
+    '''
+

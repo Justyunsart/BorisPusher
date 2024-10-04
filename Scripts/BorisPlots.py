@@ -65,7 +65,10 @@ def graph_coil_B_cross(c:Collection, lim:int, step:int, fig, root):
 
     
     stream = fig.streamplot(X, Z, U, V, color= Bamp, density=1)
-    #stream = ax.streamplot(X, Z, U, V, color= Bamp, density=5, norm=colors.LogNorm(vmin = Bamp.min(), vmax = Bamp.max()))
+    #stream = fig.streamplot(X, Z, U, V, color= Bamp, density=2, norm=colors.LogNorm(vmin = Bamp.min(), vmax = Bamp.max()))
+    fig.set_xlabel("X-axis (m)")
+    fig.set_ylabel("Z-axis (m)")
+    fig.set_title("Magnetic Field Cross Section on the X-Z plane at Y=0")
     root.colorbar(stream.lines)
     
 
@@ -256,6 +259,18 @@ def graph_E_X(lim:int, step:int, subplot):
 
     subplot.plot(x,E)
 
+def graph_coil_B():
+    fig = plt.figure()
+
+    f1 = fig.add_subplot(121, projection="3d")
+    f2 = fig.add_subplot(122, aspect="equal")
+
+    magpy.show(c, canvas=f1, row=1, col=1)
+    graph_coil_B_cross(c, 3, 100, f2, fig)
+
+    plt.show()
+
+
 #root = str(Path(__file__).resolve().parents[1])
 #outd = root + "/Outputs/boris_500000_20.0_2_(13)/dataframe.json"
 
@@ -269,7 +284,10 @@ def graph_E_X(lim:int, step:int, subplot):
 #graph_coil_B_cross(c=c, lim=3, step=200)
 #print(c.getB((0,0,0)))
 #print(c.getB((-2,0,2)))
+#graph_coil_B()
 
+#if __name__ == "__main__":
+    #graph_coil_B()
 
 '''
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):

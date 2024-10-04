@@ -113,6 +113,7 @@ def borisPush(id:int):
 
 
     #E = np.array([-9.5e5, 0., 0])
+    E = np.array([0, 0., 0])
     #Bf = np.array([0., 0., 1])
 
     # Step 2: do the actual boris logic
@@ -120,7 +121,7 @@ def borisPush(id:int):
         x = np.array([out[time - 1].px, out[time - 1].py, out[time - 1].pz])
         v = np.array([out[time - 1].vx, out[time - 1].vy, out[time - 1].vz])
         #print("x for particle: ", id, " at time ", time, ": ", x)
-        E = EfieldX(x)
+        #E = EfieldX(x)
         Bf = Bfield(x)
         #Bf = np.array([0.0, 0.0, 1])
         out[time - 1].bx, out[time - 1].by,out[time - 1].bz = Bf # update B field for particle we just found

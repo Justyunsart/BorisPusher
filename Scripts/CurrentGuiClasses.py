@@ -9,7 +9,6 @@ import tkinter as tk
 from dataclasses import dataclass, asdict
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from functools import partial
 
 from magpylib import show
 from magpylib import Collection
@@ -53,6 +52,8 @@ class EntryTable:
         self.data = dataclass
         self.fields = list(dataclass.__dataclass_fields__.keys())
         self.fieldDefaults = list(dataclass.__dataclass_fields__.values())
+        self.fieldTypes = type(self.fieldDefaults)
+
         self.numcols = len(self.fields)
 
 
@@ -175,6 +176,7 @@ class CurrentEntryTable(EntryTable):
             c.rotate_from_angax(circle.RotationAngle, circle.RotationAxis)
             collection.add(c)
         
+        self.plot.cla()
         show(collection, canvas=self.plot)
 
 class OnlyNumEntry(tk.Entry, object):
@@ -218,5 +220,3 @@ class CircleCurrentConfig:
 
     RotationAngle: float = 0.
     RotationAxis: str = "x"
-
-
