@@ -6,7 +6,8 @@ It's basically a container for parameters to create magpylib objects
 '''
 
 import tkinter as tk
-from dataclasses import dataclass, asdict
+from tkinter import ttk
+from dataclasses import dataclass, field
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -52,7 +53,6 @@ class EntryTable:
         self.data = dataclass
         self.fields = list(dataclass.__dataclass_fields__.keys())
         self.fieldDefaults = list(dataclass.__dataclass_fields__.values())
-        self.fieldTypes = type(self.fieldDefaults)
 
         self.numcols = len(self.fields)
 
@@ -117,18 +117,19 @@ class EntryTable:
         '''
         Creates a new row for the entry table
         '''
-        entry = self.data()
-        defvals = list(asdict(entry).values())
-        self.GetEntries().append(entry)
+        row = self.data(self.frame1)
+        
+        self.GetEntries().append(row)
 
-        for i in range(self.numcols):
+        col = 0
+        for i in row:
             # create the respective entry box
-            self.entry = OnlyNumEntry(self.frame1)
-
+            self.widget = i.paramWidget
+            
             # populate entry with class default values
-            self.entry.insert(0, defvals[i])
-            self.entry.grid(row = len(self.entries), column=i)
-            self.entry.bind_class("OnlyNumEntry", "<Key>", self.EntryValidateCallback)
+            self.widget.grid(row = len(self.entries), column = col)
+            col += 1
+            #self.entry.bind_class("OnlyNumEntry", "<Key>", self.EntryValidateCallback)
 
 class CurrentEntryTable(EntryTable):
     '''
@@ -205,18 +206,41 @@ class OnlyNumEntry(tk.Entry, object):
             self.isNum = False
 
 
+class EntryTableParam:
+    paramDefault: None
+    paramWidget: callable
+
+    def __init__(self, default, widget=OnlyNumEntry, **kwargs):
+        self.paramDefault = default
+        self.paramWidget = widget(**kwargs)
+
 @dataclass
-class CircleCurrentConfig:
+class CircleCurrentConfig():
     '''
     An object created from (I'm assuming) a 'create new current' button.
     Assume that this is like an entry object for a scrollbar table.
     '''
-    PosX: float = 0.
-    PosY: float = 0.
-    PosZ: float = 0.
+    PosX: EntryTableParam = field(init=False)
+    PosY: EntryTableParam = field(init=False)
+    PosZ: EntryTableParam = field(init=False)
 
-    Amp: float = 1e5
-    Diameter: float = 1.
+    Amp: EntryTableParam = field(init=False)
+    Diameter: EntryTableParam = field(init=False)
 
-    RotationAngle: float = 0.
-    RotationAxis: str = "x"
+    RotationAngle: EntryTableParam = field(init=False)
+    RotationAxis: EntryTableParam = field(init=False)
+
+    def __init__(self, frame):
+        self.PosX = EntryTableParam(0., master=frame)
+        self.PosY = EntryTableParam(0., master=frame)
+        self.PosZ = EntryTableParam(0., master=frame)
+
+        self.Amp = EntryTableParam(1e5, master=frame)
+        self.Diameter = EntryTableParam(1, master=frame)
+
+        self.RotationAngle = EntryTableParam(0., master=frame)
+        self.RotationAxis = EntryTableParam('x', ttk.Combobox, textvariable=tk.StringVar(), master=frame, values=["x", "y", "z"])
+        
+    def __iter__(self):
+        for val in self.__dict__.values():
+            yield val
