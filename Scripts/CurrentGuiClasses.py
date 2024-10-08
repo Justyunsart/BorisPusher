@@ -10,6 +10,7 @@ from tkinter import ttk
 from dataclasses import dataclass, field
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from functools import partial
 
 from magpylib import show
 from magpylib import Collection
@@ -34,8 +35,9 @@ class EntryTable:
     fields: list
 
     # metadata
-    entries: list
+    entries: list # contains the data extracted from each widget.
     data: dataclass
+    widgets: list # reference to all the grid widgets created in functions
 
     # FIELD GETTERS
     def GetEntries(self):
@@ -48,6 +50,7 @@ class EntryTable:
         # keep reference to the master 
         self.master = master
         self.entries = []
+        self.widgets = []
 
         # read the fields from the supplied dataclass.
         self.data = dataclass
@@ -74,7 +77,7 @@ class EntryTable:
             self.titleLabel = tk.Label(self.frame1,
                                        text=str(self.fields[i]))
             self.titleLabel.grid(row=0, column=i)
-        self.NewEntry() # add one empty row for the start
+        self.NewEntry(isInit=False) # add one empty row for the start
 
         # Button to add new rows
         self.addButton = tk.Button(self.frame,
@@ -106,30 +109,72 @@ class EntryTable:
 
         # Now we extract the newly edited value to allow for examination.
         entryValue = widget.get()
-        print(self.GetEntries(), rowInd, colInd, entryValue)
         
-        if(widget.isNum):
-            self.GetEntries()[rowInd].__setattr__(self.fields[colInd], float(entryValue))
-            print(self.GetEntries()[rowInd])
+        self.GetEntries()[rowInd][self.fields[colInd]] = entryValue
         return True
 
-    def NewEntry(self):
+    def DelEntry(self, button):
+        '''
+        Deletes its respective row of the entry table, as well as its data in self.entries.
+        '''
+
+        row = button.grid_info()['row'] # the row to remove
+
+        print(self.frame1.grid_size())
+        print(row)
+        for widget in self.frame1.grid_slaves(row=row):
+            widget.destroy()
+
+        widgets = self.frame1.grid_slaves() # every widget in the frame
+        
+        for widget in widgets:
+            widgetRow = widget.grid_info()['row']
+            if widgetRow > row:
+                widget.grid(row=widgetRow-1, column=widget.grid_info()['column'])
+    
+        self.widgets.pop(row-1)
+        self.entries.pop(row-1)
+        print(self.frame1.grid_size())
+
+
+    
+    def NewEntry(self, isInit=True):
         '''
         Creates a new row for the entry table
         '''
         row = self.data(self.frame1)
-        
-        self.GetEntries().append(row)
 
+        r = self.frame1.grid_size()[1]
+        dict = {} # data extracted from each row
+        rowwidgets = []
         col = 0
         for i in row:
             # create the respective entry box
             self.widget = i.paramWidget
-            
+            dict[self.fields[col]] = self.widget.get()
             # populate entry with class default values
-            self.widget.grid(row = len(self.entries), column = col)
+            self.widget.grid(row = r, column = col)
+            rowwidgets.append(self.widget)
+
+            match self.widget:
+                case OnlyNumEntry():
+                    self.widget.bind_class("OnlyNumEntry", "<Key>", self.EntryValidateCallback)
+                case ttk.Combobox():
+                    self.widget.bind("<<ComboboxSelected>>", self.EntryValidateCallback)
+
             col += 1
-            #self.entry.bind_class("OnlyNumEntry", "<Key>", self.EntryValidateCallback)
+
+        # also add delete button at the far right
+        self.delButton = tk.Button(self.frame1, text="Delete")
+        rowwidgets.append(self.delButton)
+        self.delButton.grid(row=r, column = col)
+        self.delButton.config(command=partial(self.DelEntry, self.delButton))
+
+        # update metadata containers
+        self.entries.append(dict)
+        self.widgets.append(rowwidgets)
+        #print(self.widgets)
+        return isInit
 
 class CurrentEntryTable(EntryTable):
     '''
@@ -137,22 +182,17 @@ class CurrentEntryTable(EntryTable):
 
     I'll probably also include the graph widget in this class for simplicity.
     '''
+    collection = Collection()
+
     def __init__(self, master, dataclass):
         super().__init__(master, dataclass)
-        # Graph update button; can replace with validate callbacks later
-        self.graphButton = tk.Button(self.frame,
-                                     text="Graph",
-                                     command=self.GraphCoils)
-        self.graphButton.grid(row=1, column=1)
-
-        # Frame for the graph: sits below the entry table
-        self.frame2 = tk.LabelFrame(self.frame,
-                                    text="Graph")
-        self.frame2.grid(row=2, column=0)
-
         #--------#
         # FIGURE #
         #--------#
+        self.frame2 = tk.LabelFrame(self.master,
+                                   text="Graph")
+        self.frame2.grid(row=1, column=0)
+
         self.fig = plt.figure(figsize=(10, 10))
         self.plot = self.fig.add_subplot(1,1,1, projection="3d")
         
@@ -160,25 +200,43 @@ class CurrentEntryTable(EntryTable):
                                         master = self.frame2)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=0, column=0)
-    
+
+        # draw canvas for the first time
+        # is it inelegant to hard code initialization event order like this? maybe
+        # toobad!
+        self.GraphCoils()
+
     def GraphCoils(self):
         '''
         1. Extracts the data from self.entries
         2. Creates magpylib circle current objects from this data
         3. Graphs these created coils
         '''
-        collection = Collection()
-        for circle in self.GetEntries():
-            pos = [circle.PosX, circle.PosY, circle.PosZ]
-            c = Circle(current=circle.Amp,
+        self.collection = Collection()
+        #print(self.GetEntries())
+        for row in self.GetEntries():
+            pos = [float(row["PosX"]), float(row["PosY"]), float(row["PosZ"])]
+            c = Circle(current=float(row["Amp"]),
                                    position=pos,
-                                   diameter = circle.Diameter
+                                   diameter = float(row["Diameter"])
                                    )
-            c.rotate_from_angax(circle.RotationAngle, circle.RotationAxis)
-            collection.add(c)
+            c.rotate_from_angax(float(row["RotationAngle"]), row["RotationAxis"])
+            self.collection.add(c)
         
         self.plot.cla()
-        show(collection, canvas=self.plot)
+        show(self.collection, canvas=self.plot)
+    
+    def EntryValidateCallback(self, entry):
+        '''
+        override of base class function, graphs the configuration upon each change.
+        '''
+        super().EntryValidateCallback(entry)
+        self.GraphCoils()
+    
+    def NewEntry(self, isInit = True):
+        check = super().NewEntry(isInit= isInit)
+        if(check):
+            self.GraphCoils()
 
 class OnlyNumEntry(tk.Entry, object):
     def __init__(self, master, **kwargs):
@@ -213,6 +271,25 @@ class EntryTableParam:
     def __init__(self, default, widget=OnlyNumEntry, **kwargs):
         self.paramDefault = default
         self.paramWidget = widget(**kwargs)
+        self._SetDefault()
+    
+    def _SetDefault(self):
+        match self.paramWidget:
+            case OnlyNumEntry():
+                self.paramWidget.insert(0, self.paramDefault)
+            case ttk.Combobox():
+                self.paramWidget["values"] = ["x",
+                                              "y",
+                                              "z"]
+                self.paramWidget.current(self.paramDefault)
+
+    def Get(self, isNum=True):
+        if isNum:
+            return float(self.paramWidget.get())
+        else:
+            return self.paramWidget.get()
+
+
 
 @dataclass
 class CircleCurrentConfig():
@@ -239,7 +316,7 @@ class CircleCurrentConfig():
         self.Diameter = EntryTableParam(1, master=frame)
 
         self.RotationAngle = EntryTableParam(0., master=frame)
-        self.RotationAxis = EntryTableParam('x', ttk.Combobox, textvariable=tk.StringVar(), master=frame, values=["x", "y", "z"])
+        self.RotationAxis = EntryTableParam(0, ttk.Combobox, master=frame, state="readonly")
         
     def __iter__(self):
         for val in self.__dict__.values():
