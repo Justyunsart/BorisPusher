@@ -5,6 +5,7 @@ from GuiHelpers import *
 from functools import partial
 from PusherClasses import EfOptions, BfOptions
 from CurrentGuiClasses import CurrentEntryTable, CircleCurrentConfig
+from BorisGuiClasses import ConfigMenuBar, MainWindow
 
 #######
 # GUI #
@@ -12,28 +13,29 @@ from CurrentGuiClasses import CurrentEntryTable, CircleCurrentConfig
 '''
 Testing the code by changing parameters and numsteps and everything became too cumbersone, so I decided to
 bite the bullet and create some GUI for it. 
+
+This is the main hub for the GUI, with many helper files providing classes and functions.
 '''
 
 # Application Window
 root = Tk()
 root.title("Configure Sim")
 
-# Content Frame
-#    > Holds contents of the UI
-# mainframe = ttk.Frame(root, padding = "3 3 12 12")
-# mainframe.grid(column = 0, row = 0, sticky = (N, W, E, S))
-# root.columnconfigure(0, weight = 1)
-# root.rowconfigure(0, weight = 1)
-
-#rframe = ttk.Frame(root, padding = "3 3 12 12")
-#rframe.grid(column=1, row=0, sticky = (N, W, E, S))
+# main window
+Main = MainWindow(root)
+Main.grid(row=0, column=0)
 
 #======#
 # MENU #
 #======#
 
+# add the toolbar
+mainToolbar = ConfigMenuBar(Main)
+
+
 # PLOT OR CALCULATE?
-tabControl=ttk.Notebook(root, padding="4 12 12 4", width=800, height=400)
+tabControl=ttk.Notebook(Main, padding="4 12 12 4", width=800, height=400)
+tabControl.grid(row=0, column=0)
 
 ## Create tab objects
 tab_calc = tk.Frame(tabControl)
@@ -45,19 +47,6 @@ tab_plot = ttk.Frame(tabControl, padding="4 12 12 4")
 tab_plot.columnconfigure(0, weight = 1)
 tab_plot.rowconfigure(1, weight = 1)
 
-# CREATION
-menubar = Menu(root)
-
-# FILE TAB
-file = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Edit", menu=file)
-## commands
-file.add_command(label="Preferences")
-
-## helpers
-def PrefCallback():
-    # TODO: Create a popup window that allows users to set default output dirs and other options.
-    return 0
 
 
 # PLOT GUI #
