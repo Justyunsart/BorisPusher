@@ -4,6 +4,7 @@ from tkinter import ttk
 from BorisPlots import graph_trajectory
 
 from PrefFile import PrevFiles
+import pandas as pd
 
 
 
@@ -62,17 +63,6 @@ def FileCallback(do_file:bool, button_restart_file:ttk.Button):
         button_restart_file.configure(state = "enabled")
         return True
     
-# Run the simulation if you press calculate
-
-# TODO: Add functionality for tracking last used conditions
-def CalculateCallback(isRun:BooleanVar, do_file:BooleanVar , root:Tk, inpd:StringVar, name:ttk.Label, dtb:float):
-    isRun.set(True)
-    dtb = dtb
-    do_file.set(do_file.get())
-    if(do_file.get()):
-        inpd.set(name.cget("text"))
-
-    #root.destroy()
 
 '''
 value: the string name of the method of field calculation
@@ -105,3 +95,33 @@ def FieldCallback(event, value:ttk.Combobox, xcontainer:Entry, ycontainer:Entry,
                               text = "0.0")
             zcontainer.config(state="normal",
                               text = "0.0")
+
+def CSV_to_Df(dir, isNum=True):
+    '''
+    A function that will be called in the calculate button's command.
+    Turns the csv data in the particle input file to a workable dataframe.
+
+    dir: path to the file to be read.
+    isNum: a bool that determines if everything should be considered numeric or not.
+    '''
+    # step 1: read the file from the directory.
+    data = pd.read_csv(dir)
+
+    # step 2: numeric checks
+    if (isNum):
+        data = data.apply(pd.to_numeric(errors="coerce"))
+    
+    return data
+
+# Run the simulation if you press calculate
+
+# TODO: Add functionality for tracking last used conditions
+def CalculateCallback(particleDIR):
+    '''
+    When the calculate button is pressed, the GUI passes key information to
+    the backend and starts the simulation.
+    '''
+
+    # Getting the particle data:
+    df = CSV_to_Df(particleDIR)
+    
