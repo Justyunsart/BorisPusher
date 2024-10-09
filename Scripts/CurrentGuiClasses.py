@@ -38,6 +38,7 @@ class EntryTable:
     entries: list # contains the data extracted from each widget.
     data: dataclass
     widgets: list # reference to all the grid widgets created in functions
+    isInit: bool
 
     # FIELD GETTERS
     def GetEntries(self):
@@ -47,6 +48,7 @@ class EntryTable:
     # INITIALIZAION #
     #===============#
     def __init__(self, master, dataclass:dataclass): # initialization function
+        self.isInit = False
         # keep reference to the master 
         self.master = master
         self.entries = []
@@ -66,24 +68,26 @@ class EntryTable:
         # PARENT FRAME FOR ALL CONTENTS
         self.frame = tk.LabelFrame(self.master,
                                    text="EntryTable")
-        self.frame.grid(row=0, column=0)
+        self.frame.grid(row=0, column=0, sticky = "")
 
         # frame for table data
         self.frame1 = tk.Frame(self.frame) 
-        self.frame1.grid(row=0, column=0)
+        self.frame1.grid(row=0, column=0, sticky = "")
 
         # create top row of the data table (name of vars)
         for i in range(self.numcols): 
             self.titleLabel = tk.Label(self.frame1,
                                        text=str(self.fields[i]))
             self.titleLabel.grid(row=0, column=i)
-        self.NewEntry(isInit=False) # add one empty row for the start
+        self.NewEntry() # add one empty row for the start
 
         # Button to add new rows
         self.addButton = tk.Button(self.frame,
                                    text="New Entry",
                                    command=self.NewEntry)
         self.addButton.grid(row=1, column=0)
+
+        self.isInit = True
     
     #===========#
     # CALLBACKS #
@@ -137,7 +141,7 @@ class EntryTable:
         #print(self.frame1.grid_size())
 
     
-    def NewEntry(self, isInit=True, defaults=True, *args):
+    def NewEntry(self, *args, defaults=True):
         '''
         Creates a new row for the entry table
         
@@ -145,17 +149,20 @@ class EntryTable:
         if not creating a default row, you must pass an instance of a dataclass
         with the desired values.
         '''
-        if (defaults):
+        #print(defaults)
+        if (defaults == True):
             row = self.data(self.frame1)
         else:
-            row = args
+            #print("should run when defaults is False")
+            row = args[0]
         #print("row is: ", row)
         r = self.frame1.grid_size()[1]
         dict = {} # data extracted from each row
         rowwidgets = []
         col = 0
         for i in row:
-            #print("the field is: ", i)
+            #print(i)
+            #print("the field is: ", i.paramDefault)
             # create the respective entry box
             self.widget = i.paramWidget
             dict[self.fields[col]] = self.widget.get()
@@ -181,7 +188,6 @@ class EntryTable:
         self.entries.append(dict)
         self.widgets.append(rowwidgets)
         #print(self.widgets)
-        return isInit
 
 
     def ClearTable(self):
@@ -202,12 +208,18 @@ class EntryTable:
         given a list of dataclass objects, populate the table with respective rows.
         Expected to run when files are loaded. therefore, it clears the entry table.
         '''
+        if (not self.isInit):
+            return False
+
         if self.frame1.grid_size()[1] > 1:
+            #print("clearing table")
             self.ClearTable()
 
         for row in list:
             #print("setrows for: ", row)
             self.NewEntry(row, defaults=False)
+        
+        return True
 
 class CurrentEntryTable(EntryTable):
     '''
@@ -266,8 +278,9 @@ class CurrentEntryTable(EntryTable):
         super().EntryValidateCallback(entry)
         self.GraphCoils()
     
-    def NewEntry(self, isInit = True):
-        check = super().NewEntry(isInit= isInit)
+    def NewEntry(self, *args, defaults=True):
+        super().NewEntry(*args, defaults=True)
+        check = self.isInit
         if(check):
             self.GraphCoils()
 
@@ -277,7 +290,7 @@ class OnlyNumEntry(tk.Entry, object):
         # other initialization
         self.var = tk.StringVar(master)
         self.isNum = False
-        tk.Entry.__init__(self, master, textvariable=self.var, **kwargs)
+        tk.Entry.__init__(self, master, textvariable=self.var, width=10, **kwargs)
 
         # event handling - make sure this class is included in bindtags
         btags = list(self.bindtags())
@@ -303,6 +316,7 @@ class EntryTableParam:
 
     def __init__(self, default, widget=OnlyNumEntry, **kwargs):
         self.paramDefault = default
+        #print (self.paramDefault)
         self.paramWidget = widget(**kwargs)
         self._SetDefault()
     

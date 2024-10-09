@@ -171,7 +171,8 @@ class LabeledEntry():
         self.label.grid(row=row, column=0, columnspan=2, sticky="W")
 
         self.entry = tk.Entry(self.master,
-                              textvariable=self.value)
+                              textvariable=self.value,
+                              **kwargs)
         self.entry.grid(row=row, column=2, columnspan=2, sticky="W")
 
 class Particle_File_Dropdown(FileDropdown):
@@ -202,10 +203,10 @@ class TimeStep_n_NumStep():
         self.frame.grid(row=0, column=0, sticky="W")
         self.master.grid_columnconfigure(0, weight=1)
 
-        self.dt = LabeledEntry(self.frame, val=0.0000001, row=1, title="Timestep (sec): ")
+        self.dt = LabeledEntry(self.frame, val=0.0000001, row=1, title="Timestep (sec): ", width = 10)
         self.dt.value.trace_add("write", self._Total_Sim_Time)
         
-        self.numsteps = LabeledEntry(self.frame, val=50000, row=0, title="Num Steps: ")
+        self.numsteps = LabeledEntry(self.frame, val=50000, row=0, title="Num Steps: ", width = 10)
         self.numsteps.value.trace_add("write", self._Total_Sim_Time)
 
         # display the simulation time
@@ -244,26 +245,38 @@ class ParticlePreview(EntryTable):
         super().__init__(master, dataclass)
         self.Read_Data()
     
-    def NewEntry(self, isInit=True, defaults=False, *args):
+    def NewEntry(self, *args, defaults=True):
         '''
         Suppress creating a new row on initialization.
         '''
-        if(isInit):
-            super().NewEntry(self)
+        if(self.isInit):
+            #print("Creating new entry", defaults, *args)
+            super().NewEntry(*args, defaults = defaults)
         else:
+            #print("suppressing New Entry")
             return False
     
     def Read_Data(self):
         '''
         look at the dir of the selected input file, then turn it into rows on the entry table
         '''
+        #print("reading data")
         data = CSV_to_Df(self.fileWidget.PATH).values.tolist() # ideally, each sublist will be a row of params for file_particle
+        #print(data)
 
         particles = []
         for row in data:
-            particle = file_particle(self.master, row[0], row[1], row[2], row[3], row[4], row[5])
+            particle = file_particle(self.frame1, 
+                                     px = row[0], 
+                                     py = row[1], 
+                                     pz = row[2], 
+                                     vx = row[3], 
+                                     vy = row[4], 
+                                     vz = row[5])
+            #print(particle.py.paramDefault)
             particles.append(particle)
         
+        #print(particles)
         self.SetRows(particles)
 
 

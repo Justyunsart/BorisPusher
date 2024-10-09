@@ -22,7 +22,9 @@ root.title("Configure Sim")
 
 # main window
 Main = MainWindow(root)
-Main.grid(row=0, column=0)
+Main.grid(row=0, column=0, sticky=N+W+E)
+Main.grid_rowconfigure(0, weight=1)
+Main.grid_columnconfigure(0, weight=1)
 
 #======#
 # MENU #
@@ -39,21 +41,22 @@ DIR_Coil = Main_PrefFiles.DIR_coil
 #print(DIR_Particle)
 
 # PLOT OR CALCULATE?
-tabControl=ttk.Notebook(Main, padding="4 12 12 4", width=800, height=400)
-tabControl.grid(row=0, column=0)
+tabControl=ttk.Notebook(Main, padding="4 12 12 4")
+tabControl.grid(row=0, column=0, sticky=N+W+E+S)
 
 ## Create tab objects
 tab_calc = tk.Frame(tabControl)
 tab_calc.grid(column = 0, row = 0, sticky = (N, W, E, S))
-tab_calc.columnconfigure(0, weight = 1)
-tab_calc.rowconfigure(1, weight = 1)
+tab_calc.grid_columnconfigure(0, weight = 1)
+tab_calc.grid_rowconfigure(0, weight = 1)
 
 tab_plot = ttk.Frame(tabControl, padding="4 12 12 4")
-tab_plot.columnconfigure(0, weight = 1)
-tab_plot.rowconfigure(1, weight = 1)
+tab_plot.grid_columnconfigure(0, weight = 1)
+tab_plot.grid_rowconfigure(0, weight = 1)
 
 
-
+tabControl.grid_rowconfigure(0, weight=1)
+tabControl.grid_columnconfigure(0, weight=1)
 # PLOT GUI #
 #=============#
 # GUI WIDGETS #
@@ -120,7 +123,7 @@ calc_title_LFrame.grid(row=0, column=0, pady=10, padx=10, sticky="NW")
 ### SUB CONTAINERS
 
 CalcContainer = tk.LabelFrame(calc_title_LFrame, bg="gray", text="Parameters")
-CalcContainer.grid(row=3,column=0)
+CalcContainer.grid(row=1,column=0)
 
 
 CalcCheckBoxFrame = tk.Frame(calc_title_LFrame, bg="light gray")
@@ -129,15 +132,18 @@ CalcCheckBoxFrame.grid(row=1, column=0, pady=10, padx=10, sticky="N")
 CalcRestartFileFrame = tk.Frame(calc_title_LFrame)
 CalcRestartFileFrame.grid(row=2, column= 0, pady=10, padx=10)
 
+DropdownFrame = tk.Frame(calc_title_LFrame)
+DropdownFrame.grid(row=0, column=1, sticky="W")
+
 ParticlePreviewFrame = tk.Frame(calc_title_LFrame)
-ParticlePreviewFrame.grid(row=0, column=1, sticky="E")
+ParticlePreviewFrame.grid(row=1, column=1, sticky="W")
 
 CalcTimeStepFrame = tk.LabelFrame(CalcContainer, bg="light gray", text="Time, Step")
 CalcTimeStepFrame.grid(row=0, column=0, pady=5, padx=20)
 
 
 ## Particle condition stuff..
-Combobox_particle_file = Particle_File_Dropdown(CalcRestartFileFrame,
+Combobox_particle_file = Particle_File_Dropdown(DropdownFrame,
                                                 dir=DIR_Particle)
 particlePreview = ParticlePreview(ParticlePreviewFrame,
                                   Combobox_particle_file)
