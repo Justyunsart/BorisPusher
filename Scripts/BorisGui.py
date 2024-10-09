@@ -4,7 +4,7 @@ import tkinter as tk
 from GuiHelpers import *
 from functools import partial
 from PusherClasses import EfOptions, BfOptions
-from CurrentGuiClasses import CurrentEntryTable, CircleCurrentConfig
+from CurrentGuiClasses import *
 from BorisGuiClasses import *
 #######
 # GUI #
@@ -129,6 +129,9 @@ CalcCheckBoxFrame.grid(row=1, column=0, pady=10, padx=10, sticky="N")
 CalcRestartFileFrame = tk.Frame(calc_title_LFrame)
 CalcRestartFileFrame.grid(row=2, column= 0, pady=10, padx=10)
 
+ParticlePreviewFrame = tk.Frame(calc_title_LFrame)
+ParticlePreviewFrame.grid(row=0, column=1, sticky="E")
+
 CalcTimeStepFrame = tk.LabelFrame(CalcContainer, bg="light gray", text="Time, Step")
 CalcTimeStepFrame.grid(row=0, column=0, pady=5, padx=20)
 
@@ -136,6 +139,9 @@ CalcTimeStepFrame.grid(row=0, column=0, pady=5, padx=20)
 ## Particle condition stuff..
 Combobox_particle_file = Particle_File_Dropdown(CalcRestartFileFrame,
                                                 dir=DIR_Particle)
+particlePreview = ParticlePreview(ParticlePreviewFrame,
+                                  Combobox_particle_file)
+#particlePreview.grid(row=0, column=0, padx=10, pady=10)
 
 ## Timestep stuff..
 time_info = TimeStep_n_NumStep(CalcTimeStepFrame)

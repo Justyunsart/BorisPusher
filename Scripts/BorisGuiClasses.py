@@ -5,12 +5,16 @@ Some are general, some are one time use.
 
 import tkinter as tk
 from tkinter import ttk
+from CurrentGuiClasses import EntryTable, file_particle
+from GuiHelpers import CSV_to_Df
+
 
 # file stuff
 from PrefFile import PrefFile
 from pathlib import Path
 import os
 import pickle
+import pandas as pd
 
 class ConfigMenuBar():
     def __init__ (self, master):
@@ -126,16 +130,21 @@ class FileDropdown(ttk.Combobox):
     last = index of the last used file. Defaults to 0 unless overridden.
     '''
     dir:str # path to the folder you want to make its contents a dropdown menu of
+    fileName:tk.StringVar
+
+    PATH:str #the full path to the file.
 
     def __init__(self, master, dir, last=0, **kwargs):
         self.master = master
         self.dir = dir
+        self.fileName = tk.StringVar()
 
         self.dir_contents = self._DIR_to_List()
-        print(self.dir_contents)
+        #print(self.dir_contents)
 
-        super().__init__(master=master, values=self.dir_contents,**kwargs)
+        super().__init__(master=master, values=self.dir_contents, textvariable=self.fileName, **kwargs)
         super().current(last)
+        self.PATH = os.path.join(self.dir, self.fileName.get())
     
     def _DIR_to_List(self):
         files = []
@@ -165,15 +174,15 @@ class LabeledEntry():
                               textvariable=self.value)
         self.entry.grid(row=row, column=2, columnspan=2, sticky="W")
 
-class Particle_File_Dropdown():
+class Particle_File_Dropdown(FileDropdown):
     def __init__(self, master, dir, last=0, **kwargs):
         self.master = master
 
         self.frame = tk.Frame(master=self.master)
         self.frame.grid(row=0, column=0)
 
-        self.dropdown = FileDropdown(self.frame, dir, last, **kwargs)
-        self.dropdown.grid(row=0, column=1)
+        super().__init__(self.frame, dir, last, **kwargs)
+        super().grid(row=0, column=1)
 
         self.label = tk.Label(self.frame,
                               text="Particle Conditions: ")
@@ -225,6 +234,39 @@ class TimeStep_n_NumStep():
             self.simVar.set(str(self.simTime))
             return True
         return False
+
+class ParticlePreview(EntryTable):
+    '''
+    An entrytable for viewing and editing particle initial condition csvs.
+    '''
+    def __init__(self, master, fileWidget, dataclass=file_particle):
+        self.fileWidget = fileWidget
+        super().__init__(master, dataclass)
+        self.Read_Data()
+    
+    def NewEntry(self, isInit=True, defaults=False, *args):
+        '''
+        Suppress creating a new row on initialization.
+        '''
+        if(isInit):
+            super().NewEntry(self)
+        else:
+            return False
+    
+    def Read_Data(self):
+        '''
+        look at the dir of the selected input file, then turn it into rows on the entry table
+        '''
+        data = CSV_to_Df(self.fileWidget.PATH).values.tolist() # ideally, each sublist will be a row of params for file_particle
+
+        particles = []
+        for row in data:
+            particle = file_particle(self.master, row[0], row[1], row[2], row[3], row[4], row[5])
+            particles.append(particle)
+        
+        self.SetRows(particles)
+
+
 
 def _Try_Float(list):
     '''

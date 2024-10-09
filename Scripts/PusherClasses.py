@@ -122,6 +122,7 @@ def CreateOutput(inp, sim_time, num_points, num_parts):
 #===========#
 # Dataclass #
 #===========#
+
 '''
 The struct-like data class that will be stored inside an array (Array of structs data structure, or AoS)
 Makes the data, code more intuitive.

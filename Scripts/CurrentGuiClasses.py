@@ -120,8 +120,8 @@ class EntryTable:
 
         row = button.grid_info()['row'] # the row to remove
 
-        print(self.frame1.grid_size())
-        print(row)
+        #print(self.frame1.grid_size())
+        #print(row)
         for widget in self.frame1.grid_slaves(row=row):
             widget.destroy()
 
@@ -134,25 +134,32 @@ class EntryTable:
     
         self.widgets.pop(row-1)
         self.entries.pop(row-1)
-        print(self.frame1.grid_size())
-
+        #print(self.frame1.grid_size())
 
     
-    def NewEntry(self, isInit=True):
+    def NewEntry(self, isInit=True, defaults=True, *args):
         '''
         Creates a new row for the entry table
+        
+        
+        if not creating a default row, you must pass an instance of a dataclass
+        with the desired values.
         '''
-        row = self.data(self.frame1)
-
+        if (defaults):
+            row = self.data(self.frame1)
+        else:
+            row = args
+        #print("row is: ", row)
         r = self.frame1.grid_size()[1]
         dict = {} # data extracted from each row
         rowwidgets = []
         col = 0
         for i in row:
+            #print("the field is: ", i)
             # create the respective entry box
             self.widget = i.paramWidget
             dict[self.fields[col]] = self.widget.get()
-            # populate entry with class default values
+            
             self.widget.grid(row = r, column = col)
             rowwidgets.append(self.widget)
 
@@ -175,6 +182,32 @@ class EntryTable:
         self.widgets.append(rowwidgets)
         #print(self.widgets)
         return isInit
+
+
+    def ClearTable(self):
+        '''
+        deletes everything from the table. That means, everything 
+        except for the first row of the frame (which has the column information)
+        '''
+        numRows = self.frame1.grid_size()[1]
+
+        for row in reversed(range(1, numRows)):
+            for widget in self.frame1.grid_slaves(row=row):
+                widget.destroy()
+        self.entries = []
+        self.widgets = []
+
+    def SetRows(self, list):
+        '''
+        given a list of dataclass objects, populate the table with respective rows.
+        Expected to run when files are loaded. therefore, it clears the entry table.
+        '''
+        if self.frame1.grid_size()[1] > 1:
+            self.ClearTable()
+
+        for row in list:
+            #print("setrows for: ", row)
+            self.NewEntry(row, defaults=False)
 
 class CurrentEntryTable(EntryTable):
     '''
@@ -318,6 +351,35 @@ class CircleCurrentConfig():
         self.RotationAngle = EntryTableParam(0., master=frame)
         self.RotationAxis = EntryTableParam(0, ttk.Combobox, master=frame, state="readonly")
         
+    def __iter__(self):
+        for val in self.__dict__.values():
+            yield val
+
+@dataclass
+class file_particle:
+    '''
+    dataclass for particles, only used for the csv config files.
+    '''
+    #position
+    px: EntryTableParam = field(init=False)
+    py: EntryTableParam = field(init=False)
+    pz: EntryTableParam = field(init=False)
+
+    # Velocity
+    vx: EntryTableParam = field(init=False)
+    vy: EntryTableParam = field(init=False)
+    vz: EntryTableParam = field(init=False)
+
+    def __init__ (self, frame, px=0., py=0., pz=0., 
+                  vx=0., vy=0, vz=0):
+        self.px = EntryTableParam(px, master=frame)
+        self.py = EntryTableParam(py, master=frame)
+        self.pz = EntryTableParam(pz, master=frame)
+        
+        self.vx = EntryTableParam(vx, master=frame)
+        self.vy = EntryTableParam(vy, master=frame)
+        self.vz = EntryTableParam(vz, master=frame)
+    
     def __iter__(self):
         for val in self.__dict__.values():
             yield val

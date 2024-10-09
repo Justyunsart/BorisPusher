@@ -109,7 +109,7 @@ def CSV_to_Df(dir, isNum=True):
 
     # step 2: numeric checks
     if (isNum):
-        data = data.apply(pd.to_numeric(errors="coerce"))
+        data.apply(pd.to_numeric)
     
     return data
 
