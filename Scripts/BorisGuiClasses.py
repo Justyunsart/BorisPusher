@@ -3,6 +3,7 @@ Contains object-oriented GUI classes for general use.
 '''
 
 import tkinter as tk
+from tkinter import ttk
 
 # file stuff
 from PrefFile import PrefFile
@@ -91,3 +92,31 @@ class MainWindow(tk.Frame):
         as well as last used configs.
         (Just get the DIR where these are stored)
         '''
+
+class FileDropdown(ttk.Combobox):
+    '''
+    Stuff for when you want to change the input files. Instead of searching via
+    the file explorer, this will initialize with all the files in the preferences' input DIRs
+    in a dropdown menu.
+
+
+    last = index of the last used file. Defaults to 0 unless overridden.
+    '''
+    dir:str # path to the folder you want to make its contents a dropdown menu of
+
+    def __init__(self, master, dir, last=0, **kwargs):
+        self.master = master
+        self.dir = dir
+
+        self.dir_contents = self._DIR_to_List()
+
+        super().__init__(master=master, values=[self.dir_contents],**kwargs)
+        self.current(last)
+    
+    def _DIR_to_List(self):
+        files = []
+        for file in os.listdir(self.dir):
+            if os.path.isfile(file):
+                files.append(file)
+        return files
+

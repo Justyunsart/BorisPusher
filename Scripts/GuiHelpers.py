@@ -3,6 +3,7 @@ from tkinter import filedialog
 from tkinter import ttk
 from BorisPlots import graph_trajectory
 
+from PrefFile import PrevFiles
 
 
 
@@ -62,6 +63,8 @@ def FileCallback(do_file:bool, button_restart_file:ttk.Button):
         return True
     
 # Run the simulation if you press calculate
+
+# TODO: Add functionality for tracking last used conditions
 def CalculateCallback(isRun:BooleanVar, do_file:BooleanVar , root:Tk, inpd:StringVar, name:ttk.Label, dtb:float):
     isRun.set(True)
     dtb = dtb
@@ -69,7 +72,7 @@ def CalculateCallback(isRun:BooleanVar, do_file:BooleanVar , root:Tk, inpd:Strin
     if(do_file.get()):
         inpd.set(name.cget("text"))
 
-    root.destroy()
+    #root.destroy()
 
 '''
 value: the string name of the method of field calculation

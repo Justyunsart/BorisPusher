@@ -5,7 +5,7 @@ from GuiHelpers import *
 from functools import partial
 from PusherClasses import EfOptions, BfOptions
 from CurrentGuiClasses import CurrentEntryTable, CircleCurrentConfig
-from BorisGuiClasses import ConfigMenuBar, MainWindow
+from BorisGuiClasses import ConfigMenuBar, MainWindow, FileDropdown
 
 #######
 # GUI #

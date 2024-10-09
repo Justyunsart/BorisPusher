@@ -1,5 +1,7 @@
 '''
 Stores the base class for the structure of the main preferences text file.
+
+Also stores the base class for the structure of the previously used configs.
 '''
 from dataclasses import dataclass
 
@@ -9,3 +11,8 @@ class PrefFile():
     DIR_particle:str
     DIR_coil:str
     DIR_output:str
+
+@dataclass
+class PrevFiles():
+    DIR_particle:str
+    DIR_coil:str
