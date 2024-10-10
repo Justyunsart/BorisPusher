@@ -228,6 +228,28 @@ class EntryTable:
         
         return True
 
+    def GetData(self):
+        '''
+        when called, reads the currently held data points and outputs it in a readable format.
+
+        
+        self.entries is a list of dictionaries; each list entry is a row in the table.
+        Therefore, the format could be: {key = "<entry name>_<n>" : value = <dataclass instance>}
+        
+        
+        Or a nested dictionary. I'm going with nested dictionary. It's easy, and I'm stupid.
+        '''
+        keyBase = str(self.data)
+
+        out = {}
+        for i in range(len(self.entries)):
+            keyName = f'{keyBase}_{i}'
+            value = self.entries[i]
+
+            out[keyName] = value
+
+        return out
+
 class CurrentEntryTable(EntryTable):
     '''
     The Entry Table for currents will have a (probably unique) graph button, so I made a subclass to extend that functionality.
@@ -252,7 +274,7 @@ class CurrentEntryTable(EntryTable):
                                         master = self.frame2)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=0, column=0)
-
+        
         # draw canvas for the first time
         # is it inelegant to hard code initialization event order like this? maybe
         # toobad!
@@ -290,6 +312,10 @@ class CurrentEntryTable(EntryTable):
         check = self.isInit
         if(check):
             self.GraphCoils()
+    
+    def GetData(self):
+        value = self.collection
+        return dict(coils = value)
 
 class OnlyNumEntry(tk.Entry, object):
     def __init__(self, master, **kwargs):

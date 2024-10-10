@@ -15,6 +15,8 @@ bite the bullet and create some GUI for it.
 
 This is the main hub for the GUI, with many helper files providing classes and functions.
 '''
+# Container for all the information to pass to program:
+params = []
 
 # Application Window
 root = Tk()
@@ -154,8 +156,7 @@ time_info = TimeStep_n_NumStep(CalcTimeStepFrame)
 
 ## Caclulate button
 calc_button = tk.Button(tab_calc,
-                        text="Calculate",
-                        command=CalculateCallback)
+                        text="Calculate")
 calc_button.grid(row=2, column=0)
 
 
@@ -182,4 +183,9 @@ toplevel.geometry(f"+{toplevel_offsetx}+{toplevel_offsety}")
 CurrentFrame = tk.LabelFrame(toplevel, text="Configure Current")
 CurrentFrame.grid(row = 0, padx=10, pady=10)
 
-table = CurrentEntryTable(CurrentFrame, CircleCurrentConfig)
+coil_table = CurrentEntryTable(CurrentFrame, CircleCurrentConfig)
+
+# control what classes to send over to the program by adding it to params
+params = [time_info, particlePreview, coil_table]
+
+calc_button.configure(command=partial(CalculateCallback, params)) # update button command after setting up params

@@ -230,6 +230,7 @@ class TimeStep_n_NumStep():
                                  textvariable=self.simVar,
                                  justify="center")
         self.simLabel.grid(row=0, column=0, sticky="")
+
     
     def _Total_Sim_Time(self, *args):
         dt = self.dt.value.get()
@@ -244,6 +245,15 @@ class TimeStep_n_NumStep():
             self.simVar.set(str(self.simTime))
             return True
         return False
+    
+    def GetData(self):
+        '''
+        returns relevant data in a readable format
+        '''
+        data = {}
+        data["numsteps"] = float(self.numsteps.entry.get())
+        data["dt"] = float(self.dt.entry.get())
+        return data
 
 class ParticlePreview(EntryTable):
     '''

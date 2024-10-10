@@ -116,17 +116,27 @@ def CSV_to_Df(dir, isNum=True):
 # Run the simulation if you press calculate
 
 # TODO: Add functionality for tracking last used conditions
-def CalculateCallback(particleDIR):
+def CalculateCallback(params:list):
     '''
     When the calculate button is pressed, the GUI passes key information to
     the backend and starts the simulation.
     '''
+    data = GatherParams(params)
+    print(data)
 
-    # Getting the particle data:
-    df = CSV_to_Df(particleDIR)
 
-def GatherParams():
+def GatherParams(params:list):
     '''
     obtain the current values of all relevant parameters.
+
+    params: the list that keeps a reference to all relevant tkinter objects.
     '''
+    data = {}
+    for widget in params:
+        x = widget.GetData()
+        #print("x is: ", x)
+        data = {**data, **x} # merge the resulting dictionaries to update the original data container
+        #print("data updated to: ", data)
+    return data
+
     
