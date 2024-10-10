@@ -85,7 +85,14 @@ class EntryTable:
         self.addButton = tk.Button(self.frame,
                                    text="New Entry",
                                    command=self.NewEntry)
-        self.addButton.grid(row=1, column=0)
+        self.addButton.grid(row=1, column=0, sticky="")
+
+        # Save as button
+        self.saveButton = tk.Button(
+            self.frame,
+            text="Save As"
+        )
+        self.saveButton.grid(row=1, column=1, sticky="E")
 
         self.isInit = True
     

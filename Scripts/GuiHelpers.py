@@ -124,4 +124,9 @@ def CalculateCallback(particleDIR):
 
     # Getting the particle data:
     df = CSV_to_Df(particleDIR)
+
+def GatherParams():
+    '''
+    obtain the current values of all relevant parameters.
+    '''
     

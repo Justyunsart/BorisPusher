@@ -145,9 +145,9 @@ CalcTimeStepFrame.grid(row=0, column=0, pady=5, padx=20)
 ## Particle condition stuff..
 Combobox_particle_file = Particle_File_Dropdown(DropdownFrame,
                                                 dir=DIR_Particle)
+particleCheckboxes = ParticlePreviewSettings(DropdownFrame)
 particlePreview = ParticlePreview(ParticlePreviewFrame,
                                   Combobox_particle_file)
-#particlePreview.grid(row=0, column=0, padx=10, pady=10)
 
 ## Timestep stuff..
 time_info = TimeStep_n_NumStep(CalcTimeStepFrame)

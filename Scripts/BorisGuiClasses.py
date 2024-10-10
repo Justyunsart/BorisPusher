@@ -8,13 +8,11 @@ from tkinter import ttk
 from CurrentGuiClasses import *
 from GuiHelpers import CSV_to_Df
 
-
 # file stuff
 from PrefFile import PrefFile
 from pathlib import Path
 import os
 import pickle
-import pandas as pd
 
 class ConfigMenuBar():
     def __init__ (self, master):
@@ -255,7 +253,6 @@ class ParticlePreview(EntryTable):
         self.fileWidget = fileWidget
         # add this class as a listener to the data changes.
         fileWidget.PATH.attach(self)
-        #print(fileWidget.PATH._observers)
 
         super().__init__(master, dataclass)
         self.Read_Data()
@@ -298,9 +295,22 @@ class ParticlePreview(EntryTable):
         '''
         rerun read data to reset the table upon the selected input file being changed.
         '''
-        #print("change the table")
         self.Read_Data()
 
+class ParticlePreviewSettings():
+    '''
+    checkmarks for some settings like:
+        > overwrite (checked on by default)
+    '''
+    def __init__(self, master):
+        self.master = master
+
+        self.overwriteCheck = tk.Checkbutton(
+            master=self.master,
+            text="overwrite"
+        )
+        self.overwriteCheck.grid(row=0, column=1, sticky="W")
+        self.overwriteCheck.select() #set on by default
 
 def _Try_Float(list):
     '''
