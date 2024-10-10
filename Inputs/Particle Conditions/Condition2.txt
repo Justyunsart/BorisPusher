@@ -1,2 +1,2 @@
-starting_pos,starting_vel
-0 0 0.,3.4e6 3.2e6 2.8e6
+px, py, pz, vx, vy, vz
+0,0,0.,3.4e6,3.2e6,2.8e6

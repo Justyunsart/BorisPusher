@@ -5,7 +5,7 @@ Some are general, some are one time use.
 
 import tkinter as tk
 from tkinter import ttk
-from CurrentGuiClasses import EntryTable, file_particle
+from CurrentGuiClasses import *
 from GuiHelpers import CSV_to_Df
 
 
@@ -132,19 +132,23 @@ class FileDropdown(ttk.Combobox):
     dir:str # path to the folder you want to make its contents a dropdown menu of
     fileName:tk.StringVar
 
-    PATH:str #the full path to the file.
+    PATH:Data #the full path to the file.
 
     def __init__(self, master, dir, last=0, **kwargs):
         self.master = master
         self.dir = dir
         self.fileName = tk.StringVar()
+        self.PATH = Data('PATH')
 
         self.dir_contents = self._DIR_to_List()
         #print(self.dir_contents)
 
         super().__init__(master=master, values=self.dir_contents, textvariable=self.fileName, **kwargs)
         super().current(last)
-        self.PATH = os.path.join(self.dir, self.fileName.get())
+        self._UpdatePath()
+
+        # also add a trace to update all the field variables when it happens
+        self.fileName.trace_add("write", self._UpdatePath)
     
     def _DIR_to_List(self):
         files = []
@@ -153,6 +157,13 @@ class FileDropdown(ttk.Combobox):
             if os.path.isfile(path):
                 files.append(file)
         return files
+    
+    def _UpdatePath(self, *args):
+        '''
+        there's probably a built in way to do this but oh well.
+        '''
+        #print("updating path to: ", self.fileName.get())
+        self.PATH.data = os.path.join(self.dir, self.fileName.get())
 
 class LabeledEntry():
     '''
@@ -242,6 +253,10 @@ class ParticlePreview(EntryTable):
     '''
     def __init__(self, master, fileWidget, dataclass=file_particle):
         self.fileWidget = fileWidget
+        # add this class as a listener to the data changes.
+        fileWidget.PATH.attach(self)
+        #print(fileWidget.PATH._observers)
+
         super().__init__(master, dataclass)
         self.Read_Data()
     
@@ -261,7 +276,7 @@ class ParticlePreview(EntryTable):
         look at the dir of the selected input file, then turn it into rows on the entry table
         '''
         #print("reading data")
-        data = CSV_to_Df(self.fileWidget.PATH).values.tolist() # ideally, each sublist will be a row of params for file_particle
+        data = CSV_to_Df(self.fileWidget.PATH._data).values.tolist() # ideally, each sublist will be a row of params for file_particle
         #print(data)
 
         particles = []
@@ -278,7 +293,13 @@ class ParticlePreview(EntryTable):
         
         #print(particles)
         self.SetRows(particles)
-
+    
+    def update(self, subject):
+        '''
+        rerun read data to reset the table upon the selected input file being changed.
+        '''
+        #print("change the table")
+        self.Read_Data()
 
 
 def _Try_Float(list):
@@ -292,3 +313,4 @@ def _Try_Float(list):
             return False
     
     return True
+
