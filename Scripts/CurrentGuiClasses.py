@@ -15,6 +15,8 @@ from functools import partial
 from magpylib import show
 from magpylib import Collection
 from magpylib.current import Circle
+import csv
+import os
 
 class EntryTable:
     '''
@@ -95,8 +97,10 @@ class EntryTable:
         self.saveButton.grid(row=1, column=1, sticky="E")
         
         # save as entry field
+        self.saveEntryVal = tk.StringVar()
         self.saveEntry = tk.Entry(
             self.frame,
+            textvariable=self.saveEntryVal,
             width=20
         )
         self.saveEntry.grid(row=1, column=2, sticky="E")
@@ -235,6 +239,42 @@ class EntryTable:
         
         return True
 
+    def _SetSaveEntry(self, name:str, **kwargs):
+        '''
+        whenever this is called, the save entry field gets filled with the currently selected file's name.
+        
+        
+        Because this base class does not include the file dropdown, it's expected that the name parameter is filled
+        by its children. Otherwise, this function will just go unused.
+        '''
+        self.saveEntryVal.set(name)
+        return True
+    
+    def SaveData(self, dir:str):
+        '''
+        after reading where to save (DIR variable from somewhere),
+        look at the value of the nearby entry widget and either create the file (if not present)
+        or overwrite to the already existing file.
+
+        format:
+        1st line is the names of all the fields
+
+        Every line following are values that fall under these fields.
+        '''
+        # this is the name of the file to save to.
+        saveName = self.saveEntryVal.get()
+
+        PATH = os.path.join(saveName, dir)
+
+        # the first row is the names of all the fields.
+        vals = self.fields.copy() #i want to really make sure we're working with a copy of the list
+
+        # get each entry in the desired format
+        for entry in self.entries:
+            vals.append(list(entry.values()))
+
+        List_to_CSV(PATH, vals)
+    
     def GetData(self):
         '''
         when called, reads the currently held data points and outputs it in a readable format.
@@ -264,6 +304,7 @@ class CurrentEntryTable(EntryTable):
     I'll probably also include the graph widget in this class for simplicity.
     '''
     collection = Collection()
+    defaultFileName = "Coil"
 
     def __init__(self, master, dataclass, dirWidget):
         self.dirWidget = dirWidget
@@ -320,14 +361,6 @@ class CurrentEntryTable(EntryTable):
         check = self.isInit
         if(check):
             self.GraphCoils()
-
-    def SaveData(self):
-        '''
-        after reading where to save (DIR variable from somewhere),
-        look at the value of the nearby entry widget and either create the file (if not present)
-        or overwrite to the already existing file.
-        '''
-        saveName = self.saveEntry.get()
 
     
     def GetData(self):
@@ -387,6 +420,13 @@ class EntryTableParam:
             return self.paramWidget.get()
 
 
+def List_to_CSV(fileName, data, *args, **kwargs):
+    '''
+    turns an input of a nested list to a csv text file
+    '''
+    mycsv = csv.writer(open(fileName, "wb"), *args, **kwargs)
+    for row in data:
+        mycsv.writerow(row)
 
 @dataclass
 class CircleCurrentConfig():
