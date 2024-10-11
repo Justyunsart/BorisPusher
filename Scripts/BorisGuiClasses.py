@@ -268,6 +268,7 @@ class ParticlePreview(EntryTable):
 
         super().__init__(master, dataclass)
         self.Read_Data()
+        self._SetSaveEntry(self.fileWidget.fileName.get())
     
     def NewEntry(self, *args, defaults=True):
         '''
@@ -284,8 +285,10 @@ class ParticlePreview(EntryTable):
         '''
         look at the dir of the selected input file, then turn it into rows on the entry table
         '''
+        
+
         #print("reading data")
-        data = CSV_to_Df(self.fileWidget.PATH._data).values.tolist() # ideally, each sublist will be a row of params for file_particle
+        data = CSV_to_Df(self.fileWidget.PATH.data).values.tolist() # ideally, each sublist will be a row of params for file_particle
         #print(data)
 
         particles = []
@@ -308,6 +311,7 @@ class ParticlePreview(EntryTable):
         rerun read data to reset the table upon the selected input file being changed.
         '''
         self.Read_Data()
+        self._SetSaveEntry(self.fileWidget.fileName.get())
 
 class ParticlePreviewSettings():
     '''

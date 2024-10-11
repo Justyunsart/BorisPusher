@@ -17,6 +17,7 @@ from magpylib import Collection
 from magpylib.current import Circle
 import csv
 import os
+from GuiHelpers import CSV_to_Df
 
 class EntryTable:
     '''
@@ -49,8 +50,9 @@ class EntryTable:
     #===============#
     # INITIALIZAION #
     #===============#
-    def __init__(self, master, dataclass:dataclass): # initialization function
+    def __init__(self, master, dataclass:dataclass, name="entry"): # initialization function
         self.isInit = False
+        self.name = name
         # keep reference to the master 
         self.master = master
         self.entries = []
@@ -243,10 +245,13 @@ class EntryTable:
         '''
         whenever this is called, the save entry field gets filled with the currently selected file's name.
         
-        
+
         Because this base class does not include the file dropdown, it's expected that the name parameter is filled
         by its children. Otherwise, this function will just go unused.
         '''
+        if(name == ""):
+            self.saveEntryVal.set(self.name)
+            return True
         self.saveEntryVal.set(name)
         return True
     
@@ -309,6 +314,11 @@ class CurrentEntryTable(EntryTable):
     def __init__(self, master, dataclass, dirWidget):
         self.dirWidget = dirWidget
         super().__init__(master, dataclass)
+
+        # JAWK TAWAH attach to the thanggg 
+        self.dirWidget.PATH.attach(self)
+        self._SetSaveEntry(self.dirWidget.fileName.get())
+
         #--------#
         # FIGURE #
         #--------#
@@ -362,10 +372,45 @@ class CurrentEntryTable(EntryTable):
         if(check):
             self.GraphCoils()
 
-    
+    def Read_Data(self):
+        '''
+        look at the dir of the selected input file, then turn it into rows on the entry table
+        '''
+        if(self.fileWidget.fileName) == "":
+            return False
+
+        #print("reading data")
+        data = CSV_to_Df(self.fileWidget.PATH.data).values.tolist() # ideally, each sublist will be a row of params for file_particle
+        #print(data)
+
+        coils = []
+        for row in data:
+            coil = CircleCurrentConfig(self.frame1, 
+                                     px = row[0], 
+                                     py = row[1], 
+                                     pz = row[2], 
+                                     amp= row[3],
+                                     dia= row[4],
+                                     angle = row[5],
+                                     axis=row[6]
+                                     )
+            #print(particle.py.paramDefault)
+            coils.append(coil)
+        
+        #print(particles)
+        self.SetRows(coils)
+        return True
+
     def GetData(self):
         value = self.collection
         return dict(coils = value)
+    
+    def update(self, subject):
+        '''
+        rerun read data to reset the table upon the selected input file being changed.
+        '''
+        self.Read_Data()
+        self._SetSaveEntry(self.dirWidgetidget.fileName.get())
 
 class OnlyNumEntry(tk.Entry, object):
     def __init__(self, master, **kwargs):
@@ -444,16 +489,16 @@ class CircleCurrentConfig():
     RotationAngle: EntryTableParam = field(init=False)
     RotationAxis: EntryTableParam = field(init=False)
 
-    def __init__(self, frame):
-        self.PosX = EntryTableParam(0., master=frame)
-        self.PosY = EntryTableParam(0., master=frame)
-        self.PosZ = EntryTableParam(0., master=frame)
+    def __init__(self, frame, px = 0, py = 0, pz = 0, amp = 1e5, dia = 1, angle = 0, axis = 0):
+        self.PosX = EntryTableParam(px, master=frame)
+        self.PosY = EntryTableParam(py, master=frame)
+        self.PosZ = EntryTableParam(pz, master=frame)
 
-        self.Amp = EntryTableParam(1e5, master=frame)
-        self.Diameter = EntryTableParam(1, master=frame)
+        self.Amp = EntryTableParam(amp, master=frame)
+        self.Diameter = EntryTableParam(dia, master=frame)
 
-        self.RotationAngle = EntryTableParam(0., master=frame)
-        self.RotationAxis = EntryTableParam(0, ttk.Combobox, master=frame, state="readonly", width=5)
+        self.RotationAngle = EntryTableParam(angle, master=frame)
+        self.RotationAxis = EntryTableParam(axis, ttk.Combobox, master=frame, state="readonly", width=5)
         
     def __iter__(self):
         for val in self.__dict__.values():
