@@ -93,6 +93,13 @@ class EntryTable:
             text="Save As"
         )
         self.saveButton.grid(row=1, column=1, sticky="E")
+        
+        # save as entry field
+        self.saveEntry = tk.Entry(
+            self.frame,
+            width=20
+        )
+        self.saveEntry.grid(row=1, column=2, sticky="E")
 
         self.isInit = True
     
@@ -258,7 +265,8 @@ class CurrentEntryTable(EntryTable):
     '''
     collection = Collection()
 
-    def __init__(self, master, dataclass):
+    def __init__(self, master, dataclass, dirWidget):
+        self.dirWidget = dirWidget
         super().__init__(master, dataclass)
         #--------#
         # FIGURE #
@@ -312,6 +320,15 @@ class CurrentEntryTable(EntryTable):
         check = self.isInit
         if(check):
             self.GraphCoils()
+
+    def SaveData(self):
+        '''
+        after reading where to save (DIR variable from somewhere),
+        look at the value of the nearby entry widget and either create the file (if not present)
+        or overwrite to the already existing file.
+        '''
+        saveName = self.saveEntry.get()
+
     
     def GetData(self):
         value = self.collection
@@ -396,7 +413,7 @@ class CircleCurrentConfig():
         self.Diameter = EntryTableParam(1, master=frame)
 
         self.RotationAngle = EntryTableParam(0., master=frame)
-        self.RotationAxis = EntryTableParam(0, ttk.Combobox, master=frame, state="readonly")
+        self.RotationAxis = EntryTableParam(0, ttk.Combobox, master=frame, state="readonly", width=5)
         
     def __iter__(self):
         for val in self.__dict__.values():

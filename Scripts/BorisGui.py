@@ -125,7 +125,7 @@ calc_title_LFrame.grid(row=0, column=0, pady=10, padx=10, sticky="NW")
 ### SUB CONTAINERS
 
 CalcContainer = tk.LabelFrame(calc_title_LFrame, bg="gray", text="Parameters")
-CalcContainer.grid(row=1,column=0)
+CalcContainer.grid(row=0,column=0)
 
 
 CalcCheckBoxFrame = tk.Frame(calc_title_LFrame, bg="light gray")
@@ -134,14 +134,21 @@ CalcCheckBoxFrame.grid(row=1, column=0, pady=10, padx=10, sticky="N")
 CalcRestartFileFrame = tk.Frame(calc_title_LFrame)
 CalcRestartFileFrame.grid(row=2, column= 0, pady=10, padx=10)
 
-DropdownFrame = tk.Frame(calc_title_LFrame)
-DropdownFrame.grid(row=0, column=1, sticky="W")
+Particle = tk.LabelFrame(calc_title_LFrame, text="Particle Conditions")
+Particle.grid(row=0, column=1, sticky="W")
 
-ParticlePreviewFrame = tk.Frame(calc_title_LFrame)
-ParticlePreviewFrame.grid(row=1, column=1, sticky="W")
+DropdownFrame = tk.Frame(Particle)
+DropdownFrame.grid(row=0, column=0, sticky="W")
+
+ParticlePreviewFrame = tk.Frame(Particle)
+ParticlePreviewFrame.grid(row=1, column=0, sticky="W")
 
 CalcTimeStepFrame = tk.LabelFrame(CalcContainer, bg="light gray", text="Time, Step")
 CalcTimeStepFrame.grid(row=0, column=0, pady=5, padx=20)
+
+Fields = tk.LabelFrame(CalcContainer, bg="light gray", text="Static Fields")
+Fields.grid(row=1, column=0)
+
 
 
 ## Particle condition stuff..
@@ -153,6 +160,14 @@ particlePreview = ParticlePreview(ParticlePreviewFrame,
 
 ## Timestep stuff..
 time_info = TimeStep_n_NumStep(CalcTimeStepFrame)
+
+## FIELDS!!!!!!
+b_field = CoordTable(Fields, title="B-Field")
+b_field.grid(row=0, column=0)
+
+e_field = CoordTable(Fields, title="E-Field")
+e_field.grid(row=1, column=0)
+
 
 ## Caclulate button
 calc_button = tk.Button(tab_calc,
@@ -183,9 +198,19 @@ toplevel.geometry(f"+{toplevel_offsetx}+{toplevel_offsety}")
 CurrentFrame = tk.LabelFrame(toplevel, text="Configure Current")
 CurrentFrame.grid(row = 0, padx=10, pady=10)
 
-coil_table = CurrentEntryTable(CurrentFrame, CircleCurrentConfig)
+CurrentFile = tk.Frame(CurrentFrame)
+CurrentFile.grid(row=0, column=0)
+CurrentTable = tk.Frame(CurrentFrame)
+CurrentTable.grid(row=1, column=0)
+
+coil_file = Particle_File_Dropdown(CurrentFile, DIR_Coil)
+coil_table = CurrentEntryTable(CurrentTable, CircleCurrentConfig, coil_file)
+
+
+#=======#
+# FINAL #
+#=======#
 
 # control what classes to send over to the program by adding it to params
-params = [time_info, particlePreview, coil_table]
-
-calc_button.configure(command=partial(CalculateCallback, params)) # update button command after setting up params
+params = [time_info, particlePreview, coil_table, b_field, e_field]
+calc_button.configure(command=partial(CalculateCallback, params)) # update calculate button's command after setting up params

@@ -154,6 +154,8 @@ class FileDropdown(ttk.Combobox):
             path = os.path.join(self.dir, file)
             if os.path.isfile(path):
                 files.append(file)
+        if (files == []):
+            files.append("")
         return files
     
     def _UpdatePath(self, *args):
@@ -169,7 +171,7 @@ class LabeledEntry():
     '''
     value:tk.StringVar
 
-    def __init__(self, master, val, row, title="title", **kwargs):
+    def __init__(self, master, val, row, col=0, title="title", **kwargs):
         self.master = master
         self.title = title
         self.value = tk.StringVar(value=val)
@@ -177,12 +179,12 @@ class LabeledEntry():
         self.label = tk.Label(self.master,
                               text=self.title,
                               justify="left")
-        self.label.grid(row=row, column=0, columnspan=2, sticky="W")
+        self.label.grid(row=row, column=col, columnspan=2, sticky="W")
 
         self.entry = tk.Entry(self.master,
                               textvariable=self.value,
                               **kwargs)
-        self.entry.grid(row=row, column=2, columnspan=2, sticky="W")
+        self.entry.grid(row=row, column=col+2, columnspan=2, sticky="W")
 
 class Particle_File_Dropdown(FileDropdown):
     def __init__(self, master, dir, last=0, **kwargs):
@@ -195,7 +197,7 @@ class Particle_File_Dropdown(FileDropdown):
         super().grid(row=0, column=1)
 
         self.label = tk.Label(self.frame,
-                              text="Particle Conditions: ")
+                              text="File: ")
         self.label.grid(row=0, column=0)
 
 class TimeStep_n_NumStep():
@@ -322,7 +324,83 @@ class ParticlePreviewSettings():
         self.overwriteCheck.grid(row=0, column=1, sticky="W")
         self.overwriteCheck.select() #set on by default
 
+class CoordTable(tk.LabelFrame):
+    '''
+    Diffrerent than an entry table (which has variable field types).
+    Here, the table is hard set to 3 entries - X, Y, and Z.
+
+    Used for setting the B and E fields, for example.
+
+    I made this a new class because its usecase is different enough for it to not use many of Entrytable's
+    functions.
+    '''
+    def __init__(self, master, title= "coords", **kwargs):
+        self.master = master
+        self.title = title
+        super().__init__(master, text = self.title, **kwargs)
+
+        #frame for the entry widgets
+        self.frame1 = tk.Frame(self)
+        self.frame1.grid(row=1, column=0)
+
+        self.X = LabeledEntry(self.frame1, 0, row=1, col=0, title="X: ", width=10)
+        self.Y = LabeledEntry(self.frame1, 0, row=1, col=4, title="Y: ", width=10)
+        self.Z = LabeledEntry(self.frame1, 0, row=1, col=8, title="Z: ", width=10)
+        self.entries = [self.X.entry, self.Y.entry, self.Z.entry] # handy reference to all entry widgets
+
+        # frame for the use checkmark
+        self.frame = tk.Frame(self)
+        self.frame.grid(row=0, column=0, sticky="W")
+
+        self.doUse = tk.IntVar(value = 0)  #using a var makes value tracking easier.
+
+        self.calcCheck = tk.Checkbutton(self.frame, variable= self.doUse, text="Use?")
+        self.calcCheck.grid(row=0, column=0, sticky="W")
+
+        self.doUse.trace_add("write", self.CheckEditability)
+
+        self.CheckEditability() # set the entries in their correct state.
+
+    def GetData(self):
+        '''
+        when asked, will return the captured coordinates as a list.
+        '''
+        out = {}
+        keyName = self.title
+        keyUse = f'{keyName}_Use'
+        value = [float(self.X.entry.get()), float(self.Y.entry.get()), float(self.Z.entry.get())]
+        
+        out[keyName] = value
+        out[keyUse] = self.doUse.get() # so the program knows whether to use these static field vals or not.
+
+        return out
+
+    def CheckEditability(self, *args, **kwargs):
+        '''
+        used when self.calcCheck is toggled on; makes these cells in an editable state
+        '''
+        useState = self.doUse.get()
+
+        if(useState == 0):
+            '''
+            useState is off: all entries should be read-only.
+            '''
+            #print("disable")
+            for entry in self.entries:
+                entry.config(state="disabled")
+        else:
+            '''
+            entries are otherwise editable.
+            '''
+            for entry in self.entries:
+                entry.config(state="normal")
+
+
+
+
+
 def _Try_Float(list):
+
     '''
     ask for forgiveness, not for permission.
     '''
