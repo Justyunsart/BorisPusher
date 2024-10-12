@@ -300,7 +300,6 @@ class EntryTable:
             value = self.entries[i]
 
             out[keyName] = value
-
         return out
 
 class CurrentEntryTable(EntryTable):

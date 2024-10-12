@@ -317,6 +317,18 @@ class ParticlePreview(EntryTable):
         '''
         self.Read_Data()
         self._SetSaveEntry(self.fileWidget.fileName.get())
+    
+    def SaveData(self, dir: str):
+        super().SaveData(dir)
+
+        # In addition to the super, also update the selected file's value in the field dropdown
+        if self.saveEntryVal.get() not in self.fileWidget["values"]:
+            self.fileWidget["values"] += (self.saveEntryVal.get(),)
+            self.fileWidget.current(len(self.fileWidget["values"]) - 1)
+    
+    def GetData(self):
+        out =  super().GetData()
+        out["Partile File"] = self.fileWidget.fileName.get()
 
 class ParticlePreviewSettings():
     '''
