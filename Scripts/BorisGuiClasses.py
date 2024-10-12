@@ -137,7 +137,7 @@ class FileDropdown(ttk.Combobox):
         self.dir = dir
         self.fileName = tk.StringVar()
         self.PATH = Data('PATH')
-        
+
          # check: make sure the dir exists. if not, create the dir.
         os.makedirs(dir, exist_ok=True)
 
@@ -270,6 +270,8 @@ class ParticlePreview(EntryTable):
         fileWidget.PATH.attach(self)
 
         super().__init__(master, dataclass)
+        self.saveButton.configure(command=partial(self.SaveData, self.fileWidget.dir))
+
         self.Read_Data()
         self._SetSaveEntry(self.fileWidget.fileName.get())
     
