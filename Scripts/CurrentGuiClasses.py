@@ -94,7 +94,8 @@ class EntryTable:
         # Save as button
         self.saveButton = tk.Button(
             self.frame,
-            text="Save As"
+            text="Save As",
+            command=self.SaveData
         )
         self.saveButton.grid(row=1, column=1, sticky="E")
         
@@ -267,18 +268,18 @@ class EntryTable:
         Every line following are values that fall under these fields.
         '''
         # this is the name of the file to save to.
-        saveName = self.saveEntryVal.get()
+        saveName = self.saveEntry.get()
 
-        PATH = os.path.join(saveName, dir)
+        PATH = os.path.join(dir, saveName)
+        #print(PATH)
 
         # the first row is the names of all the fields.
-        vals = self.fields.copy() #i want to really make sure we're working with a copy of the list
-
+        vals = [self.fields.copy()] #i want to really make sure we're working with a copy of the list
         # get each entry in the desired format
         for entry in self.entries:
             vals.append(list(entry.values()))
 
-        List_to_CSV(PATH, vals)
+        List_to_CSV(PATH, vals, newline="")
     
     def GetData(self):
         '''
@@ -333,6 +334,8 @@ class CurrentEntryTable(EntryTable):
                                         master = self.frame2)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=0, column=0)
+
+        self.saveButton.config(command = partial(self.SaveData, self.dirWidget.dir))
         
         # draw canvas for the first time
         # is it inelegant to hard code initialization event order like this? maybe
@@ -469,9 +472,10 @@ def List_to_CSV(fileName, data, *args, **kwargs):
     '''
     turns an input of a nested list to a csv text file
     '''
-    mycsv = csv.writer(open(fileName, "wb"), *args, **kwargs)
-    for row in data:
-        mycsv.writerow(row)
+    #print(data)
+    with open(fileName, "w", *args, **kwargs) as mycsv:
+        writer = csv.writer(mycsv)
+        writer.writerows(data)
 
 @dataclass
 class CircleCurrentConfig():

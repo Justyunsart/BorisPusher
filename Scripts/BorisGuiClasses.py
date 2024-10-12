@@ -137,6 +137,9 @@ class FileDropdown(ttk.Combobox):
         self.dir = dir
         self.fileName = tk.StringVar()
         self.PATH = Data('PATH')
+        
+         # check: make sure the dir exists. if not, create the dir.
+        os.makedirs(dir, exist_ok=True)
 
         self.dir_contents = self._DIR_to_List()
         #print(self.dir_contents)
