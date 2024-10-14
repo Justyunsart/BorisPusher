@@ -314,7 +314,7 @@ class CurrentEntryTable(EntryTable):
                    "y" : 1,
                    "z" : 2}
 
-    def __init__(self, master, dataclass, dirWidget):
+    def __init__(self, master, dataclass, dirWidget, graphFrame):
         self.dirWidget = dirWidget
         super().__init__(master, dataclass)
         self.saveButton.configure(command=partial(self.SaveData, self.dirWidget.dir))
@@ -325,8 +325,7 @@ class CurrentEntryTable(EntryTable):
         #--------#
         # FIGURE #
         #--------#
-        self.frame2 = tk.LabelFrame(self.master,
-                                   text="Graph")
+        self.frame2 = graphFrame
         self.frame2.grid(row=1, column=0)
 
         self.fig = plt.figure(figsize=(10, 10))
@@ -433,6 +432,10 @@ class CurrentEntryTable(EntryTable):
         self.Read_Data()
         self._SetSaveEntry(self.dirWidget.fileName.get())
 
+
+
+# MORE GENERIC CLASSES #
+#==============================================================
 class OnlyNumEntry(tk.Entry, object):
     def __init__(self, master, **kwargs):
 
@@ -525,6 +528,7 @@ class CircleCurrentConfig():
     def __iter__(self):
         for val in self.__dict__.values():
             yield val
+
 
 @dataclass
 class file_particle:

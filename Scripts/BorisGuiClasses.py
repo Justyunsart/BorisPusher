@@ -416,8 +416,118 @@ class CoordTable(tk.LabelFrame):
             for entry in self.entries:
                 entry.config(state="normal")
 
+class CoilButtons():
+    '''
+    helpful autofill widgets for stuff like:
+        > quick setups for mirror, hexahedron
+
+    
+    This will sit next to the entry table, and will feature buttons and entries.
+    '''
+    def __init__(self, master):
+        self.master = master
+
+        # extra organizing frames
+        mainframe = tk.LabelFrame(self.master,
+                                  text="Common Settings")
+        mainframe.grid(row=0, column=0, padx=10, pady=10, sticky="W")
+
+        configFrames = tk.LabelFrame(master=mainframe,
+                                     text="Quick Shapes")
+        configFrames.grid(row=0, column=0, padx=5, pady=5, sticky="W")
+
+        paramFrame = tk.LabelFrame(master=mainframe,
+                                   text="Global Adjustments")
+        paramFrame.grid(row=1, column=0, padx=5, pady=5)
+
+        # fill in frames w thingies
+        ## BUTTONS
+        self.hexahedron = tk.Button(master=configFrames,
+                                    text="Hexahedron")
+        self.hexahedron.grid(row=0, column=0, sticky="W", padx=5, pady=5)
+
+        self.Mirror = tk.Button(master=configFrames,
+                                    text="Mirror")
+        self.Mirror.grid(row=0, column=1, sticky="W", padx=5, pady=5)
+
+        ## PARAMS
+        ### checkbox that ensures that the coil is symmetric about origin
+        self.symCheck = tk.IntVar(value = 1)
+        self.isSym = tk.Checkbutton(master = paramFrame,
+                                    text="symmetric about origin",
+                                    variable=self.symCheck)
+        self.isSym.grid(row=0, column=0, sticky="W")
+
+        ### rest of the params that gets turned on when check is true
+        entryFrame = tk.Frame(paramFrame)
+        entryFrame.grid(row=1, column=0)
+        self.gap = LabeledEntry(master=entryFrame,
+                                row=0,
+                                col=0,
+                                title="Offset By: ",
+                                val=0.,
+                                width=10)
+        self.dia = LabeledEntry(master=entryFrame,
+                                row=1,
+                                col=0,
+                                title="Diameter: ",
+                                val=0.,
+                                width=10)
+        self.amp = LabeledEntry(master=entryFrame,
+                                row=2,
+                                col=0,
+                                title="Current: ",
+                                val=0.,
+                                width=10)
+        
+        ### Button to apply changes - on its own frame for ease of gridding
+        buttonFrame = tk.Frame(master=paramFrame)
+        buttonFrame.grid(row=4, column=0, pady=10)
+        self.apply = tk.Button(master = buttonFrame,
+                               text="Apply")
+        self.apply.grid(row=0, column=0, sticky= "")
+        
 
 
+class CurrentConfig:
+    def __init__(self, master, DIR):
+        self.master = master
+
+        # frames setup
+        mainframe = tk.Frame(self.master)
+        mainframe.grid(row=0, column = 0)
+        
+        """
+        plethora of frames to organize all the current file, table objects
+        """
+        CurrentTable = tk.Frame(mainframe)
+        CurrentTable.grid(row=1, column=1, sticky="NW")
+
+        CurrentEntry = tk.Frame(CurrentTable)
+        CurrentEntry.grid(row=1, column=0)
+
+        CurrentFile = tk.Frame(CurrentTable)
+        CurrentFile.grid(row=0, column=0, sticky="NW")
+
+        CurrentGraph = tk.Frame(self.master)
+        CurrentGraph.grid(row=1, column=0)
+        
+        """
+        this one contains all the common global transformations u can desire
+        """
+        ParamFrame = tk.Frame(mainframe)
+        ParamFrame.grid(row=1, column=0)
+        
+        # populate frames
+        self.dropdown = Particle_File_Dropdown(master=CurrentFile,
+                                               dir = DIR)
+        
+        self.table = CurrentEntryTable(master=CurrentEntry, 
+                            dataclass=CircleCurrentConfig, 
+                            dirWidget=self.dropdown,
+                            graphFrame=CurrentGraph)
+        
+        self.param = CoilButtons(ParamFrame)
 
 
 def _Try_Float(list):

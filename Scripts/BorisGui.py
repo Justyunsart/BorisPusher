@@ -198,19 +198,19 @@ toplevel.geometry(f"+{toplevel_offsetx}+{toplevel_offsety}")
 CurrentFrame = tk.LabelFrame(toplevel, text="Configure Current")
 CurrentFrame.grid(row = 0, padx=10, pady=10)
 
-CurrentFile = tk.Frame(CurrentFrame)
-CurrentFile.grid(row=0, column=0)
-CurrentTable = tk.Frame(CurrentFrame)
-CurrentTable.grid(row=1, column=0)
+#CurrentFile = tk.Frame(CurrentFrame)
+#CurrentFile.grid(row=0, column=0)
+#CurrentTable = tk.Frame(CurrentFrame)
+#CurrentTable.grid(row=1, column=0)
 
-coil_file = Particle_File_Dropdown(CurrentFile, DIR_Coil)
-coil_table = CurrentEntryTable(CurrentTable, CircleCurrentConfig, coil_file)
-
+#coil_file = Particle_File_Dropdown(CurrentFile, DIR_Coil)
+#coil_table = CurrentEntryTable(CurrentTable, CircleCurrentConfig, coil_file)
+coil_config = CurrentConfig(CurrentFrame, DIR_Coil)
 
 #=======#
 # FINAL #
 #=======#
 
 # control what classes to send over to the program by adding it to params
-params = [time_info, particlePreview, coil_table, b_field, e_field]
+params = [time_info, particlePreview, coil_config.table, b_field, e_field]
 calc_button.configure(command=partial(CalculateCallback, params)) # update calculate button's command after setting up params
