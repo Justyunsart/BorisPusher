@@ -11,6 +11,8 @@ from typing import ClassVar
 class PrefFile():
     DIR_particle:str
     DIR_coil:str
+    DIR_coilDefs:str
+
     DIR_output:str
 
     PAR_dt:str

@@ -50,6 +50,7 @@ class ConfigMenuBar():
             ## location of particle condition folder
         particlePath = os.path.join(inputPath, "Particle Conditions")
         coilPath = os.path.join(inputPath, "Coil Configurations")
+        coilDefsPath = os.path.join(coilPath, "Defaults")
 
             ## location of output folder
         outputPath = os.path.join(self.master.filepath, "Outputs")
@@ -57,6 +58,7 @@ class ConfigMenuBar():
         # 2: Create the PrefFile object with default params
         prefs = PrefFile(particlePath, 
                          coilPath, 
+                         coilDefsPath,
                          outputPath,
                          "0.000001",
                          "50000",
@@ -424,7 +426,7 @@ class CoilButtons():
     
     This will sit next to the entry table, and will feature buttons and entries.
     '''
-    def __init__(self, master):
+    def __init__(self, master, table):
         self.master = master
 
         # extra organizing frames
@@ -490,7 +492,7 @@ class CoilButtons():
 
 
 class CurrentConfig:
-    def __init__(self, master, DIR):
+    def __init__(self, master, DIR, DIR_CoilDef):
         self.master = master
 
         # frames setup
@@ -525,9 +527,12 @@ class CurrentConfig:
         self.table = CurrentEntryTable(master=CurrentEntry, 
                             dataclass=CircleCurrentConfig, 
                             dirWidget=self.dropdown,
-                            graphFrame=CurrentGraph)
+                            graphFrame=CurrentGraph,
+                            defaults = DIR_CoilDef)
         
-        self.param = CoilButtons(ParamFrame)
+        self.param = CoilButtons(ParamFrame,
+                                 table=self.table)
+        self.param.Mirror.config(command=self.table.Create_Mirror)
 
 
 def _Try_Float(list):

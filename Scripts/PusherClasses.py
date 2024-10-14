@@ -276,3 +276,15 @@ class Config():
         - Coil setup
     '''
 
+def UniqueFileName(DIR, fileName:str):
+    '''
+    given a path to a file and filename, return either the fileName (if unique)
+    or fileName(n) if not.
+    '''
+    parent = DIR
+    counter = 0
+    temp = fileName
+    while os.path.exists(os.path.join(parent, temp)):
+        counter += 1
+        temp = f"{fileName}({counter})"
+    return temp

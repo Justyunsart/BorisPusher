@@ -39,6 +39,7 @@ mainToolbar = ConfigMenuBar(Main)
 Main_PrefFiles = Main.prefs
 DIR_Particle = Main_PrefFiles.DIR_particle
 DIR_Coil = Main_PrefFiles.DIR_coil
+DIR_coilDefs = Main_PrefFiles.DIR_coilDefs
 
 #print(DIR_Particle)
 
@@ -205,7 +206,7 @@ CurrentFrame.grid(row = 0, padx=10, pady=10)
 
 #coil_file = Particle_File_Dropdown(CurrentFile, DIR_Coil)
 #coil_table = CurrentEntryTable(CurrentTable, CircleCurrentConfig, coil_file)
-coil_config = CurrentConfig(CurrentFrame, DIR_Coil)
+coil_config = CurrentConfig(CurrentFrame, DIR_Coil, DIR_coilDefs)
 
 #=======#
 # FINAL #
