@@ -106,11 +106,20 @@ def CSV_to_Df(dir, isNum=True):
     '''
     # step 1: read the file from the directory.
     data = pd.read_csv(dir)
+    #print(data)
 
     # step 2: numeric checks
+    ## does not iterate if the entire df is numeric.
     if (isNum):
         data.apply(pd.to_numeric)
-    
+    ## iterates through columns if the entire dataframe is not numeric.
+    else:
+        for col in data:
+            try:
+                data[col] = data[col].astype(float)
+            except ValueError:
+                pass
+    #print(data)
     return data
 
 # Run the simulation if you press calculate

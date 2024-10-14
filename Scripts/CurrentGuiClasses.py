@@ -310,14 +310,17 @@ class CurrentEntryTable(EntryTable):
     '''
     collection = Collection()
     defaultFileName = "Coil"
+    axisIndices = {"x" : 0,
+                   "y" : 1,
+                   "z" : 2}
 
     def __init__(self, master, dataclass, dirWidget):
         self.dirWidget = dirWidget
         super().__init__(master, dataclass)
+        self.saveButton.configure(command=partial(self.SaveData, self.dirWidget.dir))
 
         # JAWK TAWAH attach to the thanggg 
         self.dirWidget.PATH.attach(self)
-        self._SetSaveEntry(self.dirWidget.fileName.get())
 
         #--------#
         # FIGURE #
@@ -339,7 +342,9 @@ class CurrentEntryTable(EntryTable):
         # draw canvas for the first time
         # is it inelegant to hard code initialization event order like this? maybe
         # toobad!
-        self.GraphCoils()
+        self.Read_Data()
+        self._SetSaveEntry(self.dirWidget.fileName.get())
+        #self.GraphCoils()
 
     def GraphCoils(self):
         '''
@@ -347,6 +352,7 @@ class CurrentEntryTable(EntryTable):
         2. Creates magpylib circle current objects from this data
         3. Graphs these created coils
         '''
+        #print("graph reset")
         self.collection = Collection()
         #print(self.GetEntries())
         for row in self.GetEntries():
@@ -359,8 +365,9 @@ class CurrentEntryTable(EntryTable):
             self.collection.add(c)
         
         self.plot.cla()
-        show(self.collection, canvas=self.plot)
-    
+        show(self.collection, canvas=self.plot, canvas_update = True, backend="matplotlib")
+        self.canvas.draw()
+
     def EntryValidateCallback(self, entry):
         '''
         override of base class function, graphs the configuration upon each change.
@@ -369,7 +376,7 @@ class CurrentEntryTable(EntryTable):
         self.GraphCoils()
     
     def NewEntry(self, *args, defaults=True):
-        super().NewEntry(*args, defaults=True)
+        super().NewEntry(*args, defaults=defaults)
         check = self.isInit
         if(check):
             self.GraphCoils()
@@ -378,11 +385,11 @@ class CurrentEntryTable(EntryTable):
         '''
         look at the dir of the selected input file, then turn it into rows on the entry table
         '''
-        if(self.fileWidget.fileName) == "":
+        if(self.dirWidget.fileName) == "":
             return False
 
         #print("reading data")
-        data = CSV_to_Df(self.fileWidget.PATH.data).values.tolist() # ideally, each sublist will be a row of params for file_particle
+        data = CSV_to_Df(self.dirWidget.PATH.data, isNum=False).values.tolist() # ideally, each sublist will be a row of params for file_particle
         #print(data)
 
         coils = []
@@ -394,25 +401,37 @@ class CurrentEntryTable(EntryTable):
                                      amp= row[3],
                                      dia= row[4],
                                      angle = row[5],
-                                     axis=row[6]
+                                     axis=self.axisIndices[row[6]]
                                      )
             #print(particle.py.paramDefault)
             coils.append(coil)
         
-        #print(particles)
+        #print(coils)
         self.SetRows(coils)
         return True
 
+    def SetRows(self, list):
+        super().SetRows(list)
+        self.GraphCoils()
+    
     def GetData(self):
         value = self.collection
         return dict(coils = value)
+    
+    def SaveData(self, dir: str):
+        super().SaveData(dir)
+
+        # In addition to the super, also update the selected file's value in the field dropdown
+        if self.saveEntryVal.get() not in self.dirWidget["values"]:
+            self.dirWidget["values"] += (self.saveEntryVal.get(),)
+            self.dirWidget.current(len(self.dirWidget["values"]) - 1)
     
     def update(self, subject):
         '''
         rerun read data to reset the table upon the selected input file being changed.
         '''
         self.Read_Data()
-        self._SetSaveEntry(self.dirWidgetidget.fileName.get())
+        self._SetSaveEntry(self.dirWidget.fileName.get())
 
 class OnlyNumEntry(tk.Entry, object):
     def __init__(self, master, **kwargs):
