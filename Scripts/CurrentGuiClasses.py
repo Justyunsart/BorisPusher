@@ -340,6 +340,42 @@ class EntryTable:
         
         self.SaveData(dir)
 
+    def Refresh(self):
+        """
+        in the event of many changes happening to the table at once,
+        
+        
+        this method can be called at the end of those changes to sync
+        widgets with self.entries.
+
+        
+        since the EntryCallback only triggers from combobox selections and 
+        keypresses, this way is more efficient when there are changes caused
+        by backend code.
+        """
+        collectedTypes = [OnlyNumEntry, ttk.Combobox]
+        out = []
+
+        size = self.frame1.grid_size()
+        #indices of interest from the grid are (inclusive):
+        #     - rows 1 -> end
+        #     - cols 0 -> -2
+        widgets = []
+        for i in range(1, size[1]):
+            row = self.frame1.grid_slaves(row=i) [::-1]
+            widgets.append(row)
+
+        for row in widgets:
+            temp = {}
+            for widget in row:
+                if (type(widget) in collectedTypes):
+                    info = widget.grid_info()
+                    c = info["column"]
+                    temp[self.fields[c]] = widget.get()
+            out.append(temp)
+
+        self.entries = out
+
 
 class CurrentEntryTable(EntryTable):
     '''
@@ -400,7 +436,7 @@ class CurrentEntryTable(EntryTable):
         #print(self.GetEntries())
         for row in self.GetEntries():
             pos = [float(row["PosX"]), float(row["PosY"]), float(row["PosZ"])]
-            c = Circle(current=float(row["Amp"]),
+            c = Circle(current=float(eval(row["Amp"])),
                                    position=pos,
                                    diameter = float(row["Diameter"])
                                    )
@@ -467,7 +503,7 @@ class CurrentEntryTable(EntryTable):
         self.Read_Data()
         self._SetSaveEntry(self.dirWidget.fileName.get())
 
-    def Create_Mirror(self):
+    def Create_Mirror(self, fileName:str, templateName:str):
         '''
         1. create a new file to work with
         2. in the new file, set up (with default params) a mirror configuration
@@ -475,11 +511,15 @@ class CurrentEntryTable(EntryTable):
             > They also have the same charge
         '''
         # 1. Get the name of the file this function will create.
-        name = UniqueFileName(DIR=self.dirWidget.dir, fileName="Mirror")
-        DIR_mirror = os.path.join(self.DIR_coilDefs, "mirror")
+        name = UniqueFileName(DIR=self.dirWidget.dir, fileName=fileName)
+        DIR_mirror = os.path.join(self.DIR_coilDefs, templateName)
 
         #print("name is: ", name)
         #print("I should be made in: ", os.path.join(self.dirWidget.dir, name))
         
         # 2. Create and populate the file.
         self._NewFile(dir=self.dirWidget.dir, name=name, data=DIR_mirror)
+    
+    def Refresh(self):
+        super().Refresh()
+        self.GraphCoils()

@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import ttk
 from CurrentGuiClasses import *
 from GuiHelpers import CSV_to_Df
+from math import copysign
 
 # file stuff
 from PrefFile import PrefFile
@@ -426,8 +427,10 @@ class CoilButtons():
     
     This will sit next to the entry table, and will feature buttons and entries.
     '''
+    table:CurrentEntryTable
     def __init__(self, master, table):
         self.master = master
+        self.table = table
 
         # extra organizing frames
         mainframe = tk.LabelFrame(self.master,
@@ -452,6 +455,10 @@ class CoilButtons():
                                     text="Mirror")
         self.Mirror.grid(row=0, column=1, sticky="W", padx=5, pady=5)
 
+        ### Button function calls
+        self.hexahedron.config(command=partial(self.table.Create_Mirror, fileName="Hexahedron", templateName="hexahedron"))
+        self.Mirror.config(command=partial(self.table.Create_Mirror, fileName="Mirror", templateName="mirror"))
+
         ## PARAMS
         ### checkbox that ensures that the coil is symmetric about origin
         self.symCheck = tk.IntVar(value = 1)
@@ -468,28 +475,97 @@ class CoilButtons():
                                 col=0,
                                 title="Offset By: ",
                                 val=0.,
-                                width=10)
+                                width=10,
+                                name="position")
         self.dia = LabeledEntry(master=entryFrame,
                                 row=1,
                                 col=0,
                                 title="Diameter: ",
                                 val=0.,
-                                width=10)
+                                width=10,
+                                name="diameter")
         self.amp = LabeledEntry(master=entryFrame,
                                 row=2,
                                 col=0,
                                 title="Current: ",
                                 val=0.,
-                                width=10)
+                                width=10,
+                                name="amp")
+        self.buttons = [self.gap, self.dia, self.amp]
         
         ### Button to apply changes - on its own frame for ease of gridding
         buttonFrame = tk.Frame(master=paramFrame)
         buttonFrame.grid(row=4, column=0, pady=10)
         self.apply = tk.Button(master = buttonFrame,
-                               text="Apply")
+                               text="Apply",
+                               command=self.apply)
         self.apply.grid(row=0, column=0, sticky= "")
-        
 
+    def GatherEntries(self):
+        """
+        returns a list of entries with actual values in them.
+        """
+        out = {}
+        for button in self.buttons:
+            if float(eval(button.entry.get())) != 0.:
+                out[button.entry._name] = button.entry.get()
+        return out
+    
+    def apply(self):
+        '''
+        when pressing the apply button, the program will determine
+        which operations should be processed and execute them accordingly.
+        '''
+        inds = {"diameter":4,
+                "amp":3}
+        buttons = self.GatherEntries()
+        for name, value in buttons.items():
+            if name == "position":
+                self._GapOffset(gapVal=float(value))
+            elif name in inds.keys():
+                self._ModifyFeature(inds[name], value)
+            else:
+                print(f'CoilButtons.GatherEntries somehow ran with unrecognized tk.Entry name')
+        self.table.Refresh()
+
+
+    def _ModifyFeature(self, col, val):
+        """
+        col = index of variable to edit
+        val = val to change it to
+        """
+        # all the widgets in the column of interest, with the title
+        # headings taken out.
+        widgets = self.table.frame1.grid_slaves(column=col)[::-1]
+        widgets.pop(0)
+
+        # make everything in the column the desired value
+        # also multplied by the sign of the value to preserve opposing currents.
+        widgets[:] = map(lambda x: (x.var.set(float(eval(val)) * copysign(1, float(eval(x.get()))))), widgets)
+    
+    def _GapOffset(self, gapVal:float):
+        """
+        logic for modifying gap
+
+
+        inds: dict of inds of [x,y,z]
+            > keys are rotation axis of the current loop
+            > values are axes to modify
+        """
+        inds = {"y":0,
+                "x":1,
+                "z":2}
+        entries = self.table.GetEntries()
+        for i in range(len(entries)):
+            posInd = inds[entries[i]["RotationAxis"]]
+
+            # add if positive, subtract if negative
+            widget = self.table.frame1.grid_slaves(column=posInd, row=i+1)[0]
+
+            current = float(widget.var.get())
+            sign = float(copysign(1, current))
+
+            widget.var.set((sign * gapVal))
 
 class CurrentConfig:
     def __init__(self, master, DIR, DIR_CoilDef):
@@ -532,8 +608,6 @@ class CurrentConfig:
         
         self.param = CoilButtons(ParamFrame,
                                  table=self.table)
-        self.param.Mirror.config(command=self.table.Create_Mirror)
-
 
 def _Try_Float(list):
 
