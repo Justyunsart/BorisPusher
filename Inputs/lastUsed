@@ -1,0 +1,2 @@
+numsteps,timestep,coilFile,doStaticB,doStaticE,B-Field,E-Field,particleFile
+50000.0,1e-07,Hexahedron,0,0,"[0.0, 0.0, 0.0]","[0.0, 0.0, 0.0]",mondado.txt

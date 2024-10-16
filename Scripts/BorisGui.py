@@ -40,6 +40,7 @@ Main_PrefFiles = Main.prefs
 DIR_Particle = Main_PrefFiles.DIR_particle
 DIR_Coil = Main_PrefFiles.DIR_coil
 DIR_coilDefs = Main_PrefFiles.DIR_coilDefs
+DIR_lastUsed = Main_PrefFiles.DIR_lastUsed
 
 #print(DIR_Particle)
 
@@ -211,7 +212,10 @@ coil_config = CurrentConfig(CurrentFrame, DIR_Coil, DIR_coilDefs)
 #=======#
 # FINAL #
 #=======#
+subs = {}
 
 # control what classes to send over to the program by adding it to params
-params = [time_info, particlePreview, coil_config.table, b_field, e_field]
-calc_button.configure(command=partial(CalculateCallback, params)) # update calculate button's command after setting up params
+subs["params"] = [time_info, particlePreview, coil_config, b_field, e_field]
+
+calc_button.configure(command=partial(CalculateCallback, subs["params"], DIR_lastUsed)) # update calculate button's command after setting up params
+FillWidgets(subs["params"], DIR_lastUsed)

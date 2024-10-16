@@ -2,10 +2,15 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 from BorisPlots import graph_trajectory
+from GuiEntryHelpers import Dict_to_CSV
+import os
+from dataclasses import dataclass
 
 from PrefFile import PrevFiles
 import pandas as pd
+import csv
 
+from magpy4c1 import runsim
 
 
 '''
@@ -25,7 +30,7 @@ def PlotFileCallback(name:ttk.Label, button:ttk.Button):
 
 def PlotConfirmCallback(name:ttk.Label, root:Tk):
     graph_trajectory(lim = 500, data = name.cget("text"))
-    root.quit()
+    #root.quit()
 
 
 # HELPERS
@@ -125,13 +130,36 @@ def CSV_to_Df(dir, isNum=True):
 # Run the simulation if you press calculate
 
 # TODO: Add functionality for tracking last used conditions
-def CalculateCallback(params:list):
+def CalculateCallback(params:list, DIR_last:str):
     '''
     When the calculate button is pressed, the GUI passes key information to
     the backend and starts the simulation.
     '''
     data = GatherParams(params)
-    print(data)
+    toProgram = {
+        'numsteps' : data['numsteps'],
+        'timestep' : data['dt'],
+        'coils' : data['coils'],
+        'doStaticB' : data['B-Field_Use'],
+        'doStaticE' : data['E-Field_Use'],
+        'B-Field' : data['B-Field'],
+        'E-Field' : data['E-Field'],
+        'particles':data["<class 'GuiEntryHelpers.file_particle'>"]
+        }
+    toFile = {
+        'numsteps' : data['numsteps'],
+        'timestep' : data['dt'],
+        'coilFile' : data['Coil File'],
+        'doStaticB' : data['B-Field_Use'],
+        'doStaticE' : data['E-Field_Use'],
+        'B-Field' : data['B-Field'],
+        'E-Field' : data['E-Field'],
+        'particleFile':data["Particle File"]
+        }
+
+    Dict_to_CSV(DIR_last, toFile, newline="")
+
+    runsim(toProgram)
 
 
 def GatherParams(params:list):
@@ -148,4 +176,55 @@ def GatherParams(params:list):
         #print("data updated to: ", data)
     return data
 
+def FillWidgets(p:list, path:str):
+    """
+    takes a dictionary of parameter values, and fills the windows' widgets with their values.
+
+    params: list
+        > a list of all the widgets that need to be edited.
+    values: str (path to dict)
+        > Keys: the names of all the parameters
+        > Values: the value to change these parameters to
+    """
+    values = {}
+    with open(path, mode='r') as file:
+        reader = csv.reader(file)
+
+        keys = next(reader) # get first line
+        vals = next(reader) # move to the second line
+
+        for i in range(len(keys)):
+            values[keys[i]] = vals[i]
+    print(values)
+
+    fieldWidgets = {
+        'numsteps' : p[0],
+        'timestep' : p[0],
+        'coilFile' : p[2],
+        'doStaticB' : FieldDict(p[3], 0),
+        'doStaticE' : FieldDict(p[4], 0),
+        'B-Field' : FieldDict(p[3], 1),
+        'E-Field' : FieldDict(p[4], 1),
+        'particleFile': p[1]
+        }
     
+    for key, value in fieldWidgets.items():
+        """
+        for every field, run their respective widgets' setter functions.
+        """
+        value._Set(key, values[key])
+
+class FieldDict():
+    def __init__(self, inst, val):
+        self.out = {}
+        self.out["param"] = inst
+        self.out["id"] = val
+
+    def _Set(self, fieldName, val):
+        " remember, val here is from the input data file"
+        match self.out["id"]:
+            case 0:
+                self.out["param"].SetCheck(val)
+            case 1:
+                self.out["param"].SetCoords(val)
+

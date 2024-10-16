@@ -15,7 +15,7 @@ from functools import partial
 from magpylib import show
 from magpylib import Collection
 from magpylib.current import Circle
-import csv
+import pandas as pd
 import os
 from GuiHelpers import CSV_to_Df
 from PusherClasses import UniqueFileName
@@ -294,14 +294,17 @@ class EntryTable:
         
         Or a nested dictionary. I'm going with nested dictionary. It's easy, and I'm stupid.
         '''
+        
         keyBase = str(self.data)
 
         out = {}
+        lst = []
         for i in range(len(self.entries)):
-            keyName = f'{keyBase}_{i}'
+            #keyName = f'{keyBase}_{i}'
             value = self.entries[i]
+            lst.append(value)
 
-            out[keyName] = value
+        out[keyBase] = pd.DataFrame(lst)
         return out
     
     def Read_Data(self, dir=None):
@@ -486,7 +489,9 @@ class CurrentEntryTable(EntryTable):
     
     def GetData(self):
         value = self.collection
-        return dict(coils = value)
+        out = dict(coils = value)
+        out["Coil File"] = self.saveEntryVal.get()
+        return out
     
     def SaveData(self, dir: str):
         super().SaveData(dir)

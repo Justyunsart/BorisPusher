@@ -74,6 +74,15 @@ def List_to_CSV(fileName, data, *args, **kwargs):
         writer = csv.writer(mycsv)
         writer.writerows(data)
 
+def Dict_to_CSV(fileName:str, data:dict, *args, **kwargs):
+    """
+    used to create the last used parameters file.
+    """
+    with open(fileName, "w", *args, **kwargs) as mycsv:
+        writer = csv.DictWriter(mycsv, data.keys())
+        writer.writeheader()
+        writer.writerow(data)
+
 @dataclass
 class CircleCurrentConfig():
     '''

@@ -14,6 +14,7 @@ class PrefFile():
     DIR_coilDefs:str
 
     DIR_output:str
+    DIR_lastUsed:str
 
     PAR_dt:str
     PAR_numsteps:str

@@ -14,16 +14,24 @@ import pandas as pd
 ## Currents, dataclasses
 from PusherClasses import particle
 from PusherClasses import GetCurrentTrace, CreateOutput, CalcPtE
-from MakeCurrent import current as c
-from MakeCurrent import dia, A, B
+from MakeCurrent import dia, A, Bx
 ## Calculations
 import numpy as np
 import magpylib as magpy
 
+from BorisPlots import graph_trajectory
+
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
 
+'''
+global vars
 
+staticB:int = 0
+staticE:int = 0
+B:list = []
+E:list = []
+'''
 
 
 ####################
@@ -44,6 +52,9 @@ Ensure the code is efficient because the whole point of these operations is to i
 # using magpylib, this calculates the b-field affecting the particle
 # unless it is outside of the bounds given by 'side'
 def Bfield(y):
+    if staticB == 1:
+        return B
+
     out = []
 
     isBounds = y.any() > side
@@ -65,8 +76,9 @@ accel = None
 Calculates the E Field at point 'p' from the list of charge source coordinates given.
 '''
 def EfieldX(p:np.ndarray):
-
-    E = np.multiply(A * np.exp(-(p[0] / B)** 4), (p[0]/B)**15)
+    if staticE == 1:
+        return E
+    E = np.multiply(A * np.exp(-(p[0] / Bx)** 4), (p[0]/Bx)**15)
     return np.array([E,0,0])
 
 '''
@@ -81,7 +93,7 @@ coilLength = 1000
 # boris push calculation
 # this is used to move the particle in a way that simulates movement from a magnetic field
 def borisPush(id:int):
-    global num_points, num_parts, dt, side, df  # Should be fine in multiprocessing because these values are only read,,,
+    global df, num_parts, num_points, dt, sim_time, side, staticB, staticE, B, E # Should be fine in multiprocessing because these values are only read,,,
     assert id <= (num_parts - 1), f"Input parameter 'id' received a value greater than the number of particles, {num_parts}"
 
     #print(df)
@@ -97,14 +109,20 @@ def borisPush(id:int):
 
     out = np.empty(shape = (num_points + 1), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
 
-    temp = df["starting_pos"].to_numpy()[id] # Populate it with the initial conditions at index 0.
-    temp1 = df["starting_vel"].to_numpy()[id] * 6
-    out[0] = particle(px = temp[0], 
-                            py = temp[1],
-                            pz = temp[2],
-                            vx = temp1[0],
-                            vy = temp1[1],
-                            vz = temp1[2],
+    #temp = df["starting_pos"].to_numpy()[id] # Populate it with the initial conditions at index 0.
+    #temp1 = df["starting_vel"].to_numpy()[id] * 6
+
+    row = df.iloc[id]
+    starting_pos = [row["px"], row["py"], row["pz"]]
+    starting_pos = [float(item) for item in starting_pos]
+    starting_vel = [row['vx'], row['vy'], row['vz']]
+    starting_vel = [float(item) for item in starting_vel]
+    out[0] = particle(px = starting_pos[0], 
+                            py = starting_pos[1],
+                            pz = starting_pos[2],
+                            vx = starting_vel[0],
+                            vy = starting_vel[1],
+                            vz = starting_vel[2],
                             bx = 0,
                             by = 0,
                             bz = 0,
@@ -121,7 +139,7 @@ def borisPush(id:int):
         x = np.array([out[time - 1].px, out[time - 1].py, out[time - 1].pz])
         v = np.array([out[time - 1].vx, out[time - 1].vy, out[time - 1].vz])
         #print("x for particle: ", id, " at time ", time, ": ", x)
-        #E = EfieldX(x)
+        E = EfieldX(x)
         Bf = Bfield(x)
         #Bf = np.array([0.0, 0.0, 1])
         out[time - 1].bx, out[time - 1].by,out[time - 1].bz = Bf # update B field for particle we just found
@@ -159,21 +177,40 @@ def borisPush(id:int):
     # ft = ft*(10**-5)
     return out
 
-def init_process(data, n1, n2, t, t1):
-    global df, num_parts, num_points, dt, sim_time, sources, side
+def init_process(data, n1, n2, t, t1, doB, doE, Bf, Ef, coils):
+    global df, num_parts, num_points, dt, sim_time, side, staticB, staticE, B, E, c
     df = data
     num_parts = n1
     num_points = n2
     dt = t
     sim_time = t1
-    sources = GetCurrentTrace(c, dia, res=100, nsteps=100)
-    side=100
+    #sources = GetCurrentTrace(c, dia, res=100, nsteps=100)
+    side=3
+
+    staticB = doB
+    staticE = doE
+    B = np.array(Bf)
+    E = np.array(Ef)
+
+    c = coils
+
     #print("data shared: ", data, n1, n2, t)
 
-def runsim(dfIn, numPa, numPo, tScale, time):
-    init_process(dfIn, numPa, numPo, tScale, time)
+def runsim(fromGui:dict):
+    dfIn = pd.DataFrame(fromGui['particles'])
+    numPa = dfIn.shape[0]
+    numPo = int(fromGui['numsteps'])
+    tScale = fromGui['timestep']
+    time = numPo * tScale
+    doB = fromGui['doStaticB']
+    doE = fromGui['doStaticE']
+    Bf = fromGui['B-Field']
+    Ef = fromGui['E-Field']
+    coils = fromGui['coils']
+
+    init_process(dfIn, numPa, numPo, tScale, time, doB, doE, Bf, Ef, coils)
     values = range(numPa)
-    with ProcessPoolExecutor(initializer=init_process, initargs=(dfIn, numPa, numPo, tScale, time)) as executor:
+    with ProcessPoolExecutor(initializer=init_process, initargs=(dfIn, numPa, numPo, tScale, time, doB, doE, Bf, Ef, coils)) as executor:
         futures = executor.map(borisPush, values)
 
     out = []
@@ -181,4 +218,6 @@ def runsim(dfIn, numPa, numPo, tScale, time):
         out.append(future)
 
     out = np.asarray(out)
-    CreateOutput(out, sim_time, num_points, num_parts)
+
+    dir = CreateOutput(out, sim_time, num_points, num_parts)
+    graph_trajectory(lim=side, data=dir)

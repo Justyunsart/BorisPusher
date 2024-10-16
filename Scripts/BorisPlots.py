@@ -3,7 +3,7 @@ import numpy as np
 import magpylib as magpy
 import pandas as pd
 
-from magpy4c1 import EfieldX
+#from magpy4c1 import EfieldX
 
 from magpylib import Collection
 
@@ -19,7 +19,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import plotly.graph_objects as go
 
 from MakeCurrent import current as c
-from MakeCurrent import A, B
+from MakeCurrent import A, Bx
 
 from math import pi, cos, sin
 
@@ -248,14 +248,14 @@ def graph_trajectory(lim, data):
     magpy.show(c, canvas=traj)
 
     # Enjoy the fruits of your labor
-    plt.show()
+    fig1.show()
 
 def graph_E_X(lim:int, step:int, subplot):
 
     # construct grid for the cross section
     x = np.linspace(-lim, lim, step) # these represent LOCAL x and y for the 2D graph, not the 3D space.
 
-    E = np.multiply(A * np.exp(-(x / B)** 4), (x/B)**15)
+    E = np.multiply(A * np.exp(-(x / Bx)** 4), (x/Bx)**15)
 
     subplot.plot(x,E)
 

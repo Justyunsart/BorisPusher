@@ -14,6 +14,7 @@ from PrefFile import PrefFile
 from pathlib import Path
 import os
 import pickle
+import ast
 
 class ConfigMenuBar():
     def __init__ (self, master):
@@ -55,12 +56,14 @@ class ConfigMenuBar():
 
             ## location of output folder
         outputPath = os.path.join(self.master.filepath, "Outputs")
+        lastusedPath = os.path.join(inputPath, "lastUsed")
 
         # 2: Create the PrefFile object with default params
         prefs = PrefFile(particlePath, 
                          coilPath, 
                          coilDefsPath,
                          outputPath,
+                         lastusedPath,
                          "0.000001",
                          "50000",
                          "",
@@ -262,6 +265,15 @@ class TimeStep_n_NumStep():
         data["numsteps"] = float(self.numsteps.entry.get())
         data["dt"] = float(self.dt.entry.get())
         return data
+    
+    def _Set(self, key:str, value:list):
+        match key:
+            case 'numsteps':
+                self.numsteps.value.set(value)
+            case 'timestep':
+                self.dt.value.set(value)
+        
+
 
 class ParticlePreview(EntryTable):
     '''
@@ -331,7 +343,17 @@ class ParticlePreview(EntryTable):
     
     def GetData(self):
         out =  super().GetData()
-        out["Partile File"] = self.fileWidget.fileName.get()
+        out["Particle File"] = self.fileWidget.fileName.get()
+        return out
+    
+    def _Set(self, key, value):
+        "edits the value of the dropdown widgets to the provided one."
+        if(key != 'particleFile'):
+            return False
+        
+        dropdownLst:list = self.fileWidget["values"]
+        ind = dropdownLst.index(value)
+        self.fileWidget.current(ind)
 
 class ParticlePreviewSettings():
     '''
@@ -371,6 +393,7 @@ class CoordTable(tk.LabelFrame):
         self.Y = LabeledEntry(self.frame1, 0, row=1, col=4, title="Y: ", width=10)
         self.Z = LabeledEntry(self.frame1, 0, row=1, col=8, title="Z: ", width=10)
         self.entries = [self.X.entry, self.Y.entry, self.Z.entry] # handy reference to all entry widgets
+        self.labeledEntries = [self.X, self.Y, self.Z]
 
         # frame for the use checkmark
         self.frame = tk.Frame(self)
@@ -418,6 +441,14 @@ class CoordTable(tk.LabelFrame):
             '''
             for entry in self.entries:
                 entry.config(state="normal")
+    
+    def SetCheck(self, val):
+        self.doUse.set(val)
+    def SetCoords(self, val):
+        val = ast.literal_eval(val)
+        #val = [n.strip() for n in val]
+        for i in range(3):
+            self.labeledEntries[i].value.set(val[i])
 
 class CoilButtons():
     '''
@@ -608,6 +639,18 @@ class CurrentConfig:
         
         self.param = CoilButtons(ParamFrame,
                                  table=self.table)
+        
+    def GetData(self):
+        return self.table.GetData()
+    
+    def _Set(self, key:str, value:str):
+        "edits the value of the dropdown widgets to the provided one."
+        if(key != 'coilFile'):
+            return False
+        
+        dropdownLst:list = self.dropdown["values"]
+        ind = dropdownLst.index(value)
+        self.dropdown.current(ind)
 
 def _Try_Float(list):
 

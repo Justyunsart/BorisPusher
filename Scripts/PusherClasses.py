@@ -117,6 +117,7 @@ def CreateOutput(inp, sim_time, num_points, num_parts):
 
     temp = os.path.join(dir, f"dataframe.json")
     data.to_json(temp, orient="table")
+    return temp
 
 
 #===========#
