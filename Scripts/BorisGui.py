@@ -156,7 +156,7 @@ Fields.grid(row=1, column=0)
 ## Particle condition stuff..
 Combobox_particle_file = Particle_File_Dropdown(DropdownFrame,
                                                 dir=DIR_Particle)
-particleCheckboxes = ParticlePreviewSettings(DropdownFrame)
+#particleCheckboxes = ParticlePreviewSettings(DropdownFrame)
 particlePreview = ParticlePreview(ParticlePreviewFrame,
                                   Combobox_particle_file)
 
