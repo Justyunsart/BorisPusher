@@ -52,7 +52,7 @@ class EntryTable:
     #===============#
     # INITIALIZAION #
     #===============#
-    def __init__(self, master, dataclass:dataclass, name="entry"): # initialization function
+    def __init__(self, master, dataclass:dataclass, name="entry", save=True, rowInit=True): # initialization function
         self.isInit = False
         self.name = name
         # keep reference to the master 
@@ -85,7 +85,8 @@ class EntryTable:
             self.titleLabel = tk.Label(self.frame1,
                                        text=str(self.fields[i]))
             self.titleLabel.grid(row=0, column=i)
-        self.NewEntry() # add one empty row for the start
+        if(rowInit):
+            self.NewEntry() # add one empty row for the start
 
         # Button to add new rows
         self.addButton = tk.Button(self.frame,
@@ -93,22 +94,23 @@ class EntryTable:
                                    command=self.NewEntry)
         self.addButton.grid(row=1, column=0, sticky="")
 
-        # Save as button
-        self.saveButton = tk.Button(
-            self.frame,
-            text="Save As",
-            command=self.SaveData
-        )
-        self.saveButton.grid(row=1, column=1, sticky="E")
-        
-        # save as entry field
-        self.saveEntryVal = tk.StringVar()
-        self.saveEntry = tk.Entry(
-            self.frame,
-            textvariable=self.saveEntryVal,
-            width=20
-        )
-        self.saveEntry.grid(row=1, column=2, sticky="E")
+        if (save):
+            # Save as button
+            self.saveButton = tk.Button(
+                self.frame,
+                text="Save As",
+                command=self.SaveData
+            )
+            self.saveButton.grid(row=1, column=1, sticky="E")
+            
+            # save as entry field
+            self.saveEntryVal = tk.StringVar()
+            self.saveEntry = tk.Entry(
+                self.frame,
+                textvariable=self.saveEntryVal,
+                width=20
+            )
+            self.saveEntry.grid(row=1, column=2, sticky="E")
 
         self.isInit = True
     
@@ -162,6 +164,7 @@ class EntryTable:
         self.widgets.pop(row-1)
         self.entries.pop(row-1)
         #print(self.frame1.grid_size())
+        return row
 
     
     def NewEntry(self, *args, defaults=True):
@@ -258,7 +261,7 @@ class EntryTable:
         self.saveEntryVal.set(name)
         return True
     
-    def SaveData(self, dir:str):
+    def SaveData(self, dir:str, container=None, vals=None, customContainer=False):
         '''
         after reading where to save (DIR variable from somewhere),
         look at the value of the nearby entry widget and either create the file (if not present)
@@ -275,13 +278,38 @@ class EntryTable:
         PATH = os.path.join(dir, saveName)
         #print(PATH)
 
+        #print(container)
+        #print(vals)
         # the first row is the names of all the fields.
-        vals = [self.fields.copy()] #i want to really make sure we're working with a copy of the list
         # get each entry in the desired format
-        for entry in self.entries:
-            vals.append(list(entry.values()))
 
-        List_to_CSV(PATH, vals, newline="")
+        match customContainer:
+            case True:
+                match container:
+                    case None:
+                        KeyError("customContainer ran with True, yet no container given.")
+                match vals:
+                    case None:
+                        KeyError("vals not provided")
+                try:
+                    container = self._Constructed_nested_list(dic=container, vals=vals)
+                except:
+                    print(f"Something went wrong when saving container. Got: {container}" )
+            case False:
+                try:
+                    vals = [self.fields.copy()] #i want to really make sure we're working with a copy of the list
+                    container = self._Constructed_nested_list(dic=self.entries, vals=vals)
+                except:
+                    print(f"Something went wrong when saving self.entries. Got: {self.entries}" )
+
+        List_to_CSV(PATH, container, newline="")
+
+
+    def _Constructed_nested_list(self, dic, vals):
+        for entry in dic:
+            vals.append(list(entry.values()))
+        return vals
+
     
     def GetData(self):
         '''
@@ -307,7 +335,7 @@ class EntryTable:
         out[keyBase] = pd.DataFrame(lst)
         return out
     
-    def Read_Data(self, dir=None):
+    def Read_Data(self, dir=None, **kwargs):
         '''
         look at the dir of the selected input file, then turn it into rows on the entry table
         '''
@@ -316,12 +344,12 @@ class EntryTable:
                 return False
 
             #print("reading data")
-            data = CSV_to_Df(self.dirWidget.PATH.data, isNum=False).values.tolist() # ideally, each sublist will be a row of params for file_particle
+            data = CSV_to_Df(self.dirWidget.PATH.data, isNum=False, **kwargs).values.tolist() # ideally, each sublist will be a row of params for file_particle
             #print(data)
 
         else:
             """
-            when dir == None, assume it's been provided with a valid filepath to read.
+            when dir != None, assume it's been provided with a valid filepath to read.
             """
             data = CSV_to_Df(dir, isNum=False).values.tolist()
         
@@ -379,6 +407,73 @@ class EntryTable:
 
         self.entries = out
 
+class RotationConfigEntryTable(EntryTable):
+    """
+    A special kind of entry table that expects an input of data from external sources.
+    """
+    axisIndices = {"x" : 0,
+                   "y" : 1,
+                   "z" : 2}
+    def __init__(self, master, data, defaults=True, *args, callable:callable=None, **kwargs):
+        self.func = callable
+        self.master = master
+        self.data_to_fill = data
+        self.defaults = defaults
+        super().__init__(master=master, *args, **kwargs)
+
+        self.onRotationEntryOpen(defaults=self.defaults, lst=self.data_to_fill)
+    
+    def onRotationEntryOpen(self, defaults:bool, lst:list=None):
+        '''
+        # parameters:
+        defaults (bool) = True
+            > controls whether to instantiate the table with default values.
+        
+        lst:list = None
+            > expected when defaults = False.
+            > contains the data to create the table with instead of default.
+        '''
+        #print(lst)
+        match defaults:
+            case True:
+                self.NewEntry()
+            
+            case False:
+                try:
+                    self.SetRows(lst)
+                except:
+                    raise KeyError("'defaults' ran with False, yet no list")
+    
+    def OnRotationEntryClose(self):
+        """
+        when the entry table window is supposed to close,
+        it must get its data and return it for the parent window.
+        """
+        for i in self.entries:
+            i['RotationAngle'] = float(i['RotationAngle'])
+        return self.entries
+    
+    def SetRows(self, list):
+        """
+        Before running super, format the given data from a list of dicts to a list of dataclasses.
+        """
+        out = []
+        for data in list:
+            config = RotationConfig(self.frame1,
+                                    data["RotationAngle"],
+                                    self.axisIndices[data["RotationAxis"]])
+            out.append(config)
+        #print(out)
+        super().SetRows(out)
+
+    def EntryValidateCallback(self, entry):
+        super().EntryValidateCallback(entry)
+        if (self.func != None):
+            self.func(table=self)
+    
+
+# CURRENT ENTRY TABLE
+#################################################################################################################
 
 class CurrentEntryTable(EntryTable):
     '''
@@ -386,7 +481,8 @@ class CurrentEntryTable(EntryTable):
 
     I'll probably also include the graph widget in this class for simplicity.
     '''
-    collection = Collection()
+    collection = Collection() # magpy object for visualization
+    rotations = [] # container to store coil rotation info.
 
     """
     Class settings, defaults
@@ -420,6 +516,8 @@ class CurrentEntryTable(EntryTable):
         self.canvas.get_tk_widget().grid(row=0, column=0)
 
         self.saveButton.config(command = partial(self.SaveData, self.dirWidget.dir))
+
+        self.addButton.config(command=self._new_Button_Callback)
         
         # draw canvas for the first time
         # is it inelegant to hard code initialization event order like this? maybe
@@ -434,21 +532,26 @@ class CurrentEntryTable(EntryTable):
         2. Creates magpylib circle current objects from this data
         3. Graphs these created coils
         '''
+        #print(self.rotations)
         #print("graph reset")
         self.collection = Collection()
         #print(self.GetEntries())
-        for row in self.GetEntries():
+        for i in range(len(self.GetEntries())):
+            row = self.GetEntries()[i]
             pos = [float(row["PosX"]), float(row["PosY"]), float(row["PosZ"])]
             c = Circle(current=float(eval(row["Amp"])),
                                    position=pos,
                                    diameter = float(row["Diameter"])
                                    )
-            c.rotate_from_angax(float(row["RotationAngle"]), row["RotationAxis"])
+            for rotation in self.rotations[i]:
+                #print(rotation)
+                c.rotate_from_angax(float(rotation["RotationAngle"]), rotation["RotationAxis"])
             self.collection.add(c)
         
         self.plot.cla()
         show(self.collection, canvas=self.plot, canvas_update = True, backend="matplotlib")
         self.canvas.draw()
+        return True
 
     def EntryValidateCallback(self, entry):
         '''
@@ -459,28 +562,56 @@ class CurrentEntryTable(EntryTable):
     
     def NewEntry(self, *args, defaults=True):
         super().NewEntry(*args, defaults=defaults)
-        check = self.isInit
-        if(check):
-            self.GraphCoils()
+        
+        self.entries[-1]["Rotations"].config(command=partial(self.NewWindow, self.entries[-1]["Rotations"]))
+        if(self.isInit):
+            self.rotations.append([{"RotationAngle": 0, "RotationAxis": 'x'}]) # this line does not scale with changing default values of the class.
+
+    def _new_Button_Callback(self):
+        """
+        to control the call of self.GraphCoils(), call it only after pressing a new entry button.
+        So that when newentry is called from other functions, it doesn't try to run graphcoils on accident.
+        """
+        self.NewEntry()
+        self.GraphCoils()
 
     def Read_Data(self, dir=None):
-        data = super().Read_Data(dir=dir)
+        data = super().Read_Data(dir=dir, converters={"RotationAngle":tryEval, "RotationAxis":tryEval})
         coils = []
+        rotations = []
+        #print(data)
+
+        # TODO: mess with this function to incorporate the new method for rotation.
         for row in data:
             coil = CircleCurrentConfig(self.frame1, 
                                      px = row[0], 
                                      py = row[1], 
                                      pz = row[2], 
                                      amp= row[3],
-                                     dia= row[4],
-                                     angle = row[5],
-                                     axis=self.axisIndices[row[6]]
+                                     dia= row[4]
+                                     #angle = row[5],
+                                     #axis=self.axisIndices[row[6]]
                                      )
             #print(particle.py.paramDefault)
             coils.append(coil)
+            
+            #print(type(row[5]))
+            match row[5]:
+                case float():
+                    rotations.append([{"RotationAngle":(row[5]), "RotationAxis":(row[6])}])
+                case int():
+                    rotations.append([{"RotationAngle":(row[5]), "RotationAxis":(row[6])}])
+                case list():
+                    out = []
+                    for i in range(len(row[5])):
+                        out.append({"RotationAngle":(row[5])[i], "RotationAxis":(row[6])[i]})
+                    rotations.append(out)
         
         #print(coils)
+        self.rotations = rotations
+        #print(rotations)
         self.SetRows(coils)
+        #print(self.entries)
         return True
 
     def SetRows(self, list):
@@ -493,8 +624,20 @@ class CurrentEntryTable(EntryTable):
         out["Coil File"] = self.saveEntryVal.get()
         return out
     
-    def SaveData(self, dir: str):
-        super().SaveData(dir)
+    def SaveData(self, dir:str, container=None, customContainer=False):
+        # make a copy of self.entries just for this
+        container = self.entries.copy()
+        customContainer=True #flag this class as needing a custom container
+        #print(self.rotations)
+        # combine the entries and rotations container
+        for i in range(len(self.entries)):
+            container[i]["RotationAngle"] = str([j["RotationAngle"] for j in self.rotations[i]])
+            container[i]["RotationAxis"] = str([j["RotationAxis"] for j in self.rotations[i]])
+            # remove the 'Rotations' key; leftover from the dataclass that needs to be cut
+            del container[i]['Rotations']
+        
+        vals = [list(container[0].keys())]
+        super().SaveData(dir, container, vals, customContainer)
 
         # In addition to the super, also update the selected file's value in the field dropdown
         if self.saveEntryVal.get() not in self.dirWidget["values"]:
@@ -527,4 +670,52 @@ class CurrentEntryTable(EntryTable):
     
     def Refresh(self):
         super().Refresh()
+        self.GraphCoils()
+
+    def DelEntry(self, button):
+        row = super().DelEntry(button)
+        self.rotations.pop(row)
+
+    
+    def NewWindow(self, wid):
+        '''
+        passed to the entry row: opens a new window containing the rotation entry table.
+        '''
+        #print(self.rotations)
+        row = wid.grid_info()["row"] # so we know which particle this window is for
+        #print(row)
+
+        # get info to best place this window on the screen.
+        x_pos = wid.winfo_rootx()
+        y_pos = wid.winfo_rooty()
+
+        # Create the New Window
+        newWin = tk.Toplevel(self.master)
+        newWin.title(f"Configure Rotation(s) for particle {row}")
+
+        # Spawn the Entry Table element
+        frame = tk.LabelFrame(newWin, text="Rotations Table")
+        frame.grid(row=0, column=0)
+        table = RotationConfigEntryTable(defaults=False, data=self.rotations[row-1], master=frame, dataclass=RotationConfig, save=False, rowInit=False,
+                                         callable=partial(self._graph_callback, row, table=None))
+
+        # Get the size of the window with these elements added in.
+        newWin.update()
+        winX = newWin.winfo_width()
+        winY = newWin.winfo_height()
+
+        # Set the geometry
+        newWin.geometry(f'+{x_pos-winX}+{y_pos-(winY//2)}')
+
+        # Set up the data collection function onclose.
+        newWin.protocol('WM_DELETE_WINDOW', partial(self._entry_window_close, table, newWin, row))
+    
+    def _entry_window_close(self, table:RotationConfigEntryTable, window:tk.Toplevel, row:int):
+        self.rotations[row-1] = table.OnRotationEntryClose()
+        #print(self.rotations)
+
+        window.destroy()
+    def _graph_callback(self, row, table:RotationConfigEntryTable):
+        self.rotations[row-1] = table.OnRotationEntryClose()
+
         self.GraphCoils()

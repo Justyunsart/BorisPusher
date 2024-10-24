@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from dataclasses import dataclass, field
 import csv
+from ast import literal_eval
 
 """
 classes used for <CurrentGuiClasses.EntryTable> and its subclasses.
@@ -12,6 +13,13 @@ before any entrytable is constructed.
 """
 # MORE GENERIC CLASSES #
 #==============================================================
+def tryEval(val):
+    try:
+        return literal_eval(val)
+    except (ValueError, SyntaxError):
+        return val
+
+
 class OnlyNumEntry(tk.Entry, object):
     def __init__(self, master, **kwargs):
 
@@ -37,6 +45,13 @@ class OnlyNumEntry(tk.Entry, object):
         except:
             self.isNum = False
 
+class EntryButton(tk.Button):
+    def __init__(self, master, **kwargs):
+        self.master = master
+        super().__init__(master, **kwargs)
+    def get(self):
+        return self
+
 
 class EntryTableParam:
     paramDefault: None
@@ -57,6 +72,8 @@ class EntryTableParam:
                                               "y",
                                               "z"]
                 self.paramWidget.current(self.paramDefault)
+            case tk.Button():
+                pass
 
     def Get(self, isNum=True):
         if isNum:
@@ -84,6 +101,22 @@ def Dict_to_CSV(fileName:str, data:dict, *args, **kwargs):
         writer.writerow(data)
 
 @dataclass
+class RotationConfig():
+    '''
+    when clicking on the current config's rotations button, it will open a new window containing the rotation transformations
+    of the row.
+    '''
+    RotationAngle: EntryTableParam = field(init=False)
+    RotationAxis: EntryTableParam = field(init=False)
+
+    def __init__ (self, frame, angle=0, axis=0):
+        self.RotationAngle = EntryTableParam(angle, master=frame)
+        self.RotationAxis = EntryTableParam(axis, ttk.Combobox, master=frame, state="readonly", width=5)
+    def __iter__(self):
+        for val in self.__dict__.values():
+            yield val
+
+@dataclass
 class CircleCurrentConfig():
     '''
     An object created from (I'm assuming) a 'create new current' button.
@@ -96,10 +129,11 @@ class CircleCurrentConfig():
     Amp: EntryTableParam = field(init=False)
     Diameter: EntryTableParam = field(init=False)
 
-    RotationAngle: EntryTableParam = field(init=False)
-    RotationAxis: EntryTableParam = field(init=False)
+    Rotations: EntryTableParam = field(init=False)
+    #RotationAngle: EntryTableParam = field(init=False)
+    #RotationAxis: EntryTableParam = field(init=False)
 
-    def __init__(self, frame, px = 0, py = 0, pz = 0, amp = 1e5, dia = 1, angle = 0, axis = 0):
+    def __init__(self, frame, px = 0, py = 0, pz = 0, amp = 1e5, dia = 1):
         self.PosX = EntryTableParam(px, master=frame)
         self.PosY = EntryTableParam(py, master=frame)
         self.PosZ = EntryTableParam(pz, master=frame)
@@ -107,8 +141,9 @@ class CircleCurrentConfig():
         self.Amp = EntryTableParam(amp, master=frame)
         self.Diameter = EntryTableParam(dia, master=frame)
 
-        self.RotationAngle = EntryTableParam(angle, master=frame)
-        self.RotationAxis = EntryTableParam(axis, ttk.Combobox, master=frame, state="readonly", width=5)
+        self.Rotations = EntryTableParam(None, EntryButton, master=frame, text="Rotations")
+        #self.RotationAngle = EntryTableParam(angle, master=frame)
+        #self.RotationAxis = EntryTableParam(axis, ttk.Combobox, master=frame, state="readonly", width=5)
         
     def __iter__(self):
         for val in self.__dict__.values():

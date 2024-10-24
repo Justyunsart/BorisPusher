@@ -101,7 +101,7 @@ def FieldCallback(event, value:ttk.Combobox, xcontainer:Entry, ycontainer:Entry,
             zcontainer.config(state="normal",
                               text = "0.0")
 
-def CSV_to_Df(dir, isNum=True):
+def CSV_to_Df(dir, isNum=True, **kwargs):
     '''
     A function that will be called in the calculate button's command.
     Turns the csv data in the particle input file to a workable dataframe.
@@ -110,7 +110,7 @@ def CSV_to_Df(dir, isNum=True):
     isNum: a bool that determines if everything should be considered numeric or not.
     '''
     # step 1: read the file from the directory.
-    data = pd.read_csv(dir)
+    data = pd.read_csv(dir, **kwargs)
     #print(data)
 
     # step 2: numeric checks
@@ -195,7 +195,7 @@ def FillWidgets(p:list, path:str):
 
         for i in range(len(keys)):
             values[keys[i]] = vals[i]
-    print(values)
+    #print(values)
 
     fieldWidgets = {
         'numsteps' : p[0],
@@ -227,4 +227,3 @@ class FieldDict():
                 self.out["param"].SetCheck(val)
             case 1:
                 self.out["param"].SetCoords(val)
-
