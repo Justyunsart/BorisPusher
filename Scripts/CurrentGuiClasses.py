@@ -505,9 +505,9 @@ class CurrentEntryTable(EntryTable):
         # FIGURE #
         #--------#
         self.frame2 = graphFrame
-        self.frame2.grid(row=1, column=0)
+        self.frame2.grid(row=0, column=1)
 
-        self.fig = plt.figure(figsize=(10, 10))
+        self.fig = plt.figure(figsize=(5, 5))
         self.plot = self.fig.add_subplot(1,1,1, projection="3d")
         
         self.canvas = FigureCanvasTkAgg(self.fig,

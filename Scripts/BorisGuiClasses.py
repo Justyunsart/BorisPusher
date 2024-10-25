@@ -16,6 +16,18 @@ import os
 import pickle
 import ast
 
+###################
+# NESTED NOTEBOOK #
+###################
+'''
+Here, I'll make classes for it.
+'''
+
+
+
+############
+# MENU BAR #
+############
 class ConfigMenuBar():
     def __init__ (self, master):
         self.master = master
@@ -599,7 +611,7 @@ class CoilButtons():
             widget.var.set((sign * gapVal))
 
 class CurrentConfig:
-    def __init__(self, master, DIR, DIR_CoilDef):
+    def __init__(self, master, DIR, DIR_CoilDef, Gframe):
         self.master = master
 
         # frames setup
@@ -618,8 +630,7 @@ class CurrentConfig:
         CurrentFile = tk.Frame(CurrentTable)
         CurrentFile.grid(row=0, column=0, sticky="NW")
 
-        CurrentGraph = tk.Frame(self.master)
-        CurrentGraph.grid(row=1, column=0)
+        CurrentGraph = Gframe
         
         """
         this one contains all the common global transformations u can desire

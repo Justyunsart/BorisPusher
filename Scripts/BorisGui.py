@@ -19,7 +19,7 @@ This is the main hub for the GUI, with many helper files providing classes and f
 params = []
 
 # Application Window
-root = Tk()
+root = tk.Tk()
 root.title("Configure Sim")
 
 # main window
@@ -35,6 +35,9 @@ Main.grid_columnconfigure(0, weight=1)
 # add the toolbar
 mainToolbar = ConfigMenuBar(Main)
 
+"""
+KEY VARS
+"""
 # Selected dirs for sims
 Main_PrefFiles = Main.prefs
 DIR_Particle = Main_PrefFiles.DIR_particle
@@ -45,7 +48,13 @@ DIR_lastUsed = Main_PrefFiles.DIR_lastUsed
 #print(DIR_Particle)
 
 # PLOT OR CALCULATE?
-tabControl=ttk.Notebook(Main, padding="4 12 12 4")
+"""
+MAIN TABS
+"""
+style1 = ttk.Style()
+style1.configure('Two.TNotebook.Tab', font=('Arial', 18), padding=15)
+
+tabControl=ttk.Notebook(Main, padding="4 12 12 4", style='Two.TNotebook')
 tabControl.grid(row=0, column=0, sticky=N+W+E+S)
 
 ## Create tab objects
@@ -61,6 +70,23 @@ tab_plot.grid_rowconfigure(0, weight = 1)
 
 tabControl.grid_rowconfigure(0, weight=1)
 tabControl.grid_columnconfigure(0, weight=1)
+
+'''
+NESTED TABS:
+Here I will define a style for this, as I want these tabs to look different from the first ones.
+'''
+style = ttk.Style()
+style.configure('One.TNotebook.Tab', font=('Arial', 12), padding=15)
+
+calc_nested_notebook = ttk.Notebook(tab_calc, style='One.TNotebook')
+calc_nested_notebook.grid(row=0, column=0, sticky=N+W+E+S)
+calc_frame1 = ttk.Frame(calc_nested_notebook, width=200, height=100, relief=tk.SUNKEN)
+#calc_frame2 = ttk.Frame(calc_nested_notebook, width=200, height=100, relief=tk.SUNKEN)
+calc_frame3 = ttk.Frame(calc_nested_notebook, width=200, height=100, relief=tk.SUNKEN)
+calc_nested_notebook.add(calc_frame1, text="Particle")
+#calc_nested_notebook.add(calc_frame2, text="Particle")
+calc_nested_notebook.add(calc_frame3, text="Coil")
+
 # PLOT GUI #
 #=============#
 # GUI WIDGETS #
@@ -81,7 +107,7 @@ label_out_file = ttk.Label(plot_out_file,
                                text = "Output File Dir:")#.grid(column = 0, row = 1, sticky=(W))
 label_out_file.grid(row = 0, column= 0, padx=10, pady=10)
 
-button_out_file = ttk.Button(plot_out_file,
+button_out_file = tk.Button(plot_out_file,
                                  text = "Browse Files")
 button_out_file.grid(row = 0, column=1, pady=10)
 
@@ -96,7 +122,7 @@ name_out_file.grid(row = 0, column=2, pady=10)
 We need to keep watch on the selected data file value, and ensure that this button is active only when
 there is a valid data file selected.
 '''
-plot_confirm = ttk.Button(tab_plot,
+plot_confirm = tk.Button(tab_plot,
                           text="Create Plot",
                           state="disabled")
 button_out_file.config(command=partial(PlotFileCallback, name_out_file, plot_confirm))
@@ -120,7 +146,7 @@ style.configure("LG.TCheckbutton", background="light gray", foreground="black", 
 
 
 ## MAIN CONTAINER
-calc_title_LFrame = ttk.Labelframe(tab_calc,
+calc_title_LFrame = ttk.Labelframe(calc_frame1,
                              text="Boris Push Calculation")
 calc_title_LFrame.grid(row=0, column=0, pady=10, padx=10, sticky="NW")
 
@@ -136,7 +162,7 @@ CalcCheckBoxFrame.grid(row=1, column=0, pady=10, padx=10, sticky="N")
 CalcRestartFileFrame = tk.Frame(calc_title_LFrame)
 CalcRestartFileFrame.grid(row=2, column= 0, pady=10, padx=10)
 
-Particle = tk.LabelFrame(calc_title_LFrame, text="Particle Conditions")
+Particle = tk.LabelFrame(calc_frame1, text="Particle Conditions")
 Particle.grid(row=0, column=1, sticky="W")
 
 DropdownFrame = tk.Frame(Particle)
@@ -186,6 +212,14 @@ tabControl.pack(expand=1, fill="both")
 ########################
 # CURRENT MANIPULATION #
 ########################
+
+CurrentFrame = tk.LabelFrame(calc_frame3, text="Configure Current")
+CurrentFrame.grid(row = 0, column=0, padx=10, pady=10)
+GraphFrame = tk.LabelFrame(calc_frame3, text="Graph")
+GraphFrame.grid(row = 0, column=1, padx=10, pady=10)
+coil_config = CurrentConfig(CurrentFrame, DIR_Coil, DIR_coilDefs, GraphFrame)
+
+"""
 '''
 #the place to see and change the configuration of the magnetic coils.
 #Will happen in a new window because why not
@@ -208,7 +242,7 @@ CurrentFrame.grid(row = 0, padx=10, pady=10)
 #coil_file = Particle_File_Dropdown(CurrentFile, DIR_Coil)
 #coil_table = CurrentEntryTable(CurrentTable, CircleCurrentConfig, coil_file)
 coil_config = CurrentConfig(CurrentFrame, DIR_Coil, DIR_coilDefs)
-
+"""
 #=======#
 # FINAL #
 #=======#
