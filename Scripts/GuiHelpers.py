@@ -224,6 +224,8 @@ class FieldDict():
         " remember, val here is from the input data file"
         match self.out["id"]:
             case 0:
-                self.out["param"].SetCheck(val)
+                #self.out["param"].SetCheck(val)
+                pass
             case 1:
-                self.out["param"].SetCoords(val)
+                #self.out["param"].SetCoords(val)
+                pass

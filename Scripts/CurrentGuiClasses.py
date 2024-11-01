@@ -9,7 +9,9 @@ import tkinter as tk
 from tkinter import ttk
 from dataclasses import dataclass, field
 from matplotlib import pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
+                                               NavigationToolbar2Tk)
+
 from functools import partial
 
 from magpylib import show
@@ -470,6 +472,11 @@ class RotationConfigEntryTable(EntryTable):
         super().EntryValidateCallback(entry)
         if (self.func != None):
             self.func(table=self)
+    def DelEntry(self, button):
+        super().DelEntry(button)
+        self.EntryValidateCallback
+        if (self.func != None):
+            self.func(table=self)
     
 
 # CURRENT ENTRY TABLE
@@ -483,14 +490,12 @@ class CurrentEntryTable(EntryTable):
     '''
     collection = Collection() # magpy object for visualization
     rotations = [] # container to store coil rotation info.
+    lim:float = 0.
 
     """
     Class settings, defaults
     """
     defaultFileName = "Coil"
-    axisIndices = {"x" : 0,
-                   "y" : 1,
-                   "z" : 2}
 
     def __init__(self, master, dataclass, dirWidget, graphFrame, defaults):
         self.dirWidget = dirWidget
@@ -504,6 +509,7 @@ class CurrentEntryTable(EntryTable):
         #--------#
         # FIGURE #
         #--------#
+        # create graph properties
         self.frame2 = graphFrame
         self.frame2.grid(row=0, column=1)
 
@@ -512,19 +518,23 @@ class CurrentEntryTable(EntryTable):
         
         self.canvas = FigureCanvasTkAgg(self.fig,
                                         master = self.frame2)
+        toolbar = NavigationToolbar2Tk(self.canvas, pack_toolbar=False)
+        
+        # make sure they are instantiated
+        toolbar.update()
         self.canvas.draw()
-        self.canvas.get_tk_widget().grid(row=0, column=0)
 
+        # pack graph stuff
+        toolbar.pack(side=tk.BOTTOM, fill=tk.X)
+        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        # configure buttons w/ appropriate callbacks
         self.saveButton.config(command = partial(self.SaveData, self.dirWidget.dir))
-
         self.addButton.config(command=self._new_Button_Callback)
         
         # draw canvas for the first time
-        # is it inelegant to hard code initialization event order like this? maybe
-        # toobad!
         self.Read_Data()
         self._SetSaveEntry(self.dirWidget.fileName.get())
-        #self.GraphCoils()
 
     def GraphCoils(self):
         '''
@@ -532,10 +542,7 @@ class CurrentEntryTable(EntryTable):
         2. Creates magpylib circle current objects from this data
         3. Graphs these created coils
         '''
-        #print(self.rotations)
-        #print("graph reset")
         self.collection = Collection()
-        #print(self.GetEntries())
         for i in range(len(self.GetEntries())):
             row = self.GetEntries()[i]
             pos = [float(row["PosX"]), float(row["PosY"]), float(row["PosZ"])]
@@ -544,12 +551,12 @@ class CurrentEntryTable(EntryTable):
                                    diameter = float(row["Diameter"])
                                    )
             for rotation in self.rotations[i]:
-                #print(rotation)
                 c.rotate_from_angax(float(rotation["RotationAngle"]), rotation["RotationAxis"])
             self.collection.add(c)
         
         self.plot.cla()
         show(self.collection, canvas=self.plot, canvas_update = True, backend="matplotlib")
+        self.plot.get_legend().remove()
         self.canvas.draw()
         return True
 
@@ -579,9 +586,7 @@ class CurrentEntryTable(EntryTable):
         data = super().Read_Data(dir=dir, converters={"RotationAngle":tryEval, "RotationAxis":tryEval})
         coils = []
         rotations = []
-        #print(data)
 
-        # TODO: mess with this function to incorporate the new method for rotation.
         for row in data:
             coil = CircleCurrentConfig(self.frame1, 
                                      px = row[0], 
@@ -589,13 +594,9 @@ class CurrentEntryTable(EntryTable):
                                      pz = row[2], 
                                      amp= row[3],
                                      dia= row[4]
-                                     #angle = row[5],
-                                     #axis=self.axisIndices[row[6]]
                                      )
-            #print(particle.py.paramDefault)
             coils.append(coil)
             
-            #print(type(row[5]))
             match row[5]:
                 case float():
                     rotations.append([{"RotationAngle":(row[5]), "RotationAxis":(row[6])}])
@@ -607,11 +608,11 @@ class CurrentEntryTable(EntryTable):
                         out.append({"RotationAngle":(row[5])[i], "RotationAxis":(row[6])[i]})
                     rotations.append(out)
         
-        #print(coils)
         self.rotations = rotations
-        #print(rotations)
         self.SetRows(coils)
-        #print(self.entries)
+        coord = abs(np.array([coils[0].PosX.Get(),coils[0].PosY.Get(),coils[0].PosZ.Get()]))
+        axis = GetAxis(coord)
+        self.setLim(coord[axis])
         return True
 
     def SetRows(self, list):
@@ -719,3 +720,17 @@ class CurrentEntryTable(EntryTable):
         self.rotations[row-1] = table.OnRotationEntryClose()
 
         self.GraphCoils()
+    
+    def setLim(self, val):
+        """
+        when called, sets the internal lim property.
+        """
+        self.lim = val
+
+    def getLim(self) -> float:
+        """
+        for external graphing functions that require this value, so they know how to set the 2d
+        x-axis.
+        """
+        
+        return self.lim

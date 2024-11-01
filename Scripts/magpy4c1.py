@@ -48,10 +48,10 @@ Input: Array of (nparticle x pos(3)) dim
 
 Ensure the code is efficient because the whole point of these operations is to increase computational speed
 '''
-
 # using magpylib, this calculates the b-field affecting the particle
 # unless it is outside of the bounds given by 'side'
 def Bfield(y):
+    global B
     if staticB == 1:
         return B
 
@@ -76,10 +76,11 @@ accel = None
 Calculates the E Field at point 'p' from the list of charge source coordinates given.
 '''
 def EfieldX(p:np.ndarray):
+    global E
     if staticE == 1:
         return E
-    E = np.multiply(A * np.exp(-(p[0] / Bx)** 4), (p[0]/Bx)**15)
-    return np.array([E,0,0])
+    Ef = np.multiply(A * np.exp(-(p[0] / Bx)** 4), (p[0]/Bx)**15)
+    return np.array([Ef,0,0])
 
 '''
 # plotting variables
@@ -131,7 +132,7 @@ def borisPush(id:int):
 
 
     #E = np.array([-9.5e5, 0., 0])
-    E = np.array([0, 0., 0])
+    #Ef = np.array([0, 0., 0])
     #Bf = np.array([0., 0., 1])
 
     # Step 2: do the actual boris logic
@@ -139,7 +140,7 @@ def borisPush(id:int):
         x = np.array([out[time - 1].px, out[time - 1].py, out[time - 1].pz])
         v = np.array([out[time - 1].vx, out[time - 1].vy, out[time - 1].vz])
         #print("x for particle: ", id, " at time ", time, ": ", x)
-        E = EfieldX(x)
+        Ef = EfieldX(x)
         Bf = Bfield(x)
         #Bf = np.array([0.0, 0.0, 1])
         out[time - 1].bx, out[time - 1].by,out[time - 1].bz = Bf # update B field for particle we just found
@@ -147,10 +148,10 @@ def borisPush(id:int):
         # Boris logic
         tt = charge / mass * Bf * 0.5 * dt
         ss = 2. * tt / (1. + tt * tt)
-        v_minus = v + charge / (mass * vAc) * E * 0.5 * dt
+        v_minus = v + charge / (mass * vAc) * Ef * 0.5 * dt
         v_prime = v_minus + np.cross(v_minus, tt)
         v_plus = v_minus + np.cross(v_prime, ss)
-        v = v_plus + charge / (mass) * E * 0.5 * dt
+        v = v_plus + charge / (mass) * Ef * 0.5 * dt
 
         # Update particle information with the pos and vel
         position = x + v * dt 
@@ -170,7 +171,7 @@ def borisPush(id:int):
         ft += dt # total time spent simulating
         if time % 1000 == 0:
             print(f"boris calc * {time} for particle {id}")
-            print("total time: ", ft, dt, E)
+            print("total time: ", ft, dt, Ef, Bf)
         if x.any() > side:
             print('Exited Boris Push Early')
             break

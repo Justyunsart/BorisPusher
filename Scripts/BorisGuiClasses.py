@@ -6,8 +6,11 @@ Some are general, some are one time use.
 import tkinter as tk
 from tkinter import ttk
 from CurrentGuiClasses import *
+from GuiEntryHelpers import *
 from GuiHelpers import CSV_to_Df
 from math import copysign
+from matplotlib import pyplot as plt
+from FieldMethods import *
 
 # file stuff
 from PrefFile import PrefFile
@@ -15,15 +18,7 @@ from pathlib import Path
 import os
 import pickle
 import ast
-
-###################
-# NESTED NOTEBOOK #
-###################
-'''
-Here, I'll make classes for it.
-'''
-
-
+import numpy as np
 
 ############
 # MENU BAR #
@@ -136,77 +131,6 @@ class MainWindow(tk.Frame):
                 return False
         return True
 
-class FileDropdown(ttk.Combobox):
-    '''
-    Stuff for when you want to change the input files. Instead of searching via
-    the file explorer, this will initialize with all the files in the preferences' input DIRs
-    in a dropdown menu.
-
-
-    last = index of the last used file. Defaults to 0 unless overridden.
-    '''
-    dir:str # path to the folder you want to make its contents a dropdown menu of
-    fileName:tk.StringVar
-
-    PATH:Data #the full path to the file.
-
-    def __init__(self, master, dir, last=0, **kwargs):
-        self.master = master
-        self.dir = dir
-        self.fileName = tk.StringVar()
-        self.PATH = Data('PATH')
-
-         # check: make sure the dir exists. if not, create the dir.
-        os.makedirs(dir, exist_ok=True)
-
-        self.dir_contents = self._DIR_to_List()
-        #print(self.dir_contents)
-
-        super().__init__(master=master, values=self.dir_contents, textvariable=self.fileName, **kwargs)
-        super().current(last)
-        self._UpdatePath()
-
-        # also add a trace to update all the field variables when it happens
-        self.fileName.trace_add("write", self._UpdatePath)
-    
-    def _DIR_to_List(self):
-        files = []
-        for file in os.listdir(self.dir):
-            path = os.path.join(self.dir, file)
-            if os.path.isfile(path):
-                files.append(file)
-        if (files == []):
-            files.append("")
-        return files
-    
-    def _UpdatePath(self, *args):
-        '''
-        there's probably a built in way to do this but oh well.
-        '''
-        #print("updating path to: ", self.fileName.get())
-        self.PATH.data = os.path.join(self.dir, self.fileName.get())
-
-class LabeledEntry():
-    '''
-    An entry widget accompanied by a label widget on its left.
-    '''
-    value:tk.StringVar
-
-    def __init__(self, master, val, row, col=0, title="title", **kwargs):
-        self.master = master
-        self.title = title
-        self.value = tk.StringVar(value=val)
-
-        self.label = tk.Label(self.master,
-                              text=self.title,
-                              justify="left")
-        self.label.grid(row=row, column=col, columnspan=2, sticky="W")
-
-        self.entry = tk.Entry(self.master,
-                              textvariable=self.value,
-                              **kwargs)
-        self.entry.grid(row=row, column=col+2, columnspan=2, sticky="W")
-
 class Particle_File_Dropdown(FileDropdown):
     def __init__(self, master, dir, last=0, **kwargs):
         self.master = master
@@ -228,15 +152,31 @@ class TimeStep_n_NumStep():
     simTime:float
     simVar:tk.StringVar
 
-    def __init__(self, master):
+    responses = {
+        "good" : "everything looks good!",
+        "bad" : "dt is too big."
+    }
+
+    def __init__(self, master, table:CurrentEntryTable):
+        self.table = table
         self.master = master
 
         self.frame = tk.Frame(self.master)
         self.frame.grid(row=0, column=0, sticky="W")
         self.master.grid_columnconfigure(0, weight=1)
+        
+        # Frame for holding check warning
+        self.frame1 = tk.Frame(self.frame)
+        self.frame1.grid(row=4, column=0)
+
+        self.dt_str = tk.StringVar()
+        self.dt_label = tk.Label(self.frame1,
+                                 textvariable=self.dt_str)
+        self.dt_label.grid(row=0, column=0)
 
         self.dt = LabeledEntry(self.frame, val=0.0000001, row=1, title="Timestep (sec): ", width = 10)
         self.dt.value.trace_add("write", self._Total_Sim_Time)
+        self.dt.value.trace_add("write", self.dt_Callback)
         
         self.numsteps = LabeledEntry(self.frame, val=50000, row=0, title="Num Steps: ", width = 10)
         self.numsteps.value.trace_add("write", self._Total_Sim_Time)
@@ -253,7 +193,15 @@ class TimeStep_n_NumStep():
                                  textvariable=self.simVar,
                                  justify="center")
         self.simLabel.grid(row=0, column=0, sticky="")
+        self.dt_Callback()
 
+    def dt_Callback(self, *args):
+        lim = self._Check_Timestep_Size()
+        if (float(self.dt.value.get()) < lim):
+            self.dt_str.set(self.responses["good"])
+        else:
+            self.dt_str.set(f'Dt is too big, upper lim is: {lim}')
+        
     
     def _Total_Sim_Time(self, *args):
         dt = self.dt.value.get()
@@ -284,7 +232,19 @@ class TimeStep_n_NumStep():
                 self.numsteps.value.set(value)
             case 'timestep':
                 self.dt.value.set(value)
+
+    def _Check_Timestep_Size(self):
+        """
+        make sure that the timestep is sufficient.
+        """
+        distance = self.table.getLim() * 2 #Assuming that the coils are symmetric about origin
+        #print(distance)
+        desired_steps = 100
+        desired_rate = 10e6
+
+        dt_lim = distance/(desired_steps * desired_rate)
         
+        return dt_lim
 
 
 class ParticlePreview(EntryTable):
@@ -382,85 +342,67 @@ class ParticlePreviewSettings():
         self.overwriteCheck.grid(row=0, column=1, sticky="W")
         self.overwriteCheck.select() #set on by default
 
-class CoordTable(tk.LabelFrame):
-    '''
-    Diffrerent than an entry table (which has variable field types).
-    Here, the table is hard set to 3 entries - X, Y, and Z.
+"""
+WILL BE DEPRECATED
+"""
+class E_CoordTable(CoordTable):
+    """
+    extension of the coordtable class to add converse A, B vars
+    used in the analytic E-field.
+    """
+    def __init__(self, master, title="coords", **kwargs):
+        super().__init__(master, title, doInit=False, **kwargs)
+        self.A = LabeledEntry(self.frame1, 1, row=2, col=0, title="A: ", width=10)
+        self.B = LabeledEntry(self.frame1, 1, row=2, col=4, title="B: ", width=10)
+        self.converseEntries = [self.A.entry, self.B.entry]
 
-    Used for setting the B and E fields, for example.
-
-    I made this a new class because its usecase is different enough for it to not use many of Entrytable's
-    functions.
-    '''
-    def __init__(self, master, title= "coords", **kwargs):
-        self.master = master
-        self.title = title
-        super().__init__(master, text = self.title, **kwargs)
-
-        #frame for the entry widgets
-        self.frame1 = tk.Frame(self)
-        self.frame1.grid(row=1, column=0)
-
-        self.X = LabeledEntry(self.frame1, 0, row=1, col=0, title="X: ", width=10)
-        self.Y = LabeledEntry(self.frame1, 0, row=1, col=4, title="Y: ", width=10)
-        self.Z = LabeledEntry(self.frame1, 0, row=1, col=8, title="Z: ", width=10)
-        self.entries = [self.X.entry, self.Y.entry, self.Z.entry] # handy reference to all entry widgets
-        self.labeledEntries = [self.X, self.Y, self.Z]
-
-        # frame for the use checkmark
-        self.frame = tk.Frame(self)
-        self.frame.grid(row=0, column=0, sticky="W")
-
-        self.doUse = tk.IntVar(value = 0)  #using a var makes value tracking easier.
-
-        self.calcCheck = tk.Checkbutton(self.frame, variable= self.doUse, text="Use?")
-        self.calcCheck.grid(row=0, column=0, sticky="W")
-
-        self.doUse.trace_add("write", self.CheckEditability)
-
-        self.CheckEditability() # set the entries in their correct state.
-
-    def GetData(self):
-        '''
-        when asked, will return the captured coordinates as a list.
-        '''
-        out = {}
-        keyName = self.title
-        keyUse = f'{keyName}_Use'
-        value = [float(self.X.entry.get()), float(self.Y.entry.get()), float(self.Z.entry.get())]
-        
-        out[keyName] = value
-        out[keyUse] = self.doUse.get() # so the program knows whether to use these static field vals or not.
-
-        return out
-
+        self.CheckEditability()
+        self.A.value.trace_add("write", self.trigger_listener)
+        self.B.value.trace_add("write", self.trigger_listener)
+    
     def CheckEditability(self, *args, **kwargs):
-        '''
-        used when self.calcCheck is toggled on; makes these cells in an editable state
-        '''
         useState = self.doUse.get()
 
         if(useState == 0):
             '''
             useState is off: all entries should be read-only.
             '''
-            #print("disable")
             for entry in self.entries:
                 entry.config(state="disabled")
+            for entry in self.converseEntries:
+                entry.config(state='normal')
         else:
             '''
             entries are otherwise editable.
             '''
             for entry in self.entries:
                 entry.config(state="normal")
+            for entry in self.converseEntries:
+                entry.config(state='disabled')
     
-    def SetCheck(self, val):
-        self.doUse.set(val)
-    def SetCoords(self, val):
-        val = ast.literal_eval(val)
-        #val = [n.strip() for n in val]
-        for i in range(3):
-            self.labeledEntries[i].value.set(val[i])
+    def GraphE(self, plot, fig, lim, *args):
+        try:
+            #print(f'A is: {self.A.value.get()}')
+            #print(f'B is: {self.B.value.get()}')
+            #print(f'Lim is: {lim}')
+            A = float(self.A.value.get())
+            B = float(self.B.value.get())
+
+            lim = abs(lim)
+            glim = 1.5 * lim
+            x = np.linspace(-glim, glim, 50)
+            # equation for fw_E
+            E = np.multiply(A * np.exp(-(x / B)** 4), (x/B)**15)
+            #print(f'X axis is: {x}')
+            #print(f'Y axis is: {E}')
+            plot.plot(x,E)
+            
+            # also plot vertical lines for where the coils are, for visual clarity
+            plot.axvline(x = lim, color='r', linestyle='dashed')
+            plot.axvline(x = -lim, color='r', linestyle='dashed')
+
+        except ValueError:
+            pass
 
 class CoilButtons():
     '''
@@ -599,6 +541,7 @@ class CoilButtons():
                 "x":1,
                 "z":2}
         entries = self.table.GetEntries()
+        self.table.setLim(gapVal)
         for i in range(len(entries)):
             posInd = inds[entries[i]["RotationAxis"]]
 
@@ -662,6 +605,152 @@ class CurrentConfig:
         dropdownLst:list = self.dropdown["values"]
         ind = dropdownLst.index(value)
         self.dropdown.current(ind)
+
+    """
+    CURRENTLY UNUSED BECAUSE IT TAKES WAY TOO LONG TO CALL SO OFTEN.
+    might have to repurpose to something that runs from a button press instead of updating all the time.
+    """
+    def GraphB(self, fig, root):
+        """
+        with a mpl subplot as an input, graph the currently selected magnetic coil's B field's cross section.
+        """
+        c = self.GetData()
+
+        # construct grid for the cross section
+        x = np.linspace(-5, 5, 50) # these represent LOCAL x and y for the 2D graph, not the 3D space.
+        y = np.linspace(-5, 5, 50)
+
+        # calculate B field for the entire grid
+        Bs = np.array([[c.getB([i, 0, j]) for i in x] for j in y]) # [bx, by, bz]
+        '''
+        Bs shape: (step, step, 3)
+        '''
+        # gather arguments for the streamplot
+        X, Z = np.meshgrid(x, y)
+        U, V = Bs[:, :, 0], Bs[:, :, 2]
+
+        Bamp = np.sqrt(U**2 + V**2)
+
+        stream = fig.streamplot(X, Z, U, V, color= Bamp, density=1)
+        #stream = fig.streamplot(X, Z, U, V, color= Bamp, density=2, norm=colors.LogNorm(vmin = Bamp.min(), vmax = Bamp.max()))
+        fig.set_xlabel("X-axis (m)")
+        fig.set_ylabel("Z-axis (m)")
+        fig.set_title("Magnetic Field Cross Section on the X-Z plane at Y=0")
+        root.colorbar(stream.lines)
+
+class FieldDropdown(Dropdown):
+    options:Enum
+    def __init__(self, master, options:Enum, label, **kwargs):
+        self.options = options
+        names = options._member_names_
+        super().__init__(master, names, label=label, **kwargs)
+    def GetData(self):
+        return self.table.GetData()
+
+class FieldCoord_n_Graph():
+    """
+    vars for the graph
+    """
+    fig = None
+    plot = None
+    canvas = None
+    instances:dict
+    
+    def __init__(self, table:FieldDropdown, graphFrame:tk.LabelFrame, currentTable:CurrentEntryTable,
+                 title="title", x_label="x", y_label="y"):
+        """
+        expects an instance of a coordinate table, and a frame where the graph will be made.
+        """
+        self.instances = {}
+        self.frame = graphFrame
+        self.currentTable = currentTable
+        self.table = table
+        self.title = title
+        self.x_lab = x_label
+        self.y_lab = y_label
+
+        self.ConstructGraph()
+        self.prevVal = table.chosenVal.get()
+
+        table.chosenVal.trace_add("write", self.WidgetVisibility)
+        table.chosenVal.trace_add("write", self.UpdateGraph) # add another trace to the given table.
+        
+        # instantiate intialized val's widget
+        self._checkInstance(self.prevVal).ShowWidget()
+
+    def WidgetVisibility(self, *args):
+        """
+        check if you should toggle widget visibility on or off or not
+        """
+        # If you chose the same value as before, don't do anything.
+        # Should theoretically never trigger if the 'write' trace doesn't trigger
+        # when the same option is selected again on a ttk.Combobox
+        if (self.prevVal == self.table.chosenVal):
+            return True
+        
+        # set the previous widget to 'off'
+        prev = self.prevVal
+        self._checkInstance(prev).HideWidget()
+
+        # set the current widget to 'on'
+        curr = self.table.chosenVal.get()
+        self._checkInstance(curr).ShowWidget()
+
+        # lastly, update the prevVal property
+        self.prevVal = curr
+        return True
+        
+
+    def ConstructGraph(self):
+        """
+        creates a matplotlib figure
+        """
+        self.fig = plt.figure(figsize=(5,4))
+        self.plot = self.fig.add_subplot(1,1,1)
+        
+        # set graph labels
+        self.SetLabels(self.plot)
+
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame)
+        self.canvas.get_tk_widget().grid(row=0, column=0)
+    
+    def UpdateGraph(self, *args):
+        """
+        calls the given graph method and draws it on the graph.
+        Assumes that the function takes a mpl subplot as an input.
+        """
+        # gather data
+        self.plot.cla()
+        self.SetLabels(self.plot)
+        lims = self.currentTable.getLim()
+
+        # plot
+        self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
+        self.canvas.draw()
+    
+    def update(self):
+        # expected function to run when coordtable's trigger_listener is invoked.
+        self.UpdateGraph() # draw the graph
+
+    def SetLabels(self, ax):
+        ax.set_title(self.title)
+        ax.set_xlabel(self.x_lab)
+        ax.set_ylabel(self.y_lab)
+    
+    def _checkInstance(self, name:str):
+        """
+        if exists as instance, access and return it
+        if not, create one and add a ref to the instances dict.
+        """
+        if name in self.instances:
+            # name is found in instances, return the instance
+            return self.instances[name]
+        else:
+            # if not, create an instance.
+            self.instances[name] = self.table.options[name].value(self.table.master)
+            self.instances[name].widget.add_listener(self)
+            return self.instances[name]
+
 
 def _Try_Float(list):
 
