@@ -490,7 +490,7 @@ class CurrentEntryTable(EntryTable):
     '''
     collection = Collection() # magpy object for visualization
     rotations = [] # container to store coil rotation info.
-    lim:float = 0.
+    lim:Data = Data()
 
     """
     Class settings, defaults
@@ -725,12 +725,12 @@ class CurrentEntryTable(EntryTable):
         """
         when called, sets the internal lim property.
         """
-        self.lim = val
+        self.lim.data = val
+        self.lim.notify()
 
     def getLim(self) -> float:
         """
         for external graphing functions that require this value, so they know how to set the 2d
         x-axis.
         """
-        
-        return self.lim
+        return self.lim.data

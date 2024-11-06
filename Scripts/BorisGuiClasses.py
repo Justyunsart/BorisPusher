@@ -193,8 +193,16 @@ class TimeStep_n_NumStep():
                                  textvariable=self.simVar,
                                  justify="center")
         self.simLabel.grid(row=0, column=0, sticky="")
-        self.dt_Callback()
 
+        table.lim.attach(self)
+        #self.dt_Callback()
+
+    def update(self, *args):
+        """
+        when the 'lim' Data in the current table is updated, you have to re-run the Dt size check.
+        """
+        self.dt_Callback()
+    
     def dt_Callback(self, *args):
         lim = self._Check_Timestep_Size()
         if (float(self.dt.value.get()) < lim):
@@ -645,7 +653,17 @@ class FieldDropdown(Dropdown):
         names = options._member_names_
         super().__init__(master, names, label=label, **kwargs)
     def GetData(self):
-        return self.table.GetData()
+        return {str(self.options.__name__):self.chosenVal.get()}
+    def _Set(self, key, value):
+        try:
+            ind = self.dropdown['values'].index(value)
+        except:
+            #print(self.dropdown['values'])
+            print(f"dropdown value not found")
+            return False
+        #print(f"setting dropdown to: {ind}")
+        self.dropdown.current(ind)
+        return True
 
 class FieldCoord_n_Graph():
     """
@@ -750,6 +768,34 @@ class FieldCoord_n_Graph():
             self.instances[name] = self.table.options[name].value(self.table.master)
             self.instances[name].widget.add_listener(self)
             return self.instances[name]
+        
+    def GetData(self):
+        """
+        Gets the currently selected dropdown's values and passes it on as a dictionary.
+        """
+        return {str(self.table.options.__name__):self._checkInstance(self.table.chosenVal.get())}
+    
+    def _Set(self, key, value:dict):
+        """
+        when loading in last used values, populate the given widget's entries automatically.
+
+        EXPECTED INPUT:
+        key = E-Field, value = {'Fw': {'A': '0.2', 'B': '02'}}
+        """
+        method = ""
+        params = None
+        value = literal_eval(value)
+        for k, v in value.items():
+            method = k
+            params = v
+        # set the dropdown first
+        #print(f'setting e field to: {method}')
+        self.table._Set(key, method)
+
+        # set the entries.
+        for k, v in params.items():
+            self._checkInstance(self.table.chosenVal.get()).Set(k, v)
+
 
 
 def _Try_Float(list):

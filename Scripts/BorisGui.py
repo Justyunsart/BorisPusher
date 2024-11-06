@@ -347,10 +347,13 @@ coil_config = CurrentConfig(CurrentFrame, DIR_Coil, DIR_coilDefs)
 #=======#
 # FINAL #
 #=======#
+"""
+LOGIC FOR PASSING PARAMS BACK TO THE PROGRAM.
+"""
 subs = {}
 
 # control what classes to send over to the program by adding it to params
-subs["params"] = [time_info, particlePreview, coil_config, b_field, e_field]
+subs["params"] = [time_info, particlePreview, coil_config, b_field, E_field_graph]
 
 calc_button.configure(command=partial(CalculateCallback, subs["params"], DIR_lastUsed)) # update calculate button's command after setting up params
 FillWidgets(subs["params"], DIR_lastUsed)

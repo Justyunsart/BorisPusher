@@ -14,10 +14,10 @@ import pandas as pd
 ## Currents, dataclasses
 from PusherClasses import particle
 from PusherClasses import GetCurrentTrace, CreateOutput, CalcPtE
-from MakeCurrent import dia, A, Bx
 ## Calculations
 import numpy as np
 import magpylib as magpy
+from functools import partial
 
 from BorisPlots import graph_trajectory
 
@@ -51,10 +51,9 @@ Ensure the code is efficient because the whole point of these operations is to i
 # using magpylib, this calculates the b-field affecting the particle
 # unless it is outside of the bounds given by 'side'
 def Bfield(y):
-    global B
-    if staticB == 1:
-        return B
-
+    global B_Method
+    if(B_Method == "Zero"):
+        return np.zeros(3)
     out = []
 
     isBounds = y.any() > side
@@ -71,16 +70,27 @@ accel = None
 #=========#
 # E FIELD #
 #=========#
-
+def Fw(coord:float):
+    """
+    Fw analytic E field equation
+    """
+    global E_Args
+    A = float(E_Args["A"])
+    Bx = float(E_Args["B"])
+    #print(f"coord: {coord}, A: {A}, B: {Bx}")
+    return np.multiply(A * np.exp(-(coord / Bx)** 4), (coord/Bx)**15)
 '''
 Calculates the E Field at point 'p' from the list of charge source coordinates given.
 '''
 def EfieldX(p:np.ndarray):
-    global E
-    if staticE == 1:
-        return E
-    Ef = np.multiply(A * np.exp(-(p[0] / Bx)** 4), (p[0]/Bx)**15)
-    return np.array([Ef,0,0])
+    global E_Method, E_Args
+    match E_Method:
+        case "Zero":
+            return np.zeros(3)
+        case "Fw":
+            E = np.apply_along_axis(Fw, 0, p)
+            
+            return np.array(E)
 
 '''
 # plotting variables
@@ -94,7 +104,7 @@ coilLength = 1000
 # boris push calculation
 # this is used to move the particle in a way that simulates movement from a magnetic field
 def borisPush(id:int):
-    global df, num_parts, num_points, dt, sim_time, side, staticB, staticE, B, E # Should be fine in multiprocessing because these values are only read,,,
+    global df, num_parts, num_points, dt, sim_time, side, B_Method, E_Method, E_Args,c # Should be fine in multiprocessing because these values are only read,,,
     assert id <= (num_parts - 1), f"Input parameter 'id' received a value greater than the number of particles, {num_parts}"
 
     #print(df)
@@ -178,8 +188,8 @@ def borisPush(id:int):
     # ft = ft*(10**-5)
     return out
 
-def init_process(data, n1, n2, t, t1, doB, doE, Bf, Ef, coils):
-    global df, num_parts, num_points, dt, sim_time, side, staticB, staticE, B, E, c
+def init_process(data, n1, n2, t, t1, Bf, Ef, coils):
+    global df, num_parts, num_points, dt, sim_time, side, B_Method, E_Method, E_Args,c
     df = data
     num_parts = n1
     num_points = n2
@@ -188,10 +198,10 @@ def init_process(data, n1, n2, t, t1, doB, doE, Bf, Ef, coils):
     #sources = GetCurrentTrace(c, dia, res=100, nsteps=100)
     side=3
 
-    staticB = doB
-    staticE = doE
-    B = np.array(Bf)
-    E = np.array(Ef)
+    B_Method = Bf
+
+    E_Method = list(Ef.keys())[0]
+    E_Args = Ef[E_Method]
 
     c = coils
 
@@ -203,15 +213,13 @@ def runsim(fromGui:dict):
     numPo = int(fromGui['numsteps'])
     tScale = fromGui['timestep']
     time = numPo * tScale
-    doB = fromGui['doStaticB']
-    doE = fromGui['doStaticE']
     Bf = fromGui['B-Field']
     Ef = fromGui['E-Field']
     coils = fromGui['coils']
 
-    init_process(dfIn, numPa, numPo, tScale, time, doB, doE, Bf, Ef, coils)
+    init_process(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils)
     values = range(numPa)
-    with ProcessPoolExecutor(initializer=init_process, initargs=(dfIn, numPa, numPo, tScale, time, doB, doE, Bf, Ef, coils)) as executor:
+    with ProcessPoolExecutor(initializer=init_process, initargs=(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils)) as executor:
         futures = executor.map(borisPush, values)
 
     out = []

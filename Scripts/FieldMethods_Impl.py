@@ -18,6 +18,10 @@ class FieldMethod():
         self.widget.ShowWidget()
     def HideWidget(self):
         self.widget.HideWidget()
+    def GetData(self):
+        pass
+    def Set(self, key, value):
+        pass
 
 class field_impl():
     listeners = []
@@ -91,6 +95,16 @@ class Fw_impl(FieldMethod):
 
         except ValueError:
             pass
+    def GetData(self):
+        return {"Fw" : 
+                {"A" : self.widget.A.value.get(),
+                "B" : self.widget.B.value.get()}}
+    def Set(self, key, value):
+        if key == "A":
+            self.widget.A.value.set(value)
+        elif key == "B":
+            self.widget.B.value.set(value)
+
 
 class Zero_impl(FieldMethod):
     def __init__(self, master, widget=Zero_widget):
@@ -98,3 +112,6 @@ class Zero_impl(FieldMethod):
     
     def graph(self, plot, fig, lim, *args):
         plot.axhline(y=0, color='b')
+
+    def GetData(self):
+        return {"Zero" : 0}

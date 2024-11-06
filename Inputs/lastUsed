@@ -1,2 +1,2 @@
-numsteps,timestep,coilFile,doStaticB,doStaticE,B-Field,E-Field,particleFile
-50000.0,2e-10,Mirror,0,0,"[0.0, 0.0, 0.0]","[0.0, 0.0, 0.0]",Default_Input.txt
+numsteps,timestep,coilFile,B-Field,E-Field,particleFile
+50000.0,2e-10,Mirror,Magpy,"{'Fw': {'A': '2', 'B': '1'}}",Default_Input.txt

@@ -129,7 +129,6 @@ def CSV_to_Df(dir, isNum=True, **kwargs):
 
 # Run the simulation if you press calculate
 
-# TODO: Add functionality for tracking last used conditions
 def CalculateCallback(params:list, DIR_last:str):
     '''
     When the calculate button is pressed, the GUI passes key information to
@@ -140,25 +139,22 @@ def CalculateCallback(params:list, DIR_last:str):
         'numsteps' : data['numsteps'],
         'timestep' : data['dt'],
         'coils' : data['coils'],
-        'doStaticB' : data['B-Field_Use'],
-        'doStaticE' : data['E-Field_Use'],
-        'B-Field' : data['B-Field'],
-        'E-Field' : data['E-Field'],
+        'B-Field' : data['B_Methods'],
+        'E-Field' : data['E_Methods'].GetData(),
         'particles':data["<class 'GuiEntryHelpers.file_particle'>"]
         }
+    #print(toProgram)
     toFile = {
         'numsteps' : data['numsteps'],
         'timestep' : data['dt'],
         'coilFile' : data['Coil File'],
-        'doStaticB' : data['B-Field_Use'],
-        'doStaticE' : data['E-Field_Use'],
-        'B-Field' : data['B-Field'],
-        'E-Field' : data['E-Field'],
+        'B-Field' : data['B_Methods'],
+        'E-Field' : data['E_Methods'].GetData(),
         'particleFile':data["Particle File"]
         }
 
     Dict_to_CSV(DIR_last, toFile, newline="")
-
+    #print(toFile)
     runsim(toProgram)
 
 
@@ -201,10 +197,8 @@ def FillWidgets(p:list, path:str):
         'numsteps' : p[0],
         'timestep' : p[0],
         'coilFile' : p[2],
-        'doStaticB' : FieldDict(p[3], 0),
-        'doStaticE' : FieldDict(p[4], 0),
-        'B-Field' : FieldDict(p[3], 1),
-        'E-Field' : FieldDict(p[4], 1),
+        'B-Field' : p[3],
+        'E-Field' : p[4],
         'particleFile': p[1]
         }
     
@@ -214,18 +208,3 @@ def FillWidgets(p:list, path:str):
         """
         value._Set(key, values[key])
 
-class FieldDict():
-    def __init__(self, inst, val):
-        self.out = {}
-        self.out["param"] = inst
-        self.out["id"] = val
-
-    def _Set(self, fieldName, val):
-        " remember, val here is from the input data file"
-        match self.out["id"]:
-            case 0:
-                #self.out["param"].SetCheck(val)
-                pass
-            case 1:
-                #self.out["param"].SetCoords(val)
-                pass
