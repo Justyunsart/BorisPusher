@@ -635,7 +635,10 @@ class CurrentEntryTable(EntryTable):
             container[i]["RotationAngle"] = str([j["RotationAngle"] for j in self.rotations[i]])
             container[i]["RotationAxis"] = str([j["RotationAxis"] for j in self.rotations[i]])
             # remove the 'Rotations' key; leftover from the dataclass that needs to be cut
-            del container[i]['Rotations']
+            try:
+                del container[i]['Rotations']
+            except KeyError:
+                pass
         
         vals = [list(container[0].keys())]
         super().SaveData(dir, container, vals, customContainer)

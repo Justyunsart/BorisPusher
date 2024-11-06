@@ -21,6 +21,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import plotly.graph_objects as go
 
 from MakeCurrent import current as c
+from GuiEntryHelpers import tryEval
 
 from math import pi, cos, sin
 
@@ -29,6 +30,15 @@ from BorisAnalysis import CalculateLoss
 #=============#
 # 3D PLOTTING #
 #=============#
+
+def graph_coil_B_mag(c:Collection, lim:int, step:int, fig, root):
+    """
+    
+    """
+    x = np.linspace(-lim, lim, step)
+    Bs = np.array([c.getB([i,0,0]) for i in x])
+
+    fig.plot(x, Bs)
 
 def graph_coil_B_cross(c:Collection, lim:int, step:int, fig, root):
     '''
@@ -153,6 +163,32 @@ def graph_coil_points(dia, res:int, nsteps:int):
             
     orientations = np.asarray(orientations)
 
+def read_coil_file(dir):
+    """
+    Is it horrid that I'm having to write redundant logic? yes
+    Do I care? not really.
+    """
+    data = pd.read_csv(dir, converters={"RotationAngle":tryEval, "RotationAxis":tryEval}, header=0).values.tolist()
+    collection = Collection()
+    print(data)
+    for row in data:
+        print(row)
+        position = [float(row[0]), float(row[1]), float(row[2])]
+        try:
+            amp = eval(row[3])
+        except TypeError:
+            amp = float(row[3])
+        dia = float(row[4])
+        circle = magpy.current.Circle(position= position, diameter= dia, current= amp)
+        rotations = np.array([row[5], row[6]]) # 5: angle list, 6: axis list.
+        rotations = np.transpose(rotations) # make each row correspond to each rotation
+        for rotation in rotations:
+            circle.rotate_from_angax(float(rotation[0]), rotation[1])
+        collection.add(circle)
+    return collection
+
+
+
 def graph_trajectory(lim, data):
     '''
     lim = numeric var that depicts the limit value for the chart
@@ -166,8 +202,8 @@ def graph_trajectory(lim, data):
 
     # create the graph to add to
     fig1 = plt.figure(figsize=(20, 10))
-    traj = fig1.add_subplot(2,2,1, projection='3d')
-    efig = fig1.add_subplot(2,2,3)
+    traj = fig1.add_subplot(1,2,1, projection='3d')
+    efig = fig1.add_subplot(2,2,2)
     bfig = fig1.add_subplot(2,2,4)
     #traj = fig1.add_subplot(2,2,1, projection='3d')
     #energy = fig1.add_subplot(2,2,2)
@@ -206,8 +242,9 @@ def graph_trajectory(lim, data):
         x = x[mask]
         y = y[mask]
         z = z[mask]
-        #z *= 0
+        #z *= 
 
+        
         colors = mpl.colormaps[palettes[part]]
 
         # connecting lines
@@ -218,6 +255,7 @@ def graph_trajectory(lim, data):
 
         # plot everything
         traj.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
+        
 
         p = Path(data)
         p_parent = p.parent
@@ -228,34 +266,14 @@ def graph_trajectory(lim, data):
         E_method = list(E_dict.keys())[0]
         if(E_method == "Fw"):
             graph_E_X(3, 100, E_dict["Fw"]["A"], E_dict["Fw"]["B"], efig)
-        graph_coil_B_cross(c, 3, 100, bfig, fig1)
-        #traj.add_collection(lines)
+        
+        graph_coil_B_mag(c, 3, 100, bfig, fig1)
 
-        #energy.plot(vcrossmag[:-1])
-        #energy2.plot(vcrossmagD1[:-1])
-        #energy3.plot(vcrossmagD2[:-1])
+        coil_dir = p_parent.joinpath("coils.txt")
+        coils = read_coil_file(coil_dir)
 
         
-    # Set 3D plot bounds
-    #traj.set_xlim3d(-lim,lim)
-    #traj.set_ylim3d(-lim,lim)
-    #traj.set_zlim3d(-lim,lim)
-    
-    # Extract the positional data from the dataframe
-    #x, y, z = df["px"].to_numpy(), df["py"].to_numpy(), df["pz"].to_numpy()
-    
-    # Get the smallest index of when to stop graphing
-    # This feels kinda ugly I'm not going to lie.
-    #xs = np.asarray((x>lim) | (y > lim) | (z > lim)).nonzero()
-
-    #if(len(xs[0]) != 0):
-    #     ind = xs[0][0] 
-    #else: 
-    #    ind = -1
-    
-    # Plot it to the index
-    #traj.plot(x, y, z)
-    magpy.show(c, canvas=traj)
+    magpy.show(coils, canvas=traj)
 
     # Enjoy the fruits of your labor
     fig1.show()
@@ -280,25 +298,6 @@ def graph_coil_B():
     graph_coil_B_cross(c, 3, 100, f2, fig)
 
     plt.show()
-
-
-#root = str(Path(__file__).resolve().parents[1])
-#outd = root + "/Outputs/boris_500000_20.0_2_(13)/dataframe.json"
-
-#df = pd.read_json(outd, orient="table")
-#df = df.apply(pd.to_numeric)
-#print(df)
-
-# graph_trajectory(500, df)
-#graph_coil_centers()
-#graph_coil_points(dia = 500, res = 100, nsteps=100)
-#graph_coil_B_cross(c=c, lim=3, step=200)
-#print(c.getB((0,0,0)))
-#print(c.getB((-2,0,2)))
-#graph_coil_B()
-
-#if __name__ == "__main__":
-    #graph_coil_B()
 
 '''
 def make_vf_3d_boris(x_lim, y_lim, z_lim, num_points):
