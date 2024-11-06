@@ -65,7 +65,7 @@ def FileCallback(do_file:bool, button_restart_file:ttk.Button):
         return True
     else:
         #print("button enabled")
-        button_restart_file.configure(state = "enabled")
+        button_restart_file.configure(state = "normal")
         return True
     
 
@@ -141,7 +141,8 @@ def CalculateCallback(params:list, DIR_last:str):
         'coils' : data['coils'],
         'B-Field' : data['B_Methods'],
         'E-Field' : data['E_Methods'].GetData(),
-        'particles':data["<class 'GuiEntryHelpers.file_particle'>"]
+        'particles':data["<class 'GuiEntryHelpers.file_particle'>"],
+        "Coil File" : data["Coil File"]
         }
     #print(toProgram)
     toFile = {
@@ -207,4 +208,3 @@ def FillWidgets(p:list, path:str):
         for every field, run their respective widgets' setter functions.
         """
         value._Set(key, values[key])
-

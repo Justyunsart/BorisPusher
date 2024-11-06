@@ -791,10 +791,12 @@ class FieldCoord_n_Graph():
         # set the dropdown first
         #print(f'setting e field to: {method}')
         self.table._Set(key, method)
-
+        if method == "Zero":
+            return True
         # set the entries.
         for k, v in params.items():
             self._checkInstance(self.table.chosenVal.get()).Set(k, v)
+        return True
 
 
 

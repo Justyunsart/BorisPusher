@@ -8,13 +8,14 @@ import numpy as np
 from math import pi, cos, sin
 
 import pandas as pd
+import shutil
 
 from pathlib import Path
 import os
 # gui stuff
 cwd = str(Path(__file__).resolve().parents[1]) # Gets the current working directory, so we can find the Inputs, Outputs folder easily.
 outd = cwd + "/Outputs"
-
+inpd = cwd + "/Inputs/Coil Configurations"
 '''
 What will the folder for each output be called?
      > Might be able to make this from a user input, otherwise will make a default name.
@@ -101,7 +102,7 @@ def InitializeAoSDf(AoS:np.ndarray):
 
     return dfo
 
-def CreateOutput(inp, sim_time, num_points, num_parts):
+def CreateOutput(inp, sim_time, num_points, num_parts, part, bf, ef, c):
     global outd
 
     # MAKE NEW FILE FOR EACH PARTICLE
@@ -117,6 +118,24 @@ def CreateOutput(inp, sim_time, num_points, num_parts):
 
     temp = os.path.join(dir, f"dataframe.json")
     data.to_json(temp, orient="table")
+
+    particles = os.path.join(dir, f"particles.txt")
+    part.to_json(particles, orient="table")
+
+    fields_dir = os.path.join(dir, f"fields.txt")
+    fields = {"B" : bf,
+              "E" : ef}
+    fields = pd.DataFrame.from_dict(fields, orient="index")
+    fields.to_csv(fields_dir, header=False)
+
+    coil_dir = os.path.join(dir, f"coils.txt")
+    coil_file = open(coil_dir, "w")
+    file_to_copy = os.path.join(inpd, c)
+
+    shutil.copy(file_to_copy, coil_dir)
+
+    coil_file.close()
+
     return temp
 
 

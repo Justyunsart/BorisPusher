@@ -40,14 +40,7 @@ E:list = []
 #=========#
 # B FIELD #
 #=========#
-'''
-TODO:
-- Make this work on an entire nested array instead of one array at a time.
-- Possible multithreading?
-Input: Array of (nparticle x pos(3)) dim
 
-Ensure the code is efficient because the whole point of these operations is to increase computational speed
-'''
 # using magpylib, this calculates the b-field affecting the particle
 # unless it is outside of the bounds given by 'side'
 def Bfield(y):
@@ -79,9 +72,7 @@ def Fw(coord:float):
     Bx = float(E_Args["B"])
     #print(f"coord: {coord}, A: {A}, B: {Bx}")
     return np.multiply(A * np.exp(-(coord / Bx)** 4), (coord/Bx)**15)
-'''
-Calculates the E Field at point 'p' from the list of charge source coordinates given.
-'''
+
 def EfieldX(p:np.ndarray):
     global E_Method, E_Args
     match E_Method:
@@ -91,14 +82,6 @@ def EfieldX(p:np.ndarray):
             E = np.apply_along_axis(Fw, 0, p)
             
             return np.array(E)
-
-'''
-# plotting variables
-corner = 1 # sets octagonal corner size (cannot be 0)
-side = 600 # max range for plot
-gap = 15 # sets space between coils
-coilLength = 1000
-'''
 
 
 # boris push calculation
@@ -216,6 +199,7 @@ def runsim(fromGui:dict):
     Bf = fromGui['B-Field']
     Ef = fromGui['E-Field']
     coils = fromGui['coils']
+    coilName = fromGui["Coil File"]
 
     init_process(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils)
     values = range(numPa)
@@ -228,5 +212,5 @@ def runsim(fromGui:dict):
 
     out = np.asarray(out)
 
-    dir = CreateOutput(out, sim_time, num_points, num_parts)
+    dir = CreateOutput(out, sim_time, num_points, num_parts, dfIn, Bf, Ef, coilName)
     graph_trajectory(lim=side, data=dir)

@@ -2,6 +2,8 @@
 import numpy as np
 import magpylib as magpy
 import pandas as pd
+from pathlib import Path
+from ast import literal_eval
 
 #from magpy4c1 import EfieldX
 
@@ -19,7 +21,6 @@ from mpl_toolkits.mplot3d import Axes3D
 import plotly.graph_objects as go
 
 from MakeCurrent import current as c
-from MakeCurrent import A, Bx
 
 from math import pi, cos, sin
 
@@ -217,7 +218,16 @@ def graph_trajectory(lim, data):
 
         # plot everything
         traj.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
-        graph_E_X(3, 100, efig)
+
+        p = Path(data)
+        p_parent = p.parent
+        fields_dir = p_parent.joinpath("fields.txt")
+        fields = pd.read_csv(fields_dir, header=None)
+        
+        E_dict = literal_eval(fields.iloc[1,1])
+        E_method = list(E_dict.keys())[0]
+        if(E_method == "Fw"):
+            graph_E_X(3, 100, E_dict["Fw"]["A"], E_dict["Fw"]["B"], efig)
         graph_coil_B_cross(c, 3, 100, bfig, fig1)
         #traj.add_collection(lines)
 
@@ -250,12 +260,13 @@ def graph_trajectory(lim, data):
     # Enjoy the fruits of your labor
     fig1.show()
 
-def graph_E_X(lim:int, step:int, subplot):
+def graph_E_X(lim:int, step:int, A, B, subplot):
 
     # construct grid for the cross section
     x = np.linspace(-lim, lim, step) # these represent LOCAL x and y for the 2D graph, not the 3D space.
-
-    E = np.multiply(A * np.exp(-(x / Bx)** 4), (x/Bx)**15)
+    A = float(A)
+    B = float(B)
+    E = np.multiply(A * np.exp(-(x / B)** 4), (x/B)**15)
 
     subplot.plot(x,E)
 
