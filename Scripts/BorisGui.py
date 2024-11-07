@@ -7,7 +7,7 @@ from PusherClasses import EfOptions, BfOptions
 from CurrentGuiClasses import *
 from BorisGuiClasses import *
 import palettes as p
-
+from ScrollableFrame import ScrollableFrame
 #######
 # GUI #
 #######
@@ -127,6 +127,7 @@ style.map(
 calc_nested_notebook = ttk.Notebook(tab_calc, style='One.TNotebook')
 
 calc_frame1 = tk.Frame(calc_nested_notebook, relief='flat', background="light gray")
+calc_frame1_scroll = ScrollableFrame(calc_frame1)
 
 # Scroll wheel for tabs
 #calc_frame1_scrollwheel = tk.Scrollbar(calc_frame1, orient="vertical")
@@ -198,9 +199,10 @@ style.configure("LG.TCheckbutton", background="light gray", foreground="black", 
 
 
 ## MAIN CONTAINER
-calc_title_LFrame = ttk.Labelframe(calc_frame1,
+calc_title_LFrame = ttk.Labelframe(calc_frame1_scroll.frame,
                              text="Boris Push Calculation")
-calc_title_LFrame.grid(row=0, column=0, pady=10, padx=10, sticky="NW")
+#calc_title_LFrame.grid(row=0, column=0, pady=10, padx=10, sticky="NW")
+calc_title_LFrame.pack()
 
 ### SUB CONTAINERS
 
@@ -214,8 +216,9 @@ CalcCheckBoxFrame.grid(row=1, column=0, pady=10, padx=10, sticky="N")
 CalcRestartFileFrame = tk.Frame(calc_title_LFrame)
 CalcRestartFileFrame.grid(row=2, column= 0, pady=10, padx=10)
 
-Particle = tk.LabelFrame(calc_frame1, text="Particle Conditions")
-Particle.grid(row=0, column=2, sticky="N")
+Particle = tk.LabelFrame(calc_frame1_scroll.frame, text="Particle Conditions")
+#Particle.grid(row=1, column=0, sticky="E")
+Particle.pack()
 
 DropdownFrame = tk.Frame(Particle)
 DropdownFrame.grid(row=0, column=0, sticky="W")
@@ -227,8 +230,9 @@ CalcTimeStepFrame = tk.LabelFrame(CalcContainer, bg="light gray", text="Time, St
 CalcTimeStepFrame.grid(row=0, column=0, pady=5, padx=20)
 
 
-FieldGraphs = tk.LabelFrame(calc_frame1, bg="light gray", text="Fields")
-FieldGraphs.grid(row=0, column=1)
+FieldGraphs = tk.LabelFrame(calc_frame1_scroll.frame, bg="light gray", text="Fields")
+#FieldGraphs.grid(row=0, column=1)
+FieldGraphs.pack()
 
 Fields = tk.LabelFrame(FieldGraphs, bg="light gray", text="Static Fields")
 Fields.grid(row=0, column=0, sticky="W", padx=10, pady=10)
@@ -289,6 +293,7 @@ submenu = tk.Label(calc_nexted_label_frame, text="Submenus",
 
 calc_nested_notebook.add(calc_frame1, text="Particle")
 #calc_nested_notebook.add(calc_frame2, text="Particle")
+
 calc_nested_notebook.add(calc_frame3, text="Coil")
 calc_nested_notebook.pack(expand=True, fill='both', side=LEFT)
 
@@ -347,6 +352,12 @@ coil_config = CurrentConfig(CurrentFrame, DIR_Coil, DIR_coilDefs)
 #=======#
 # FINAL #
 #=======#
+"""
+REGISTER SCROLLING FRAME AREAS
+"""
+root.update()
+calc_frame1_scroll.RegisterScrollArea()
+
 """
 LOGIC FOR PASSING PARAMS BACK TO THE PROGRAM.
 """

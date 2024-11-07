@@ -98,6 +98,8 @@ class MainWindow(tk.Frame):
     filepath:str
     prefs:PrefFile
     initSuccess:bool
+    winSize_x:int
+    winSize_y:int
 
     def __init__(self, master, **kwargs):
         self.master = master
@@ -105,6 +107,8 @@ class MainWindow(tk.Frame):
         self.filepath = str(Path(__file__).resolve().parents[1]) #Expected: '/BorisPusher/...'
 
         super().__init__(**kwargs)
+        self.winSize_x = self.winfo_screenwidth()
+        self.winSize_y = self.winfo_screenheight()
         
         self.initSuccess = self._Init_Configs()
 
