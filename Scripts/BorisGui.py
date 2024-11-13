@@ -153,6 +153,9 @@ plot_out_file = ttk.LabelFrame(plot_title_LFrame,
                                text="Data Source")
 plot_out_file.grid(row = 0, padx=10, pady=10)
 
+plot_graph_traj = tk.Frame(plot_title_LFrame)
+plot_graph_traj.grid(row=1)
+
 
 ## WIDGETS
 ### Output Files
@@ -168,6 +171,14 @@ name_out_file = ttk.Label(plot_out_file,
                           text="No Output File Selected")
 name_out_file.grid(row = 0, column=2, pady=10)
 
+#################
+# GRAPH WINDOWS #
+#################
+from PlottingWindow import TrajGraph
+
+trajectoryGraph = TrajGraph(plot_graph_traj)
+
+
 #button_out_file.config(command=partial(browseFiles, name_out_file))
 
 ### Confirm Button
@@ -179,7 +190,7 @@ plot_confirm = tk.Button(tab_plot,
                           text="Create Plot",
                           state="disabled")
 button_out_file.config(command=partial(PlotFileCallback, name_out_file, plot_confirm))
-plot_confirm.config(command=partial(PlotConfirmCallback, name_out_file, root))
+plot_confirm.config(command=partial(trajectoryGraph.UpdateGraph, name_out_file))
 
 
 plot_confirm.grid(sticky=S)

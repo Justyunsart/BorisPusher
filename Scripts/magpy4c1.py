@@ -89,7 +89,7 @@ def EfieldX(p:np.ndarray):
 def borisPush(id:int):
     global df, num_parts, num_points, dt, sim_time, side, B_Method, E_Method, E_Args,c # Should be fine in multiprocessing because these values are only read,,,
     assert id <= (num_parts - 1), f"Input parameter 'id' received a value greater than the number of particles, {num_parts}"
-
+    magpy.show(c)
     #print(df)
     mass = 1.67e-27
     charge = 1.602e-19

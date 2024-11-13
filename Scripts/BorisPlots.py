@@ -201,7 +201,7 @@ def graph_trajectory(lim, data):
     #df = df[df["id"] == 0]
 
     # create the graph to add to
-    fig1 = plt.figure(figsize=(20, 10))
+    fig1 = plt.figure(figsize=(10,5))
     traj = fig1.add_subplot(1,2,1, projection='3d')
     efig = fig1.add_subplot(2,2,2)
     bfig = fig1.add_subplot(2,2,4)
@@ -226,7 +226,7 @@ def graph_trajectory(lim, data):
        #vdotv = list(map(lambda x: np.dot(x, x), v))
         #bdotb = list(map(lambda x: np.dot(x, x), b))
 
-        print(v.shape)
+        #print(v.shape)
 
         # loss logic
         #vcrossmag, vcrossmagD1, vcrossmagD2 = CalculateLoss(vels=v, bs=b)
@@ -274,8 +274,10 @@ def graph_trajectory(lim, data):
 
         
     magpy.show(coils, canvas=traj)
+    traj.get_legend().remove()
 
     # Enjoy the fruits of your labor
+    fig1.tight_layout()
     fig1.show()
 
 def graph_E_X(lim:int, step:int, A, B, subplot):

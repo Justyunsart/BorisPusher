@@ -7,6 +7,7 @@ from ast import literal_eval
 import numpy as np
 import os
 import ast
+import pandas as pd
 
 """
 classes used for <CurrentGuiClasses.EntryTable> and its subclasses.
@@ -303,6 +304,16 @@ def Dict_to_CSV(fileName:str, data:dict, *args, **kwargs):
         writer = csv.DictWriter(mycsv, data.keys())
         writer.writeheader()
         writer.writerow(data)
+
+def JSON_to_Df(path, orient="table", numeric=True):
+    """
+    reads a json file from the supplied path and returns it as a numeric table.
+    """
+    df = pd.read_json(path, orient=orient)
+
+    if(numeric):
+        df = df.apply(pd.to_numeric)
+    return df
 
 @dataclass
 class RotationConfig():
