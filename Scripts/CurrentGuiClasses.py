@@ -418,11 +418,13 @@ class RotationConfigEntryTable(EntryTable):
     axisIndices = {"x" : 0,
                    "y" : 1,
                    "z" : 2}
-    def __init__(self, master, data, defaults=True, *args, callable:callable=None, **kwargs):
+    isActive = False
+    def __init__(self, master, data, defaults=True, *args, callable:callable=None, parent, **kwargs):
         self.func = callable
         self.master = master
         self.data_to_fill = data
         self.defaults = defaults
+        self.parent = parent
         super().__init__(master=master, *args, **kwargs)
 
         self.onRotationEntryOpen(defaults=self.defaults, lst=self.data_to_fill)
@@ -447,8 +449,14 @@ class RotationConfigEntryTable(EntryTable):
                     self.SetRows(lst)
                 except:
                     raise KeyError("'defaults' ran with False, yet no list")
+        self.isActive = True
+        #print(self.isActive)
     
     def OnRotationEntryClose(self):
+        self.isActive = False
+        return self.ReturnRotations()
+    
+    def ReturnRotations(self):
         """
         when the entry table window is supposed to close,
         it must get its data and return it for the parent window.
@@ -456,6 +464,7 @@ class RotationConfigEntryTable(EntryTable):
         for i in self.entries:
             i['RotationAngle'] = float(i['RotationAngle'])
         return self.entries
+    
     
     def SetRows(self, list):
         """
@@ -471,7 +480,11 @@ class RotationConfigEntryTable(EntryTable):
         super().SetRows(out)
 
     def EntryValidateCallback(self, entry):
-        super().EntryValidateCallback(entry)
+        #print(self.isActive)
+        if (self.isActive):
+            super().EntryValidateCallback(entry)
+        else:
+            self.parent.EntryValidateCallback(entry)
         if (self.func != None):
             self.func(table=self)
     def DelEntry(self, button):
@@ -703,7 +716,7 @@ class CurrentEntryTable(EntryTable):
         frame = tk.LabelFrame(newWin, text="Rotations Table")
         frame.grid(row=0, column=0)
         table = RotationConfigEntryTable(defaults=False, data=self.rotations[row-1], master=frame, dataclass=RotationConfig, save=False, rowInit=False,
-                                         callable=partial(self._graph_callback, row, table=None))
+                                         callable=partial(self._graph_callback, row, table=None), parent = self)
 
         # Get the size of the window with these elements added in.
         newWin.update()
@@ -722,7 +735,7 @@ class CurrentEntryTable(EntryTable):
 
         window.destroy()
     def _graph_callback(self, row, table:RotationConfigEntryTable):
-        self.rotations[row-1] = table.OnRotationEntryClose()
+        self.rotations[row-1] = table.ReturnRotations()
 
         self.GraphCoils()
     
