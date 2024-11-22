@@ -585,7 +585,8 @@ class CurrentConfig:
         CurrentFile = tk.Frame(CurrentTable)
         CurrentFile.grid(row=0, column=0, sticky="NW")
 
-        CurrentGraph = Gframe
+        CurrentGraph = tk.Frame(Gframe)
+        CurrentGraph.grid(row=2,column=0)
         
         """
         this one contains all the common global transformations u can desire

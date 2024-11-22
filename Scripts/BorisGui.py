@@ -23,6 +23,7 @@ params = []
 # Application Window
 root = tk.Tk()
 root.title("Configure Sim")
+root.geometry("800x800")
 
 # palette - currently hard coded
 palette = p.Drapion
@@ -136,6 +137,8 @@ calc_frame1_scroll = ScrollableFrame(calc_frame1)
 
 #calc_frame2 = ttk.Frame(calc_nested_notebook, width=200, height=100, relief=tk.SUNKEN)
 calc_frame3 = tk.Frame(calc_nested_notebook, background="light gray")
+
+calc_frame3_scroll = ScrollableFrame(calc_frame3)
 
 #calc_nested_notebook.grid(row=0, column=0, sticky="nw")
 #calc_nexted_label_frame = tk.Frame(tab_calc)
@@ -302,12 +305,6 @@ submenu = tk.Label(calc_nexted_label_frame, text="Submenus",
                    ).pack(side=LEFT)
 '''
 
-calc_nested_notebook.add(calc_frame1, text="Particle")
-#calc_nested_notebook.add(calc_frame2, text="Particle")
-
-calc_nested_notebook.add(calc_frame3, text="Coil")
-calc_nested_notebook.pack(expand=True, fill='both', side=LEFT)
-
 
 
 #===========================================================================================#
@@ -315,10 +312,10 @@ calc_nested_notebook.pack(expand=True, fill='both', side=LEFT)
 # CURRENT MANIPULATION #
 ########################
 
-CurrentFrame = tk.LabelFrame(calc_frame3, text="Configure Current")
-CurrentFrame.grid(row = 0, column=0, padx=10, pady=10)
-GraphFrame = tk.LabelFrame(calc_frame3, text="Graph")
-GraphFrame.grid(row = 0, column=1, padx=10, pady=10)
+CurrentFrame = tk.LabelFrame(calc_frame3_scroll.frame, text="Configure Current")
+CurrentFrame.grid(row = 1, column=0, padx=10, pady=10)
+GraphFrame = tk.LabelFrame(calc_frame3_scroll.frame, text="Graph")
+GraphFrame.grid(row = 2, column=0, padx=10, pady=10)
 coil_config = CurrentConfig(CurrentFrame, DIR_Coil, DIR_coilDefs, GraphFrame)
 
 ### FIELD GRAPHS
@@ -363,11 +360,18 @@ coil_config = CurrentConfig(CurrentFrame, DIR_Coil, DIR_coilDefs)
 #=======#
 # FINAL #
 #=======#
+
+calc_nested_notebook.add(calc_frame1, text="Particle")
+#calc_nested_notebook.add(calc_frame2, text="Particle")
+
+calc_nested_notebook.add(calc_frame3, text="Coil")
+calc_nested_notebook.pack(expand=True, fill='both', side=LEFT)
 """
 REGISTER SCROLLING FRAME AREAS
 """
 root.update()
 calc_frame1_scroll.RegisterScrollArea()
+calc_frame3_scroll.RegisterScrollArea()
 
 """
 LOGIC FOR PASSING PARAMS BACK TO THE PROGRAM.

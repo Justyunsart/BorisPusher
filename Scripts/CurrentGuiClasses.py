@@ -97,22 +97,24 @@ class EntryTable:
         self.addButton.grid(row=1, column=0, sticky="")
 
         if (save):
+            saveFrame = tk.Frame(self.frame)
+            saveFrame.grid(row=2, column=0)
             # Save as button
             self.saveButton = tk.Button(
-                self.frame,
+                saveFrame,
                 text="Save As",
                 command=self.SaveData
             )
-            self.saveButton.grid(row=1, column=1, sticky="E")
+            self.saveButton.grid(row=2, column=1, sticky="W")
             
             # save as entry field
             self.saveEntryVal = tk.StringVar()
             self.saveEntry = tk.Entry(
-                self.frame,
+                saveFrame,
                 textvariable=self.saveEntryVal,
                 width=20
             )
-            self.saveEntry.grid(row=1, column=2, sticky="E")
+            self.saveEntry.grid(row=2, column=0, sticky="W")
 
         self.isInit = True
     
@@ -511,7 +513,7 @@ class CurrentEntryTable(EntryTable):
         #--------#
         # create graph properties
         self.frame2 = graphFrame
-        self.frame2.grid(row=0, column=1)
+        #self.frame2.grid(row=1, column=0)
 
         self.fig = plt.figure(figsize=(5, 5))
         self.plot = self.fig.add_subplot(1,1,1, projection="3d")
