@@ -55,7 +55,8 @@ Bx = .5
 current: var that references a magpylib current/ collection object. This is passed to many different files that utilizes it.
 
 Note:
-Do not change the name of the var current; only change the function it calls. This is because the var is referenced by name.
+    - This is mainly used to test graphs and anything alongside it purely within the backend.
+    - Do not change the name of the var current; only change the function it calls. This is because the var is referenced by name.
 '''
 current = Circle(a, dia, d, gap)
 #current = Helmholtz(a, dia, d) # mirror, since distance is far enough to not make helmholtz

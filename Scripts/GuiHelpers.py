@@ -3,10 +3,7 @@ from tkinter import filedialog
 from tkinter import ttk
 from BorisPlots import graph_trajectory
 from GuiEntryHelpers import Dict_to_CSV
-import os
-from dataclasses import dataclass
 
-from PrefFile import PrevFiles
 import pandas as pd
 import csv
 

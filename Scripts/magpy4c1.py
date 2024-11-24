@@ -89,7 +89,6 @@ def EfieldX(p:np.ndarray):
 def borisPush(id:int):
     global df, num_parts, num_points, dt, sim_time, side, B_Method, E_Method, E_Args,c # Should be fine in multiprocessing because these values are only read,,,
     assert id <= (num_parts - 1), f"Input parameter 'id' received a value greater than the number of particles, {num_parts}"
-    magpy.show(c)
     #print(df)
     mass = 1.67e-27
     charge = 1.602e-19
@@ -191,6 +190,7 @@ def init_process(data, n1, n2, t, t1, Bf, Ef, coils):
     #print("data shared: ", data, n1, n2, t)
 
 def runsim(fromGui:dict):
+    #print('simulation starting')
     dfIn = pd.DataFrame(fromGui['particles'])
     numPa = dfIn.shape[0]
     numPo = int(fromGui['numsteps'])
@@ -213,4 +213,4 @@ def runsim(fromGui:dict):
     out = np.asarray(out)
 
     dir = CreateOutput(out, sim_time, num_points, num_parts, dfIn, Bf, Ef, coilName)
-    graph_trajectory(lim=side, data=dir)
+    #graph_trajectory(lim=side, data=dir)

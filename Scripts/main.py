@@ -1,12 +1,14 @@
 # RUN THIS TO RUN THE PROGRAM LOL
 
-from BorisGui import root
-import magpy4c1
-import pandas as pd
-from PusherClasses import InitializeData
+from BorisGui import OpenGUI
 
 if __name__ == "__main__":
-    root.mainloop()
+    # For whatever reason, instantiating the GUI window HAS to 
+    # be encapsulated in a function.
+
+    # If I call root.mainloop() here, it gets called when a process
+    # spawns, even when inside the main block. 
+    OpenGUI()
     
     """
     num_parts = df.shape[0]
