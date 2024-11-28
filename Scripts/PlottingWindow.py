@@ -13,7 +13,16 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2Tk)
 from GuiEntryHelpers import (JSON_to_Df, tryEval)
 from GuiHelpers import CSV_to_Df
+from BorisAnalysis import CalculateLoss
 
+# etc. graphing funcs
+def GraphLoss(figure, vels, bs):
+    # return the magnitude of each point's VxB vector
+    vcrossmag = CalculateLoss(vels, bs)
+    vcrossmag_zero_ind = np.where(vcrossmag==0)
+    pass
+
+# CLASS
 class TrajGraph(tk.Frame):
     def __init__(self, master, stride_lower=1, stride_upper=100, **kwargs):
         self.master = master
@@ -50,6 +59,8 @@ class TrajGraph(tk.Frame):
 
             self.canvas = FigureCanvasTkAgg(self.fig, master=self)
             self.toolbar = NavigationToolbar2Tk(self.canvas, pack_toolbar=False)
+            self.toolbar.pack(side="bottom")
+            self.canvas.draw()
     
     def File_to_Collection(self, path):
         """

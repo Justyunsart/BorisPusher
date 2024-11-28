@@ -20,7 +20,7 @@ def OpenGUI():
     # Application Window
     root = tk.Tk()
     root.title("Configure Sim")
-    root.geometry("800x800")
+    #root.geometry("800x800")
 
     # palette - currently hard coded
     palette = p.Drapion
@@ -28,8 +28,8 @@ def OpenGUI():
     # main window
     Main = MainWindow(root, background = palette.Background.value)
     Main.pack(expand=True, fill='both')
-    Main.grid_rowconfigure(0, weight=1)
-    Main.grid_columnconfigure(0, weight=1)
+    #Main.grid_rowconfigure(0, weight=1)
+    #Main.grid_columnconfigure(0, weight=1)
 
     #======#
     # MENU #
@@ -81,17 +81,17 @@ def OpenGUI():
 
     ## Create tab objects
     tab_calc = tk.Frame(tabControl, bg='gray')
-    tab_calc.pack(fill='both', expand=True)
-    tab_calc.grid_columnconfigure(0, weight = 1)
-    tab_calc.grid_rowconfigure(0, weight = 1)
+
+    #tab_calc.grid_columnconfigure(0, weight = 1)
+    #tab_calc.grid_rowconfigure(0, weight = 1)
 
     tab_plot = ttk.Frame(tabControl, padding="4 12 12 4")
-    tab_plot.grid_columnconfigure(0, weight = 1)
-    tab_plot.grid_rowconfigure(0, weight = 1)
+    #tab_plot.grid_columnconfigure(0, weight = 1)
+    #tab_plot.grid_rowconfigure(0, weight = 1)
 
 
-    tabControl.grid_rowconfigure(0, weight=1)
-    tabControl.grid_columnconfigure(0, weight=1)
+    #tabControl.grid_rowconfigure(0, weight=1)
+    #tabControl.grid_columnconfigure(0, weight=1)
 
 
     '''
@@ -210,43 +210,37 @@ def OpenGUI():
 
 
     ## MAIN CONTAINER
-    calc_title_LFrame = ttk.Labelframe(calc_frame1_scroll.frame,
-                                text="Boris Push Calculation")
+    calc_title_LFrame = ttk.Frame(calc_frame1_scroll.frame)
+    calc_title_LFrame.columnconfigure(0, weight=1)
     #calc_title_LFrame.grid(row=0, column=0, pady=10, padx=10, sticky="NW")
-    calc_title_LFrame.pack()
 
     ### SUB CONTAINERS
 
-    CalcContainer = tk.LabelFrame(calc_title_LFrame, bg="gray", text="Parameters")
-    CalcContainer.grid(row=0,column=0)
-
 
     CalcCheckBoxFrame = tk.Frame(calc_title_LFrame, bg="light gray")
-    CalcCheckBoxFrame.grid(row=1, column=0, pady=10, padx=10, sticky="N")
+    CalcCheckBoxFrame.grid(row=1, column=0, pady=10, padx=10, sticky="WSEW")
 
     CalcRestartFileFrame = tk.Frame(calc_title_LFrame)
     CalcRestartFileFrame.grid(row=2, column= 0, pady=10, padx=10)
 
     Particle = tk.LabelFrame(calc_frame1_scroll.frame, text="Particle Conditions")
     #Particle.grid(row=1, column=0, sticky="E")
-    Particle.pack()
 
     DropdownFrame = tk.Frame(Particle)
-    DropdownFrame.grid(row=0, column=0, sticky="W")
+    DropdownFrame.grid(row=0, column=0, sticky="WSEW")
 
     ParticlePreviewFrame = tk.Frame(Particle)
-    ParticlePreviewFrame.grid(row=1, column=0, sticky="W")
+    ParticlePreviewFrame.grid(row=1, column=0, sticky="WSEW")
 
-    CalcTimeStepFrame = tk.LabelFrame(CalcContainer, bg="light gray", text="Time, Step")
-    CalcTimeStepFrame.grid(row=0, column=0, pady=5, padx=20)
+    CalcTimeStepFrame = tk.LabelFrame(calc_title_LFrame, bg="light gray", text="Time, Step")
+    CalcTimeStepFrame.grid(row=0, column=0, sticky="NSEW")
 
 
     FieldGraphs = tk.LabelFrame(calc_frame1_scroll.frame, bg="light gray", text="Fields")
     #FieldGraphs.grid(row=0, column=1)
-    FieldGraphs.pack()
 
     Fields = tk.LabelFrame(FieldGraphs, bg="light gray", text="Static Fields")
-    Fields.grid(row=0, column=0, sticky="W", padx=10, pady=10)
+    Fields.grid(row=0, column=0, sticky="WSEW", padx=10, pady=10)
 
     #BGraphFrame = tk.LabelFrame(FieldGraphs, bg="light gray", text="B-field")
     #BGraphFrame.grid(row=0, column=0)
@@ -285,11 +279,6 @@ def OpenGUI():
                             font=("None", 12))
     calc_button.pack(anchor='s', side=BOTTOM)
 
-
-    ## Add tab objects to notebook
-    tabControl.add(tab_calc, text="Calculate", padding=(5,5))
-    tabControl.add(tab_plot,text="Plot", padding=(5,5))
-    tabControl.pack(expand=1, fill="x", side=TOP)
     '''
     calc_nexted_label_frame.pack(side=TOP, anchor= NW, fill=Y)
     submenu = tk.Label(calc_nexted_label_frame, text="Submenus", 
@@ -357,12 +346,28 @@ def OpenGUI():
     #=======#
     # FINAL #
     #=======#
+    #PACKING
+    tab_calc.pack(fill='both', expand=True)
+    tabControl.add(tab_calc, text="Calculate", padding=(5,5))
+    tabControl.add(tab_plot,text="Plot", padding=(5,5))
+    tabControl.pack(expand=1, fill="x", side=TOP)
+
+    calc_frame1.pack(side="top", fill="both", expand=True)
+    calc_frame1_scroll._InternalPack()
+    calc_frame3_scroll._InternalPack()
+
+
+    calc_title_LFrame.pack(fill="x", side="top", expand=True)
+    Particle.pack(fill="x", side="top", expand=True)
+    FieldGraphs.pack(fill="x", side="top", expand=True)
+
 
     calc_nested_notebook.add(calc_frame1, text="Particle")
     #calc_nested_notebook.add(calc_frame2, text="Particle")
 
     calc_nested_notebook.add(calc_frame3, text="Coil")
     calc_nested_notebook.pack(expand=True, fill='both', side=LEFT)
+    
     """
     REGISTER SCROLLING FRAME AREAS
     """

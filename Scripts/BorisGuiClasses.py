@@ -166,7 +166,7 @@ class TimeStep_n_NumStep():
         self.master = master
 
         self.frame = tk.Frame(self.master)
-        self.frame.grid(row=0, column=0, sticky="W")
+        self.frame.grid(row=0, column=0, sticky="NSEW")
         self.master.grid_columnconfigure(0, weight=1)
         
         # Frame for holding check warning
@@ -187,7 +187,7 @@ class TimeStep_n_NumStep():
 
         # display the simulation time
         self.simFrame = tk.LabelFrame(self.master, text="Total Sim Time: ", bg="gray")
-        self.simFrame.grid(row=0, column=1, sticky="E")
+        self.simFrame.grid(row=0, column=1, sticky="NWES")
         self.simFrame.grid_rowconfigure(0, weight=1)
         self.simFrame.grid_columnconfigure(0, weight=1)
 
