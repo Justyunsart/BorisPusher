@@ -14,16 +14,8 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
 from GuiEntryHelpers import (JSON_to_Df, tryEval)
 from GuiHelpers import CSV_to_Df
 from BorisAnalysis import CalculateLoss
-
-# etc. graphing funcs
-def GraphLoss(figure, vels, bs):
-    # return the magnitude of each point's VxB vector
-    vcrossmag = CalculateLoss(vels, bs)
-    vcrossmag_zero_ind = np.where(vcrossmag==0)
-    pass
-
 # CLASS
-class TrajGraph(tk.Frame):
+class TrajGraph(tk.Canvas):
     def __init__(self, master, stride_lower=1, stride_upper=100, **kwargs):
         self.master = master
         self.title = "Trajectory"
@@ -31,31 +23,53 @@ class TrajGraph(tk.Frame):
         #Var to read currently selected Stride
         self.stride_var = tk.IntVar()
 
-        # Instantiate frame
+        # Instantiate canvas
         super().__init__(master, **kwargs)
 
+        self.frame = tk.Frame(self)
+
         # Create slider for Stride
-        stride_slider = tk.Scale(self, variable=self.stride_var, 
+        stride_slider = tk.Scale(self.frame, variable=self.stride_var, 
                                  from_=stride_lower, to=stride_upper,
                                  orient="horizontal")
-        stride_label = tk.Label(self, text="Step Stride")
+        stride_label = tk.Label(self.frame, text="Step Stride")
         
         # Create graph
         self.ConstructGraph()
 
+        self.window = self.create_window(0,0, window=self.frame, anchor="nw")
+
         # Packing
-        self.pack(expand=False)
         stride_label.pack()
-        stride_slider.pack(anchor="center", fill="x", expand=False)
-        self.canvas.get_tk_widget().pack(fill="both", expand=False)
+        stride_slider.pack(side="top", fill="x", expand=True)
+        self.frame.pack(side='top', fill='x', expand=True)
+        self.canvas.get_tk_widget().pack(fill="both", expand=True)
         self.toolbar.pack(side=tk.BOTTOM, fill="x")
+        self.pack(fill="both", expand=True, side="top")
+
+        # Bind self to re-register the scroll area upon window dimension change
+        self.bind('<Configure>', self._on_Configure)
+
+    def _on_Configure(self, event):
+        """
+        Intended to run whenever the root window's dimensions change.
+            - resize the frame
+            - update the scroll area.
+        """
+        # Get updated window width
+        w = event.width
+
+        # Adjust the canvas element(self) to the updated width, to match
+        self.itemconfig(self.window, width = w)
     
     def ConstructGraph(self):
             """
             creates a matplotlib figure
             """
-            self.fig = plt.figure(figsize=(5,5))
-            self.plot = self.fig.add_subplot(1,1,1, projection='3d')
+            self.fig = plt.figure()
+            self.plot = self.fig.add_subplot(1,2,1, projection='3d')
+
+            self.plot_vcross = self.fig.add_subplot(2,2,2)
 
             self.canvas = FigureCanvasTkAgg(self.fig, master=self)
             self.toolbar = NavigationToolbar2Tk(self.canvas, pack_toolbar=False)
@@ -120,8 +134,14 @@ class TrajGraph(tk.Frame):
             # extract data from dataframe
             dfslice = df[df["id"] == part]
             x, y, z = dfslice["px"].to_numpy(), dfslice["py"].to_numpy(), dfslice["pz"].to_numpy() #x, y, z coord points
+            coords = np.column_stack((x,y,z))
+            vx, vy, vz = dfslice["vx"].to_numpy(), dfslice["vy"].to_numpy(), dfslice["vz"].to_numpy()
+            vels = np.column_stack((vx,vy,vz))
+            bx,by,bz = dfslice["bx"].to_numpy(), dfslice["by"].to_numpy(), dfslice["bz"].to_numpy()
+            bs = np.column_stack((bx,by,bz))
 
-            print(x)
+            vcrossmag = CalculateLoss(vels, bs)
+
             # Apply stride by using a bool mask to get every 'stride-th' point.
             mask = np.ones(len(x), dtype=bool)
             mask[:] = False
@@ -134,6 +154,7 @@ class TrajGraph(tk.Frame):
             # Color the points based on step count
             colors = mpl.colormaps[palettes[part]]
             self.plot.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
+            self.plot_vcross.plot(vcrossmag)
 
         mp.show(c, canvas=self.plot)
         self.plot.get_legend().remove()
