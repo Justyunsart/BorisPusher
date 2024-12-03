@@ -116,6 +116,7 @@ class TrajGraph(tk.Canvas):
         called whenever the 'plot' button is pressed. Updates the graph in the frame with the trajectory.
         """
         self.plot.cla() # reset plot
+        self.plot_vcross.cla()
 
         # Read data at the supplied path
         path = label.cget("text")
@@ -140,7 +141,9 @@ class TrajGraph(tk.Canvas):
             bx,by,bz = dfslice["bx"].to_numpy(), dfslice["by"].to_numpy(), dfslice["bz"].to_numpy()
             bs = np.column_stack((bx,by,bz))
 
-            vcrossmag = CalculateLoss(vels, bs)
+            vcrossmag = CalculateLoss(vels, bs, 100)
+            vcrossmag_zeros = np.where(vcrossmag == 0)
+            #print(vcrossmag_zeros)
 
             # Apply stride by using a bool mask to get every 'stride-th' point.
             mask = np.ones(len(x), dtype=bool)

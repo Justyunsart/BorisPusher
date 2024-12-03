@@ -4,20 +4,47 @@ Holds functions for calculating loss, moment, etc.
 
 import numpy as np
 
-def CalculateLoss(vels:np.ndarray, bs:np.ndarray):
+def CalculateLoss(vels:np.ndarray, bs:np.ndarray, intervals:int):
     '''
-    returns the perpendicular component between two vectors and its first, second derivatives.
+    Selects given or default intervals from the data, then returns the mag. moment for each.
+
+    Equation used from: https://farside.ph.utexas.edu/teaching/plasma/lectures/node18.html
+        - (2.48) for the magnetic moment
+            > mu = (mass * vcross^2)/(2B)
+    
+    PARAMETERS
+    vels: an array of all the particle velocity components
+    bs: an array of all the b field components
+    intervals: an int representing the number of desired points for checking the mag. moment.
+        - advised to be a factor of nsteps, otherwise the floor division will approximate the correct interval.
     '''
+    # TEMP TEMP TEMP TEMP
+    mass = 1.672e-27 # mass is hard coded to be a proton for now. 
+    
+    # Data prepping
+    ## Get the stride to calculate mag. moment for
+    nsteps = vels.shape[0]
+    stride = nsteps//intervals
+    ## Filter the input arrays based on the stride.
+    vels = vels[::stride]
+    bs = bs[::stride]
+    
+    # Calculation
+    ## Numerator: (m * vcross^2)
     vcross = np.cross(vels, bs)
-    # array of the magnitudes of the perpendicular component
-    vcrossmag = np.sqrt(list(map(lambda x: np.dot(x, x), vcross)))
+    vcross_sq = np.array(list((map(lambda x: np.dot(x,x), vcross))), dtype=float)
+    #print(vcross_sq)
+    mass_x_cross = vcross_sq * mass
+    ## Denominator: 2B
+    b_mag_mult = 2 * np.sqrt(np.array(list(map(lambda x:np.dot(x,x), bs)), dtype=float))
+    ### Check if any of the denominator is 0, then remove them from both arrays
+    b_mag_zeros = np.where(b_mag_mult == 0)
 
-    # if we get the first order derivative, we can observe the amount of time the magnitudes increase vs. decrease
-    #vcrossmagD1 = _ArrCentralDiff(vcrossmag)
-    #vcrossmagD2 = _ArrCentralDiff(vcrossmagD1)
+    for ind in b_mag_zeros:
+        np.delete(mass_x_cross, ind)
+        np.delete(b_mag_mult, ind)
 
-    #return vcrossmag, vcrossmagD1, vcrossmagD2
-    return vcrossmag
+    return np.divide(mass_x_cross, b_mag_mult)
 
 def _ArrCentralDiff(arr:np.ndarray):
     '''
