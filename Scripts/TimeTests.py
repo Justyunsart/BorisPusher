@@ -210,4 +210,9 @@ def EfieldX(p:np.ndarray):
     return np.array([E,0,0])
 
 position = np.array([0,0,0])
-print(EfieldX(position))
+#print(EfieldX(position))
+
+vels = np.array([[0,0,0], [0,1,0], [1,1,1]])
+v_mag_sq = np.array(list((map(lambda x: np.dot(x,x), vels))), dtype=float)
+
+print(v_mag_sq)

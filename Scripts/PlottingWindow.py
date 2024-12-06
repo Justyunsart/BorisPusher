@@ -74,8 +74,17 @@ class TrajGraph(tk.Canvas):
             self.canvas = FigureCanvasTkAgg(self.fig, master=self)
             self.toolbar = NavigationToolbar2Tk(self.canvas, pack_toolbar=False)
             self.toolbar.pack(side="bottom")
+            self.fig.tight_layout()
             self.canvas.draw()
     
+    def SetAxis(self):
+        self.plot_vcross.set_title('Velocity vs. (V x B)')
+        self.plot_vcross.set_xlabel('Step Number')
+        self.plot_vcross.set_ylabel('Magnitude (M/s x A)')
+        self.plot_vcross.legend(['Vel Magnitude', 'VxB_x', 'VxB_y', 'VxB_z'], ncol=2, fancybox=True, shadow=True, loc="upper center", bbox_to_anchor=(0.5, -0.5))
+
+
+
     def File_to_Collection(self, path):
         """
          1. locate the coils file, assuming that path is the dir. to the json.
@@ -141,7 +150,7 @@ class TrajGraph(tk.Canvas):
             bx,by,bz = dfslice["bx"].to_numpy(), dfslice["by"].to_numpy(), dfslice["bz"].to_numpy()
             bs = np.column_stack((bx,by,bz))
 
-            vcrossmag = CalculateLoss(vels, bs, 100)
+            vcrossmag, bmag, vcross_sq, vSum, v_mag, vels = CalculateLoss(vels, bs, 100)
             vcrossmag_zeros = np.where(vcrossmag == 0)
             #print(vcrossmag_zeros)
 
@@ -157,10 +166,17 @@ class TrajGraph(tk.Canvas):
             # Color the points based on step count
             colors = mpl.colormaps[palettes[part]]
             self.plot.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
-            self.plot_vcross.plot(vcrossmag)
+            #self.plot_vcross.plot(vcrossmag)
+            #self.plot_vcross.plot(bmag)
+            #self.plot_vcross.plot(vcross_sq)
+            #self.plot_vcross.plot(vSum)
+            self.plot_vcross.plot(v_mag)
+            self.plot_vcross.plot(vels)
 
         mp.show(c, canvas=self.plot)
+        self.SetAxis()
         self.plot.get_legend().remove()
+        self.fig.tight_layout()
         self.canvas.draw()
         #print(f'graphing finished.')
 
