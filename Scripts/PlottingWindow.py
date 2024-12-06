@@ -78,10 +78,10 @@ class TrajGraph(tk.Canvas):
             self.canvas.draw()
     
     def SetAxis(self):
-        self.plot_vcross.set_title('Velocity vs. (V x B)')
+        self.plot_vcross.set_title('Velocity')
         self.plot_vcross.set_xlabel('Step Number')
-        self.plot_vcross.set_ylabel('Magnitude (M/s x A)')
-        self.plot_vcross.legend(['Vel Magnitude', 'VxB_x', 'VxB_y', 'VxB_z'], ncol=2, fancybox=True, shadow=True, loc="upper center", bbox_to_anchor=(0.5, -0.5))
+        self.plot_vcross.set_ylabel('M/s')
+        self.plot_vcross.legend(['Vel Magnitude', 'Vx', 'Vy', 'Vz'], ncol=2, fancybox=True, shadow=True, loc="upper center", bbox_to_anchor=(0.5, -0.25))
 
 
 

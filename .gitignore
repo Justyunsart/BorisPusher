@@ -606,3 +606,7 @@ Outputs/boris_500000_0.0001_1_(26)/coils.txt
 Outputs/boris_500000_0.0001_1_(26)/dataframe.json
 Outputs/boris_500000_0.0001_1_(26)/fields.txt
 Outputs/boris_500000_0.0001_1_(26)/particles.txt
+Outputs/boris_5000000_0.001_1/coils.txt
+Outputs/boris_5000000_0.001_1/dataframe.json
+Outputs/boris_5000000_0.001_1/fields.txt
+Outputs/boris_5000000_0.001_1/particles.txt
