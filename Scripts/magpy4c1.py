@@ -41,20 +41,14 @@ E:list = []
 # B FIELD #
 #=========#
 
-# using magpylib, this calculates the b-field affecting the particle
 # unless it is outside of the bounds given by 'side'
 def Bfield(y):
-    global B_Method
+    global B_Method, c
     if(B_Method == "Zero"):
         return np.zeros(3)
-    out = []
 
-    isBounds = y.any() > side
-    Bf = [0.,0.,0.]
-    if(not isBounds):
-        Bf = c.getB(y, squeeze=True)
-        out = Bf
-    return np.array(out)
+    Bf = c.getB(y, squeeze=True)
+    return np.array(Bf)
 
 # global variables
 magpy.graphics.style.CurrentStyle(arrow=None)
@@ -87,9 +81,16 @@ def EfieldX(p:np.ndarray):
 # boris push calculation
 # this is used to move the particle in a way that simulates movement from a magnetic field
 def borisPush(id:int):
-    global df, num_parts, num_points, dt, sim_time, side, B_Method, E_Method, E_Args,c # Should be fine in multiprocessing because these values are only read,,,
+    global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args,c # Should be fine in multiprocessing because these values are only read,,,
     assert id <= (num_parts - 1), f"Input parameter 'id' received a value greater than the number of particles, {num_parts}"
     #print(df)
+    
+    ## Collect coil location to know when the particle escapes
+    side = c[0].position
+    side = np.absolute(max(side.min(), side.max(), key=abs))
+    #print(f'magpy4c1.borisPush: side is: {side}')
+    
+    ## Mass and Charge are hard coded to be protons right now
     mass = 1.67e-27
     charge = 1.602e-19
 
@@ -164,21 +165,21 @@ def borisPush(id:int):
         if time % 1000 == 0:
             print(f"boris calc * {time} for particle {id}")
             print("total time: ", ft, dt, Ef, Bf)
-        if x.any() > side:
+        if np.absolute(max(x.min(), x.max(), key=abs)) > side:
+            out = out[out != np.array(None)]
             print('Exited Boris Push Early')
             break
     # ft = ft*(10**-5)
     return out
 
 def init_process(data, n1, n2, t, t1, Bf, Ef, coils):
-    global df, num_parts, num_points, dt, sim_time, side, B_Method, E_Method, E_Args,c
+    global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args,c
     df = data
     num_parts = n1
     num_points = n2
     dt = t
     sim_time = t1
     #sources = GetCurrentTrace(c, dia, res=100, nsteps=100)
-    side=3
 
     B_Method = Bf
 
