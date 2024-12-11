@@ -20,7 +20,7 @@ def OpenGUI():
     # Application Window
     root = tk.Tk()
     root.title("Configure Sim")
-    #root.geometry("800x800")
+    root.geometry("1000x1500")
 
     # palette - currently hard coded
     palette = p.Drapion
@@ -350,7 +350,7 @@ def OpenGUI():
     tab_calc.pack(fill='both', expand=True)
     tabControl.add(tab_calc, text="Calculate", padding=(5,5))
     tabControl.add(tab_plot,text="Plot", padding=(5,5))
-    tabControl.pack(expand=1, fill="x", side=TOP)
+    tabControl.pack(expand=1, fill="both", side=TOP)
 
     calc_frame1.pack(side="top", fill="both", expand=True)
     calc_frame1_scroll._InternalPack()

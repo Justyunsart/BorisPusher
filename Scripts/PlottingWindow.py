@@ -17,6 +17,7 @@ from BorisAnalysis import CalculateLoss
 # CLASS
 class TrajGraph(tk.Canvas):
     def __init__(self, master, stride_lower=1, stride_upper=100, **kwargs):
+        mpl.use("tkagg")
         self.master = master
         self.title = "Trajectory"
 
@@ -43,8 +44,8 @@ class TrajGraph(tk.Canvas):
         stride_label.pack()
         stride_slider.pack(side="top", fill="x", expand=True)
         self.frame.pack(side='top', fill='x', expand=True)
-        self.canvas.get_tk_widget().pack(fill="both", expand=True)
-        self.toolbar.pack(side=tk.BOTTOM, fill="x")
+        #self.canvas.get_tk_widget().pack(fill="both", expand=True)
+        #self.toolbar.pack(side=tk.BOTTOM, fill="x")
         self.pack(fill="both", expand=True, side="top")
 
         # Bind self to re-register the scroll area upon window dimension change
@@ -71,11 +72,11 @@ class TrajGraph(tk.Canvas):
 
             self.plot_vcross = self.fig.add_subplot(2,2,2)
 
-            self.canvas = FigureCanvasTkAgg(self.fig, master=self)
-            self.toolbar = NavigationToolbar2Tk(self.canvas, pack_toolbar=False)
-            self.toolbar.pack(side="bottom")
+            #self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+            #self.toolbar = NavigationToolbar2Tk(self.fig, pack_toolbar=False)
+            #self.toolbar.pack(side="bottom")
             self.fig.tight_layout()
-            self.canvas.draw()
+            #self.canvas.draw()
     
     def SetAxis(self):
         self.plot_vcross.set_title('Velocity')
@@ -177,6 +178,7 @@ class TrajGraph(tk.Canvas):
         self.SetAxis()
         self.plot.get_legend().remove()
         self.fig.tight_layout()
-        self.canvas.draw()
+        self.fig.show()
+        #self.canvas.draw()
         #print(f'graphing finished.')
 
