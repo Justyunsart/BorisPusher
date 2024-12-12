@@ -108,6 +108,9 @@ def CSV_to_Df(dir, isNum=True, **kwargs):
     '''
     # step 1: read the file from the directory.
     data = pd.read_csv(dir, **kwargs)
+
+    if data.empty:
+        data = pd.read_json(dir, orient="table")
     #print(data)
 
     # step 2: numeric checks

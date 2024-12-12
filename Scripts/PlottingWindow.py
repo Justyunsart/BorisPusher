@@ -36,17 +36,17 @@ class TrajGraph(tk.Canvas):
         stride_label = tk.Label(self.frame, text="Step Stride")
         
         # Create graph
-        self.ConstructGraph()
+        #self.ConstructGraph()
 
         self.window = self.create_window(0,0, window=self.frame, anchor="nw")
 
         # Packing
         stride_label.pack()
         stride_slider.pack(side="top", fill="x", expand=True)
-        self.frame.pack(side='top', fill='x', expand=True)
+        #self.frame.pack(side='top', fill='x', expand=True)
         #self.canvas.get_tk_widget().pack(fill="both", expand=True)
         #self.toolbar.pack(side=tk.BOTTOM, fill="x")
-        self.pack(fill="both", expand=True, side="top")
+        #self.pack(fill="both", expand=True, side="top")
 
         # Bind self to re-register the scroll area upon window dimension change
         self.bind('<Configure>', self._on_Configure)
@@ -73,7 +73,7 @@ class TrajGraph(tk.Canvas):
             self.plot_vcross = self.fig.add_subplot(2,2,2)
 
             #self.canvas = FigureCanvasTkAgg(self.fig, master=self)
-            #self.toolbar = NavigationToolbar2Tk(self.fig, pack_toolbar=False)
+            #self.toolbar = NavigationToolbar2Tk(self.canvas, pack_toolbar=False)
             #self.toolbar.pack(side="bottom")
             self.fig.tight_layout()
             #self.canvas.draw()
@@ -84,6 +84,9 @@ class TrajGraph(tk.Canvas):
         self.plot_vcross.set_ylabel('M/s')
         self.plot_vcross.legend(['Vel Magnitude', 'Vx', 'Vy', 'Vz'], ncol=2, fancybox=True, shadow=True, loc="upper center", bbox_to_anchor=(0.5, -0.25))
 
+        self.plot.set_xlabel("X (m)")
+        self.plot.set_ylabel("Y (m)")
+        self.plot.set_zlabel("Z (m)")
 
 
     def File_to_Collection(self, path):
@@ -125,6 +128,8 @@ class TrajGraph(tk.Canvas):
         """
         called whenever the 'plot' button is pressed. Updates the graph in the frame with the trajectory.
         """
+        self.ConstructGraph()
+
         self.plot.cla() # reset plot
         self.plot_vcross.cla()
 
