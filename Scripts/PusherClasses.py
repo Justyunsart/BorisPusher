@@ -102,7 +102,8 @@ def InitializeAoSDf(AoS:np.ndarray):
 
     return dfo
 
-def CreateOutput(inp, sim_time, num_points, num_parts, part, bf, ef, c):
+import csv
+def CreateOutput(inp, sim_time, num_points, num_parts, part, bf, ef, c, diags):
     global outd
 
     # MAKE NEW FILE FOR EACH PARTICLE
@@ -115,7 +116,9 @@ def CreateOutput(inp, sim_time, num_points, num_parts, part, bf, ef, c):
     #    temp = os.path.join(dir, f"{i}.txt")
         # print("saving, ", AoS[i])
         # np.save(temp, AoS[i])
-
+    diag_path = os.path.join(dir, f"diagnostics.txt")
+    diags.to_csv(diag_path)
+    
     temp = os.path.join(dir, f"dataframe.json")
     data.to_json(temp, orient="table")
 

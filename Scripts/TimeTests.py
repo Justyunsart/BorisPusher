@@ -215,4 +215,8 @@ position = np.array([0,0,0])
 vels = np.array([[0,0,0], [0,1,0], [1,1,1]])
 v_mag_sq = np.array(list((map(lambda x: np.dot(x,x), vels))), dtype=float)
 
-print(v_mag_sq)
+#print(v_mag_sq)
+
+q = 1.6e-19 #coulomb
+M = 1.67e-27 #kilograms
+print(q/M)

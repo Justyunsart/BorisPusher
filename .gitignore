@@ -1,3 +1,10 @@
 Outputs/
 Inputs/
 __pycache__/
+Scripts/__pycache__/
+Scripts/__pycache__/magpy4c1.cpython-312.pyc
+Scripts/__pycache__/PusherClasses.cpython-312.pyc
+Outputs/.DS_Store
+Inputs/.DS_Store
+Inputs/lastUsed
+.DS_Store

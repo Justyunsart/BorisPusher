@@ -17,9 +17,9 @@ from PusherClasses import GetCurrentTrace, CreateOutput, CalcPtE
 ## Calculations
 import numpy as np
 import magpylib as magpy
-from functools import partial
 
-from BorisPlots import graph_trajectory
+## Computation Diagnostics
+import time as t
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
@@ -81,6 +81,12 @@ def EfieldX(p:np.ndarray):
 # boris push calculation
 # this is used to move the particle in a way that simulates movement from a magnetic field
 def borisPush(id:int):
+    """
+    INTERNAL VARS
+    Gyroradius:
+        gyro_time: the time in sec it takes for one gyration.
+            > as of now, this was calculated using the gyroradius formula assuming B = 1T, and the particle is a proton.
+    """
     global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args,c # Should be fine in multiprocessing because these values are only read,,,
     assert id <= (num_parts - 1), f"Input parameter 'id' received a value greater than the number of particles, {num_parts}"
     #print(df)
@@ -91,12 +97,14 @@ def borisPush(id:int):
     #print(f'magpy4c1.borisPush: side is: {side}')
     
     ## Mass and Charge are hard coded to be protons right now
-    mass = 1.67e-27
-    charge = 1.602e-19
+    mass = 1.67e-27 #kg
+    charge = 1.602e-19 #coulumb
 
     vAc = 1
-    #mm = 0.001
+
+    ## Time trackers
     ft = 0 # tracker for total simulation time
+    comp_start = t.time() # tracker for computational time
 
     # Step 1: Create the AoS the process will work with
     #     > These conditions are read from inp file, currently stored in df.
@@ -162,15 +170,36 @@ def borisPush(id:int):
                             step = time)
 
         ft += dt # total time spent simulating
+        
+        #TIME STEP SCALING
+        ##check ion gyrofrequency
+        """
+        we are aiming for 100 steps per gyration, so we find the
+        so we find the time it takes for 1 gyration at the particle's B and divide it by 100
+        """
+
         if time % 1000 == 0:
             print(f"boris calc * {time} for particle {id}")
             print("total time: ", ft, dt, Ef, Bf)
+
+            Bmag = np.linalg.norm(Bf)
+            curr_gyrofreq = (charge * Bmag)/mass #rads/sec
+            curr_time = 2 * np.pi / curr_gyrofreq
+        
+            dt = curr_time/100
+
         if np.absolute(max(x.min(), x.max(), key=abs)) > side:
             out = out[out != np.array(None)]
             print('Exited Boris Push Early')
             break
-    # ft = ft*(10**-5)
-    return out
+    
+    comp_time = t.time() - comp_start
+    diags = {
+        "Particle id" : id,
+        "Computation Time" : comp_time,
+        "Simulation Time" : ft
+    }
+    return out, diags
 
 def init_process(data, n1, n2, t, t1, Bf, Ef, coils):
     global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args,c
@@ -208,10 +237,15 @@ def runsim(fromGui:dict):
         futures = executor.map(borisPush, values)
 
     out = []
-    for future in futures:
+    diags = []
+    for future, diag in futures:
         out.append(future)
+        diags.append(diag)
 
+    ## Turn the list of dictionaries into a dataframe for ease of output.
+    diags = pd.DataFrame(diags)
+    ## Turn list of output data into an array for ease of access
     out = np.asarray(out)
 
-    dir = CreateOutput(out, sim_time, num_points, num_parts, dfIn, Bf, Ef, coilName)
+    dir = CreateOutput(out, sim_time, num_points, num_parts, dfIn, Bf, Ef, coilName, diags)
     #graph_trajectory(lim=side, data=dir)
