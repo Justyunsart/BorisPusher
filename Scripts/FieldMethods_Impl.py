@@ -2,6 +2,7 @@
 All the logic that goes inside the field methods themselves.
 """
 from GuiEntryHelpers import LabeledEntry
+from Alg.polarSpace import toCyl
 import tkinter as tk
 from tkinter import ttk
 import numpy as np
@@ -72,6 +73,25 @@ class Fw_impl(FieldMethod):
     def __init__(self, master, widget=Fw_widget):
         super().__init__(master, widget)
     
+    def at(coord, A, B):
+        """
+        Function to contain the actual implementation.
+        Called when the program wants to use the function to get a value.
+        For example, magpy4c1.py when it wants to get the E-field at a coordinate.
+
+        All the values are externally provided.
+
+        Inputs:
+        - coord: a single int/float. It is expected that axis handling is done externally.
+        - A, B: method-specific variables externally provided.
+        
+        Output:
+        - A single digit representing the E magnitude for the input coordinate.
+        """
+        return np.multiply(A * np.exp(-(coord / B)** 4), (coord/B)**15)
+
+
+    
     def graph(self, plot, fig, lim, *args):
         try:
             #print(f'A is: {self.A.value.get()}')
@@ -115,3 +135,52 @@ class Zero_impl(FieldMethod):
 
     def GetData(self):
         return {"Zero" : 0}
+
+class bob_e_impl(FieldMethod):
+    def __init__(self, master, widget=Zero_widget):
+        super().__init__(master, widget)
+    def at(coord, q=1, radius=1, resolution=100, convert=True):
+        """
+        implementation of the function.
+        Inputs:
+        """
+        #print(f'FieldMethods_Impl.bob_e_impl.at: bob_e called with charge {q} and radius {radius}')
+        # Parameters
+        k = 8.8542e-12
+        kq_a2 = (k * q)/(radius**2)
+
+        # Coordinate Constants
+        if convert:
+            coord = toCyl(coord)
+        zeta = coord[2] / radius
+        rho = coord[0] / radius
+        if rho == 0:
+            rho = 0.00001
+        r1 = rho
+
+        # Integral Constants - pg.3 of document
+        mag = (rho ** 2 + zeta ** 2 + 1)
+        mag_3_2 = mag ** (3/2)
+        ## Fzeta
+        Fzeta_c = (zeta)/(mag_3_2 * (radius ** 2))
+        ## Frho
+        Frho_c = (rho)/(mag_3_2 * (radius ** 2))
+
+        # Integration
+        # Circle is broken into {resolution} slices; with each result being appended to the lists below.
+
+        thetas = np.linspace(0, np.pi, resolution) # np.array of all the theta values used in the integration (of shape {resolution})
+        cosines = np.cos(thetas) # np.array of all the cosine values of the thetas
+        denominators = (1-((2 * rho * cosines)/mag)) ** (3/2) # shared denominator values of fzeta and frho
+        
+        fzeta = 1/denominators
+        frho = (1 - cosines / rho) / denominators
+
+        # Final - fzeta, frho is summed, multiplied by the integration constant and kq.a^2.
+        zeta = np.asarray(fzeta).sum() * Fzeta_c * kq_a2
+        rho = np.asarray(frho).sum() * Frho_c * kq_a2
+        return zeta, rho
+    
+    def GetData(self):
+        return {"Bob_e":
+                {}}

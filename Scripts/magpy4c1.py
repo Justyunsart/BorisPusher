@@ -5,6 +5,7 @@
 ##########################################################################
 
 # parallelization
+from concurrent.futures import ThreadPoolExecutor #multithreading
 from concurrent.futures import ProcessPoolExecutor #multiprocessing
 
 # used to create output restart file
@@ -20,6 +21,12 @@ import magpylib as magpy
 
 ## Computation Diagnostics
 import time as t
+
+# Field Methods
+from FieldMethods_Impl import (bob_e_impl)
+
+# Linalg stuff
+from Alg.polarSpace import toCart, toCyl
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
@@ -57,6 +64,9 @@ accel = None
 #=========#
 # E FIELD #
 #=========#
+"""
+Extra wrapper functions to gather inputs to plug into the implementation.
+"""
 def Fw(coord:float):
     """
     Fw analytic E field equation
@@ -67,13 +77,75 @@ def Fw(coord:float):
     #print(f"coord: {coord}, A: {A}, B: {Bx}")
     return np.multiply(A * np.exp(-(coord / Bx)** 4), (coord/Bx)**15)
 
+def _Bob_e(inCoord, c):
+    """
+    The internal function passed to each thread in Bob_e().
+
+    Inputs:
+    inCord: the coordinate of the point to calculate E at.
+    cnr: the coordinate of the circle's center and its radius.
+    """
+
+    # Assuming that the coil is alligned with the XY plane,
+    # Subtract the center coordinate from the inCoord.
+    centerCoord = c.position
+    radius = (c.diameter/2)
+    #print(f"magpy4c1._Bob_e: coil = {c} at position {centerCoord} and radius {radius}")
+    normCoord = inCoord-centerCoord
+
+    # Then pass this as the coordinate parameter of the implementation.
+    z, r = bob_e_impl.at(normCoord, q=10e4, radius= radius, convert=False)
+
+    return z, r
+
+def Bob_e(coord):
+    global c_cnr, c
+    """
+    BTW:
+    For now, the function assumes the coils are
+    alligned with the XY plane.
+
+    Make sure you ONLY use such coils when using this implementation.
+    """
+    
+    """
+    This function will utlize multithreading, with each coil
+    calculating its own e-field on a new thread.
+    """
+    zetas = []
+    rhos = []
+    cyl_coord = toCyl(coord)
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = {executor.submit(_Bob_e, cyl_coord, coil): coil for coil in c}
+
+        # Gather the data from futures once completed.
+        for index, task in enumerate(futures):
+            result = task.result()
+            zetas.append(result[0])
+            rhos.append(result[1])
+        z_sum = sum(zetas)
+        r_sum = sum(rhos)
+        # since the ring e field is rotationally symmetrical, the theta value can be something easy like 0.
+
+    return toCart(r_sum, cyl_coord[1], z_sum)
+
 def EfieldX(p:np.ndarray):
+    """
+    Controller for what E method is used.
+
+    Inputs:
+    p: the target coordinate.
+    """
     global E_Method, E_Args
+    #print(f"E_method is: {E_Method}")
     match E_Method:
         case "Zero":
             return np.zeros(3)
         case "Fw":
             E = np.apply_along_axis(Fw, 0, p)
+        case "Bob_e":
+            E = Bob_e(p)
+            #print(f"Bob_e says E is: {E}")
             
             return np.array(E)
 
@@ -202,7 +274,7 @@ def borisPush(id:int):
     return out, diags
 
 def init_process(data, n1, n2, t, t1, Bf, Ef, coils):
-    global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args,c
+    global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args, c, c_cnr
     df = data
     num_parts = n1
     num_points = n2
@@ -215,7 +287,16 @@ def init_process(data, n1, n2, t, t1, Bf, Ef, coils):
     E_Method = list(Ef.keys())[0]
     E_Args = Ef[E_Method]
 
+    # Magpy collection object with all the coils
     c = coils
+
+    ## List of all the coil center coordinates.
+    ## Used in some E field implementations.
+    c_centers = np.array([s.position for s in c.children_all])
+    ## List of all the coil radii.
+    c_radii = np.array([s.diameter for s in c.children_all])
+    c_cnr = np.column_stack((c_centers, c_radii))
+
 
     #print("data shared: ", data, n1, n2, t)
 

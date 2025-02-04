@@ -49,6 +49,7 @@ class EntryTable:
 
     # FIELD GETTERS
     def GetEntries(self):
+        #print(f"Entrytable.GetEntries: {self.entries}")
         return self.entries
     
     #===============#
@@ -130,7 +131,7 @@ class EntryTable:
             1. Validate entry type (not implemented here atm)
             2. Update its corresponding field in self.entries
         '''
-
+        #print(f"EntryTable.EntryValidateCallback called, self.entries is {self.entries}")
         # To get the corresponding index and field in self.entries, we need to first extract the grid position of the entry box.
 
         # Row index = self.entry index
@@ -248,7 +249,6 @@ class EntryTable:
         for row in list:
             #print("setrows for: ", row)
             self.NewEntry(row, defaults=False)
-        
         return True
 
     def _SetSaveEntry(self, name:str, **kwargs):
@@ -513,12 +513,14 @@ class CurrentEntryTable(EntryTable):
     defaultFileName = "Coil"
 
     def __init__(self, master, dataclass, dirWidget, graphFrame, defaults):
+        #print(f"initializing currententrytable class")
         self.dirWidget = dirWidget
         self.DIR_coilDefs = defaults
         super().__init__(master, dataclass)
         self.saveButton.configure(command=partial(self.SaveData, self.dirWidget.dir))
 
-        # JAWK TAWAH attach to the thanggg 
+        # dirWidget's PATH var is an observer class, which this table will watch and update
+        # when called.
         self.dirWidget.PATH.attach(self)
 
         #--------#
@@ -548,8 +550,7 @@ class CurrentEntryTable(EntryTable):
         self.addButton.config(command=self._new_Button_Callback)
         
         # draw canvas for the first time
-        self.Read_Data()
-        self._SetSaveEntry(self.dirWidget.fileName.get())
+        self.update()
 
     def GraphCoils(self):
         '''
@@ -579,6 +580,7 @@ class CurrentEntryTable(EntryTable):
         '''
         override of base class function, graphs the configuration upon each change.
         '''
+        #print(f"CurrentGuiClasses.CurrentEntryTable.EntryValidateCallback: self.entries is: {self.entries}")
         super().EntryValidateCallback(entry)
         self.GraphCoils()
     
@@ -622,8 +624,9 @@ class CurrentEntryTable(EntryTable):
                     for i in range(len(row[5])):
                         out.append({"RotationAngle":(row[5])[i], "RotationAxis":(row[6])[i]})
                     rotations.append(out)
-        
+        #print(f"CurrentEntryTable.Read_data: coils is: {coils}")
         self.rotations = rotations
+
         self.SetRows(coils)
         coord = abs(np.array([coils[0].PosX.Get(),coils[0].PosY.Get(),coils[0].PosZ.Get()]))
         axis = GetAxis(coord)
@@ -632,6 +635,7 @@ class CurrentEntryTable(EntryTable):
 
     def SetRows(self, list):
         super().SetRows(list)
+        #print(f"EntryTable.CurrentGuiClasses.SetRows: self.entries is now {self.entries}")
         self.GraphCoils()
     
     def GetData(self):
@@ -663,10 +667,11 @@ class CurrentEntryTable(EntryTable):
             self.dirWidget["values"] += (self.saveEntryVal.get(),)
             self.dirWidget.current(len(self.dirWidget["values"]) - 1)
     
-    def update(self, subject):
+    def update(self, subject=None):
         '''
         rerun read data to reset the table upon the selected input file being changed.
         '''
+        #print(f"currentEntryTable.update: table updated")
         self.Read_Data()
         self._SetSaveEntry(self.dirWidget.fileName.get())
 

@@ -5,11 +5,16 @@ class ScrollableFrame(tk.Canvas):
     With a predefined desired minimum width and height,
     puts all widgets, frames in a scrollable format.
 
+    Also has an observer pattern for basic event handling.
+
     PARAMETERS:
     master: tk.Frame
          - the container where this element will reside
     """
     def __init__(self, master:tk.Frame, **kwargs):
+        # observer: list of event subscribers
+        self.subs = []
+        
         # master is expected to be a tk.Frame object.
         self.master = master
         self.scrollbar_v = tk.Scrollbar(master) # scrollbar has to be parented by the frame
@@ -56,3 +61,28 @@ class ScrollableFrame(tk.Canvas):
         self.window = self.create_window(0,0, window=self.frame, anchor="nw")
         self.pack(fill="both", expand=True, side="top")
         #self.frame.pack(fill="both", expand=True, side="top")
+    
+    ############
+    # Observer #
+    ############
+    def _add_Subscriber(self, sub):
+        """
+        Adds to the list of things to notify when triggered.
+        """
+        if sub not in self.subs:
+            self.subs.append(sub)
+    
+    def _remove_Subscriber(self, sub):
+        """
+        Removes the subscriber from being notified.
+        """
+        if sub in self.subs:
+            self.subs.remove(sub)
+
+    def _notify_Subscribers(self):
+        """
+        Pings subscribers to run an update function.
+        Assumes that the subs have a function called update().
+        """
+        for sub in self.subs:
+            sub.update()

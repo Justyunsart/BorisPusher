@@ -255,7 +255,7 @@ def OpenGUI():
     #particleCheckboxes = ParticlePreviewSettings(DropdownFrame)
     particlePreview = ParticlePreview(ParticlePreviewFrame,
                                     Combobox_particle_file)
-
+    calc_frame1_scroll._add_Subscriber(particlePreview) # I do this so that I can run the table's update function when this tab becomes selected.
     ## FIELDS!!!!!!
     import FieldMethods as fm
     #b_field = CoordTable(Fields, title="B-Field")
@@ -303,6 +303,7 @@ def OpenGUI():
     GraphFrame = tk.LabelFrame(calc_frame3_scroll.frame, text="Graph")
     GraphFrame.grid(row = 2, column=0, padx=10, pady=10)
     coil_config = CurrentConfig(CurrentFrame, DIR_Coil, DIR_coilDefs, GraphFrame)
+    calc_frame3_scroll._add_Subscriber(coil_config) # Done so table's update function runs when this tab is active.
 
     ### FIELD GRAPHS
     """
@@ -353,6 +354,7 @@ def OpenGUI():
     tabControl.pack(expand=1, fill="both", side=TOP)
 
     calc_frame1.pack(side="top", fill="both", expand=True)
+    calc_frame3.pack(side="top", fill="both", expand=True)
     calc_frame1_scroll._InternalPack()
     calc_frame3_scroll._InternalPack()
 
@@ -375,6 +377,13 @@ def OpenGUI():
     calc_frame1_scroll.RegisterScrollArea()
     calc_frame3_scroll.RegisterScrollArea()
 
+    """
+    REGISTER EVENT FUNCTIONS
+    """
+    # Refresh tables when switching between param and coil tabs
+    # Reminds the program to switch classes when dealing with their class functions.
+    calc_nested_notebook.bind('<<NotebookTabChanged>>', OnNotebookTabChanged)
+    
     """
     LOGIC FOR PASSING PARAMS BACK TO THE PROGRAM.
     """

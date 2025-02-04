@@ -138,6 +138,7 @@ def tryEval(val):
     try:
         return literal_eval(val)
     except (ValueError, SyntaxError):
+        print(f"error encountered when evaluating {val}, reutrning original string.")
         return val
 
 class FileDropdown(ttk.Combobox):

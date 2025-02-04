@@ -102,12 +102,12 @@ class TrajGraph(tk.Canvas):
         
         # store coils and rotations separately, so that we can apply the rotations afterwards
         c = mp.Collection()
-        df = CSV_to_Df(coilpath, converters={"RotationAngle":tryEval, "RotationAxis":tryEval}, isNum=False, header=0)
+        df = CSV_to_Df(coilpath, converters={"Amp":tryEval, "RotationAngle":tryEval, "RotationAxis":tryEval}, isNum=False, header=0)
         #print(df)
         for i, row in df.iterrows():
             row = row.tolist()
             position = [float(row[0]), float(row[1]), float(row[2])]
-            coil = Circle(position, current=float(row[3]), diameter=float(row[4]))
+            coil = Circle(position, current=float(tryEval(row[3])), diameter=float(row[4]))
 
             match row[5]:
                 case float():

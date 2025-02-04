@@ -1,0 +1,5 @@
+As of Jan. 1, 2025, I've started migrating the GUI from tKinter to PySlide6.
+This was done due to the higher fidelity of tools offered by PySlide (and tKinter looks dated).
+
+Everything is a work in progress and is not implemented fully!
+To see the current version, run borisMainWindow.py

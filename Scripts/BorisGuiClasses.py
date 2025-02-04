@@ -11,6 +11,7 @@ from GuiHelpers import CSV_to_Df
 from math import copysign
 from matplotlib import pyplot as plt
 from FieldMethods import *
+from ScrollableFrame import ScrollableFrame
 
 # file stuff
 from PrefFile import PrefFile
@@ -274,6 +275,10 @@ class ParticlePreview(EntryTable):
         self.Read_Data()
         self._SetSaveEntry(self.fileWidget.fileName.get())
     
+    def EntryValidateCallback(self, entry):
+        #print(f"BorisGuiClasses.ParticlePreview.EntryValidateCallback: self.entries is: {self.entries}")
+        return super().EntryValidateCallback(entry)
+    
     def NewEntry(self, *args, defaults=True):
         '''
         Suppress creating a new row on initialization.
@@ -310,7 +315,7 @@ class ParticlePreview(EntryTable):
         #print(particles)
         self.SetRows(particles)
     
-    def update(self, subject):
+    def update(self, subject=None):
         '''
         rerun read data to reset the table upon the selected input file being changed.
         '''
@@ -567,6 +572,7 @@ class CoilButtons():
 
 class CurrentConfig:
     def __init__(self, master, DIR, DIR_CoilDef, Gframe):
+        #print(f"BorisGuiClasses.CurrentConfig: Config is initializing.")
         self.master = master
 
         # frames setup
@@ -617,6 +623,23 @@ class CurrentConfig:
         dropdownLst:list = self.dropdown["values"]
         ind = dropdownLst.index(value)
         self.dropdown.current(ind)
+        self.table.update()
+    
+    def update(self, *args, **kwargs):
+        """
+        Upon switching notebook tabs, I discovered something annoying. Though Tkinter has already loaded in the CurrentEntryTable,
+        it still uses internal vars from the ParticlePreview.
+
+        For example, editing a cell calls ParticlePreview's internal self.entries property, and nothing is actually changed. 
+            -Calling CurrentEntryTable exclusive funcs fixes it. (opening the rotations window)
+            -Loading a new coil config file also fixes it.
+                >This is possibly a weird interaction between notebooks and switching between tabs containing sibling classes.
+        
+        To bypass this issue (as it seems to be due to the package), the program will call this function to 'refresh' the entry table widget
+        when it detects the tab switching event (bound in BorisGui.py). 
+        """
+        #print(f"BorisGuiClasses.CurrentConfig: Update table")
+        self.table.update()
 
     """
     CURRENTLY UNUSED BECAUSE IT TAKES WAY TOO LONG TO CALL SO OFTEN.
@@ -816,4 +839,24 @@ def _Try_Float(list):
             return False
     
     return True
+
+def OnNotebookTabChanged(event, *args, **kwargs):
+    """
+    Event function to run whenever notebook tabs are changed (from params to coil config).
+    Put logic here you want to run anytime this happens.
+
+    Things that happen right now:
+    1. Depending on the tab, the active entrytable will run its update function. This ensures that tkinter treats them differently.
+    """
+    # Get the notebook widget.
+    nb = event.widget
+    # Get the currently selected tab by index
+    activeTabInd = nb.index("current")
+
+    # Get the selected tab's children widgets, and select the scrollablewidget instance. It is assumed all tabs have it.
+    scollFrame = nb.winfo_children()[activeTabInd].winfo_children()[1]
+
+    scollFrame._notify_Subscribers()
+    #print(f"BorisGuiClasses.OnNotebookTabChanges: subs notified.")
+    #print(activeWidgets)
 
