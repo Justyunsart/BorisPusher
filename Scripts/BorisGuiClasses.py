@@ -764,14 +764,19 @@ class FieldCoord_n_Graph():
         calls the given graph method and draws it on the graph.
         Assumes that the function takes a mpl subplot as an input.
         """
-        # gather data
-        self.plot.cla()
-        self.SetLabels(self.plot)
-        lims = self.currentTable.getLim()
+        # Check if the graph should be edited by looking at the widget's flags.
+        curr = self.table.chosenVal.get()
+        doUpdate = self._checkInstance(curr).autoUpdate
 
-        # plot
-        self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
-        self.canvas.draw()
+        if doUpdate:
+            # gather data
+            self.plot.cla()
+            self.SetLabels(self.plot)
+            lims = self.currentTable.getLim()
+
+            # plot
+            self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
+            self.canvas.draw()
     
     def update(self):
         # expected function to run when coordtable's trigger_listener is invoked.

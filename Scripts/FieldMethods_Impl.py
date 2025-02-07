@@ -1,39 +1,59 @@
 """
-All the logic that goes inside the field methods themselves.
+All the logic that goes inside the FieldMethods.py's enums themselves.
+I decided that having all the implementations in one place makes it easy to add more methods in the future.
+It's also easier to debug and change parameters globally when testing different functionalities. 
 """
 from GuiEntryHelpers import LabeledEntry
 from Alg.polarSpace import toCyl
 import tkinter as tk
 from tkinter import ttk
 import numpy as np
+import concurrent.futures
 
 ##############
 # BASE CLASS #
 ##############
 class FieldMethod():
+    """
+    Abstract class for frontend and backend links for each field method.
+    Contains the actual equation, as well as the ability to extract parameter values from its GUI widgets.
+    """
     def __init__(self, master, widget):
         self.widget = widget(master)
+    # Called when the GUI wants to display the field with its current values.
     def graph(self, plot, fig, lim, *args):
         pass
+    # Toggles to either show or remove its widgets for when the method is selected/deselected.
     def ShowWidget(self):
         self.widget.ShowWidget()
     def HideWidget(self):
-        self.widget.HideWidget()
+        self.widget.HideWidget()    
+    # When the program wants to extract the parameter values, it calls this.
     def GetData(self):
         pass
+    # When you want to force the widget to populate a given value, you can call this.
     def Set(self, key, value):
         pass
 
 class field_impl():
+    """
+    Abstract class for the GUI link to the fieldMethod.
+    Contains the tkinter widgets involved.
+        > They are all encapsulated in its own class so the program can generalize function calls
+          for common operations (toggle widget visibility)
+    """
+    autoUpdate = True # flag for whether the graph should update whenever it's chosen.
     listeners = []
     widgets = []
     frame1:tk.Frame = None
+    # Some observer methods to handle basic event handling
     def add_listener(self, listener):
         if listener not in self.listeners:
             self.listeners.append(listener)
     def trigger_listener(self, *args):
         for listener in self.listeners:
             listener.update()
+    # Toggle associated widgets on/off for when the method is selected/deselected.
     def ShowWidget(self):
         self.frame1.grid()
     def HideWidget(self):
@@ -43,6 +63,9 @@ class field_impl():
 ################
 # GUI WIDGETS #
 ###############
+"""
+Houses instances of the field_impl class for each field method.
+"""
 class Fw_widget(field_impl):
     def __init__(self, frame):
         self.frame1 = tk.Frame(frame)
@@ -64,11 +87,43 @@ class Zero_widget(field_impl):
         self.Z = LabeledEntry(self.frame1, 0, row=1, col=8, title="Z: ", width=5, state="readonly")
         self.widgets = [self.X, self.Y, self.Z]
 
+class Bob_e_widget(field_impl):
+    def __init__(self, frame):
+        # To make the graph function only work with the provided button, flag it to not update.
+        self.autoUpdate = False
+
+        self.frame1 = tk.Frame(frame)
+        self.frame1.grid(row=2, column=0)
+
+        self.q = LabeledEntry(self.frame1, .1, row=1, col=0, title="q: ", width=10)
+        self.res = LabeledEntry(self.frame1, .1, row=1, col=4, title="res: ", width=10)
+        self.widgets = [self.q, self.res]
+
+        # Button to call graphing.
+        self.buttonFrame = tk.Frame(frame)
+        self.graphButton = tk.Button(self.buttonFrame, text="Graph")
+        self.buttonFrame.grid(row=3, column=0)
+        self.graphButton.pack()
+
+
+        self.q.value.trace_add("write", self.trigger_listener)
+        self.res.value.trace_add("write", self.trigger_listener)
+
+    def ShowWidget(self):
+        super().ShowWidget()
+        self.buttonFrame.grid()
+
+    def HideWidget(self):
+        super().HideWidget()
+        self.buttonFrame.grid_remove()
     
 
 ##################
 # IMPLEMENTATION #
 ##################
+"""
+Contains the FieldMethod class instances for each field method.
+"""
 class Fw_impl(FieldMethod):
     def __init__(self, master, widget=Fw_widget):
         super().__init__(master, widget)
@@ -137,8 +192,11 @@ class Zero_impl(FieldMethod):
         return {"Zero" : 0}
 
 class bob_e_impl(FieldMethod):
-    def __init__(self, master, widget=Zero_widget):
+    def __init__(self, master, widget=Bob_e_widget):
         super().__init__(master, widget)
+        # register the graph button to the graphing function
+
+
     def at(coord, q=1, radius=1, resolution=100, convert=True):
         """
         implementation of the function.
@@ -183,4 +241,47 @@ class bob_e_impl(FieldMethod):
     
     def GetData(self):
         return {"Bob_e":
-                {}}
+                {{"q": self.widget.q.value.get(),
+                  "res": self.widget.res.value.get()}
+                }}
+    
+    def Set(self, key, value):
+        if key == "q":
+            self.widget.q.value.set(value)
+        elif key == "res":
+            self.widget.res.value.set(value)
+
+    def graph(self, plot, fig, lim, *args):
+        """
+        When called, will populate the given plot with 
+        a contour of the field mags (sum of the zeta, rho components.)
+        """
+        return super().graph(plot, fig, lim, *args)
+    
+    def fx_calc(self, points):
+        """
+        Since I don't want to break anything from before but I want to try new things,
+        this has a duplicate function of plugging in input points into the bob_e function.
+
+        Used in the graph_fx_contour function in the plotting section.
+        """
+        #print(points)
+        r_z = []
+        z_z = []
+        sum = []
+        results = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            futures = {executor.submit(self.at, point, convert=False): point for point in points}
+            #print(len(futures))
+            
+            for index, task in enumerate(futures):
+                result = task.result()
+                r_z.append(abs(result[1]))
+                z_z.append(abs(result[0]))
+                sum.append(abs(result[0] + result[1]))
+        
+        return {
+            "rho_z" : r_z,
+            "zeta_z" : z_z,
+            "sum" : sum
+        }

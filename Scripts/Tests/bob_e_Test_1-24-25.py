@@ -278,6 +278,7 @@ def fx_calc(points):
     #print(points)
     r_z = []
     z_z = []
+    sum = []
     results = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         futures = {executor.submit(bob_e, point, convert=False): point for point in points}
@@ -287,6 +288,7 @@ def fx_calc(points):
             result = task.result()
             r_z.append(abs(result[1]))
             z_z.append(abs(result[0]))
+            sum.append(abs(result[0] + result[1]))
     
     return {
         "rho_z" : r_z,

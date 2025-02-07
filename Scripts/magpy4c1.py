@@ -86,6 +86,10 @@ def _Bob_e(inCoord, c):
     cnr: the coordinate of the circle's center and its radius.
     """
 
+    global E_Args
+    q = float(E_Args["q"])
+    res = float(E_Args["res"])
+
     # Assuming that the coil is alligned with the XY plane,
     # Subtract the center coordinate from the inCoord.
     centerCoord = c.position
@@ -94,7 +98,7 @@ def _Bob_e(inCoord, c):
     normCoord = inCoord-centerCoord
 
     # Then pass this as the coordinate parameter of the implementation.
-    z, r = bob_e_impl.at(normCoord, q=10e4, radius= radius, convert=False)
+    z, r = bob_e_impl.at(normCoord, q=q, resolution=res, radius= radius, convert=False)
 
     return z, r
 
