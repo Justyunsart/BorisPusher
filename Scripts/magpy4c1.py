@@ -4,6 +4,7 @@
 # Andrew Egly, Yoon Roh, Bob Terry                                       #
 ##########################################################################
 
+from scipy.spatial.transform import Rotation as R
 # parallelization
 from concurrent.futures import ThreadPoolExecutor #multithreading
 from concurrent.futures import ProcessPoolExecutor #multiprocessing
@@ -87,18 +88,37 @@ def _Bob_e(inCoord, c):
     """
 
     global E_Args
-    q = float(E_Args["q"])
-    res = float(E_Args["res"])
+    q = float(E_Args["q"]) # charge
+    res = float(E_Args["res"]) # amount of points to be used in the integration
+    
+    # To make the target point relative to the coil (which is alligned with the XY plane), we:
+    #    - get the coil's scipy.transform.rotation object (stored as the Orientation parameter of a magpylib current)
+    #    - rotate by inverse
+    #    - rotate by [0, 0, 90] to make it horizontal
+    horiz_rot = R.from_euler('z', 90, degrees=True)
+    
+    rot = c.orientation # a scipy.rotation object that describes the coil's rotation
+
+    # rotate the target point by the inverse rotation for net 0 rotation
+    rotCoord = rot.apply(inCoord, inverse=True)
+
+    # rotate the target point again to the horizontal rotation angle.
+    rotCoord = horiz_rot.apply(rotCoord)
+
+
+    #print(f"detected rotation is: ")
+    #print(f"{rot.as_euler('xyz', degrees=True)}")
+    #print(f"point {inCoord} rotated to {rotCoord}")
 
     # Assuming that the coil is alligned with the XY plane,
     # Subtract the center coordinate from the inCoord.
     centerCoord = c.position
     radius = (c.diameter/2)
     #print(f"magpy4c1._Bob_e: coil = {c} at position {centerCoord} and radius {radius}")
-    normCoord = inCoord-centerCoord
+    normCoord = rotCoord-centerCoord
 
     # Then pass this as the coordinate parameter of the implementation.
-    z, r = bob_e_impl.at(normCoord, q=q, resolution=res, radius= radius, convert=False)
+    z, r = bob_e_impl.at(normCoord, q=q, resolution=int(res), radius= radius, convert=False)
 
     return z, r
 

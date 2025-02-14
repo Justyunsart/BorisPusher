@@ -1,2 +1,2 @@
 numsteps,timestep,coilFile,B-Field,E-Field,particleFile
-500000.0,2e-10,bob_e_test_coils,Magpy,{'Bob_e': {}},bob_test_particles2.txt
+500000.0,2e-10,bob_e_test_coils,Magpy,"{'Bob_e': {'q': '10000', 'res': '100'}}",bob_test_particles2.txt

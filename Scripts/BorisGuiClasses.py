@@ -21,6 +21,7 @@ import pickle
 import ast
 import numpy as np
 
+
 ############
 # MENU BAR #
 ############
@@ -359,10 +360,11 @@ class ParticlePreviewSettings():
         self.overwriteCheck.grid(row=0, column=1, sticky="W")
         self.overwriteCheck.select() #set on by default
 
+
 """
-WILL BE DEPRECATED
+DEPRECATED; functionality moved to FieldMethods_Impl's classes.
 """
-class E_CoordTable(CoordTable):
+class _E_CoordTable(CoordTable):
     """
     extension of the coordtable class to add converse A, B vars
     used in the analytic E-field.
@@ -692,6 +694,7 @@ class FieldDropdown(Dropdown):
         self.dropdown.current(ind)
         return True
 
+
 class FieldCoord_n_Graph():
     """
     vars for the graph
@@ -768,7 +771,7 @@ class FieldCoord_n_Graph():
         curr = self.table.chosenVal.get()
         doUpdate = self._checkInstance(curr).autoUpdate
 
-        if doUpdate:
+        if doUpdate == True:
             # gather data
             self.plot.cla()
             self.SetLabels(self.plot)
@@ -777,6 +780,15 @@ class FieldCoord_n_Graph():
             # plot
             self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
             self.canvas.draw()
+        elif doUpdate == False:
+            # clear plot
+            self.plot.cla()
+            c = self.currentTable.collection
+
+            # run the graph function
+            self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c)
+            self.canvas.draw()
+
     
     def update(self):
         # expected function to run when coordtable's trigger_listener is invoked.

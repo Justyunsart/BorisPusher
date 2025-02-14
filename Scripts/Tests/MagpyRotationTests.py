@@ -4,7 +4,7 @@ utilized by magpylib's Orientations parameter
 """
 from magpylib.current import Circle
 import magpylib as mpl
-from scipy.spatial.transform import Rotation as r
+from scipy.spatial.transform import Rotation as R
 import numpy as np
 
 # Create circular coils.
@@ -23,5 +23,8 @@ c.add(coil, coil1)
 #    - We can even inverse the rotation with scipy methods.
 for coil in c.children_all:
     rotation = coil.orientation
-    inv_rotation = rotation.inv()
-    print(f"Child {coil} has orientation: {rotation.as_euler('xyz', degrees=True)}")
+    inv_rotation = rotation.inv().as_euler('xyz', degrees=True)
+    #print(f"Child {coil} has orientation: {rotation.as_euler('xyz', degrees=True)}")
+    coil.rotate_from 
+
+
