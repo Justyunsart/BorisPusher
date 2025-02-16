@@ -263,6 +263,11 @@ class bob_e_impl(FieldMethod):
         When called, will populate the given plot with 
         a contour of the field mags (sum of the zeta, rho components.)
         """
+        # Before doing anything, set the axis labels.
+        plot.set_xlabel("X-axis")
+        plot.set_ylabel("Z-axis")
+        plot.set_title("E field mag. on the X-Z plane")
+
         # Resolution parameters - determines fidelity of graph
         resolution = 100 # determines the number of points created between the bounds
         
@@ -287,8 +292,14 @@ class bob_e_impl(FieldMethod):
         sum_Z = np.array(z_data["sum"]).reshape(resolution, resolution)
         smesh = plot.contourf(x_linspace, y_linspace, sum_Z, levels=100,
                                 cmap="gist_ncar")
-        #cb = fig.colorbar(smesh, ax=plot)
-        #plt.close()
+        
+        # Colorbar checking
+        last_axis_label = fig.axes[-1].get_label() # colorbar is assumed to be the last added axis. So we check the last axis label for existing colorbars.
+        #print(fig.axes[-1].get_label())
+
+        # Only create a colorbar if there isn't one detected at the end of the figure.
+        if last_axis_label != "<colorbar>":
+            cb = fig.colorbar(smesh, ax=plot)
 
     
     def fx_calc(self, points, coils):
