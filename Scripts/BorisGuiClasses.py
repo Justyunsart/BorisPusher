@@ -342,8 +342,11 @@ class ParticlePreview(EntryTable):
             return False
         
         dropdownLst:list = self.fileWidget["values"]
-        ind = dropdownLst.index(value)
-        self.fileWidget.current(ind)
+        try:
+            ind = dropdownLst.index(value)
+            self.fileWidget.current(ind)
+        except ValueError:
+            self.fileWidget.current(0)
 
 class ParticlePreviewSettings():
     '''
@@ -623,9 +626,13 @@ class CurrentConfig:
             return False
         
         dropdownLst:list = self.dropdown["values"]
-        ind = dropdownLst.index(value)
-        self.dropdown.current(ind)
-        self.table.update()
+        try:
+            ind = dropdownLst.index(value)
+            self.dropdown.current(ind)
+            self.table.update()
+        except ValueError:
+            self.dropdown.current(0)
+            self.table.update()
     
     def update(self, *args, **kwargs):
         """
