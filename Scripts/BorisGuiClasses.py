@@ -793,6 +793,7 @@ class FieldCoord_n_Graph():
             c = self.currentTable.collection
 
             # run the graph function
+            #print(f"collection is: {c.children_all[0].position}")
             self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c)
             self.canvas.draw()
 

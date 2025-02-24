@@ -312,6 +312,7 @@ class bob_e_impl(FieldMethod):
             
             for index, task in enumerate(futures):
                 result = task.result()
+                print(result)
                 sum.append(result)
         
         return {
@@ -329,7 +330,8 @@ class bob_e_impl(FieldMethod):
             z, r = self.at(transformed, radius = (c.diameter/2), convert=False)
             #sums.append(z + r)
             sums.append(np.sqrt(z**2 + r**2))
-        return sum(sums)
+        sums = sum(sums)
+        return sums
 
     
     def OrientPoint(self, c:Circle, point):
@@ -338,12 +340,9 @@ class bob_e_impl(FieldMethod):
         """
         # Reset rotation to identity
         rotation = c.orientation
+        #print(f"coil rotation: {rotation.as_euler('xyz', degrees=True)}")
         inv_rotation = rotation.inv()
         rotated_point = inv_rotation.apply(point)
-
-        # Then rotate point by 90 degrees in the Z direction
-        z_rot = R.from_euler('z', 90, degrees=True)
-        rotated_point = z_rot.apply(rotated_point)
 
         # subtract the coil's position from the rotated point to make it centered at the origin.
         out = rotated_point - c.position
