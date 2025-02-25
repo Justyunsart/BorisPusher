@@ -138,7 +138,8 @@ def GetAxis(coord):
 
 def tryEval(val):
     try:
-        return literal_eval(val)
+        #print(val)
+        return eval(str(val))
     except (ValueError, SyntaxError):
         print(f"error encountered when evaluating {val}, reutrning original string.")
         return val
