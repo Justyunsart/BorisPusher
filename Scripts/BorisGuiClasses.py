@@ -766,8 +766,23 @@ class FieldCoord_n_Graph():
         # set graph labels
         self.SetLabels(self.plot)
 
+        self.updateGraphButton = tk.Button(master=self.frame, text="Update Graph", command=self.ManualGraphUpdate)
+        self.updateGraphButton.grid(row=0, column=0)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame)
-        self.canvas.get_tk_widget().grid(row=0, column=0)
+        self.canvas.get_tk_widget().grid(row=1, column=0)
+    
+    def ManualGraphUpdate(self, *args):
+        """
+        only called when the update button is pressed.
+        """
+        # clear plot
+        self.plot.cla()
+        c = self.currentTable.collection
+
+        # run the graph function
+        #print(f"collection is: {c.children_all[0].position}")
+        self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c)
+        self.canvas.draw()
     
     def UpdateGraph(self, *args):
         """
@@ -786,15 +801,6 @@ class FieldCoord_n_Graph():
 
             # plot
             self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
-            self.canvas.draw()
-        elif doUpdate == False:
-            # clear plot
-            self.plot.cla()
-            c = self.currentTable.collection
-
-            # run the graph function
-            #print(f"collection is: {c.children_all[0].position}")
-            self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c)
             self.canvas.draw()
 
     

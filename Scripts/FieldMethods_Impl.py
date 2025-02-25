@@ -238,6 +238,9 @@ class bob_e_impl(FieldMethod):
         cosines = np.cos(thetas) # np.array of all the cosine values of the thetas
         denominators = (1-((2 * rho * cosines)/mag)) ** (3/2) # shared denominator values of fzeta and frho
         
+        # replace zeros with a really small decimal.
+        denominators[denominators==0] = 1e-20
+
         fzeta = 1/denominators
         frho = (1 - cosines / rho) / denominators
 
@@ -312,7 +315,7 @@ class bob_e_impl(FieldMethod):
             
             for index, task in enumerate(futures):
                 result = task.result()
-                print(result)
+                #print(result)
                 sum.append(result)
         
         return {
