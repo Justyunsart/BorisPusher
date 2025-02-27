@@ -118,7 +118,7 @@ def _Bob_e(inCoord, c):
     normCoord = rotCoord-centerCoord
 
     # Then pass this as the coordinate parameter of the implementation.
-    z, r = bob_e_impl.at(coord = normCoord, q=q, resolution=int(res), radius= radius, convert=False)
+    z, r = bob_e_impl().at(coord = normCoord, q=q, resolution=int(res), radius= radius, convert=False)
 
     return z, r
 
