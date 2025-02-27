@@ -202,8 +202,8 @@ class bob_e_impl(FieldMethod):
         super().__init__(master, widget)
         # register the graph button to the graphing function
 
-
-    def at(self, coord, q=1, radius=1, resolution=100, convert=True):
+    
+    def at(coord, q=1, radius=1, resolution=100, convert=True):
         """
         implementation of the function.
         Inputs:
@@ -330,7 +330,7 @@ class bob_e_impl(FieldMethod):
         for c in collection.children_all:
             transformed = self.OrientPoint(c, point)
             #print(transformed)
-            z, r = self.at(transformed, radius = (c.diameter/2), convert=False)
+            z, r = bob_e_impl.at(transformed, radius = (c.diameter/2), convert=False)
             #sums.append(z + r)
             sums.append(np.sqrt(z**2 + r**2))
         sums = sum(sums)
