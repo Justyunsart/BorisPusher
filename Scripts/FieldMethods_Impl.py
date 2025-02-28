@@ -328,7 +328,7 @@ class bob_e_impl(FieldMethod):
         """
         sums = []
         for c in collection.children_all:
-            transformed = self.OrientPoint(c, point)
+            transformed = bob_e_impl.OrientPoint(c, point)
             #print(transformed)
             z, r = bob_e_impl.at(transformed, radius = (c.diameter/2), convert=False)
             #sums.append(z + r)
@@ -337,7 +337,7 @@ class bob_e_impl(FieldMethod):
         return sums
 
     
-    def OrientPoint(self, c:Circle, point):
+    def OrientPoint(c:Circle, point):
         """
         Points plugged into the self.at function need to be transformed to be in the assumed config.
         """
