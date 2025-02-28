@@ -344,11 +344,12 @@ class bob_e_impl(FieldMethod):
         # Reset rotation to identity
         rotation = c.orientation
         #print(f"coil rotation: {rotation.as_euler('xyz', degrees=True)}")
-        inv_rotation = rotation.inv()
-        rotated_point = inv_rotation.apply(point)
-
         # subtract the coil's position from the rotated point to make it centered at the origin.
-        out = rotated_point - c.position
+        p = point - c.position
+        # after subtracting, the rotation then can be applied. This makes the point rotate about the coil center.
+        inv_rotation = rotation.inv()
+        rotated_point = inv_rotation.apply(p)
+
 
         #print(f"started with {point}, ended with {out}")
-        return out
+        return rotated_point
