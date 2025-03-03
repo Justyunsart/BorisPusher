@@ -207,6 +207,7 @@ class bob_e_impl(FieldMethod):
         """
         implementation of the function.
         Inputs:
+        q: total charge of the ring in Coulombs
         """
         #print(f"coord is: {coord}")
         #print(f'FieldMethods_Impl.bob_e_impl.at: bob_e called with charge {q} and radius {radius}')
