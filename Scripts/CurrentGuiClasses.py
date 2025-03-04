@@ -700,7 +700,7 @@ class CurrentEntryTable(EntryTable):
         row = super().DelEntry(button)
         self.rotations.pop(row)
 
-    def GraphB(self, fig, root):
+    def GraphB(self, fig, root, cax):
         """
         with a mpl subplot as an input, graph the currently selected magnetic coil's B field's cross section.
         """
@@ -719,6 +719,7 @@ class CurrentEntryTable(EntryTable):
         # calculate B field for the entire grid
         Bs = np.array(c.getB(grid)) # [bx, by, bz]
         Bx, _, By = np.moveaxis(Bs, 2, 0)
+        
         '''
         Bs shape: (step, step, 3)
         '''
@@ -729,7 +730,8 @@ class CurrentEntryTable(EntryTable):
         fig.set_xlabel("X-axis (m)")
         fig.set_ylabel("Z-axis (m)")
         fig.set_title("Magnetic Field Cross Section on the X-Z plane at Y=0")
-        root.colorbar(stream.lines)
+    
+        root.colorbar(stream.lines, cax=cax)
     
     def NewWindow(self, wid):
         '''

@@ -13,6 +13,7 @@ from matplotlib import pyplot as plt
 from FieldMethods import *
 from FieldMethods_Impl import *
 from ScrollableFrame import ScrollableFrame
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 # file stuff
 from PrefFile import PrefFile
@@ -674,15 +675,35 @@ class FieldCoord_n_Graph():
         """
         self.fig = plt.figure(figsize=(5,4))
         self.plot = self.fig.add_subplot(1,1,1)
-        
-        # set graph labels
-        self.SetLabels(self.plot)
+        self.cax = make_axes_locatable(self.plot).append_axes("right", size="5%", pad=0.05)
 
         self.updateGraphButton = tk.Button(master=self.frame, text="Update Graph", command=self.UpdateGraph)
         self.updateGraphButton.grid(row=0, column=0)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame)
         self.canvas.get_tk_widget().grid(row=1, column=0)
+        
+        # have everything be off by default
+        self.plot.set_axis_off()
+        self.cax.set_axis_off()
+
     
+    def _RemoveColorbar(self):
+        """
+        A helper function when resetting the gui plots.
+        Because colorbars are added as a separate axis from the plotting one, clearing the
+        plotting axis will not remove colorbars.
+
+        Instead, this function will check the label of the last axis on the figure.
+        If it's a colorbar label, then it will be removed.
+        """
+        # Colorbar checking
+        last_axis_label = self.fig.axes[-1].get_label() # colorbar is assumed to be the last added axis. So we check the last axis label for existing colorbars.
+
+        # Only create a colorbar if there isn't one detected at the end of the figure.
+        if last_axis_label == "<colorbar>":
+            ax = self.fig.gca()
+            ax.images[-1].colorbar.remove()
+
     def UpdateGraph(self, *args):
         """
         calls the given graph method and draws it on the graph.
@@ -696,8 +717,14 @@ class FieldCoord_n_Graph():
         graphOption = self.options.chosenVal.get()
         #print(graphOption)
 
+        # clear plot
+        self.plot.cla()
+        self.cax.cla()
+        # set axis on
+        self.plot.set_axis_on()
         match graphOption:
             case "E":
+                self.cax.set_axis_on()
                 """
                 doUpdate is a flag set in each fieldImpl class. It used to stand for something else, but is now functionally a way to
                 differentiate between functions that require a reference to the magpylib collection object or not.
@@ -707,7 +734,6 @@ class FieldCoord_n_Graph():
                 """
                 if doUpdate == True:
                     # gather data
-                    self.plot.cla()
                     self.SetLabels(self.plot)
                     lims = self.currentTable.getLim()
 
@@ -715,19 +741,19 @@ class FieldCoord_n_Graph():
                     self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
                     self.canvas.draw()
                 else:
-                    # clear plot
-                    self.plot.cla()
                     c = self.currentTable.collection
 
                     # run the graph function
                     #print(f"collection is: {c.children_all[0].position}")
-                    self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c)
+                    self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c, cax=self.cax)
                     self.canvas.draw()
             case "B":
                 """
                 Plots a streamplot of the B field; a 2D cross section at a plane crossing the origin.
                 """
-                self.currentTable.GraphB(fig=self.plot, root=self.fig)
+                self.cax.set_axis_on()
+                self.currentTable.GraphB(fig=self.plot, root=self.fig, cax=self.cax)
+                self.canvas.draw()
             case "E_B_lineout":
                 """
                 Plots two line graphs comparing the magnitudes of the B and E fields across an axis.
@@ -735,7 +761,8 @@ class FieldCoord_n_Graph():
                 The graph will run coordinates on a line running through the coil center(s)
                 Does not currently have the ability to select different axes in the case of multiple orientations.
                 """
-                # Check instance
+                self.cax.set_axis_off()
+                # Check instance. Use either a pre-populated value or the default (if not instantiated).
                 try:
                     self.instances["Bob_e"]
                 except:
@@ -743,9 +770,6 @@ class FieldCoord_n_Graph():
                     There is no active instance of the Bob_e object (switch the active option to Bob_e)
                     """
                     self.table._Set(2, "Bob_e")
-                
-                # Prepare plot
-                self.plot.cla()
 
                 # Get relevant parameters
                 lim = self.currentTable.getLim() + 2 # add extra padding on the x (local) axis
@@ -762,18 +786,28 @@ class FieldCoord_n_Graph():
                 coords = coords.T
 
                 # Get data
-                B = self.currentTable.collection.getB(coords)
+                B = self.currentTable.collection.getB(coords) # (n, 3 shape)
+                # Get B magnitudes
+                B = np.linalg.norm(B, axis=1)
                 E = bob_e_impl.fx_calc(coords, self.currentTable.collection, q, res)["sum"]
 
                 # Plot
-                self.plot.plot(lin, B, linestyle="dashed", color="blue")
-                self.plot.plot(lin, E, linestyle="solid", color="red")
+                self.plot.plot(lin, B, linestyle="dashed", color="blue", label="B-mag")
+                self.plot.plot(lin, E, linestyle="solid", color="red", label="E-mag")
+                self.plot.legend(loc="upper left")
 
                 # Set labels
                 axes = ["x", "y", "z"]
                 self.plot.set_xlabel(f"{axes[axis]}-Coordinates (m)")
                 self.plot.set_ylabel(f"Magnitude")
                 self.plot.set_title(f"E, B lineout")
+
+                # Add some text
+                self.plot.text(1.125, 0.9, f"coords: {coords[0]} to {coords[-1]}", fontsize=10,
+                               horizontalalignment='right', verticalalignment='bottom',
+                               transform=self.plot.transAxes) # what coordinates were plugged in
+
+                self.canvas.draw()
 
 
 

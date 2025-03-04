@@ -263,7 +263,7 @@ class bob_e_impl(FieldMethod):
         elif key == "res":
             self.widget.res.value.set(value)
 
-    def graph(self, plot, fig, lim, collection=None, *args):
+    def graph(self, plot, fig, lim, cax, collection=None, *args):
         """
         When called, will populate the given plot with 
         a contour of the field mags (sum of the zeta, rho components.)
@@ -303,10 +303,7 @@ class bob_e_impl(FieldMethod):
         # Colorbar checking
         last_axis_label = fig.axes[-1].get_label() # colorbar is assumed to be the last added axis. So we check the last axis label for existing colorbars.
         #print(fig.axes[-1].get_label())
-
-        # Only create a colorbar if there isn't one detected at the end of the figure.
-        if last_axis_label != "<colorbar>":
-            cb = fig.colorbar(smesh, ax=plot)
+        cb = fig.colorbar(smesh, cax=cax)
 
     
     def fx_calc(points, coils, q, r):
