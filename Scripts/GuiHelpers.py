@@ -15,15 +15,24 @@ File explorer for restart files
 '''
 inpd=""
 # Variable to store the dir of the input file
-def browseFiles(name:ttk.Label):
-    filename = filedialog.askopenfilename(title = "Select a Restart File")
+def browseFiles(name:ttk.Label, dir):
+    """
+    Opens the file browser, expects users to select a file.
+    """
+    filename = filedialog.askopenfilename(title = "Select a Restart File",
+                                          initialdir = dir)
     if(filename != ""): # If an actual file is selected
         name.configure(text = filename)
         inpd = filename
     return True
 
-def PlotFileCallback(name:ttk.Label, button:ttk.Button):
-    FileCallback(browseFiles(name), button)
+def PlotFileCallback(name:ttk.Label, button:ttk.Button, dir):
+    """
+    called from BorisGui when outpout file browsing is pressed.
+    First calls browseFiles to prompt user for file.
+    Then, FileCallback is called to enable the plot button (which is disabled by default)
+    """
+    FileCallback(browseFiles(name, dir), button)
 
 def PlotConfirmCallback(name:ttk.Label, root:Tk):
     graph_trajectory(lim = 500, data = name.cget("text"))

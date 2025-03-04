@@ -363,69 +363,6 @@ class ParticlePreviewSettings():
         self.overwriteCheck.grid(row=0, column=1, sticky="W")
         self.overwriteCheck.select() #set on by default
 
-
-"""
-DEPRECATED; functionality moved to FieldMethods_Impl's classes.
-"""
-class _E_CoordTable(CoordTable):
-    """
-    extension of the coordtable class to add converse A, B vars
-    used in the analytic E-field.
-    """
-    def __init__(self, master, title="coords", **kwargs):
-        super().__init__(master, title, doInit=False, **kwargs)
-        self.A = LabeledEntry(self.frame1, 1, row=2, col=0, title="A: ", width=10)
-        self.B = LabeledEntry(self.frame1, 1, row=2, col=4, title="B: ", width=10)
-        self.converseEntries = [self.A.entry, self.B.entry]
-
-        self.CheckEditability()
-        self.A.value.trace_add("write", self.trigger_listener)
-        self.B.value.trace_add("write", self.trigger_listener)
-    
-    def CheckEditability(self, *args, **kwargs):
-        useState = self.doUse.get()
-
-        if(useState == 0):
-            '''
-            useState is off: all entries should be read-only.
-            '''
-            for entry in self.entries:
-                entry.config(state="disabled")
-            for entry in self.converseEntries:
-                entry.config(state='normal')
-        else:
-            '''
-            entries are otherwise editable.
-            '''
-            for entry in self.entries:
-                entry.config(state="normal")
-            for entry in self.converseEntries:
-                entry.config(state='disabled')
-    
-    def GraphE(self, plot, fig, lim, *args):
-        try:
-            #print(f'A is: {self.A.value.get()}')
-            #print(f'B is: {self.B.value.get()}')
-            #print(f'Lim is: {lim}')
-            A = float(self.A.value.get())
-            B = float(self.B.value.get())
-
-            lim = abs(lim)
-            glim = 1.5 * lim
-            x = np.linspace(-glim, glim, 50)
-            # equation for fw_E
-            E = np.multiply(A * np.exp(-(x / B)** 4), (x/B)**15)
-            #print(f'X axis is: {x}')
-            #print(f'Y axis is: {E}')
-            plot.plot(x,E)
-            
-            # also plot vertical lines for where the coils are, for visual clarity
-            plot.axvline(x = lim, color='r', linestyle='dashed')
-            plot.axvline(x = -lim, color='r', linestyle='dashed')
-
-        except ValueError:
-            pass
-
 class CoilButtons():
     '''
     helpful autofill widgets for stuff like:
@@ -704,6 +641,10 @@ class FieldDropdown(Dropdown):
 
 class FieldCoord_n_Graph():
     """
+    THE WIDGET COLLECTION WHERE YOU CHOOSE THE B AND E FIELDS USED.
+    ALSO GRAPHS FOR THEM.
+    """
+    """
     vars for the graph
     """
     fig = None
@@ -711,7 +652,7 @@ class FieldCoord_n_Graph():
     canvas = None
     instances:dict
     
-    def __init__(self, table:FieldDropdown, graphFrame:tk.LabelFrame, currentTable:CurrentEntryTable,
+    def __init__(self, table:FieldDropdown, graphOptions:FieldDropdown, graphFrame:tk.LabelFrame, currentTable:CurrentEntryTable,
                  title="title", x_label="x", y_label="y"):
         """
         expects an instance of a coordinate table, and a frame where the graph will be made.
@@ -720,6 +661,7 @@ class FieldCoord_n_Graph():
         self.frame = graphFrame
         self.currentTable = currentTable
         self.table = table
+        self.options = graphOptions
         self.title = title
         self.x_lab = x_label
         self.y_lab = y_label
@@ -728,7 +670,7 @@ class FieldCoord_n_Graph():
         self.prevVal = table.chosenVal.get()
 
         table.chosenVal.trace_add("write", self.WidgetVisibility)
-        table.chosenVal.trace_add("write", self.UpdateGraph) # add another trace to the given table.
+        #table.chosenVal.trace_add("write", self.UpdateGraph) # add another trace to the given table.
         
         # instantiate intialized val's widget
         self._checkInstance(self.prevVal).ShowWidget()
@@ -766,33 +708,30 @@ class FieldCoord_n_Graph():
         # set graph labels
         self.SetLabels(self.plot)
 
-        self.updateGraphButton = tk.Button(master=self.frame, text="Update Graph", command=self.ManualGraphUpdate)
+        self.updateGraphButton = tk.Button(master=self.frame, text="Update Graph", command=self.UpdateGraph)
         self.updateGraphButton.grid(row=0, column=0)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame)
         self.canvas.get_tk_widget().grid(row=1, column=0)
-    
-    def ManualGraphUpdate(self, *args):
-        """
-        only called when the update button is pressed.
-        """
-        # clear plot
-        self.plot.cla()
-        c = self.currentTable.collection
-
-        # run the graph function
-        #print(f"collection is: {c.children_all[0].position}")
-        self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c)
-        self.canvas.draw()
     
     def UpdateGraph(self, *args):
         """
         calls the given graph method and draws it on the graph.
         Assumes that the function takes a mpl subplot as an input.
         """
+        # INITIAL CHECKERS
         # Check if the graph should be edited by looking at the widget's flags.
         curr = self.table.chosenVal.get()
         doUpdate = self._checkInstance(curr).autoUpdate
+        # Also check the currently selected graph value in the options dropdown.
+        graphOption = self.options.chosenVal.get()
 
+        """
+        doUpdate is a flag set in each fieldImpl class. It used to stand for something else, but is now functionally a way to
+        differentiate between functions that require a reference to the magpylib collection object or not.
+
+        eg. Fw only gets its limits from the currentTable reference's getLim function, so it doesn't need the collection.
+        Bob_e_impl needs each coil center and rotation, so it's easier to get a reference.
+        """
         if doUpdate == True:
             # gather data
             self.plot.cla()
@@ -801,6 +740,15 @@ class FieldCoord_n_Graph():
 
             # plot
             self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
+            self.canvas.draw()
+        else:
+            # clear plot
+            self.plot.cla()
+            c = self.currentTable.collection
+
+            # run the graph function
+            #print(f"collection is: {c.children_all[0].position}")
+            self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c)
             self.canvas.draw()
 
     
@@ -824,7 +772,7 @@ class FieldCoord_n_Graph():
         else:
             # if not, create an instance.
             self.instances[name] = self.table.options[name].value(self.table.master)
-            self.instances[name].widget.add_listener(self)
+            #self.instances[name].widget.add_listener(self)
             return self.instances[name]
         
     def GetData(self):

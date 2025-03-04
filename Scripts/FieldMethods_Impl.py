@@ -152,7 +152,7 @@ class Fw_impl(FieldMethod):
 
 
     
-    def graph(self, plot, fig, lim, *args):
+    def graph(self, plot, fig, lim, *args, **kwargs):
         try:
             #print(f'A is: {self.A.value.get()}')
             #print(f'B is: {self.B.value.get()}')

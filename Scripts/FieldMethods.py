@@ -11,4 +11,12 @@ class E_Methods(Enum):
 
 class B_Methods(Enum):
     Zero = Zero_impl
-    Magpy = auto() # calculated using magpylib's analytic equation
+    Magpy = 1 # calculated using magpylib's analytic equation
+
+class FieldGraph_Methods(Enum):
+    """
+    Options for field graph views you can choose in the GUI.
+    """
+    E = 0
+    B = 1
+    E_B_lineout = 2

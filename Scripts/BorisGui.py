@@ -10,6 +10,7 @@ from ScrollableFrame import ScrollableFrame
 # GUI #
 #######
 def OpenGUI():
+    #print(f"OpenGUI called.")
     '''
     Testing the code by changing parameters and numsteps and everything became too cumbersone, so I decided to
     bite the bullet and create some GUI for it. 
@@ -47,6 +48,7 @@ def OpenGUI():
     DIR_Coil = Main_PrefFiles.DIR_coil
     DIR_coilDefs = Main_PrefFiles.DIR_coilDefs
     DIR_lastUsed = Main_PrefFiles.DIR_lastUsed
+    DIR_Output = Main_PrefFiles.DIR_output
 
     #print(DIR_Particle)
 
@@ -189,7 +191,7 @@ def OpenGUI():
     plot_confirm = tk.Button(tab_plot,
                             text="Create Plot",
                             state="disabled")
-    button_out_file.config(command=partial(PlotFileCallback, name_out_file, plot_confirm))
+    button_out_file.config(command=partial(PlotFileCallback, name_out_file, plot_confirm, DIR_Output))
     plot_confirm.config(command=partial(trajectoryGraph.UpdateGraph, name_out_file))
 
 
@@ -242,6 +244,10 @@ def OpenGUI():
     Fields = tk.LabelFrame(FieldGraphs, bg="light gray", text="Static Fields")
     Fields.grid(row=0, column=0, sticky="WSEW", padx=10, pady=10)
 
+    Fields0 = tk.Frame(Fields)
+    Fields0.grid(row=0, column=0, sticky="WSEW", padx=5, pady=5)
+    Fields1 = tk.Frame(Fields)
+    Fields1.grid(row=0, column=1, sticky="WSEW", padx=5, pady=5)
     #BGraphFrame = tk.LabelFrame(FieldGraphs, bg="light gray", text="B-field")
     #BGraphFrame.grid(row=0, column=0)
 
@@ -259,17 +265,21 @@ def OpenGUI():
     ## FIELDS!!!!!!
     import FieldMethods as fm
     #b_field = CoordTable(Fields, title="B-Field")
-    b_field = FieldDropdown(Fields,
+    b_field = FieldDropdown(Fields0,
                         fm.B_Methods,
                         "B-Field: ",
                         default=1)
     b_field.grid(row=0, column=0)
 
     #e_field = E_CoordTable(Fields, title="E-Field")
-    e_field= FieldDropdown(Fields,
+    e_field= FieldDropdown(Fields0,
                         fm.E_Methods,
                         "E-Field: ")
     e_field.grid(row=1, column=0)
+
+    # Graphing options for the field parameter settings.
+    field_graphs = FieldDropdown(Fields1, fm.FieldGraph_Methods, "Show me: ")
+    field_graphs.grid(row=0, column=0)
 
     ## Caclulate button
     calc_button = tk.Button(tab_calc,
@@ -310,7 +320,8 @@ def OpenGUI():
     written below currents to ensure they are loaded in 
     """
     #B_field_graph = FieldCoord_n_Graph(b_field, BGraphFrame, coil_config.GraphB)
-    E_field_graph = FieldCoord_n_Graph(table = e_field, 
+    E_field_graph = FieldCoord_n_Graph(table = e_field,
+                                       graphOptions=field_graphs, 
                                     graphFrame= EGraphFrame, 
                                     currentTable=coil_config.table,
                                     title="E on X-Z Plane",
@@ -396,7 +407,7 @@ def OpenGUI():
     FillWidgets(subs["params"], DIR_lastUsed)
 
     def on_close():
+        root.quit()
         root.destroy()
     root.protocol("WM_DELETE_WINDOW", on_close)
     root.mainloop()
-    print("exited")
