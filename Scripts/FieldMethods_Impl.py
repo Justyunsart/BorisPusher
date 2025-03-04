@@ -99,7 +99,7 @@ class Bob_e_widget(field_impl):
         self.frame1.grid(row=2, column=0)
 
         self.q = LabeledEntry(self.frame1, .1, row=1, col=0, title="q: ", width=10)
-        self.res = LabeledEntry(self.frame1, .1, row=1, col=4, title="res: ", width=10)
+        self.res = LabeledEntry(self.frame1, 100, row=1, col=4, title="res: ", width=10)
         self.widgets = [self.q, self.res]
 
         """
@@ -209,6 +209,7 @@ class bob_e_impl(FieldMethod):
         Inputs:
         q: total charge of the ring in Coulombs
         """
+        #print(f"q is: {q}")
         #print(f"coord is: {coord}")
         #print(f'FieldMethods_Impl.bob_e_impl.at: bob_e called with charge {q} and radius {radius}')
         # Parameters
@@ -267,6 +268,8 @@ class bob_e_impl(FieldMethod):
         When called, will populate the given plot with 
         a contour of the field mags (sum of the zeta, rho components.)
         """
+        data = self.GetData()["Bob_e"]
+
         # Before doing anything, set the axis labels.
         plot.set_xlabel("X-axis")
         plot.set_ylabel("Z-axis")
@@ -291,7 +294,7 @@ class bob_e_impl(FieldMethod):
         points = np.column_stack(np.vstack([gX.ravel(), z_linspace, gY.ravel()]))
 
         # For every point, for every coil, orient the point and plug it in the function.
-        z_data = self.fx_calc(points, collection)
+        z_data = bob_e_impl.fx_calc(points, collection, float(data["q"]), int(data["res"]))
 
         sum_Z = np.array(z_data["sum"]).reshape(resolution, resolution)
         smesh = plot.contourf(x_linspace, y_linspace, sum_Z, levels=100,
@@ -306,12 +309,12 @@ class bob_e_impl(FieldMethod):
             cb = fig.colorbar(smesh, ax=plot)
 
     
-    def fx_calc(self, points, coils):
+    def fx_calc(points, coils, q, r):
         #print(points)
         sum = []
         results = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            futures = {executor.submit(self._ecalc, point, coils): point for point in points}
+            futures = {executor.submit(bob_e_impl._ecalc, point, coils, q, r): point for point in points}
             #print(len(futures))
             
             for index, task in enumerate(futures):
@@ -323,7 +326,7 @@ class bob_e_impl(FieldMethod):
             "sum" : sum
         }
     
-    def _ecalc(self, point, collection):
+    def _ecalc(point, collection, q, res):
         """
         wrapper to orient the point for each coil in the collection, and to call the integration for that point.
         """
@@ -331,7 +334,7 @@ class bob_e_impl(FieldMethod):
         for c in collection.children_all:
             transformed = bob_e_impl.OrientPoint(c, point)
             #print(transformed)
-            z, r = bob_e_impl.at(transformed, radius = (c.diameter/2), convert=False)
+            z, r = bob_e_impl.at(transformed, radius = (c.diameter/2), convert=False, q=q, resolution=res)
             #sums.append(z + r)
             sums.append(np.sqrt(z**2 + r**2))
         sums = sum(sums)

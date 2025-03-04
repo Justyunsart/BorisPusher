@@ -219,4 +219,7 @@ v_mag_sq = np.array(list((map(lambda x: np.dot(x,x), vels))), dtype=float)
 
 q = 1.6e-19 #coulomb
 M = 1.67e-27 #kilograms
-print(q/M)
+#print(q/M)
+
+points = np.linspace([-3,0,0], [3,0,0], 100)
+print(points)

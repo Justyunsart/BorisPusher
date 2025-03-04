@@ -11,6 +11,7 @@ from GuiHelpers import CSV_to_Df
 from math import copysign
 from matplotlib import pyplot as plt
 from FieldMethods import *
+from FieldMethods_Impl import *
 from ScrollableFrame import ScrollableFrame
 
 # file stuff
@@ -587,37 +588,6 @@ class CurrentConfig:
         #print(f"BorisGuiClasses.CurrentConfig: Update table")
         self.table.update()
 
-    """
-    CURRENTLY UNUSED BECAUSE IT TAKES WAY TOO LONG TO CALL SO OFTEN.
-    might have to repurpose to something that runs from a button press instead of updating all the time.
-    """
-    def GraphB(self, fig, root):
-        """
-        with a mpl subplot as an input, graph the currently selected magnetic coil's B field's cross section.
-        """
-        c = self.GetData()
-
-        # construct grid for the cross section
-        x = np.linspace(-5, 5, 50) # these represent LOCAL x and y for the 2D graph, not the 3D space.
-        y = np.linspace(-5, 5, 50)
-
-        # calculate B field for the entire grid
-        Bs = np.array([[c.getB([i, 0, j]) for i in x] for j in y]) # [bx, by, bz]
-        '''
-        Bs shape: (step, step, 3)
-        '''
-        # gather arguments for the streamplot
-        X, Z = np.meshgrid(x, y)
-        U, V = Bs[:, :, 0], Bs[:, :, 2]
-
-        Bamp = np.sqrt(U**2 + V**2)
-
-        stream = fig.streamplot(X, Z, U, V, color= Bamp, density=1)
-        #stream = fig.streamplot(X, Z, U, V, color= Bamp, density=2, norm=colors.LogNorm(vmin = Bamp.min(), vmax = Bamp.max()))
-        fig.set_xlabel("X-axis (m)")
-        fig.set_ylabel("Z-axis (m)")
-        fig.set_title("Magnetic Field Cross Section on the X-Z plane at Y=0")
-        root.colorbar(stream.lines)
 
 class FieldDropdown(Dropdown):
     options:Enum
@@ -724,32 +694,89 @@ class FieldCoord_n_Graph():
         doUpdate = self._checkInstance(curr).autoUpdate
         # Also check the currently selected graph value in the options dropdown.
         graphOption = self.options.chosenVal.get()
+        #print(graphOption)
 
-        """
-        doUpdate is a flag set in each fieldImpl class. It used to stand for something else, but is now functionally a way to
-        differentiate between functions that require a reference to the magpylib collection object or not.
+        match graphOption:
+            case "E":
+                """
+                doUpdate is a flag set in each fieldImpl class. It used to stand for something else, but is now functionally a way to
+                differentiate between functions that require a reference to the magpylib collection object or not.
 
-        eg. Fw only gets its limits from the currentTable reference's getLim function, so it doesn't need the collection.
-        Bob_e_impl needs each coil center and rotation, so it's easier to get a reference.
-        """
-        if doUpdate == True:
-            # gather data
-            self.plot.cla()
-            self.SetLabels(self.plot)
-            lims = self.currentTable.getLim()
+                eg. Fw only gets its limits from the currentTable reference's getLim function, so it doesn't need the collection.
+                Bob_e_impl needs each coil center and rotation, so it's easier to get a reference.
+                """
+                if doUpdate == True:
+                    # gather data
+                    self.plot.cla()
+                    self.SetLabels(self.plot)
+                    lims = self.currentTable.getLim()
 
-            # plot
-            self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
-            self.canvas.draw()
-        else:
-            # clear plot
-            self.plot.cla()
-            c = self.currentTable.collection
+                    # plot
+                    self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
+                    self.canvas.draw()
+                else:
+                    # clear plot
+                    self.plot.cla()
+                    c = self.currentTable.collection
 
-            # run the graph function
-            #print(f"collection is: {c.children_all[0].position}")
-            self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c)
-            self.canvas.draw()
+                    # run the graph function
+                    #print(f"collection is: {c.children_all[0].position}")
+                    self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c)
+                    self.canvas.draw()
+            case "B":
+                """
+                Plots a streamplot of the B field; a 2D cross section at a plane crossing the origin.
+                """
+                self.currentTable.GraphB(fig=self.plot, root=self.fig)
+            case "E_B_lineout":
+                """
+                Plots two line graphs comparing the magnitudes of the B and E fields across an axis.
+
+                The graph will run coordinates on a line running through the coil center(s)
+                Does not currently have the ability to select different axes in the case of multiple orientations.
+                """
+                # Check instance
+                try:
+                    self.instances["Bob_e"]
+                except:
+                    """
+                    There is no active instance of the Bob_e object (switch the active option to Bob_e)
+                    """
+                    self.table._Set(2, "Bob_e")
+                
+                # Prepare plot
+                self.plot.cla()
+
+                # Get relevant parameters
+                lim = self.currentTable.getLim() + 2 # add extra padding on the x (local) axis
+                axis = self.currentTable.axis # index of the major axis
+                instance = self.instances["Bob_e"]
+                data = instance.GetData()["Bob_e"]
+                q = float(data['q'])
+                res = int(data['res'])
+
+                # Generate points
+                lin = np.linspace(-lim, lim, res)
+                coords = np.zeros((3, res))
+                coords[axis] = lin
+                coords = coords.T
+
+                # Get data
+                B = self.currentTable.collection.getB(coords)
+                E = bob_e_impl.fx_calc(coords, self.currentTable.collection, q, res)["sum"]
+
+                # Plot
+                self.plot.plot(lin, B, linestyle="dashed", color="blue")
+                self.plot.plot(lin, E, linestyle="solid", color="red")
+
+                # Set labels
+                axes = ["x", "y", "z"]
+                self.plot.set_xlabel(f"{axes[axis]}-Coordinates (m)")
+                self.plot.set_ylabel(f"Magnitude")
+                self.plot.set_title(f"E, B lineout")
+
+
+
 
     
     def update(self):
