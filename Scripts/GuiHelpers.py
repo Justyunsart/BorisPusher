@@ -193,27 +193,31 @@ def FillWidgets(p:list, path:str):
         > Values: the value to change these parameters to
     """
     values = {}
-    with open(path, mode='r') as file:
-        reader = csv.reader(file)
+    try:
+        with open(path, mode='r') as file:
+            reader = csv.reader(file)
 
-        keys = next(reader) # get first line
-        vals = next(reader) # move to the second line
+            keys = next(reader) # get first line
+            vals = next(reader) # move to the second line
 
-        for i in range(len(keys)):
-            values[keys[i]] = vals[i]
-    #print(values)
+            for i in range(len(keys)):
+                values[keys[i]] = vals[i]
+        #print(values)
 
-    fieldWidgets = {
-        'numsteps' : p[0],
-        'timestep' : p[0],
-        'coilFile' : p[2],
-        'B-Field' : p[3],
-        'E-Field' : p[4],
-        'particleFile': p[1]
-        }
-    
-    for key, value in fieldWidgets.items():
-        """
-        for every field, run their respective widgets' setter functions.
-        """
-        value._Set(key, values[key])
+        fieldWidgets = {
+            'numsteps' : p[0],
+            'timestep' : p[0],
+            'coilFile' : p[2],
+            'B-Field' : p[3],
+            'E-Field' : p[4],
+            'particleFile': p[1]
+            }
+        
+        for key, value in fieldWidgets.items():
+            """
+            for every field, run their respective widgets' setter functions.
+            """
+            value._Set(key, values[key])
+        return True
+    except:
+        return False
