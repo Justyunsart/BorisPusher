@@ -212,7 +212,7 @@ class bob_e_impl(FieldMethod):
         #print(f"coord is: {coord}")
         #print(f'FieldMethods_Impl.bob_e_impl.at: bob_e called with charge {q} and radius {radius}')
         # Parameters
-        k = 8.8542e-12
+        k = 8.99e9 # Coulomb's constant, N * m^2/C^2
         kq_a2 = (k * q)/(radius**2)
 
         # Coordinate Constants
