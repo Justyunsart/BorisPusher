@@ -101,15 +101,7 @@ def _Bob_e(inCoord, c):
     return z, r
 
 def Bob_e(coord):
-    global c_cnr, c
-    """
-    BTW:
-    For now, the function assumes the coils are
-    alligned with the XY plane.
-
-    Make sure you ONLY use such coils when using this implementation.
-    """
-    
+    global c_cnr, c    
     """
     This function will utlize multithreading, with each coil
     calculating its own e-field on a new thread.
@@ -202,6 +194,9 @@ def borisPush(id:int):
                             bx = 0,
                             by = 0,
                             bz = 0,
+                            ex = 0,
+                            ey = 0,
+                            ez = 0,
                             id = id,
                             step = 0)
 
@@ -219,6 +214,7 @@ def borisPush(id:int):
         Bf = Bfield(x)
         #Bf = np.array([0.0, 0.0, 1])
         out[time - 1].bx, out[time - 1].by,out[time - 1].bz = Bf # update B field for particle we just found
+        out[time - 1].ex, out[time - 1].ey,out[time - 1].ez = Ef # update E field for particle we just found
 
         # Boris logic
         tt = charge / mass * Bf * 0.5 * dt
@@ -240,6 +236,9 @@ def borisPush(id:int):
                             bx = 0,
                             by = 0,
                             bz = 0,
+                            ex = 0,
+                            ey = 0,
+                            ez = 0,
                             id = id,
                             step = time)
 

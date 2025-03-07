@@ -8,3 +8,5 @@ Outputs/.DS_Store
 Inputs/.DS_Store
 Inputs/lastUsed
 .DS_Store
+Scripts/DashApp.py
+Scripts/PlottingWindow_Dash.py

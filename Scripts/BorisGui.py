@@ -21,7 +21,7 @@ def OpenGUI():
     # Application Window
     root = tk.Tk()
     root.title("Configure Sim")
-    root.geometry("1000x1500")
+    root.geometry("1041x1210")
 
     # palette - currently hard coded
     palette = p.Drapion
@@ -169,16 +169,22 @@ def OpenGUI():
                                     text = "Browse Files")
     button_out_file.grid(row = 0, column=1, pady=10)
 
+    name_out_file_var = tk.StringVar(value="No Output File Selected")
     name_out_file = ttk.Label(plot_out_file,
-                            text="No Output File Selected")
+                            textvariable=name_out_file_var)
     name_out_file.grid(row = 0, column=2, pady=10)
 
     #################
     # GRAPH WINDOWS #
     #################
-    from PlottingWindow import TrajGraph
+    #from PlottingWindow import TrajGraph
+    from PlottingWindow import PlottingWindowObj
+    #from PlottingWindow_Dash import DashApp_Frame
 
-    trajectoryGraph = TrajGraph(plot_graph_traj)
+    #trajectoryGraph = TrajGraph(plot_graph_traj)
+    #trajectoryGraph = DashApp_Frame(plot_graph_traj)
+    trajectoryGraph = PlottingWindowObj(plot_graph_traj, Main, name_out_file_var)
+    trajectoryGraph.grid(row=0, column=0)
 
 
     #button_out_file.config(command=partial(browseFiles, name_out_file))
@@ -188,14 +194,15 @@ def OpenGUI():
     We need to keep watch on the selected data file value, and ensure that this button is active only when
     there is a valid data file selected.
     '''
-    plot_confirm = tk.Button(tab_plot,
-                            text="Create Plot",
-                            state="disabled")
-    button_out_file.config(command=partial(PlotFileCallback, name_out_file, plot_confirm, DIR_Output))
-    plot_confirm.config(command=partial(trajectoryGraph.UpdateGraph, name_out_file))
+    #plot_confirm = tk.Button(tab_plot,
+    #                        text="Create Plot",
+    #                        state="disabled")
+    button_out_file.config(command=partial(PlotFileCallback, name_out_file_var, DIR_Output))
+    #plot_confirm.config(command=partial(trajectoryGraph.UpdateGraph, name_out_file))
+    #plot_confirm.config(command=partial(trajectoryGraph.loadApp, name_out_file))
 
 
-    plot_confirm.grid(sticky=S)
+    #plot_confirm.grid(sticky=S)
 
 
 
@@ -391,9 +398,11 @@ def OpenGUI():
     """
     REGISTER EVENT FUNCTIONS
     """
+    from PlottingWindow import on_main_notebook_tab_changed
     # Refresh tables when switching between param and coil tabs
     # Reminds the program to switch classes when dealing with their class functions.
     calc_nested_notebook.bind('<<NotebookTabChanged>>', OnNotebookTabChanged)
+    tabControl.bind('<<NotebookTabChanged>>', lambda event, i=trajectoryGraph:on_main_notebook_tab_changed(event, i))
     
     """
     LOGIC FOR PASSING PARAMS BACK TO THE PROGRAM.

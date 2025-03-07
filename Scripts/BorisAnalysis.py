@@ -4,6 +4,25 @@ Holds functions for calculating loss, moment, etc.
 
 import numpy as np
 
+def magnitude_at_each_step(arr):
+    """
+    takes in a 2D input array and returns a 1D array containing the magnitudes at axis 1.
+    """
+    return np.linalg.norm(arr, axis=1)
+
+
+def get_parallel(bs, arr):
+    """
+    returns the elementwise dot product of the two input arrays.
+    """
+    return np.einsum('ij, ij->i', bs, arr)
+
+def get_perpendicular(bs, arr):
+    """
+    returns the cross product's magnitude of the two arrays.
+    """
+    return magnitude_at_each_step(np.cross(arr, bs))
+
 def CalculateLoss(vels:np.ndarray, bs:np.ndarray, intervals:int):
     '''
     Selects given or default intervals from the data, then returns the mag. moment for each.

@@ -173,6 +173,11 @@ class particle:
     by: np.float64
     bz: np.float64
 
+    # E field
+    ex: np.float64
+    ey: np.float64
+    ez: np.float64
+
 @dataclass
 class charge:
     position: np.ndarray
