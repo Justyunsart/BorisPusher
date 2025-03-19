@@ -7,6 +7,8 @@ import numpy as np
 def magnitude_at_each_step(arr):
     """
     takes in a 2D input array and returns a 1D array containing the magnitudes at axis 1.
+    in: [[x1,y1,z1],[x2,y2,z2],...[xn,yn,zn]]
+    out: [mag1, mag2, mag3]
     """
     return np.linalg.norm(arr, axis=1)
 

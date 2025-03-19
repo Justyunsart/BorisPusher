@@ -1,6 +1,8 @@
 """
 Junk for integrating plotting visuals into the GUI window
 """
+import pickle
+import io
 import magpylib as mp
 from magpylib.current import Circle
 from pathlib import Path
@@ -20,6 +22,14 @@ from BorisAnalysis import *
 """
 the following r settings and callables that the classes will implement.
 """
+dpi = 100 # dpi of the graphs
+dropdown_font_textsize_proportion = 3
+trajectory_font_textsize_proportion = 4
+
+# SETTINGS FOR NEW TOPLEVEL WINDOW GRAPH
+# these are in inches.
+toplevel_width = 8
+toplevel_height = 4
 
 # DEFAULT GRAPH SETTINGS:
 graph_default = {
@@ -43,16 +53,20 @@ trajectory_style = {
 
 vel_step_style = {
     'title' : 'Vel vs. Step',
-    'ylab' : 'm/s'
+    'ylab' : 'm/s',
+    'xlab' : 'step'
 }
 
 b_step_style = {
     'title' : 'B-mag vs. Step',
-    'ylab' : 'T'
+    'ylab' : 'T',
+    'xlab' : 'step'
 }
 
 e_step_style = {
-    'title' : 'E-mag vs. Step'
+    'title' : 'E-mag vs. Step',
+    'ylab' : 'V per m',
+    'xlab' : 'step'
 }
 
 # available graphing options. Stored in a ttk.combobx.
@@ -100,7 +114,7 @@ def Param_v_Step_callable(fig, plot, df:pd.DataFrame, id, **kwargs):
 
     # get the graphable components
     # 1. the magnitude of the component at each step.
-    step_mag = magnitude_at_each_step(coords)
+    step_mag = magnitude_at_each_step(coords)[:-1]
 
     # for now, b has only this line.
     if id == 'b':
@@ -112,13 +126,16 @@ def Param_v_Step_callable(fig, plot, df:pd.DataFrame, id, **kwargs):
         bs = np.column_stack((bx, by, bz)) # b coordinates all in one array.
 
         # get the parallel and perpendicular components relative to b
-        step_parallel = get_parallel(bs, coords)
-        step_perpendicular = get_perpendicular(bs, coords)
+        step_parallel = get_parallel(bs, coords)[:-1]
+        step_perpendicular = get_perpendicular(bs, coords)[:-1]
 
         # graph these guys.
-        plot.plot(step_mag, label='magnitude', color='green')
-        plot.plot(step_parallel, label='parallel', color='blue')
-        plot.plot(step_perpendicular, label='perpendicular', color='red')
+        plot.plot(step_mag, label='mag', color='green')
+        plot.plot(step_parallel, label='p', color='blue')
+        plot.plot(step_perpendicular, label='perp', color='red')
+
+        # add a legend
+        plot.legend(bbox_to_anchor=(0, 1.15), loc='lower left', fontsize=4, ncol=3 )
 
 
 def Trajectory_callable(fig, plot, df:pd.DataFrame, c:mp.Collection, **kwargs):
@@ -155,33 +172,96 @@ graph_option_style_map = {'Vel vs. Step' : {'id' : 'v', 'style': vel_step_style}
 '''
 the following r the actual classes that implement the previously established settings and functions.
 '''
+# Custom toolbar
+class CustomToolbar(NavigationToolbar2Tk):
+    """
+    the same toolbar, except there is a new button that opens the canvas in its own window.
+    """
+        
+    def open_window(self):
+        """
+        function to open the figure in own window.
+        Also, the window CANNOT be in its own thread because matplotlib's show needs the main thread. 
+
+        So this will open a tk.Toplevel window containing the figure instead.
+        """
+        # create a toplevel object.
+        window = tk.Toplevel(self.root)
+
+        # FIGURE ACCESSING/FORMATTING
+        # we may need to pickle, depickle the figure to ensure we're working with an independent copy.
+        buf = io.BytesIO()
+        pickle.dump(self.canvas.figure, buf)
+        buf.seek(0)
+        fig = pickle.load(buf)
+
+        # resize the figure copy to the global settings.
+        fig.set_size_inches(toplevel_width, toplevel_height)
+        
+        # and then we also get a reference to the subplot so we can adjust the font sizes and stuff.
+        ax = fig.get_axes()[0]
+        ax.set_title(ax.get_title(), size=20)
+        ax.set_xlabel(ax.get_xlabel(), size=12, labelpad=4)
+        ax.set_ylabel(ax.get_ylabel(), size=12, labelpad=4)
+        if ax.name == '3d':
+            ax.set_zlabel(ax.get_zlabel(), size=12, labelpad=4)
+        ax.tick_params(axis='both', which='major', labelsize = 10, pad=4)
+        fig.tight_layout()
+
+        # FIGURE DRAWING
+        # add the figure and toolbar to the new window.
+        canvas = FigureCanvasTkAgg(master=window, figure=fig)
+        toolbar = NavigationToolbar2Tk(canvas, window)
+        canvas.get_tk_widget().pack(side='top')
+        canvas.draw()        
+        
+    def __init__(self,parent_, root_):
+        self.root = root_ # root refers to the parent window of the TK application.
+        self.toolitems += ((None, None, None, None), 
+                           ("Enlarge", "Opens graph in new window", 'home', "open_window"))
+        NavigationToolbar2Tk.__init__(self,parent_)
+
+
+
 # CLASS
 class CanvasFigure(tk.Frame):
     """
     A class that contains a matplotlib figure inside of itself, navigable with tkinter.
+
+    Also has a button that opens the graph in a dedicated window. Because oftentimes things are small.
+    I think this is a good compromise between dedicated windows vs. in-program frames.
+        > you control the thing graphed and see its general shape in program
+        > you can then see the detailed view if you choose tol
     """
 
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, root, **kwargs):
         # default settings for the figure displayed by the canvas.
         # used unless overwritten by kwargs.
         self.graph_settings = graph_default.copy()
-
         self.master = master
+        
         # Overwrite any non-default settings.
         # Remove graph_settings relevant keywords in case we want to pass any kwargs to tk.Frame
         for key in self.graph_settings.keys():
             if key in kwargs.keys():
                 self.graph_settings[key] = kwargs.pop(key)
+        
         # Run init of tk.Frame
         super().__init__(master, **kwargs)
         self.config(highlightbackground='red', highlightthickness='1') # visualize frame bounds
+        
+        # REST OF INIT: CLASS SPECIFIC STUFF
         # Instantiate figure
         self.initFig()
         # After instantiating the figure, it can be placed in a tk.Canvas
+        #self.button = tk.Button(master=self, text="Enlarge")
+        #self.button.pack(side=tk.TOP)
         self.canvas = tk.Canvas(master=self)
         self.canvas.pack(side=tk.TOP, expand=1)
         self.graph = FigureCanvasTkAgg(self.fig, self.canvas)
         self.graph.get_tk_widget().pack(side=tk.TOP, expand=1, fill=tk.BOTH)
+        # add the navigation toolbar
+        self.toolbar = CustomToolbar(self.graph, root)
 
     
     def initFig(self):
@@ -231,8 +311,6 @@ class CanvasFigure(tk.Frame):
         """
         self.prepareGraph()
         func(self.fig, self.plot, df, **kwargs) # the graphing logic is being applied here.
-        self.fig.tight_layout()
-        self.graph.draw()
         return True
 
 class DropdownFigure(tk.Frame):
@@ -241,11 +319,11 @@ class DropdownFigure(tk.Frame):
     THIS COMBOBOX WILL HAVE VARIOUS GRAPHING OPTIONS TO CHOOSE FROM,
     WHICH WILL AUTOMATICALLY UPDATE THE INCLUDED GRAPH.
     """
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, root, **kwargs):
         self.master = master
         super().__init__(master, **kwargs)
         # store references to children
-        self.canvFig = CanvasFigure(master=self, **kwargs)
+        self.canvFig = CanvasFigure(master=self, root=root, **kwargs)
         # elevating some CanvasFigure properties so I can access it as a DropdownFigure easily.
         self.canvas = self.canvFig.canvas
         self.graph = self.canvFig.graph
@@ -287,8 +365,8 @@ class DropdownFigure(tk.Frame):
         # load the new dictionary
         new_dict = graph_option_style_map[self.chosenVal.get()]['style']
         # update the current dictionary with this one.
-        self.settings = self.settings.update(new_dict)
-        print(self.settings)
+        self.settings = self.canvFig.graph_settings.update(new_dict)
+        #print(self.settings)
     
     def updateGraph(self, df:pd.DataFrame, **kwargs):
         """
@@ -326,6 +404,7 @@ class PlottingWindowObj(tk.Frame):
         self.pady = 0
 
         self.root = root # a reference to the program's main window is necessary to get the window size.
+                         # it's also needed to make a new toplevel window for my custom toolbar button press event.
         self.master = master
         self.df = None # the dataset read from the .json output file.
         self.c = None # the magpylib.collection object that was used to run the simulation.
@@ -335,9 +414,10 @@ class PlottingWindowObj(tk.Frame):
 
         # we want a 3-plot structure with the trajectory plot dominating a whole column to itself.
         # Create figures.
-        self.trajectory = CanvasFigure(master=self, projection='3d', title='Trajectory')
-        self.graph1 = DropdownFigure(self)
-        self.graph2 = DropdownFigure(self)
+        self.trajectory = CanvasFigure(master=self, projection='3d', title='Trajectory', root=root)
+        self.trajectory.plot.set_box_aspect([1,1,1]) # make the 3d bounding box always square.
+        self.graph1 = DropdownFigure(self, root)
+        self.graph2 = DropdownFigure(self, root)
 
         # also for dropdown figures, we need to subscribe to their combobox changed events.
         # REMINDER: THIS IS SO THAT WE CAN PASS THE DATAFRAME PROPERTY FROM THIS CLASS TO THE DROPDOWNS WHILE TRIGGERING UPDATES FROM TK EVENTS.
@@ -351,10 +431,14 @@ class PlottingWindowObj(tk.Frame):
         self.plots = [self.trajectory.plot, self.graph1.plot, self.graph2.plot] # the subplots in the mpl figs
         self.canvases = [self.trajectory.canvas, self.graph1.canvas, self.graph2.canvas] # the canvases that hold the FigureCanvasTkAggs
 
+        # additional figure containers, for just holding the dropdown graphs.
+        self.dropdown_figures = [self.graph1.fig, self.graph2.fig]
+        self.dropdown_graphs = [self.graph1.graph, self.graph2.graph]
+
         # packing step
-        self.trajectory.pack(expand=1, side=tk.LEFT, anchor="w")
-        self.graph1.pack(side=tk.TOP, anchor='ne', expand=1)
-        self.graph2.pack(side=tk.TOP, anchor='se', expand=1)
+        self.trajectory.pack(expand=1, side=tk.LEFT, anchor="w", ipadx=3, ipady=3, padx=5)
+        self.graph1.pack(side=tk.TOP, anchor='ne', expand=1, ipadx=3, ipady=3, padx=1, pady=2)
+        self.graph2.pack(side=tk.TOP, anchor='se', expand=1, ipadx=3, ipady=3, padx=1, pady=2)
 
         # event bindings:
         self.set_active() # resizing based on window size
@@ -375,6 +459,7 @@ class PlottingWindowObj(tk.Frame):
             # these are decided in the DropdownFigure object themselves.
             self.graph1.updateGraph(self.df)
             self.graph2.updateGraph(self.df)
+            self.resize_callback(None)
 
     def update_dropdown(self, event, dropdown):
         """
@@ -389,6 +474,7 @@ class PlottingWindowObj(tk.Frame):
         if self.df is not None and self.c is not None:
             dropdown.update_graph_settings(event)
             dropdown.updateGraph(self.df)
+            self.resize_callback(None)
     
     def read_dataframe(self, *args):
         """
@@ -459,16 +545,56 @@ class PlottingWindowObj(tk.Frame):
         """
         self.root.unbind("<Configure>", self.resize_callback)
 
-    def redraw_graphs(self):
+    def _redraw_graphs(self, figs, graphs, context, z=False):
+        """
+        internal function used to abstract the function call to redraw the object's internal figures.
+        """
+        size = context['font.size']
+        padding = size * 0.01
+        for fig in figs:
+            for ax in fig.axes:
+                # update title
+                ax.title.set_fontsize(size)
+                # x - axis
+                ax.xaxis.label.set_fontsize(size*0.75) # size of text
+                ax.xaxis.labelpad = padding
+                # y - axis
+                ax.yaxis.label.set_fontsize(size*0.75)
+                ax.yaxis.labelpad = padding
+                # ticks
+                ax.tick_params(axis='both', which='major', labelsize = size*0.75, pad=padding)
+                if(z):
+                    padding = padding * 0.001
+                    # in 3d graphs, also mess with z axis stuff.
+                    ax.set_xlabel(ax.get_xlabel(), labelpad=padding)
+                    ax.set_ylabel(ax.get_ylabel(), labelpad=padding)
+                    ax.set_zlabel(ax.get_zlabel(), labelpad=padding)
+                    ax.zaxis.label.set_fontsize(size*0.75)
+                    ax.zaxis.labelpad = padding
+                    ax.tick_params(axis='z', which='major', labelsize = size*0.75, pad=padding)
+            fig.tight_layout()
+        for graph in graphs:
+            graph.draw()
+    
+    def redraw_graphs(self, mode='all', traj_rc = None, dropdown_rc = None):
         '''
         globally redraw all graphs this components is responsible for.
         '''
-        # after redrawing canvas, put tight_layout on the plots so they don't cut off.
-        for fig in self.figs:
-            fig.tight_layout()
-        for graph in self.graphs:
-            graph.draw()
-            
+        modes = ['all', 'traj', 'dropdown']
+        assert mode in modes, f"Value error: the mode argument {mode} not in {modes}"
+
+        match mode:
+            case 'all':
+               assert (traj_rc is not None and dropdown_rc is not None)
+               # in 'all' mode, the function calls itself to update the trajectory and dropdown graphs.
+               self.redraw_graphs('traj', traj_rc=traj_rc)
+               self.redraw_graphs('dropdown', dropdown_rc=dropdown_rc)
+            case 'traj':
+                assert traj_rc is not None
+                self._redraw_graphs([self.trajectory.fig], [self.trajectory.graph], traj_rc, z=True)
+            case 'dropdown':
+                assert dropdown_rc is not None
+                self._redraw_graphs(self.dropdown_figures, self.dropdown_graphs, dropdown_rc)
 
     def resize_callback(self, event):
         """
@@ -478,23 +604,37 @@ class PlottingWindowObj(tk.Frame):
         # get the current window width and height
         width = self.root.winfo_width()
         height = self.root.winfo_height()
-        #print(width, height)
         
         # **I'm going to measure the desired size by percentages of the window size.
-        traj_width = ((width * 0.45))
-        traj_height = ((height * 0.5))
+        # Trajectory graph will be clamped to be a square aspect ratio, so both width and height should have the same value.
+        w_h_avg = (width + height) / 2
+        traj_width = ((w_h_avg * 0.45))
+        traj_height = ((w_h_avg * 0.45))
 
-        g1_width = ((width * 0.3))
-        g1_height = ((height * 0.35))
+        g1_width = ((width * 0.4))
+        g1_height = ((height * 0.25))
 
         # set canvas sizes.
         # To enforce strict size limits on the mpl figures, we set the FigureCanvasTkAgg object's internal canvas widget's size.
         self.graphs[0].get_tk_widget().config(width=traj_width, height=traj_height)
         self.graphs[1].get_tk_widget().config(width=g1_width, height=g1_height)
         self.graphs[2].get_tk_widget().config(width=g1_width, height=g1_height)
-        
+
+        # GET TEMP. RC STYLE CONTEXTS FOR LABEL PADDING AND SCALING.
+        # font sizing will get the ratio between the length and height of the frame (in pixels) and multiply it by their respective proportions.
+        w_h_ratio = width/height
+
+        traj_font_size = trajectory_font_textsize_proportion
+        dropdown_font_size = w_h_ratio * dropdown_font_textsize_proportion
+
+        #print(f"{traj_font_size}")
+        #print(f"{dropdown_font_size}")
+
+        traj_rc = {'font.size' : traj_font_size, 'axes.labelpad' : traj_font_size, 'axes.titlesize' : traj_font_size}
+        dropdown_rc = {'font.size' : dropdown_font_size, 'axes.labelpad' : dropdown_font_size, 'axes.titlesize' : dropdown_font_size}
+
         # redraw the graphs
-        self.redraw_graphs()
+        self.redraw_graphs('all', traj_rc = traj_rc, dropdown_rc = dropdown_rc)
 
 def on_main_notebook_tab_changed(event, plotObj:PlottingWindowObj):
     """
@@ -511,7 +651,7 @@ def on_main_notebook_tab_changed(event, plotObj:PlottingWindowObj):
         # 1. make the object care about window size changes
         #plotObj.set_active()
         # 2. manually call the resize callback just this once.
-        plotObj.redraw_graphs()
+        plotObj.resize_callback(None)
     else:
         # if the name of the tab is not Plot, then make sure the object is unbound from the window change event.
        #plotObj.set_inactive()
