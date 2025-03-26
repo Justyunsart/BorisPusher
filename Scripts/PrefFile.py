@@ -4,14 +4,14 @@ Stores the base class for the structure of the main preferences text file.
 Also stores the base class for the structure of the previously used configs.
 '''
 from dataclasses import dataclass
-from typing import ClassVar
 
-# TODO: Make way to get, set these fields.
 @dataclass
 class PrefFile():
     DIR_particle:str
     DIR_coil:str
     DIR_coilDefs:str
+    DIR_Bob:str
+    DIR_BobDefs:str
 
     DIR_output:str
     DIR_lastUsed:str

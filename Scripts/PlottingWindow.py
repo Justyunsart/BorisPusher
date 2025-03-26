@@ -14,9 +14,8 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2Tk)
-from GuiEntryHelpers import (JSON_to_Df, tryEval)
+from GuiEntryHelpers import (JSON_to_Df, tryEval, CSV_to_Df)
 import pandas as pd
-from GuiHelpers import CSV_to_Df
 from BorisAnalysis import *
 
 """

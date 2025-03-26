@@ -7,7 +7,6 @@ import tkinter as tk
 from tkinter import ttk
 from CurrentGuiClasses import *
 from GuiEntryHelpers import *
-from GuiHelpers import CSV_to_Df
 from math import copysign
 from matplotlib import pyplot as plt
 from FieldMethods import *
@@ -69,10 +68,16 @@ class ConfigMenuBar():
         outputPath = os.path.join(self.master.filepath, "Outputs")
         lastusedPath = os.path.join(inputPath, "lastUsed")
 
+            ## location of bob_e stuff
+        bobPath = os.path.join(inputPath, "Bob_E Configurations")
+        bobDefsPath = os.path.join(bobPath, "Defaults")
+
         # 2: Create the PrefFile object with default params
         prefs = PrefFile(particlePath, 
                          coilPath, 
                          coilDefsPath,
+                         bobPath,
+                         bobDefsPath,
                          outputPath,
                          lastusedPath,
                          "0.000001",
@@ -138,20 +143,6 @@ class MainWindow(tk.Frame):
             except:
                 return False
         return True
-
-class Particle_File_Dropdown(FileDropdown):
-    def __init__(self, master, dir, last=0, **kwargs):
-        self.master = master
-
-        self.frame = tk.Frame(master=self.master)
-        self.frame.grid(row=0, column=0)
-
-        super().__init__(self.frame, dir, last, **kwargs)
-        super().grid(row=0, column=1)
-
-        self.label = tk.Label(self.frame,
-                              text="File: ")
-        self.label.grid(row=0, column=0)
 
 class TimeStep_n_NumStep():
     '''
@@ -275,8 +266,9 @@ class ParticlePreview(EntryTable):
         super().__init__(master, dataclass)
         self.saveButton.configure(command=partial(self.SaveData, self.fileWidget.dir))
 
-        self.Read_Data()
-        self._SetSaveEntry(self.fileWidget.fileName.get())
+        #self.Read_Data()
+        #self._SetSaveEntry(self.fileWidget.fileName.get())
+        self.update()
     
     def EntryValidateCallback(self, entry):
         #print(f"BorisGuiClasses.ParticlePreview.EntryValidateCallback: self.entries is: {self.entries}")
@@ -543,15 +535,11 @@ class CurrentConfig:
         ParamFrame = tk.Frame(mainframe)
         ParamFrame.grid(row=1, column=0)
         
-        # populate frames
-        self.dropdown = Particle_File_Dropdown(master=CurrentFile,
-                                               dir = DIR)
-        
         self.table = CurrentEntryTable(master=CurrentEntry, 
-                            dataclass=CircleCurrentConfig, 
-                            dirWidget=self.dropdown,
+                            dataclass=CircleCurrentConfig,
                             graphFrame=CurrentGraph,
-                            defaults = DIR_CoilDef)
+                            defaults = DIR_CoilDef,
+                            DIR = DIR)
         
         self.param = CoilButtons(ParamFrame,
                                  table=self.table)
@@ -623,16 +611,20 @@ class FieldCoord_n_Graph():
     canvas = None
     instances:dict
     
-    def __init__(self, table:FieldDropdown, graphOptions:FieldDropdown, graphFrame:tk.LabelFrame, currentTable:CurrentEntryTable,
+    def __init__(self, root, table:FieldDropdown, graphOptions:FieldDropdown, graphFrame:tk.LabelFrame, canvasFrame:tk.Frame, currentTable:CurrentEntryTable,
                  title="title", x_label="x", y_label="y"):
         """
         expects an instance of a coordinate table, and a frame where the graph will be made.
         """
-        self.instances = {}
-        self.frame = graphFrame
-        self.currentTable = currentTable
-        self.table = table
-        self.options = graphOptions
+        self.root = root # reference to the main window
+        self.instances = {} # holds instances of the FieldMethods_Impl class.
+        self.frame = graphFrame # frame that holds the graphical button controls
+        self.canvasFrame = canvasFrame # frame that holds the canvas for the actual figure
+        self.currentTable = currentTable # we need a reference to the table containing the coil info so we can do B-field calcs.
+        self.table = table # this table is the dropdpown menu for the fields.
+        self.options = graphOptions # this is the dropdown where people choose the graph to display on the canvasFrame
+        
+        # properties for the graph
         self.title = title
         self.x_lab = x_label
         self.y_lab = y_label
@@ -678,9 +670,9 @@ class FieldCoord_n_Graph():
         self.cax = make_axes_locatable(self.plot).append_axes("right", size="5%", pad=0.05)
 
         self.updateGraphButton = tk.Button(master=self.frame, text="Update Graph", command=self.UpdateGraph)
-        self.updateGraphButton.grid(row=0, column=0)
-        self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame)
-        self.canvas.get_tk_widget().grid(row=1, column=0)
+        self.updateGraphButton.grid(row=0, column=2)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.canvasFrame)
+        self.canvas.get_tk_widget().grid(row=0, column=0)
         
         # have everything be off by default
         self.plot.set_axis_off()
@@ -741,11 +733,10 @@ class FieldCoord_n_Graph():
                     self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
                     self.canvas.draw()
                 else:
-                    c = self.currentTable.collection
 
                     # run the graph function
                     #print(f"collection is: {c.children_all[0].position}")
-                    self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, collection=c, cax=self.cax)
+                    self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, cax=self.cax)
                     self.canvas.draw()
             case "B":
                 """
@@ -776,7 +767,7 @@ class FieldCoord_n_Graph():
                 axis = self.currentTable.axis # index of the major axis
                 instance = self.instances["Bob_e"]
                 data = instance.GetData()["Bob_e"]
-                q = float(data['q'])
+                coils = data['collection']
                 res = int(data['res'])
 
                 # Generate points
@@ -789,7 +780,7 @@ class FieldCoord_n_Graph():
                 B = self.currentTable.collection.getB(coords) # (n, 3 shape)
                 # Get B magnitudes
                 B = np.linalg.norm(B, axis=1)
-                E = bob_e_impl.fx_calc(coords, self.currentTable.collection, q, res)["sum"]
+                E = bob_e_impl.fx_calc(coords, coils, res)["sum"]
 
                 # Plot
                 self.plot.plot(lin, B, linestyle="dashed", color="blue", label="B-mag")
@@ -808,10 +799,6 @@ class FieldCoord_n_Graph():
                                transform=self.plot.transAxes) # what coordinates were plugged in
 
                 self.canvas.draw()
-
-
-
-
     
     def update(self):
         # expected function to run when coordtable's trigger_listener is invoked.
@@ -832,7 +819,7 @@ class FieldCoord_n_Graph():
             return self.instances[name]
         else:
             # if not, create an instance.
-            self.instances[name] = self.table.options[name].value(self.table.master)
+            self.instances[name] = self.table.options[name].value(self.table.master, self.root)
             #self.instances[name].widget.add_listener(self)
             return self.instances[name]
         

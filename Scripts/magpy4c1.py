@@ -88,7 +88,7 @@ def _Bob_e(inCoord, c):
     """
 
     global E_Args
-    q = float(E_Args["q"]) # charge
+    q = c.current # charge
     res = float(E_Args["res"]) # amount of points to be used in the integration
     
     # To make the target point relative to the coil, we call the bob_e.impl's alignment func.
@@ -109,8 +109,9 @@ def Bob_e(coord):
     zetas = []
     rhos = []
     cyl_coord = toCyl(coord)
+    E_collection = E_Args['collection']
     with ThreadPoolExecutor(max_workers=8) as executor:
-        futures = {executor.submit(_Bob_e, cyl_coord, coil): coil for coil in c}
+        futures = {executor.submit(_Bob_e, cyl_coord, coil): coil for coil in E_collection}
 
         # Gather the data from futures once completed.
         for index, task in enumerate(futures):

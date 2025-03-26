@@ -261,9 +261,14 @@ def OpenGUI():
     EGraphFrame = tk.LabelFrame(FieldGraphs, bg="light gray", text="E-field")
     EGraphFrame.grid(row=1, column=0)
 
+    EGraphFrame_for_Canvas = tk.Frame(EGraphFrame) # contains the canvas for the graph. done so that the elements above are placed independently.
+    EGraphFrame_for_Canvas.grid(row=1, column=0)
+
+    EGraphFrame_for_Buttons = tk.Frame(EGraphFrame)
+    EGraphFrame_for_Buttons.grid(row=0, column=0)
 
     ## Particle condition stuff..
-    Combobox_particle_file = Particle_File_Dropdown(DropdownFrame,
+    Combobox_particle_file = FileDropdown(DropdownFrame,
                                                     dir=DIR_Particle)
     #particleCheckboxes = ParticlePreviewSettings(DropdownFrame)
     particlePreview = ParticlePreview(ParticlePreviewFrame,
@@ -285,7 +290,7 @@ def OpenGUI():
     e_field.grid(row=1, column=0)
 
     # Graphing options for the field parameter settings.
-    field_graphs = FieldDropdown(Fields1, fm.FieldGraph_Methods, "Show me: ")
+    field_graphs = FieldDropdown(EGraphFrame_for_Buttons, fm.FieldGraph_Methods, "Show me: ")
     field_graphs.grid(row=0, column=0)
 
     ## Caclulate button
@@ -328,8 +333,10 @@ def OpenGUI():
     """
     #B_field_graph = FieldCoord_n_Graph(b_field, BGraphFrame, coil_config.GraphB)
     E_field_graph = FieldCoord_n_Graph(table = e_field,
+                                       root=Main,
                                        graphOptions=field_graphs, 
-                                    graphFrame= EGraphFrame, 
+                                    graphFrame= EGraphFrame_for_Buttons, 
+                                    canvasFrame=EGraphFrame_for_Canvas,
                                     currentTable=coil_config.table,
                                     title="E on X-Z Plane",
                                     x_label="X (m)",

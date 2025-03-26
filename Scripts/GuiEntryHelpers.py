@@ -6,6 +6,7 @@ import csv
 from ast import literal_eval
 import numpy as np
 import os
+import shutil
 import ast
 import pandas as pd
 
@@ -141,8 +142,9 @@ def tryEval(val):
         print(f"error encountered when evaluating {val}, reutrning original string.")
         return val
 
-class FileDropdown(ttk.Combobox):
+class FileDropdown(tk.Frame):
     '''
+    TLDR: DROPDOWN w/ FILES FROM GIVEN DIR. 
     Stuff for when you want to change the input files. Instead of searching via
     the file explorer, this will initialize with all the files in the preferences' input DIRs
     in a dropdown menu.
@@ -155,41 +157,69 @@ class FileDropdown(ttk.Combobox):
 
     PATH:Data #the full path to the file.
 
-    def __init__(self, master, dir, last=0, **kwargs):
-        self.master = master
+    def __init__(self, master, dir, last=0, default=None, **kwargs):
+        self.master = master # parent frame.
+        self.default_name = "New_File"
+        self.default_file = default #filepath to the default file
+
+        # initialize the frame to populate w/ label and combobox.
+        # the class inherits from tk.Frame so I can control packing when I instantiate it.
+        super().__init__(master=master)
+
+        # aesthetics vars
+        self.label = tk.Label(self, text="File: ")
+
+        # dropdown tracking vars
         self.dir = dir
         self.fileName = tk.StringVar()
         self.PATH = Data('PATH')
 
-         # check: make sure the dir exists. if not, create the dir.
+        # check: make sure the dir exists. if not, create the dir.
         os.makedirs(dir, exist_ok=True)
-
         self.dir_contents = self._DIR_to_List()
-        #print(self.dir_contents)
 
-        super().__init__(master=master, values=self.dir_contents, textvariable=self.fileName, **kwargs)
-        super().current(last)
+        # initialize the combobox
+        self.combo_box = ttk.Combobox(master=self, values=self.dir_contents, textvariable=self.fileName, **kwargs)
+        self.combo_box.current(last)
         self._UpdatePath()
 
         # also add a trace to update all the field variables when it happens
         self.fileName.trace_add("write", self._UpdatePath)
+
+        # PACKING
+        self.label.pack(side='left')
+        self.combo_box.pack(side='left')
     
     def _DIR_to_List(self):
         files = []
-        for file in os.listdir(self.dir):
+        _files = list(filter(os.path.isdir, os.listdir(self.dir)))
+        #print(_files)
+        if len(_files) == 0:
+            self.create_default()
+            _files = os.listdir(self.dir)
+
+        for file in _files:
             path = os.path.join(self.dir, file)
             if os.path.isfile(path):
                 files.append(file)
-        if (files == []):
-            files.append("")
         return files
     
+    def create_default(self):
+        """
+        Run whenever there are no files in the current directory that is being read.
+        If the default attribute is not None, then that file is created.
+        """
+        if self.default_file is not None:
+            # copy the file from the self.default_file
+            shutil.copy(self.default_file, self.dir)
+
     def _UpdatePath(self, *args):
         '''
         there's probably a built in way to do this but oh well.
         '''
         #print("updating path to: ", self.fileName.get())
         self.PATH.data = os.path.join(self.dir, self.fileName.get())
+
 
 class LabeledEntry():
     '''
@@ -265,11 +295,14 @@ class EntryTableParam:
 
     def __init__(self, default, widget=OnlyNumEntry, **kwargs):
         self.paramDefault = default
-        #print (self.paramDefault)
         self.paramWidget = widget(**kwargs)
         self._SetDefault()
     
     def _SetDefault(self):
+        """
+        Sees the type of the widget the object is created with, and populates it with default value with the provided paramDegault peoperty.
+        NOTE: tk.Combobox objects are assumed to be for rotations only, and are populated with 'x', 'y', and 'z'.
+        """
         match self.paramWidget:
             case OnlyNumEntry():
                 self.paramWidget.insert(0, self.paramDefault)
@@ -281,11 +314,40 @@ class EntryTableParam:
             case tk.Button():
                 pass
 
-    def Get(self, isNum=True):
+    def get(self, isNum=False):
         if isNum:
             return float(self.paramWidget.get())
         else:
             return self.paramWidget.get()
+
+def CSV_to_Df(dir, isNum=True, **kwargs):
+    '''
+    A function that will be called in the calculate button's command.
+    Turns the csv data in the particle input file to a workable dataframe.
+
+    dir: path to the file to be read.
+    isNum: a bool that determines if everything should be considered numeric or not.
+    '''
+    # step 1: read the file from the directory.
+    data = pd.read_csv(dir, **kwargs)
+
+    if data.empty:
+        data = pd.read_json(dir, orient="table")
+    #print(data)
+
+    # step 2: numeric checks
+    ## does not iterate if the entire df is numeric.
+    if (isNum):
+        data.apply(pd.to_numeric)
+    ## iterates through columns if the entire dataframe is not numeric.
+    else:
+        for col in data:
+            try:
+                data[col] = data[col].astype(float)
+            except ValueError:
+                pass
+    #print(data)
+    return data
 
 
 def List_to_CSV(fileName, data, *args, **kwargs):
@@ -316,6 +378,83 @@ def JSON_to_Df(path, orient="table", numeric=True):
         df = df.apply(pd.to_numeric)
     return df
 
+"""
+DATACLASSES USED FOR THE ENTRY TABLES.
+
+The entry table class knows the column number, name, and widget type to populate with these dataclasses.
+    > It had to be done like this so some columns can be programmed to spawn buttons instead of a tk.Entry.
+"""
+
+
+@dataclass
+class Bob_e_Config_Dataclass():
+    '''
+    For circles in the bob_e method, the relevant params are:
+        - position
+        - rotation
+        - diameter
+    '''
+    PosX: EntryTableParam = field(init=False)
+    PosY: EntryTableParam = field(init=False)
+    PosZ: EntryTableParam = field(init=False)
+
+    Diameter: EntryTableParam = field(init=False)
+
+    Q: EntryTableParam = field(init=False)
+
+    Rotations: EntryTableParam = field(init=False)
+
+    eval_inds = (5, 6) # index reference of the rotation_angles and rotation_axes lists
+    power_name = "Q"
+
+    def __init__(self, frame, px = 0, py = 0, pz = 0, dia = 1, q=0.00000000001, rotation_angles = [], rotation_axes = []):
+        self.PosX = EntryTableParam(px, master=frame)
+        self.PosY = EntryTableParam(py, master=frame)
+        self.PosZ = EntryTableParam(pz, master=frame)
+
+        self.Diameter = EntryTableParam(dia, master=frame)
+
+        self.Q = EntryTableParam(q, master=frame)
+
+        self.Rotations = EntryTableParam(None, EntryButton, master=frame, text="Rotations")
+
+        self.iterables = [self.PosX, self.PosY, self.PosZ, self.Diameter, self.Q, self.Rotations]
+
+        # properties that are useful, and are hidden from iteration.
+        self.rotation_angles = rotation_angles
+        self.rotation_axes = rotation_axes
+
+
+    @property
+    def rotation_angles(self):
+        return self._rotation_angles
+    @rotation_angles.setter
+    def rotation_angles(self, val):
+        assert type(val) == list
+        self._rotation_angles = val
+
+    @property
+    def rotation_axes(self):
+        return self._rotation_axes
+    @rotation_axes.setter
+    def rotation_axes(self, val):
+        assert type(val) == list
+        self._rotation_axes = val
+    
+    def __iter__(self):
+        for val in self.iterables:
+            yield val
+    
+    def get_dict(self):
+        """
+        returns all attributes from the self.iterables list as a dictionary.
+        The keys are the attribute names, and the values are, their values lol.
+        """
+        out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
+        out['Rotations'] = {"Angles" : self.rotation_angles, "Axes" : self.rotation_axes}
+        return out
+
+
 @dataclass
 class RotationConfig():
     '''
@@ -328,9 +467,16 @@ class RotationConfig():
     def __init__ (self, frame, angle=0, axis=0):
         self.RotationAngle = EntryTableParam(angle, master=frame)
         self.RotationAxis = EntryTableParam(axis, ttk.Combobox, master=frame, state="readonly", width=5)
+        self.iterables = [self.RotationAngle, self.RotationAxis]
     def __iter__(self):
-        for val in self.__dict__.values():
+        for val in self.iterables:
             yield val
+    def get_dict(self):
+        """
+        returns all attributes from the self.iterables list as a dictionary.
+        The keys are the attribute names, and the values are, their values lol.
+        """
+        return {key:value.get() for key, value in vars(self).items() if value in self.iterables}
 
 @dataclass
 class CircleCurrentConfig():
@@ -346,10 +492,11 @@ class CircleCurrentConfig():
     Diameter: EntryTableParam = field(init=False)
 
     Rotations: EntryTableParam = field(init=False)
-    #RotationAngle: EntryTableParam = field(init=False)
-    #RotationAxis: EntryTableParam = field(init=False)
+    # we need this index so we know to run ast.literal_eval on these indices.
+    eval_inds: tuple = (5, 6) # index reference of the rotation_angles and rotation_axes lists
+    power_name: str = "Amp"
 
-    def __init__(self, frame, px = 0, py = 0, pz = 0, amp = 1e5, dia = 1):
+    def __init__(self, frame, px = 0, py = 0, pz = 0, amp = 1e5, dia = 1, rotation_angles = [], rotation_axes = []):
         self.PosX = EntryTableParam(px, master=frame)
         self.PosY = EntryTableParam(py, master=frame)
         self.PosZ = EntryTableParam(pz, master=frame)
@@ -358,13 +505,41 @@ class CircleCurrentConfig():
         self.Diameter = EntryTableParam(dia, master=frame)
 
         self.Rotations = EntryTableParam(None, EntryButton, master=frame, text="Rotations")
-        #self.RotationAngle = EntryTableParam(angle, master=frame)
-        #self.RotationAxis = EntryTableParam(axis, ttk.Combobox, master=frame, state="readonly", width=5)
         
+        self.iterables = [self.PosX, self.PosY, self.PosZ, self.Amp, self.Diameter, self.Rotations]
+
+        # properties that are useful, and are hidden from iteration.
+        self._rotation_angles = rotation_angles
+        self._rotation_axes = rotation_axes
+
+    @property
+    def rotation_angles(self):
+        return self._rotation_angles
+    @rotation_angles.setter
+    def rotation_angles(self, val):
+        assert type(val) == list
+        self._rotation_angles = val
+
+    @property
+    def rotation_axes(self):
+        return self._rotation_axes
+    @rotation_axes.setter
+    def rotation_axes(self, val):
+        assert type(val) == list
+        self._rotation_axes = val
+
     def __iter__(self):
-        for val in self.__dict__.values():
+        for val in self.iterables:
             yield val
 
+    def get_dict(self):
+        """
+        returns all attributes from the self.iterables list as a dictionary.
+        The keys are the attribute names, and the values are, their values lol.
+        """
+        out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
+        out['Rotations'] = {"Angles" : self.rotation_angles, "Axes" : self.rotation_axes}
+        return out
 
 @dataclass
 class file_particle:
@@ -390,8 +565,18 @@ class file_particle:
         self.vx = EntryTableParam(vx, master=frame)
         self.vy = EntryTableParam(vy, master=frame)
         self.vz = EntryTableParam(vz, master=frame)
+
+        self.iterables = [self.px, self.py, self.pz, self.vx, self.vy, self.vz]
     
     def __iter__(self):
-        for val in self.__dict__.values():
+        for val in self.iterables:
             yield val
+    
+    def get_dict(self):
+        """
+        returns all attributes from the self.iterables list as a dictionary.
+        The keys are the attribute names, and the values are, their values lol.
+        """
+        out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
+        return out
     
