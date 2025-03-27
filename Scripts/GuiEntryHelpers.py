@@ -160,7 +160,7 @@ class FileDropdown(tk.Frame):
     def __init__(self, master, dir, last=0, default=None, **kwargs):
         self.master = master # parent frame.
         self.default_name = "New_File"
-        self.default_file = default #filepath to the default file
+        self.default_callable = default # function to generate a default file (if the provided DIR is empty.)
 
         # initialize the frame to populate w/ label and combobox.
         # the class inherits from tk.Frame so I can control packing when I instantiate it.
@@ -191,9 +191,9 @@ class FileDropdown(tk.Frame):
         self.combo_box.pack(side='left')
     
     def _DIR_to_List(self):
-        files = []
-        _files = list(filter(os.path.isdir, os.listdir(self.dir)))
-        #print(_files)
+        files = [] # the final output list 
+        # filter the dir to get the list of files only.
+        _files = [f for f in os.listdir(self.dir) if os.path.isfile(os.path.join(self.dir, f))]
         if len(_files) == 0:
             self.create_default()
             _files = os.listdir(self.dir)
@@ -209,9 +209,9 @@ class FileDropdown(tk.Frame):
         Run whenever there are no files in the current directory that is being read.
         If the default attribute is not None, then that file is created.
         """
-        if self.default_file is not None:
-            # copy the file from the self.default_file
-            shutil.copy(self.default_file, self.dir)
+        if self.default_callable is not None:
+            # run the provided function if it's not None
+            self.default_callable()
 
     def _UpdatePath(self, *args):
         '''
@@ -445,13 +445,19 @@ class Bob_e_Config_Dataclass():
         for val in self.iterables:
             yield val
     
-    def get_dict(self):
+    def get_dict(self, to_csv=False):
         """
         returns all attributes from the self.iterables list as a dictionary.
         The keys are the attribute names, and the values are, their values lol.
         """
-        out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
-        out['Rotations'] = {"Angles" : self.rotation_angles, "Axes" : self.rotation_axes}
+        if(not to_csv):
+            out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
+            out['Rotations'] = {"Angles" : self.rotation_angles, "Axes" : self.rotation_axes}
+        else:
+            out = {key:[value.get()] for key, value in vars(self).items() if value in self.iterables}
+            out['RotationAngle'] = [self.rotation_angles]
+            out['RotationAxis'] = [self.rotation_axes]
+            del out['Rotations']
         return out
 
 
@@ -532,13 +538,19 @@ class CircleCurrentConfig():
         for val in self.iterables:
             yield val
 
-    def get_dict(self):
+    def get_dict(self, to_csv=False):
         """
         returns all attributes from the self.iterables list as a dictionary.
         The keys are the attribute names, and the values are, their values lol.
         """
-        out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
-        out['Rotations'] = {"Angles" : self.rotation_angles, "Axes" : self.rotation_axes}
+        if(not to_csv):
+            out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
+            out['Rotations'] = {"Angles" : self.rotation_angles, "Axes" : self.rotation_axes}
+        else:
+            out = {key:[value.get()] for key, value in vars(self).items() if value in self.iterables}
+            out['RotationAngle'] = [self.rotation_angles]
+            out['RotationAxis'] = [self.rotation_axes]
+            del out['Rotations']
         return out
 
 @dataclass

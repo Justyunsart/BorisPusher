@@ -34,6 +34,8 @@ class ConfigMenuBar():
 
         if not master.initSuccess:
             self._Enforce_Default()
+        # On application start, make sure the claimed DIRS actually exist.
+        self._Check_DIR_Existence()
 
     def InitUI(self):
         menubar = tk.Menu(self.master, tearoff=0)
@@ -46,7 +48,17 @@ class ConfigMenuBar():
 
 
         menubar.add_cascade(label="File", menu=fileMenu)
+    
+    def _Check_DIR_Existence(self):
+        """
+        For each specified path attribute in self.prefs,
+        create the appropriately named DIR at the configured path if it doesn't exist.
+        """
+        for dir in self.master.prefs.DIRS:
+            # iterate over every dir value. Create the file here if it exists.
+            os.makedirs(dir, exist_ok=True)
 
+    
     def _Enforce_Default(self):
         '''
         Restore default DIR paths for preference settings.

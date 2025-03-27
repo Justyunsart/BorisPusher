@@ -271,10 +271,7 @@ class EntryTable():
                 #print(row)
                 self.NewEntry(row, defaults=False)
         else:
-            for row in self.instances:
-                #print(row)
-                #print("setrows for: ", row)
-                self.NewEntry(row, defaults=False)
+            print(f"SetRows called with NONE for parameter 'list'")
         return True
 
     def _SetSaveEntry(self, name:str, **kwargs):
@@ -333,6 +330,7 @@ class EntryTable():
                 except:
                     print(f"Something went wrong when saving self.entries. Got: {self.entries}" )
 
+        #print(PATH)
         List_to_CSV(PATH, container, newline="")
 
 
@@ -389,10 +387,10 @@ class EntryTable():
             # READ TO THE SELECTED DIRECTORY IF NO EXPLICIT DIR PROVIDED
             if((self.dirWidget.fileName) == "") or (self.dirWidget.fileName is None):
                 return False
-            #print(self.dirWidget.fileName)
             data = CSV_to_Df(self.dirWidget.PATH.data, isNum=False, converters=converter, **kwargs)
 
         else:
+            # WHEN A DIR IS PROVIDED ON FUNCTION CALL
             # READ SPECIFIED DIR IF CALLED w/ IT
             data = CSV_to_Df(dir, isNum=False, converters=converter)
         
@@ -519,13 +517,14 @@ class RotationConfigEntryTable(EntryTable):
         """
         Before running super, format the given data from a list of dicts to a list of dataclasses.
         """
+        lst = []
         for data in self.data_to_fill:
             config = RotationConfig(self.frame1,
                                     data[0],
                                     self.axisIndices[data[1]])
-            self.instances.append(config)
+            lst.append(config)
         #print(self.instances)
-        super().SetRows(None)
+        super().SetRows(lst)
 
     def EntryValidateCallback(self, entry):
         #print(self.isActive)
@@ -555,10 +554,11 @@ class CurrentEntryTable(EntryTable):
     (param: ) dataclass: a container class with the varaible names and widgets to produce (located in GuiEntryHelpers.py)
     (param: ) graphFrame: a tk.Frame or subclass that the graphical representation of the current config will be.
     (param: ) defaults: a path pointing to the DIR containing default options (hexahedron/mirror config)
+        You can think of 'defaults' like 'presets'.
     (param: ) DIR: the path to the dir containing all the saved config files of the desired dataclass.
     '''
 
-    def __init__(self, master, dataclass, graphFrame, defaults, DIR):
+    def __init__(self, master, dataclass, graphFrame, defaults, DIR, graph_toolbar = False):
         self.collection = Collection() # magpy object for visualization
         self.rotations = [] # container to store coil rotation info.
         # self.lim: the max. offset of the coil in the entry table.
@@ -566,13 +566,11 @@ class CurrentEntryTable(EntryTable):
 
         #self.instances = [] # references to the instantiated dataclasses (rows).
         self.defaultFileName = "Coil"
+        self.DIR = DIR
         self.DIR_coilDefs = defaults
 
-        # get the first default file path
-        _file = os.path.join(defaults, os.listdir(defaults)[0])
-
         super().__init__(master, dataclass)
-        self.dirWidget = FileDropdown(master=self.frame0, dir=DIR, default=_file)
+        self.dirWidget = FileDropdown(master=self.frame0, dir=DIR, default=self._Create_Default_File)
         self.dirWidget.grid(row=0, column=0)
         self.saveButton.configure(command=partial(self.SaveData, self.dirWidget.dir))
 
@@ -592,14 +590,15 @@ class CurrentEntryTable(EntryTable):
         
         self.canvas = FigureCanvasTkAgg(self.fig,
                                         master = self.frame2)
-        toolbar = NavigationToolbar2Tk(self.canvas, pack_toolbar=False)
-        
-        # make sure they are instantiated
-        toolbar.update()
-        self.canvas.draw()
+        if(graph_toolbar):
+            toolbar = NavigationToolbar2Tk(self.canvas, pack_toolbar=False)
+            
+            # make sure they are instantiated
+            toolbar.update()
+            self.canvas.draw()
 
-        # pack graph stuff
-        toolbar.pack(side=tk.BOTTOM, fill=tk.X)
+            # pack graph stuff
+            toolbar.pack(side=tk.BOTTOM, fill=tk.X)
         self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         # configure buttons w/ appropriate callbacks
@@ -608,6 +607,24 @@ class CurrentEntryTable(EntryTable):
         
         # draw canvas for the first time
         self.update()
+
+    def _Create_Default_File(self):
+        """
+        run whenever the DIR for input files is empty.
+        creates a file with the dataclass's default values.
+        """
+        #print(f"new file creation attempt")
+        default_dataclass = self.data(self.frame1) # construct dataclass with default parameters
+        df = default_dataclass.get_dict(to_csv=True) # we need to format this dict. so that rotations and angles are lists.
+        #print(df)
+        df = pd.DataFrame.from_dict(df)
+        #print(df)
+
+
+        def_name = "Default_Dan"
+        self._SetSaveEntry(def_name)
+        df.to_csv(os.path.join(self.DIR, def_name), index=False)
+        
 
     def GraphCoils(self):
         '''
@@ -671,22 +688,18 @@ class CurrentEntryTable(EntryTable):
         Expands the Read_Data method of its parent because of the (specialized) requirement
         of some parameters not fitting in a csv format.
         """
-        #TODO: make this object oriented and not hard coded for CircleCurrentConfig.
         data = super().Read_Data(dir=dir, eval_ind=self.data.eval_inds)
-        #print(data)
-        #print(type(data))
 
         # REMINDER: these dataclass specific info. should be contained within the class instances instead.
         coils = []
-        rotations = []
         
         for row in data:
             # unpack each row as a coil arg.
             # each dataclass is constructed like: master, *args
             coil = self.data(self.frame1, *row)
             coils.append(coil)
-        #print(self.instances)
 
+        # The dataclass instances will be added to self.instances after getting processed by self.SetRows().
         self.SetRows(coils)
 
         # used for graphing alongside an axis.
@@ -713,7 +726,8 @@ class CurrentEntryTable(EntryTable):
     def SaveData(self, dir:str, container=None, customContainer=False):
         # make a copy of self.entries just for this
         #container = self.entries.copy()
-        container = self.GetEntries()
+        if(container == None):
+            container = self.GetEntries()
         customContainer=True #flag this class as needing a custom container
         #print(self.rotations)
         """

@@ -29,8 +29,6 @@ def OpenGUI():
     # main window
     Main = MainWindow(root, background = palette.Background.value)
     Main.pack(expand=True, fill='both')
-    #Main.grid_rowconfigure(0, weight=1)
-    #Main.grid_columnconfigure(0, weight=1)
 
     #======#
     # MENU #
@@ -47,7 +45,7 @@ def OpenGUI():
     DIR_Particle = Main_PrefFiles.DIR_particle
     DIR_Coil = Main_PrefFiles.DIR_coil
     DIR_coilDefs = Main_PrefFiles.DIR_coilDefs
-    DIR_lastUsed = Main_PrefFiles.DIR_lastUsed
+    DIR_lastUsed = Main_PrefFiles.FILE_lastUsed
     DIR_Output = Main_PrefFiles.DIR_output
 
     #print(DIR_Particle)
