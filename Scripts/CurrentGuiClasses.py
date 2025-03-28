@@ -807,10 +807,6 @@ class CurrentEntryTable(EntryTable):
         super().Refresh()
         self.GraphCoils()
 
-    def DelEntry(self, button):
-        row = super().DelEntry(button)
-        self.rotations.pop(row)
-
     def GraphB(self, fig, root, cax):
         """
         with a mpl subplot as an input, graph the currently selected magnetic coil's B field's cross section.
