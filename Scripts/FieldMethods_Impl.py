@@ -50,6 +50,7 @@ class field_impl():
     listeners = []
     widgets = []
     frame1:tk.Frame = None
+    widget_frames = []
     # Some observer methods to handle basic event handling
     def add_listener(self, listener):
         if listener not in self.listeners:
@@ -59,9 +60,13 @@ class field_impl():
             listener.update()
     # Toggle associated widgets on/off for when the method is selected/deselected.
     def ShowWidget(self):
-        self.frame1.grid()
+        for frame in self.widget_frames:
+            frame.grid()
+        #self.frame1.grid()
     def HideWidget(self):
-        self.frame1.grid_remove()
+        for frame in self.widget_frames:
+            frame.grid_remove()
+        #self.frame1.grid_remove()
         
 
 ################
@@ -74,6 +79,7 @@ class Fw_widget(field_impl):
     def __init__(self, frame, main=None):
         self.root = main
         self.frame1 = tk.Frame(frame)
+        self.widget_frames = [self.frame1]
         self.frame1.grid(row=2, column=0)
         self.A = LabeledEntry(self.frame1, .1, row=1, col=0, title="A: ", width=10)
         self.B = LabeledEntry(self.frame1, .1, row=1, col=4, title="B: ", width=10)
@@ -88,6 +94,7 @@ class Zero_widget(field_impl):
         self.root = main
         self.frame1 = tk.Frame(frame)
         self.frame1.grid(row=2, column=0)
+        self.widget_frames = [self.frame1]
         self.X = LabeledEntry(self.frame1, 0, row=1, col=0, title="X: ", width=5, state="readonly")
         self.Y = LabeledEntry(self.frame1, 0, row=1, col=4, title="Y: ", width=5, state="readonly")
         self.Z = LabeledEntry(self.frame1, 0, row=1, col=8, title="Z: ", width=5, state="readonly")
@@ -102,9 +109,9 @@ class Bob_e_widget(field_impl):
         self.frame1 = tk.Frame(frame)
         self.frame1.grid(row=2, column=0)
         self.frame2 = tk.Frame(frame)
-        self.frame3 = tk.Frame(self.frame2)
         self.frame2.grid(row=3, column=0)
-        self.frame3.grid(row=0, column=0)
+
+        self.widget_frames = [self.frame1, self.frame2]
 
         #self.q = LabeledEntry(self.frame1, .1, row=1, col=0, title="q: ", width=10)
         self.res = LabeledEntry(self.frame1, 100, row=1, col=1, title="res: ", width=10)

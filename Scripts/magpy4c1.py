@@ -89,6 +89,7 @@ def _Bob_e(inCoord, c):
 
     global E_Args
     q = c.current # charge
+    #print(f"running with the q:{q}")
     res = float(E_Args["res"]) # amount of points to be used in the integration
     
     # To make the target point relative to the coil, we call the bob_e.impl's alignment func.

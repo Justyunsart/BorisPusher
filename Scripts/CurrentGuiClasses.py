@@ -4,7 +4,7 @@ Users will basically create instances of this to customize the current.
 
 It's basically a container for parameters to create magpylib objects
 '''
-
+from collections import defaultdict
 import tkinter as tk
 from tkinter import ttk
 from dataclasses import dataclass, field
@@ -38,7 +38,7 @@ class EntryTable():
     #========#
 
     # FIELD GETTERS
-    def GetEntries(self):
+    def GetEntries(self, csv=False):
         """
         Moving away from keeping and updating data with self.entries. Instead, I want to retain dataclass instances (since I'm creating these classes anyway).
         This function will get the attribute self.instances (a list of currently active dataclass instances) and return all their data as a dictionary.
@@ -47,9 +47,39 @@ class EntryTable():
         """
         out = []
         for entry in self.instances:
-            out.append(entry.get_dict())
-        #print(out)
-        return out
+            out.append(entry.get_dict(csv))
+
+        if(not csv): # csv == False
+            """
+            When the function is called with csv == False, the caller is requesting a view of the data that works for graphing.
+                The dict should be organized like: [{dict1}, {dict2}], in which:
+                    Each dict holds both the row and rotation data
+                    Each dict also represents a new row.
+
+            This is accomplished with the above code by running the dataclass's get_dict() callable with csv == False.
+            """
+            return out
+
+        else: # csv == True
+            """
+            When function is called with csv == True, the caller is requesting a view of the data that directly works for converting to a pd.DataFrame object.
+                The dict should be organized like: {'key':[value1, value2,], ...}, in which:
+                    Key - each column variable
+                    Value - a list containing the respective entry for each row.
+
+            This can be accomplished by merging the list of dictionaries created before the if-else block. Because it ran get_dict() with csv == True,
+            each dict is formatted with the rotation attributes without nesting.
+            """
+            # a dictionary that fills missing values with an empty list.
+            out_merged = defaultdict(list)
+
+            # iterate over the out list of dictionaries, extending the empty list with stored values.
+            for d in out:
+                for key, value in d.items():
+                    # value is expected to be a list
+                    out_merged[key].extend(value)
+
+            return out_merged
     
     #===============#
     # INITIALIZAION #
@@ -151,7 +181,17 @@ class EntryTable():
 
         # Now we extract the newly edited value to allow for examination.
         entryValue = widget.get()
-        
+
+        # Don't update anything if the entryValue is illegal.
+        #   If it's blank or cannot be converted into a float.
+        try:
+            float(entryValue)
+        except:
+            # if the value is illegal, then trigger the widget's warning state.
+            widget.trigger_warning()
+            return False
+
+        widget.untrigger_warning() # remove the widget's warned state if it is warned.
         instance = self.instances[rowInd] # the dataclass instance of the correspondng row
         instance.iterables[colInd].paramWidget.var.set(entryValue) # modify the dataclass's corresponding value according the the colInd.
         #self.GetEntries()[rowInd][self.fields[colInd]] = entryValue
@@ -659,8 +699,8 @@ class CurrentEntryTable(EntryTable):
         override of base class function, graphs the configuration upon each change.
         '''
         #print(f"CurrentGuiClasses.CurrentEntryTable.EntryValidateCallback: self.entries is: {self.entries}")
-        super().EntryValidateCallback(entry)
-        self.GraphCoils()
+        self.GraphCoils() if super().EntryValidateCallback(entry) else None
+        return True
     
     # Will not be used anymore, once the class moves to storing values via dataclass instances instead of a dict.
     def NewEntry(self, *args, defaults=True):
@@ -727,28 +767,16 @@ class CurrentEntryTable(EntryTable):
         # make a copy of self.entries just for this
         #container = self.entries.copy()
         if(container == None):
-            container = self.GetEntries()
-        customContainer=True #flag this class as needing a custom container
-        #print(self.rotations)
-        """
-        # combine the entries and rotations container
-        for i in range(len(container)):
-            container[i]["RotationAngle"] = str([j["RotationAngle"] for j in self.rotations[i]])
-            container[i]["RotationAxis"] = str([j["RotationAxis"] for j in self.rotations[i]])
-            # remove the 'Rotations' key; leftover from the dataclass that needs to be cut
-            try:
-                del container[i]['Rotations']
-            except KeyError:
-                pass
-        """
+            container = self.GetEntries(csv=True)
         
-        vals = [list(container[0].keys())]
-        super().SaveData(dir, container, vals, customContainer)
+        filename = self.saveEntryVal.get()
+        df = pd.DataFrame.from_dict(container)
+        df.to_csv(os.path.join(self.DIR, filename), index=False)
 
         # In addition to the super, also update the selected file's value in the field dropdown
-        if self.saveEntryVal.get() not in self.dirWidget["values"]:
-            self.dirWidget["values"] += (self.saveEntryVal.get(),)
-            self.dirWidget.current(len(self.dirWidget["values"]) - 1)
+        if self.saveEntryVal.get() not in self.dirWidget.combo_box['values']:
+            self.dirWidget.combo_box["values"] += (self.saveEntryVal.get(),)
+            self.dirWidget.combo_box.current(len(self.dirWidget.combo_box["values"]) - 1)
     
     def update(self, subject=None):
         '''
@@ -867,8 +895,16 @@ class CurrentEntryTable(EntryTable):
         dict_lst = table.ReturnRotations()
         self.instances[row-1].rotation_angles = [r["RotationAngle"] for r in dict_lst]
         self.instances[row-1].rotation_axes = [r["RotationAxis"] for r in dict_lst]
-
-        self.GraphCoils()
+        
+        try:
+            self.GraphCoils()
+        except ValueError:
+            """
+            This block will trigger when graphing is impeded for whatever reason.
+                eg. when a user has erased an entry of its contents.
+            Ignores the error to avoid pinging the terminal.
+            """
+            pass
     
     def setLim(self, val):
         """

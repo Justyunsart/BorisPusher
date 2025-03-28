@@ -233,5 +233,8 @@ c2 = Circle(current=1000)
 collection = Collection()
 collection.add(c1, c2)
 
-for child in collection:
-    print(child.current)
+#for child in collection:
+    #print(child.current)
+
+string = "1e-11"
+#print(float(string))

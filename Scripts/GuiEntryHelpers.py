@@ -9,6 +9,7 @@ import os
 import shutil
 import ast
 import pandas as pd
+from palettes import Drapion
 
 """
 classes used for <CurrentGuiClasses.EntryTable> and its subclasses.
@@ -256,13 +257,22 @@ class LabeledEntry():
                 self.label.grid_remove()
                 self.entry.grid_remove()
 
-class OnlyNumEntry(tk.Entry, object):
-    def __init__(self, master, **kwargs):
+class OnlyNumEntry(tk.Entry):
+    # normal look of the entry widget.
+    normal_style = {"highlightcolor":Drapion.Entry_Table_Cell_Highlight.value,
+                    "highlightbackground":"systemWindowBackgroundColor"}
+    
+    # applied whenever there is a problem to notify the user abt. 
+    warning_style = {"highlightcolor":Drapion.Warning_Highlight.value,
+                     'highlightbackground':Drapion.Warning_Highlight.value}
 
+    def __init__(self, master, **kwargs):
+        self.is_warned = False # attribute that keeps track of the widget's current state.
         # other initialization
         self.var = tk.StringVar(master)
         self.isNum = False
-        tk.Entry.__init__(self, master, textvariable=self.var, width=10, **kwargs)
+        super().__init__(master, textvariable=self.var, width=10, **kwargs, **self.normal_style)
+        #print(self.cget('highlightbackground'))
 
         # event handling - make sure this class is included in bindtags
         btags = list(self.bindtags())
@@ -273,6 +283,24 @@ class OnlyNumEntry(tk.Entry, object):
 
         # add trace
         self.var.trace_add('write', self.validate)
+
+    def trigger_warning(self):
+        """
+        changes the widget's style to warning_style.
+        """
+        # do nothing if the widget is already in the warned state
+        self.configure(**self.warning_style) if not self.is_warned else None
+        self.is_warned = True
+        #print("warned")
+    
+    def untrigger_warning(self):
+        """
+        changes the widget's style back to the normal style.
+        """
+        # do nothing if the widget is already in the normal state
+        self.configure(**self.normal_style) if self.is_warned else None
+        self.is_warned = False
+        #print("unwarned")
 
     def validate(self, *args):
         try:
@@ -477,11 +505,14 @@ class RotationConfig():
     def __iter__(self):
         for val in self.iterables:
             yield val
-    def get_dict(self):
+    def get_dict(self, csv=False):
         """
         returns all attributes from the self.iterables list as a dictionary.
         The keys are the attribute names, and the values are, their values lol.
         """
+        # the csv parameter is abstracted across several dataclasses. It isn't used in this one, so always have it be False for protection.
+        # it wouldn't do anthing if it was passed with True in the first place haha.
+        csv = False
         return {key:value.get() for key, value in vars(self).items() if value in self.iterables}
 
 @dataclass
@@ -584,7 +615,7 @@ class file_particle:
         for val in self.iterables:
             yield val
     
-    def get_dict(self):
+    def get_dict(self, csv=False):
         """
         returns all attributes from the self.iterables list as a dictionary.
         The keys are the attribute names, and the values are, their values lol.
