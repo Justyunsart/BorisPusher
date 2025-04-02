@@ -530,8 +530,8 @@ class CircleCurrentConfig():
 
     Rotations: EntryTableParam = field(init=False)
     # we need this index so we know to run ast.literal_eval on these indices.
-    eval_inds: tuple = (5, 6) # index reference of the rotation_angles and rotation_axes lists
-    power_name: str = "Amp"
+    eval_inds = (5, 6) # index reference of the rotation_angles and rotation_axes lists
+    power_name = "Amp"
 
     def __init__(self, frame, px = 0, py = 0, pz = 0, amp = 1e5, dia = 1, rotation_angles = [], rotation_axes = []):
         self.PosX = EntryTableParam(px, master=frame)

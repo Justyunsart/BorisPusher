@@ -268,6 +268,7 @@ def OpenGUI():
     ## Particle condition stuff..
     Combobox_particle_file = FileDropdown(DropdownFrame,
                                                     dir=DIR_Particle)
+    Combobox_particle_file.grid(row=0, column=0)
     #particleCheckboxes = ParticlePreviewSettings(DropdownFrame)
     particlePreview = ParticlePreview(ParticlePreviewFrame,
                                     Combobox_particle_file)

@@ -422,19 +422,32 @@ class EntryTable():
         if eval_ind is not None:
             for ind in eval_ind:
                 converter[int(ind)] = literal_eval
+        try:
+            if(dir==None):
+                # READ TO THE SELECTED DIRECTORY IF NO EXPLICIT DIR PROVIDED
+                if((self.dirWidget.fileName) == "") or (self.dirWidget.fileName is None):
+                    return False
+                data = CSV_to_Df(self.dirWidget.PATH.data, isNum=False, converters=converter, **kwargs)
 
-        if(dir==None):
-            # READ TO THE SELECTED DIRECTORY IF NO EXPLICIT DIR PROVIDED
-            if((self.dirWidget.fileName) == "") or (self.dirWidget.fileName is None):
-                return False
-            data = CSV_to_Df(self.dirWidget.PATH.data, isNum=False, converters=converter, **kwargs)
-
-        else:
-            # WHEN A DIR IS PROVIDED ON FUNCTION CALL
-            # READ SPECIFIED DIR IF CALLED w/ IT
-            data = CSV_to_Df(dir, isNum=False, converters=converter)
+            else:
+                # WHEN A DIR IS PROVIDED ON FUNCTION CALL
+                # READ SPECIFIED DIR IF CALLED w/ IT
+                data = CSV_to_Df(dir, isNum=False, converters=converter)
         
+        except ValueError:
+            """
+            This block will run if there is an issue with reading from the selected file.
+            (the most common case being that the csv formatting has changed.)
+
+            In this case, the program will convert read columns into lists, assuming it read
+            a single value that's not in a data structure.
+            """
+            data = CSV_to_Df(self.dirWidget.PATH.data, False)
+            for i in eval_ind:
+                data.iloc[:,i] = data.iloc[:,i].apply(lambda x: [x])
+        #print(data)
         data = data.values.tolist()
+        #print(data)
         return data
     
     def _NewFile(self, dir:str, name:str, data=None):

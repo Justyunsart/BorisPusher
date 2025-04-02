@@ -276,6 +276,7 @@ class ParticlePreview(EntryTable):
         fileWidget.PATH.attach(self)
 
         super().__init__(master, dataclass)
+        
         self.saveButton.configure(command=partial(self.SaveData, self.fileWidget.dir))
 
         #self.Read_Data()
