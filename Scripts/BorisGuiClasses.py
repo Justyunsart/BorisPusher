@@ -302,7 +302,7 @@ class ParticlePreview(EntryTable):
         '''
         look at the dir of the selected input file, then turn it into rows on the entry table
         '''
-        
+        self.ClearTable()s
 
         #print("reading data")
         data = CSV_to_Df(self.fileWidget.PATH.data).values.tolist() # ideally, each sublist will be a row of params for file_particle
