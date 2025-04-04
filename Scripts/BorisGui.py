@@ -425,4 +425,6 @@ def OpenGUI():
         root.quit()
         root.destroy()
     root.protocol("WM_DELETE_WINDOW", on_close)
+
+    calc_nested_notebook.event_generate("<<NotebookTabChanged>>") # really really really make sure that the active tab's elements are refreshed on start.
     root.mainloop()

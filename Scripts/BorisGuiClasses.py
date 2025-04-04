@@ -284,7 +284,7 @@ class ParticlePreview(EntryTable):
         self.update()
     
     def EntryValidateCallback(self, entry):
-        #print(f"BorisGuiClasses.ParticlePreview.EntryValidateCallback: self.entries is: {self.entries}")
+        print(f"BorisGuiClasses.ParticlePreview.EntryValidateCallback: self.instances is: {self.instances}")
         return super().EntryValidateCallback(entry)
     
     def NewEntry(self, *args, defaults=True):

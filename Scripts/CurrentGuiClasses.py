@@ -178,10 +178,12 @@ class EntryTable():
         info = widget.grid_info()
         rowInd = info["row"] - 1    # minus one to account for the first row being titles, var names
         colInd = info["column"]
+        #print(colInd)
 
+        #print(self.master)
         # Now we extract the newly edited value to allow for examination.
         entryValue = widget.get()
-
+        #print(entryValue)
         # Don't update anything if the entryValue is illegal.
         #   If it's blank or cannot be converted into a float.
         try:
@@ -711,6 +713,7 @@ class CurrentEntryTable(EntryTable):
         '''
         override of base class function, graphs the configuration upon each change.
         '''
+        #print(self.data)
         #print(f"CurrentGuiClasses.CurrentEntryTable.EntryValidateCallback: self.entries is: {self.entries}")
         self.GraphCoils() if super().EntryValidateCallback(entry) else None
         return True
