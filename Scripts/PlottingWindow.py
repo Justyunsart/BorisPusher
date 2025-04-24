@@ -491,10 +491,12 @@ class PlottingWindowObj(tk.Frame):
             if os.path.exists(self.path.get()):
                 path = self.path.get()
                 self.df = pd.read_json(path, orient='table') # reads the .json file and constructs it as a pandas dataframe.
+                #print(f"dataframe reading passed")
                 self.c = self.File_to_Collection(path) # reconstructs the magpylib collection object that was used.
+                #print(f"collection creaiton passed")
                 #print(self.df)
-        except:
-            print(f"Plottingwindow.PlottingWindowObj.read_dataframe: provided path does not meet the requirements of being a .json file in the table orientation. BOOOOOOOOOOOOO")
+        except SyntaxError:
+            print(f"Plottingwindow.PlottingWindowObj.read_dataframe: provided path does not meet the requirements of being a .json file in the table orientation, or the provided collection is")
         
         self.update_all_graphs()
     
@@ -511,13 +513,14 @@ class PlottingWindowObj(tk.Frame):
         
         # store coils and rotations separately, so that we can apply the rotations afterwards
         c = mp.Collection()
-        df = CSV_to_Df(coilpath, converters={"Amp":tryEval, "RotationAngle":tryEval, "RotationAxis":tryEval}, isNum=False, header=0)
+        df = CSV_to_Df(coilpath, converters={"Amp":tryEval, "RotationAngle":tryEval}, isNum=False, header=0)
         #print(df)
         for i, row in df.iterrows():
             row = row.tolist()
             position = [float(row[0]), float(row[1]), float(row[2])]
-            coil = Circle(position, current=float(tryEval(row[3])), diameter=float(row[4]))
-
+            #print(row[3])
+            coil = Circle(position, current=float(row[3]), diameter=float(row[4]))
+            #print(coil)
             match row[5]:
                 case float():
                     coil.rotate_from_angax(row[5], row[6])
@@ -528,7 +531,7 @@ class PlottingWindowObj(tk.Frame):
                         coil.rotate_from_angax(row[5][i], row[6][i])
             
             c.add(coil)
-
+        #print(c)
         return c
 
     def set_active(self):

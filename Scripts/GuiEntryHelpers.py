@@ -10,6 +10,7 @@ import shutil
 import ast
 import pandas as pd
 from palettes import Drapion
+import math
 
 """
 classes used for <CurrentGuiClasses.EntryTable> and its subclasses.
@@ -139,7 +140,15 @@ def GetAxis(coord):
 def tryEval(val):
     try:
         return literal_eval(val)
-    except (ValueError, SyntaxError):
+    except ValueError:
+        """
+        Will only handle cases where the string contains multiplied floats.
+        """
+        temp = val.split('*')
+        temp = list(map(float, temp))
+        out = math.prod(temp)
+        return out
+    except (SyntaxError):
         print(f"error encountered when evaluating {val}, reutrning original string.")
         return val
 

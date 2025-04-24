@@ -11,3 +11,5 @@ Inputs/lastUsed
 Scripts/DashApp.py
 Scripts/PlottingWindow_Dash.py
 Preferences.txt
+.DS_Store
+Outputs/.DS_Store
