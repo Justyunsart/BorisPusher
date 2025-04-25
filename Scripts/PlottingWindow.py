@@ -513,12 +513,12 @@ class PlottingWindowObj(tk.Frame):
         
         # store coils and rotations separately, so that we can apply the rotations afterwards
         c = mp.Collection()
-        df = CSV_to_Df(coilpath, converters={"Amp":tryEval, "RotationAngle":tryEval}, isNum=False, header=0)
+        df = CSV_to_Df(coilpath, converters={"Amp":tryEval, "RotationAngle":tryEval, "RotationAxis":tryEval}, isNum=False, header=0)
         #print(df)
         for i, row in df.iterrows():
             row = row.tolist()
             position = [float(row[0]), float(row[1]), float(row[2])]
-            #print(row[3])
+            #print(tryEval(row[6]))
             coil = Circle(position, current=float(row[3]), diameter=float(row[4]))
             #print(coil)
             match row[5]:

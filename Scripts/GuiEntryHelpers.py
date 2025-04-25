@@ -139,18 +139,19 @@ def GetAxis(coord):
 
 def tryEval(val):
     try:
+        #print(val)
         return literal_eval(val)
     except ValueError:
         """
         Will only handle cases where the string contains multiplied floats.
         """
-        temp = val.split('*')
-        temp = list(map(float, temp))
-        out = math.prod(temp)
-        return out
-    except (SyntaxError):
-        print(f"error encountered when evaluating {val}, reutrning original string.")
-        return val
+        if '*' in val:
+            temp = val.split('*')
+            temp = list(map(float, temp))
+            out = math.prod(temp)
+            return out
+        else:
+            return val
 
 class FileDropdown(tk.Frame):
     '''

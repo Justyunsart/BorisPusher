@@ -284,7 +284,7 @@ class ParticlePreview(EntryTable):
         self.update()
     
     def EntryValidateCallback(self, entry):
-        print(f"BorisGuiClasses.ParticlePreview.EntryValidateCallback: self.instances is: {self.instances}")
+        #print(f"BorisGuiClasses.ParticlePreview.EntryValidateCallback: self.instances is: {self.instances}")
         return super().EntryValidateCallback(entry)
     
     def NewEntry(self, *args, defaults=True):
@@ -334,9 +334,9 @@ class ParticlePreview(EntryTable):
         super().SaveData(dir, container, customContainer)
 
         # In addition to the super, also update the selected file's value in the field dropdown
-        if self.saveEntryVal.get() not in self.fileWidget["values"]:
-            self.fileWidget["values"] += (self.saveEntryVal.get(),)
-            self.fileWidget.current(len(self.fileWidget["values"]) - 1)
+        if self.saveEntryVal.get() not in self.fileWidget.combo_box["values"]:
+            self.fileWidget.combo_box["values"] += (self.saveEntryVal.get(),)
+            self.fileWidget.current(len(self.fileWidget.combo_box["values"]) - 1)
     
     def GetData(self):
         out =  super().GetData()
@@ -348,12 +348,12 @@ class ParticlePreview(EntryTable):
         if(key != 'particleFile'):
             return False
         
-        dropdownLst:list = self.fileWidget["values"]
+        dropdownLst:list = self.fileWidget.combo_box["values"]
         try:
             ind = dropdownLst.index(value)
-            self.fileWidget.current(ind)
+            self.fileWidget.combo_box.current(ind)
         except ValueError:
-            self.fileWidget.current(0)
+            self.fileWidget.combo_box.current(0)
 
 class ParticlePreviewSettings():
     '''
