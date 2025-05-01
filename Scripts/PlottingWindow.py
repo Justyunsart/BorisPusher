@@ -287,8 +287,8 @@ class DropdownFigure(tk.Frame):
         # load the new dictionary
         new_dict = graph_option_style_map[self.chosenVal.get()]['style']
         # update the current dictionary with this one.
-        self.settings = self.settings.update(new_dict)
-        print(self.settings)
+        self.settings = self.canvFig.graph_settings.update(new_dict)
+        #print(self.settings)
     
     def updateGraph(self, df:pd.DataFrame, **kwargs):
         """
