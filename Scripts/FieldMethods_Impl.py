@@ -12,6 +12,7 @@ import concurrent.futures
 from magpylib.current import Circle
 from scipy.spatial.transform import Rotation as R
 from matplotlib import pyplot as plt
+from Bob_e_Circle_Config import Bob_e_Circle_Config
 
 ##############
 # BASE CLASS #
@@ -22,8 +23,8 @@ class FieldMethod():
     Contains the actual equation, as well as the ability to extract parameter values from its GUI widgets.
     """
     autoUpdate = True # flag for whether the graph should update whenever it's chosen.
-    def __init__(self, master, widget):
-        self.widget = widget(master)
+    def __init__(self, master, widget, root=None):
+        self.widget = widget(master, root)
     # Called when the GUI wants to display the field with its current values.
     def graph(self, plot, fig, lim, collection=None, *args):
         pass
@@ -49,6 +50,7 @@ class field_impl():
     listeners = []
     widgets = []
     frame1:tk.Frame = None
+    widget_frames = []
     # Some observer methods to handle basic event handling
     def add_listener(self, listener):
         if listener not in self.listeners:
@@ -58,9 +60,13 @@ class field_impl():
             listener.update()
     # Toggle associated widgets on/off for when the method is selected/deselected.
     def ShowWidget(self):
-        self.frame1.grid()
+        for frame in self.widget_frames:
+            frame.grid()
+        #self.frame1.grid()
     def HideWidget(self):
-        self.frame1.grid_remove()
+        for frame in self.widget_frames:
+            frame.grid_remove()
+        #self.frame1.grid_remove()
         
 
 ################
@@ -70,8 +76,10 @@ class field_impl():
 Houses instances of the field_impl class for each field method.
 """
 class Fw_widget(field_impl):
-    def __init__(self, frame):
+    def __init__(self, frame, main=None):
+        self.root = main
         self.frame1 = tk.Frame(frame)
+        self.widget_frames = [self.frame1]
         self.frame1.grid(row=2, column=0)
         self.A = LabeledEntry(self.frame1, .1, row=1, col=0, title="A: ", width=10)
         self.B = LabeledEntry(self.frame1, .1, row=1, col=4, title="B: ", width=10)
@@ -82,36 +90,46 @@ class Fw_widget(field_impl):
     
 
 class Zero_widget(field_impl):
-    def __init__(self, frame):
+    def __init__(self, frame, main=None):
+        self.root = main
         self.frame1 = tk.Frame(frame)
         self.frame1.grid(row=2, column=0)
+        self.widget_frames = [self.frame1]
         self.X = LabeledEntry(self.frame1, 0, row=1, col=0, title="X: ", width=5, state="readonly")
         self.Y = LabeledEntry(self.frame1, 0, row=1, col=4, title="Y: ", width=5, state="readonly")
         self.Z = LabeledEntry(self.frame1, 0, row=1, col=8, title="Z: ", width=5, state="readonly")
         self.widgets = [self.X, self.Y, self.Z]
 
 class Bob_e_widget(field_impl):
-    def __init__(self, frame):
+    def __init__(self, frame, main=None):
+        self.root = main
         # To make the graph function only work with the provided button, flag it to not update.
         self.autoUpdate = False
 
         self.frame1 = tk.Frame(frame)
         self.frame1.grid(row=2, column=0)
+        self.frame2 = tk.Frame(frame)
+        self.frame2.grid(row=3, column=0)
 
-        self.q = LabeledEntry(self.frame1, .1, row=1, col=0, title="q: ", width=10)
-        self.res = LabeledEntry(self.frame1, 100, row=1, col=4, title="res: ", width=10)
-        self.widgets = [self.q, self.res]
+        self.widget_frames = [self.frame1, self.frame2]
 
-        """
-        # Button to call graphing.
-        self.buttonFrame = tk.Frame(frame)
-        self.graphButton = tk.Button(self.buttonFrame, text="Graph")
-        self.buttonFrame.grid(row=3, column=0)
-        self.graphButton.pack()
-        """
+        #self.q = LabeledEntry(self.frame1, .1, row=1, col=0, title="q: ", width=10)
+        self.res = LabeledEntry(self.frame1, 100, row=1, col=1, title="res: ", width=10)
+        # Button to call configuration table.
+        #self.buttonFrame = tk.Frame(frame)
+        #self.graphButton = tk.Button(self.frame1, text="Config Circle")
+        #self.graphButton.grid(row=1, col=0)
+        #self.buttonFrame.grid(row=3, column=0)
+        #self.graphButton.pack()
 
+        # Coil Config
+        self.table = Bob_e_Circle_Config(self.frame2,
+                                         defaults=self.root.prefs.DIR_BobDefs,
+                                         dir=self.root.prefs.DIR_Bob)
+        self.widgets = [self.table, self.res]
+        self.table.grid(row=0)
 
-        self.q.value.trace_add("write", self.trigger_listener)
+        #self.q.value.trace_add("write", self.trigger_listener)
         self.res.value.trace_add("write", self.trigger_listener)
 
     def ShowWidget(self):
@@ -122,6 +140,7 @@ class Bob_e_widget(field_impl):
         super().HideWidget()
         #self.buttonFrame.grid_remove()
     
+    
 
 ##################
 # IMPLEMENTATION #
@@ -130,8 +149,8 @@ class Bob_e_widget(field_impl):
 Contains the FieldMethod class instances for each field method.
 """
 class Fw_impl(FieldMethod):
-    def __init__(self, master, widget=Fw_widget):
-        super().__init__(master, widget)
+    def __init__(self, master, root, widget=Fw_widget):
+        super().__init__(master, widget, root)
     
     def at(coord, A, B):
         """
@@ -187,8 +206,8 @@ class Fw_impl(FieldMethod):
 
 
 class Zero_impl(FieldMethod):
-    def __init__(self, master, widget=Zero_widget):
-        super().__init__(master, widget)
+    def __init__(self, master, root, widget=Zero_widget):
+        super().__init__(master, widget, root)
     
     def graph(self, plot, fig, lim, *args):
         plot.axhline(y=0, color='b')
@@ -198,8 +217,8 @@ class Zero_impl(FieldMethod):
 
 class bob_e_impl(FieldMethod):
     autoUpdate = False
-    def __init__(self, master, widget=Bob_e_widget):
-        super().__init__(master, widget)
+    def __init__(self, master, root, widget=Bob_e_widget):
+        super().__init__(master, widget, root)
         # register the graph button to the graphing function
 
     
@@ -253,17 +272,17 @@ class bob_e_impl(FieldMethod):
     
     def GetData(self):
         return {"Bob_e":
-                {"q": self.widget.q.value.get(),
-                  "res": self.widget.res.value.get()}
+                {
+                    "res": self.widget.res.value.get(),
+                    "collection": self.widget.table.get_collection()
+                    }
                 }
     
     def Set(self, key, value):
-        if key == "q":
-            self.widget.q.value.set(value)
-        elif key == "res":
+        if key == "res":
             self.widget.res.value.set(value)
 
-    def graph(self, plot, fig, lim, cax, collection=None, *args):
+    def graph(self, plot, fig, lim, cax, *args):
         """
         When called, will populate the given plot with 
         a contour of the field mags (sum of the zeta, rho components.)
@@ -294,7 +313,8 @@ class bob_e_impl(FieldMethod):
         points = np.column_stack(np.vstack([gX.ravel(), z_linspace, gY.ravel()]))
 
         # For every point, for every coil, orient the point and plug it in the function.
-        z_data = bob_e_impl.fx_calc(points, collection, float(data["q"]), int(data["res"]))
+
+        z_data = bob_e_impl.fx_calc(points, data["collection"], int(data["res"]))
 
         sum_Z = np.array(z_data["sum"]).reshape(resolution, resolution)
         smesh = plot.contourf(x_linspace, y_linspace, sum_Z, levels=100,
@@ -306,12 +326,13 @@ class bob_e_impl(FieldMethod):
         cb = fig.colorbar(smesh, cax=cax)
 
     
-    def fx_calc(points, coils, q, r):
+    def fx_calc(points, coils, r):
         #print(points)
+        #print(coils)
         sum = []
         results = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            futures = {executor.submit(bob_e_impl._ecalc, point, coils, q, r): point for point in points}
+            futures = {executor.submit(bob_e_impl._ecalc, point, coils, r): point for point in points}
             #print(len(futures))
             
             for index, task in enumerate(futures):
@@ -323,7 +344,7 @@ class bob_e_impl(FieldMethod):
             "sum" : sum
         }
     
-    def _ecalc(point, collection, q, res):
+    def _ecalc(point, collection, res):
         """
         wrapper to orient the point for each coil in the collection, and to call the integration for that point.
         """
@@ -331,7 +352,7 @@ class bob_e_impl(FieldMethod):
         for c in collection.children_all:
             transformed = bob_e_impl.OrientPoint(c, point)
             #print(transformed)
-            z, r = bob_e_impl.at(transformed, radius = (c.diameter/2), convert=False, q=q, resolution=res)
+            z, r = bob_e_impl.at(transformed, radius = (c.diameter/2), convert=False, q=c.current, resolution=res)
             #sums.append(z + r)
             sums.append(np.sqrt(z**2 + r**2))
         sums = sum(sums)
@@ -352,5 +373,5 @@ class bob_e_impl(FieldMethod):
         rotated_point = inv_rotation.apply(p)
 
 
-        #print(f"started with {point}, ended with {out}")
+        #print(f"started with {point}, ended with {rotated_point}")
         return rotated_point

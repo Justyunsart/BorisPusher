@@ -222,4 +222,19 @@ M = 1.67e-27 #kilograms
 #print(q/M)
 
 points = np.linspace([-3,0,0], [3,0,0], 100)
-print(points)
+#print(points)
+
+from magpylib import Collection
+from magpylib.current import Circle
+
+c1 = Circle(current=10)
+c2 = Circle(current=1000)
+
+collection = Collection()
+collection.add(c1, c2)
+
+#for child in collection:
+    #print(child.current)
+
+string = "1e-11"
+#print(float(string))

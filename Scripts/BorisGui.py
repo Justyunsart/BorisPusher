@@ -29,8 +29,6 @@ def OpenGUI():
     # main window
     Main = MainWindow(root, background = palette.Background.value)
     Main.pack(expand=True, fill='both')
-    #Main.grid_rowconfigure(0, weight=1)
-    #Main.grid_columnconfigure(0, weight=1)
 
     #======#
     # MENU #
@@ -47,7 +45,7 @@ def OpenGUI():
     DIR_Particle = Main_PrefFiles.DIR_particle
     DIR_Coil = Main_PrefFiles.DIR_coil
     DIR_coilDefs = Main_PrefFiles.DIR_coilDefs
-    DIR_lastUsed = Main_PrefFiles.DIR_lastUsed
+    DIR_lastUsed = Main_PrefFiles.FILE_lastUsed
     DIR_Output = Main_PrefFiles.DIR_output
 
     #print(DIR_Particle)
@@ -261,10 +259,16 @@ def OpenGUI():
     EGraphFrame = tk.LabelFrame(FieldGraphs, bg="light gray", text="E-field")
     EGraphFrame.grid(row=1, column=0)
 
+    EGraphFrame_for_Canvas = tk.Frame(EGraphFrame) # contains the canvas for the graph. done so that the elements above are placed independently.
+    EGraphFrame_for_Canvas.grid(row=1, column=0)
+
+    EGraphFrame_for_Buttons = tk.Frame(EGraphFrame)
+    EGraphFrame_for_Buttons.grid(row=0, column=0)
 
     ## Particle condition stuff..
-    Combobox_particle_file = Particle_File_Dropdown(DropdownFrame,
+    Combobox_particle_file = FileDropdown(DropdownFrame,
                                                     dir=DIR_Particle)
+    Combobox_particle_file.grid(row=0, column=0)
     #particleCheckboxes = ParticlePreviewSettings(DropdownFrame)
     particlePreview = ParticlePreview(ParticlePreviewFrame,
                                     Combobox_particle_file)
@@ -285,7 +289,7 @@ def OpenGUI():
     e_field.grid(row=1, column=0)
 
     # Graphing options for the field parameter settings.
-    field_graphs = FieldDropdown(Fields1, fm.FieldGraph_Methods, "Show me: ")
+    field_graphs = FieldDropdown(EGraphFrame_for_Buttons, fm.FieldGraph_Methods, "Show me: ")
     field_graphs.grid(row=0, column=0)
 
     ## Caclulate button
@@ -328,8 +332,10 @@ def OpenGUI():
     """
     #B_field_graph = FieldCoord_n_Graph(b_field, BGraphFrame, coil_config.GraphB)
     E_field_graph = FieldCoord_n_Graph(table = e_field,
+                                       root=Main,
                                        graphOptions=field_graphs, 
-                                    graphFrame= EGraphFrame, 
+                                    graphFrame= EGraphFrame_for_Buttons, 
+                                    canvasFrame=EGraphFrame_for_Canvas,
                                     currentTable=coil_config.table,
                                     title="E on X-Z Plane",
                                     x_label="X (m)",
@@ -419,4 +425,6 @@ def OpenGUI():
         root.quit()
         root.destroy()
     root.protocol("WM_DELETE_WINDOW", on_close)
+
+    calc_nested_notebook.event_generate("<<NotebookTabChanged>>") # really really really make sure that the active tab's elements are refreshed on start.
     root.mainloop()

@@ -108,35 +108,6 @@ def FieldCallback(event, value:ttk.Combobox, xcontainer:Entry, ycontainer:Entry,
             zcontainer.config(state="normal",
                               text = "0.0")
 
-def CSV_to_Df(dir, isNum=True, **kwargs):
-    '''
-    A function that will be called in the calculate button's command.
-    Turns the csv data in the particle input file to a workable dataframe.
-
-    dir: path to the file to be read.
-    isNum: a bool that determines if everything should be considered numeric or not.
-    '''
-    # step 1: read the file from the directory.
-    data = pd.read_csv(dir, **kwargs)
-
-    if data.empty:
-        data = pd.read_json(dir, orient="table")
-    #print(data)
-
-    # step 2: numeric checks
-    ## does not iterate if the entire df is numeric.
-    if (isNum):
-        data.apply(pd.to_numeric)
-    ## iterates through columns if the entire dataframe is not numeric.
-    else:
-        for col in data:
-            try:
-                data[col] = data[col].astype(float)
-            except ValueError:
-                pass
-    #print(data)
-    return data
-
 # Run the simulation if you press calculate
 
 def CalculateCallback(params:list, DIR_last:str):
