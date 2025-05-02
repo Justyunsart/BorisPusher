@@ -14,7 +14,7 @@ from magpylib.current import Circle
 from scipy.spatial.transform import Rotation as R
 from matplotlib import pyplot as plt
 from Gui_tkinter.widgets.Bob_e_Circle_Config import Bob_e_Circle_Config
-from definitions import DIR_ROOT, NAME_BOB_E_CHARGES
+from definitions import DIR_ROOT, NAME_BOB_E_CHARGES, NAME_INPUTS
 ##############
 # BASE CLASS #
 ##############
@@ -133,7 +133,7 @@ class Bob_e_widget(field_impl):
 
         # Coil Config
         self.table = Bob_e_Circle_Config(self.frame2,
-                                         dir=os.path.join(DIR_ROOT, NAME_BOB_E_CHARGES))
+                                         dir=os.path.join(os.path.join(DIR_ROOT, NAME_INPUTS), NAME_BOB_E_CHARGES))
         self.widgets = [self.table, self.res]
         self.table.grid(row=0)
 
