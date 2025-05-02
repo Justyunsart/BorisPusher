@@ -20,7 +20,7 @@ The dropdown graphs use the function 'Param_v_Step_callable', in which:
         3. The dot products with b
 
 """
-from BorisGui import OpenGUI
+from Gui_tkinter.BorisGui import OpenGUI
 
 if __name__ == "__main__":
     # For whatever reason, instantiating the GUI window HAS to 

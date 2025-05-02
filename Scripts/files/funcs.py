@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 """
 Helper funcs for file handling
@@ -15,7 +16,7 @@ def check_subdirs(base:str, names:list, dct=None):
     """
     for name in names:
         subdir_path = os.path.join(base, name)
-        os.mkdir(subdir_path, exist_ok=True)
+        pathlib.Path.mkdir(pathlib.Path(subdir_path), exist_ok=True)
         
         if dct is not None:
             check_subdirs(os.path.join(base, name), dct[name])

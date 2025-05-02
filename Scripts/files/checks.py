@@ -1,7 +1,7 @@
 import os
 from definitions import DIR_ROOT, NAME_INPUTS, FOLDER_INPUTS
-from create import create_inputs_folder
-from funcs import check_subdirs
+from files.create import create_inputs_folder
+from files.funcs import check_subdirs
 
 """
 Functions for checking the validity of file stuff.
@@ -23,6 +23,6 @@ def input_folder_check():
         return True
     
     # Next, ensure that all directed subdirs are in the dir.
-    check_subdirs(os.path.join(DIR_ROOT, NAME_INPUTS))
+    check_subdirs(os.path.join(DIR_ROOT, NAME_INPUTS), list(FOLDER_INPUTS.keys()))
     
     return True

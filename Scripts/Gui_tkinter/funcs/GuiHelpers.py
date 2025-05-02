@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 from BorisPlots import graph_trajectory
-from GuiEntryHelpers import Dict_to_CSV
+from Gui_tkinter.funcs.GuiEntryHelpers import Dict_to_CSV
 
 import pandas as pd
 import csv

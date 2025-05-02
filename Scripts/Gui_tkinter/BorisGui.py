@@ -2,12 +2,18 @@ from tkinter import ttk
 import tkinter as tk
 import settings.palettes as p
 from functools import partial
+import os
 import settings.fields.FieldMethods as fm
 from Gui_tkinter.funcs.GuiHelpers import *
 from Gui_tkinter.widgets.CurrentGuiClasses import *
 from Gui_tkinter.widgets.BorisGuiClasses import *
 from Gui_tkinter.widgets.ScrollableFrame import ScrollableFrame
 from Gui_tkinter.widgets.PlottingWindow import PlottingWindowObj, on_main_notebook_tab_changed
+from definitions import (DIR_ROOT, NAME_INPUTS, NAME_COILS, NAME_PARTICLES, NAME_BOB_E_CHARGES, NAME_lastUsed, NAME_OUTPUTS)
+
+# events
+from events.on_start import on_start
+
 """
 This script is directly called when running main.py - the function OpenGUI() defined below assembles the tkinter GUI and runs its mainloop.
 """
@@ -17,6 +23,9 @@ def OpenGUI():
     bite the bullet and create some GUI for it. 
     This is the main hub for the GUI, with many helper files providing classes and functions.
     '''
+    # Initialization checks. Run them.
+    on_start()
+
     # Application Window
     root = tk.Tk()
     root.title("Configure Sim")
@@ -32,19 +41,18 @@ def OpenGUI():
     #======#
     # MENU #
     #======#
-    # add the toolbar
-    mainToolbar = ConfigMenuBar(Main)
 
     """
     DIRECTORY VARIABLES
     """
     # Selected dirs for sims
-    Main_PrefFiles = Main.prefs
-    DIR_Particle = Main_PrefFiles.DIR_particle
-    DIR_Coil = Main_PrefFiles.DIR_coil
-    DIR_coilDefs = Main_PrefFiles.DIR_coilDefs
-    DIR_lastUsed = Main_PrefFiles.FILE_lastUsed
-    DIR_Output = Main_PrefFiles.DIR_output
+    DIR_Inputs = os.path.join(DIR_ROOT, NAME_INPUTS)
+    DIR_Particle = os.path.join(DIR_Inputs, NAME_PARTICLES)
+    DIR_Coil = os.path.join(DIR_Inputs, NAME_COILS)
+    #DIR_coilDefs = os.path.join(DIR_Inputs, NAME_COILS)
+    DIR_lastUsed = os.path.join(DIR_Inputs, NAME_lastUsed)
+    DIR_Bob = os.path.join(DIR_Inputs, NAME_BOB_E_CHARGES)
+    DIR_Output = os.path.join(DIR_Inputs, NAME_OUTPUTS)
 
     # PLOT OR CALCULATE?
     """
@@ -250,7 +258,7 @@ def OpenGUI():
     CurrentFrame.grid(row = 1, column=0, padx=10, pady=10)
     GraphFrame = tk.LabelFrame(calc_frame3_scroll.frame, text="Graph")
     GraphFrame.grid(row = 2, column=0, padx=10, pady=10)
-    coil_config = CurrentConfig(CurrentFrame, DIR_Coil, DIR_coilDefs, GraphFrame)
+    coil_config = CurrentConfig(CurrentFrame, DIR_Coil, GraphFrame)
     calc_frame3_scroll._add_Subscriber(coil_config) # Done so table's update function runs when this tab is active.
 
     ### FIELD GRAPHS

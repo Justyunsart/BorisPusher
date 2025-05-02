@@ -5,13 +5,13 @@ Some are general, some are one time use.
 
 import tkinter as tk
 from tkinter import ttk
-from CurrentGuiClasses import *
+from Gui_tkinter.widgets.CurrentGuiClasses import *
 from Gui_tkinter.funcs.GuiEntryHelpers import *
 from math import copysign
 from matplotlib import pyplot as plt
 from settings.fields.FieldMethods import *
 from settings.fields.FieldMethods_Impl import *
-from ScrollableFrame import ScrollableFrame
+from Gui_tkinter.widgets.ScrollableFrame import ScrollableFrame
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 # file stuff
@@ -22,94 +22,8 @@ import pickle
 import ast
 import numpy as np
 
-
-############
-# MENU BAR #
-############
-class ConfigMenuBar():
-    def __init__ (self, master):
-        self.master = master
-
-        self.InitUI()
-
-        if not master.initSuccess:
-            self._Enforce_Default()
-        # On application start, make sure the claimed DIRS actually exist.
-        self._Check_DIR_Existence()
-
-    def InitUI(self):
-        menubar = tk.Menu(self.master, tearoff=0)
-        self.master.master.config(menu=menubar)
-
-        fileMenu = tk.Menu(menubar)
-        fileMenu.add_command(label="Preferences")
-        fileMenu.add_command(label="Enforce Default",
-                             command=self._Enforce_Default)
-
-
-        menubar.add_cascade(label="File", menu=fileMenu)
-    
-    def _Check_DIR_Existence(self):
-        """
-        For each specified path attribute in self.prefs,
-        create the appropriately named DIR at the configured path if it doesn't exist.
-        """
-        for dir in self.master.prefs.DIRS:
-            # iterate over every dir value. Create the file here if it exists.
-            os.makedirs(dir, exist_ok=True)
-
-    
-    def _Enforce_Default(self):
-        '''
-        Restore default DIR paths for preference settings.
-        These are written and stored in the '/Preferences.txt' file.
-        '''
-        # 1: Get the path of the Preferences.txt file using MainWindow (expected master)'s cwd field.
-        prefPath = os.path.join(self.master.filepath, "Preferences.txt")
-
-        # 1.5: Get the default DIRs
-            ## location of inputs folder
-        inputPath = os.path.join(self.master.filepath, "Inputs")
-
-            ## location of particle condition folder
-        particlePath = os.path.join(inputPath, "ParticleConditions")
-        coilPath = os.path.join(inputPath, "CoilConfigurations")
-        coilDefsPath = os.path.join(coilPath, "Defaults")
-
-            ## location of output folder
-        outputPath = os.path.join(self.master.filepath, "Outputs")
-        lastusedPath = os.path.join(inputPath, "lastUsed")
-
-            ## location of bob_e stuff
-        bobPath = os.path.join(inputPath, "Bob_EConfigurations")
-        bobDefsPath = os.path.join(bobPath, "Defaults")
-
-        # 2: Create the PrefFile object with default params
-        prefs = PrefFile(particlePath, 
-                         coilPath, 
-                         coilDefsPath,
-                         bobPath,
-                         bobDefsPath,
-                         outputPath,
-                         lastusedPath,
-                         "0.000001",
-                         "50000",
-                         "",
-                         "")
-        self.master.prefs = prefs
-     
-        # 3: If the Pref file does not exist, create one. If it does, rewrite it.
-        with open(prefPath, 'wb') as file:
-            pickle.dump(prefs, file)
-
-class Preferences():
-    '''
-    the window that pops up when you click the "Preferences" label in the menubar.
-
-    has options to configure save file locations and other backend-related features.
-    '''
-    def __init__(self, master):
-        self.master = master
+# presets
+from settings.defaults.coils import (preset_hexahedron, preset_mirror)
 
 class MainWindow(tk.Frame):
     '''
@@ -124,18 +38,15 @@ class MainWindow(tk.Frame):
 
     def __init__(self, master, **kwargs):
         self.master = master
-        # number 1: know the PATH of the program's root.
-        self.filepath = str(Path(__file__).resolve().parents[1]) #Expected: '/BorisPusher/...'
-
         super().__init__(**kwargs)
         self.winSize_x = self.winfo_screenwidth()
         self.winSize_y = self.winfo_screenheight()
-        
-        self.initSuccess = self._Init_Configs()
+    
 
     #=============#
     # CONFIG INIT #
     #=============#
+    """
     def _Init_Configs(self):
         '''
         On application start, populate simulation configurations.
@@ -155,6 +66,7 @@ class MainWindow(tk.Frame):
             except:
                 return False
         return True
+    """
 
 class TimeStep_n_NumStep():
     '''
@@ -336,7 +248,7 @@ class ParticlePreview(EntryTable):
         # In addition to the super, also update the selected file's value in the field dropdown
         if self.saveEntryVal.get() not in self.fileWidget.combo_box["values"]:
             self.fileWidget.combo_box["values"] += (self.saveEntryVal.get(),)
-            self.fileWidget.current(len(self.fileWidget.combo_box["values"]) - 1)
+            self.fileWidget.combo_box.current(len(self.fileWidget.combo_box["values"]) - 1)
     
     def GetData(self):
         out =  super().GetData()
@@ -407,8 +319,8 @@ class CoilButtons():
         self.Mirror.grid(row=0, column=1, sticky="W", padx=5, pady=5)
 
         ### Button function calls
-        self.hexahedron.config(command=partial(self.table.Create_Mirror, fileName="Hexahedron", templateName="hexahedron"))
-        self.Mirror.config(command=partial(self.table.Create_Mirror, fileName="Mirror", templateName="mirror"))
+        self.hexahedron.config(command=partial(self.table.Create_From_Preset, preset_hexahedron))
+        self.Mirror.config(command=partial(self.table.Create_From_Preset, preset_mirror))
 
         ## PARAMS
         ### checkbox that ensures that the coil is symmetric about origin
@@ -520,7 +432,7 @@ class CoilButtons():
             widget.var.set((sign * gapVal))
 
 class CurrentConfig:
-    def __init__(self, master, DIR, DIR_CoilDef, Gframe):
+    def __init__(self, master, DIR, Gframe):
         #print(f"BorisGuiClasses.CurrentConfig: Config is initializing.")
         self.master = master
 
@@ -551,7 +463,6 @@ class CurrentConfig:
         self.table = CurrentEntryTable(master=CurrentEntry, 
                             dataclass=CircleCurrentConfig,
                             graphFrame=CurrentGraph,
-                            defaults = DIR_CoilDef,
                             DIR = DIR)
         
         self.param = CoilButtons(ParamFrame,

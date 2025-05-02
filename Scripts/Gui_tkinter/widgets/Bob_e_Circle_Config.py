@@ -5,7 +5,7 @@ This window will contain the ability to control the circles that are used in the
 Even though they are not going to be used for field calculations and stuff, I'm still going to use
 magpylib's circle object for this because graphing and rotation is easy.
 """
-from CurrentGuiClasses import CurrentEntryTable
+from Gui_tkinter.widgets.CurrentGuiClasses import CurrentEntryTable
 from Gui_tkinter.funcs.GuiEntryHelpers import Bob_e_Config_Dataclass
 import tkinter as tk
 

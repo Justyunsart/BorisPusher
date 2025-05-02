@@ -1,6 +1,6 @@
 import os
 from definitions import FOLDER_INPUTS, NAME_INPUTS, DIR_ROOT
-from funcs import check_subdirs
+from files.funcs import check_subdirs
 
 """
 Helper functions involving the creation of known directories (like the inputs folder).

@@ -19,7 +19,7 @@ from magpylib import Collection
 from magpylib.current import Circle
 import pandas as pd
 import os
-from PusherClasses import UniqueFileName
+from files.PusherClasses import UniqueFileName
 from Gui_tkinter.funcs.GuiEntryHelpers import *
 from ast import literal_eval
 
@@ -291,9 +291,12 @@ class EntryTable():
         for row in reversed(range(1, numRows)):
             for widget in self.frame1.grid_slaves(row=row):
                 widget.destroy()
-        #self.entries = []
+                #print(f"row destroyed")
+        self.entries = []
         self.widgets = []
+        #print(f"before clear: {self.instances}")
         self.instances.clear()
+        #print(f"after clear: {self.instances}")
 
     def SetRows(self, list):
         '''
@@ -302,9 +305,10 @@ class EntryTable():
         '''
         #print(self.instances)
 
-        #if self.frame1.grid_size()[1] > 1:
-        #    #print("clearing table")
-        #    self.ClearTable()
+        if self.frame1.grid_size()[1] > 1:
+            #print("clearing table")
+            self.ClearTable()
+        #print(self.instances)
         if list is not None:
             """
             A list being provided = read rows to be initialized and added to instances.
@@ -613,7 +617,7 @@ class CurrentEntryTable(EntryTable):
     (param: ) DIR: the path to the dir containing all the saved config files of the desired dataclass.
     '''
 
-    def __init__(self, master, dataclass, graphFrame, defaults, DIR, graph_toolbar = False):
+    def __init__(self, master, dataclass, graphFrame, DIR, graph_toolbar = False):
         self.collection = Collection() # magpy object for visualization
         self.rotations = [] # container to store coil rotation info.
         # self.lim: the max. offset of the coil in the entry table.
@@ -622,7 +626,6 @@ class CurrentEntryTable(EntryTable):
         #self.instances = [] # references to the instantiated dataclasses (rows).
         self.defaultFileName = "Coil"
         self.DIR = DIR
-        self.DIR_coilDefs = defaults
 
         super().__init__(master, dataclass)
         self.dirWidget = FileDropdown(master=self.frame0, dir=DIR, default=self._Create_Default_File)
@@ -739,6 +742,25 @@ class CurrentEntryTable(EntryTable):
         self.NewEntry()
         self.GraphCoils()
 
+    def Finalize_Reading(self, coils):
+        """
+        The final steps of reading information.
+        Sets the rows of the table to the provided values and updates the graph.
+        """
+        # The dataclass instances will be added to self.instances after getting processed by self.SetRows().
+        #print(self.instances)
+        self.SetRows(coils)
+
+        # used for graphing alongside an axis.
+        coord = abs(np.array([coils[0].PosX.get(),coils[0].PosY.get(),coils[0].PosZ.get()], dtype=float))
+        self.axis = GetAxis(coord)
+        self.setLim(coord[self.axis])
+
+        # after everything is done, you can graph coils.
+        self.GraphCoils()
+        return True
+        
+
     def Read_Data(self, dir=None):
         """
         Expands the Read_Data method of its parent because of the (specialized) requirement
@@ -755,23 +777,8 @@ class CurrentEntryTable(EntryTable):
             coil = self.data(self.frame1, *row)
             coils.append(coil)
 
-        # The dataclass instances will be added to self.instances after getting processed by self.SetRows().
-        self.SetRows(coils)
-
-        # used for graphing alongside an axis.
-        coord = abs(np.array([coils[0].PosX.get(),coils[0].PosY.get(),coils[0].PosZ.get()], dtype=float))
-        self.axis = GetAxis(coord)
-        self.setLim(coord[self.axis])
-
-        # after everything is done, you can graph coils.
-        self.GraphCoils()
+        self.Finalize_Reading(coils)
         return True
-
-    def SetRows(self, list):
-        doGraph = super().SetRows(list)
-        #print(self.instances)
-        #print(f"EntryTable.CurrentGuiClasses.SetRows: self.entries is now {self.entries}")
-        self.GraphCoils if doGraph else None
     
     def GetData(self):
         value = self.collection
@@ -802,6 +809,38 @@ class CurrentEntryTable(EntryTable):
         self.Read_Data()
         self._SetSaveEntry(self.dirWidget.fileName.get())
 
+    
+    def Create_From_Preset(self, preset):
+        """
+        Say that there are predefined configurations that need to be loaded at
+        the press of a button (eg. mirror, hexahedron shapes).
+        These presets' information is stored internally as classes that return a list of
+        container classes.
+
+        This function parses this output, then does everything needed for file creation and reading.
+        
+        It's important that the container classes in the preset callable has the same order of params
+        as the dataclass used in the table!!
+
+        To see an example of how presets are written, look at settings.defaults.coils.py.
+        """
+        # parse the preset callable output
+        info = preset.config # list of dataclass values
+        parsed = []
+        for row in info:
+            # MAKE SURE THE PRESETS HAVE THE SAME ORDER OF INSTANCE ATTRIBUTES AS THE DATACLASS CONSTRUCTOR!!
+            row_values = list(row.__dict__.values()) # all the instance attributes as a list.
+            # the row_values list is passed as positional arguments.
+            parsed.append(self.data(self.frame1, *row_values))
+        self.Finalize_Reading(parsed)
+
+        # get a unique filename (numbered if duplicates exist)
+        name = UniqueFileName(DIR=self.dirWidget.dir, fileName=preset.name)
+        self._SetSaveEntry(name)
+        self.SaveData(dir=self.dirWidget.dir)
+        return True
+
+    """
     def Create_Mirror(self, fileName:str, templateName:str):
         '''
         1. create a new file to work with
@@ -818,6 +857,7 @@ class CurrentEntryTable(EntryTable):
         
         # 2. Create and populate the file.
         self._NewFile(dir=self.dirWidget.dir, name=name, data=DIR_mirror)
+    """
     
     def Refresh(self):
         super().Refresh()

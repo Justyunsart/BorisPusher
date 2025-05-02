@@ -4,7 +4,6 @@
 # Andrew Egly, Yoon Roh, Bob Terry                                       #
 ##########################################################################
 
-from scipy.spatial.transform import Rotation as R
 # parallelization
 from concurrent.futures import ThreadPoolExecutor #multithreading
 from concurrent.futures import ProcessPoolExecutor #multiprocessing

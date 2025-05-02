@@ -270,7 +270,7 @@ class LabeledEntry():
 class OnlyNumEntry(tk.Entry):
     # normal look of the entry widget.
     normal_style = {"highlightcolor":Drapion.Entry_Table_Cell_Highlight.value,
-                    "highlightbackground":"systemWindowBackgroundColor"}
+                    "highlightbackground":Drapion.Transparent_Highlight_Bg.value}
     
     # applied whenever there is a problem to notify the user abt. 
     warning_style = {"highlightcolor":Drapion.Warning_Highlight.value,
