@@ -1,5 +1,5 @@
 import tkinter as tk
-from ScrollableFrame import ScrollableFrame
+from Gui_tkinter.widgets.ScrollableFrame import ScrollableFrame
 
 """
 Window that pops up when the corresponding

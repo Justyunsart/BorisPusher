@@ -31,4 +31,7 @@ if __name__ == "__main__":
     OpenGUI()
     
     
-          
+"""
+packages:
+configparser-7.2.0
+"""

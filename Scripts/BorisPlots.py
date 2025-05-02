@@ -21,11 +21,10 @@ from mpl_toolkits.mplot3d import Axes3D
 import plotly.graph_objects as go
 
 from MakeCurrent import current as c
-from GuiEntryHelpers import tryEval
+from Gui_tkinter.funcs.GuiEntryHelpers import tryEval
 
 from math import pi, cos, sin
 
-from BorisAnalysis import CalculateLoss
 
 #=============#
 # 3D PLOTTING #
