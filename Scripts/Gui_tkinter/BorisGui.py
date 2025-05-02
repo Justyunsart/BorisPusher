@@ -292,6 +292,8 @@ def OpenGUI():
     calc_frame3.pack(side="top", fill="both", expand=True)
     calc_frame1_scroll._InternalPack()
     calc_frame3_scroll._InternalPack()
+    Main.scrollables.append(calc_frame1_scroll)
+    Main.scrollables.append(calc_frame3_scroll)
 
 
     calc_title_LFrame.pack(fill="x", side="top", expand=True)

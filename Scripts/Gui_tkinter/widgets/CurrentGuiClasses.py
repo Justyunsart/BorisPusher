@@ -643,7 +643,7 @@ class CurrentEntryTable(EntryTable):
         self.frame2 = graphFrame
         #self.frame2.grid(row=1, column=0)
 
-        self.fig = plt.figure(figsize=(0.5, 0.5))
+        self.fig = plt.figure(figsize=(2.5, 2.5))
         self.plot = self.fig.add_subplot(1,1,1, projection="3d")
         
         self.canvas = FigureCanvasTkAgg(self.fig,

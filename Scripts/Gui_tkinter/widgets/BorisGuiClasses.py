@@ -41,7 +41,17 @@ class MainWindow(tk.Frame):
         super().__init__(**kwargs)
         self.winSize_x = self.winfo_screenwidth()
         self.winSize_y = self.winfo_screenheight()
-    
+        self.scrollables = []
+
+    def update(self, **kwargs):
+        """
+        reregisters its scrolling area.
+        """
+        #print("should update scroll")
+        self.master.update()
+        for s in self.scrollables:
+            s.RegisterScrollArea()
+
 
     #=============#
     # CONFIG INIT #

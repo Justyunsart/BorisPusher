@@ -17,7 +17,7 @@ class Bob_e_Circle_Config(tk.Frame):
     """
     (param: ) root: the base tk.Tk object for the tkinter app.
     """
-    def __init__(self, root:tk.Tk, defaults, dir, **kwargs):
+    def __init__(self, root:tk.Tk, dir, **kwargs):
         self.root = root
         super().__init__(root, **kwargs)
 
@@ -30,7 +30,6 @@ class Bob_e_Circle_Config(tk.Frame):
         self.entry_table = CurrentEntryTable(master=self.table_frame,
                                              dataclass=Bob_e_Config_Dataclass,
                                              graphFrame=self.graph_frame,
-                                             defaults=defaults,
                                              DIR=dir)
 
         # packing step

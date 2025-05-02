@@ -246,11 +246,11 @@ def borisPush(id:int):
             print(f"boris calc * {time} for particle {id}")
             print("total time: ", ft, dt, Ef, Bf)
 
-            Bmag = np.linalg.norm(Bf)
-            curr_gyrofreq = (charge * Bmag)/mass #rads/sec
-            curr_time = 2 * np.pi / curr_gyrofreq
+            #Bmag = np.linalg.norm(Bf)
+            #curr_gyrofreq = (charge * Bmag)/mass #rads/sec
+            #curr_time = 2 * np.pi / curr_gyrofreq
         
-            dt = curr_time/100
+            #dt = curr_time/100
 
         if np.absolute(max(x.min(), x.max(), key=abs)) > side:
             out = out[out != np.array(None)]

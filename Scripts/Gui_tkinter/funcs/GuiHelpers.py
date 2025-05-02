@@ -122,7 +122,7 @@ def CalculateCallback(params:list, DIR_last:str):
         'coils' : data['coils'],
         'B-Field' : data['B_Methods'],
         'E-Field' : data['E_Methods'].GetData(),
-        'particles':data["<class 'GuiEntryHelpers.file_particle'>"],
+        'particles':data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"],
         "Coil File" : data["Coil File"]
         }
     #print(toProgram)

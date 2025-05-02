@@ -1,7 +1,7 @@
 # Global classes and structures that many scripts rely on.
 # Made to streamline coupling
 
-from definitions import DIR_ROOT, NAME_INPUTS, NAME_COILS
+from definitions import DIR_ROOT, NAME_INPUTS, NAME_COILS, NAME_OUTPUTS
 from dataclasses import dataclass, asdict
 from magpylib import Collection
 import numpy as np
@@ -27,7 +27,7 @@ Default name: "boris_nsteps_nsecs_nparticles"
     return the name
 '''
 def CreateOutDir(numsteps, numtime, numparts):
-    global outd
+    outd = os.path.join(DIR_ROOT, NAME_OUTPUTS)
     dName = "boris_" + str(numsteps) + "_" + str(numtime) + "_" + str(numparts)  
     path = os.path.join(outd, dName)
     

@@ -3,6 +3,7 @@ All the logic that goes inside the FieldMethods.py's enums themselves.
 I decided that having all the implementations in one place makes it easy to add more methods in the future.
 It's also easier to debug and change parameters globally when testing different functionalities. 
 """
+import os
 from Gui_tkinter.funcs.GuiEntryHelpers import LabeledEntry
 from Alg.polarSpace import toCyl
 import tkinter as tk
@@ -13,7 +14,7 @@ from magpylib.current import Circle
 from scipy.spatial.transform import Rotation as R
 from matplotlib import pyplot as plt
 from Gui_tkinter.widgets.Bob_e_Circle_Config import Bob_e_Circle_Config
-
+from definitions import DIR_ROOT, NAME_BOB_E_CHARGES
 ##############
 # BASE CLASS #
 ##############
@@ -51,6 +52,9 @@ class field_impl():
     widgets = []
     frame1:tk.Frame = None
     widget_frames = []
+
+    def __init__(self, main):
+        self.add_listener(main)
     # Some observer methods to handle basic event handling
     def add_listener(self, listener):
         if listener not in self.listeners:
@@ -62,10 +66,12 @@ class field_impl():
     def ShowWidget(self):
         for frame in self.widget_frames:
             frame.grid()
+            self.trigger_listener()
         #self.frame1.grid()
     def HideWidget(self):
         for frame in self.widget_frames:
             frame.grid_remove()
+            self.trigger_listener()
         #self.frame1.grid_remove()
         
 
@@ -77,6 +83,7 @@ Houses instances of the field_impl class for each field method.
 """
 class Fw_widget(field_impl):
     def __init__(self, frame, main=None):
+        super().__init__(main)
         self.root = main
         self.frame1 = tk.Frame(frame)
         self.widget_frames = [self.frame1]
@@ -91,6 +98,7 @@ class Fw_widget(field_impl):
 
 class Zero_widget(field_impl):
     def __init__(self, frame, main=None):
+        super().__init__(main)
         self.root = main
         self.frame1 = tk.Frame(frame)
         self.frame1.grid(row=2, column=0)
@@ -102,6 +110,7 @@ class Zero_widget(field_impl):
 
 class Bob_e_widget(field_impl):
     def __init__(self, frame, main=None):
+        super().__init__(main)
         self.root = main
         # To make the graph function only work with the provided button, flag it to not update.
         self.autoUpdate = False
@@ -124,8 +133,7 @@ class Bob_e_widget(field_impl):
 
         # Coil Config
         self.table = Bob_e_Circle_Config(self.frame2,
-                                         defaults=self.root.prefs.DIR_BobDefs,
-                                         dir=self.root.prefs.DIR_Bob)
+                                         dir=os.path.join(DIR_ROOT, NAME_BOB_E_CHARGES))
         self.widgets = [self.table, self.res]
         self.table.grid(row=0)
 
