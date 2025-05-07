@@ -7,12 +7,9 @@ import os
 from Gui_tkinter.funcs.GuiEntryHelpers import LabeledEntry
 from Alg.polarSpace import toCyl
 import tkinter as tk
-from tkinter import ttk
 import numpy as np
 import concurrent.futures
 from magpylib.current import Circle
-from scipy.spatial.transform import Rotation as R
-from matplotlib import pyplot as plt
 from Gui_tkinter.widgets.Bob_e_Circle_Config import Bob_e_Circle_Config
 from definitions import DIR_ROOT, NAME_BOB_E_CHARGES, NAME_INPUTS
 ##############

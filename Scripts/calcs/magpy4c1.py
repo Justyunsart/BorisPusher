@@ -241,16 +241,15 @@ def borisPush(id:int):
         we are aiming for 100 steps per gyration, so we find the
         so we find the time it takes for 1 gyration at the particle's B and divide it by 100
         """
+        #Bmag = np.linalg.norm(Bf)
+        #curr_gyrofreq = (charge * Bmag)/mass #rads/sec
+        #curr_time = 2 * np.pi / curr_gyrofreq
+    
+        #dt = curr_time/100
 
         if time % 1000 == 0:
             print(f"boris calc * {time} for particle {id}")
             print("total time: ", ft, dt, Ef, Bf)
-
-            #Bmag = np.linalg.norm(Bf)
-            #curr_gyrofreq = (charge * Bmag)/mass #rads/sec
-            #curr_time = 2 * np.pi / curr_gyrofreq
-        
-            #dt = curr_time/100
 
         if np.absolute(max(x.min(), x.max(), key=abs)) > side:
             out = out[out != np.array(None)]

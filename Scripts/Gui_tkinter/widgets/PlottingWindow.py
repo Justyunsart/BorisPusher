@@ -8,6 +8,7 @@ from magpylib.current import Circle
 from pathlib import Path
 import os
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,6 +18,7 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
 from Gui_tkinter.funcs.GuiEntryHelpers import (JSON_to_Df, tryEval, CSV_to_Df)
 import pandas as pd
 from calcs.BorisAnalysis import *
+from settings.notifs import Popup_Notifs, Title_Notif
 
 """
 the following r settings and callables that the classes will implement.
@@ -495,7 +497,9 @@ class PlottingWindowObj(tk.Frame):
                 self.c = self.File_to_Collection(path) # reconstructs the magpylib collection object that was used.
                 #print(f"collection creaiton passed")
                 #print(self.df)
-        except SyntaxError:
+            else:
+                print(f"Path {path} does not exist.")
+        except:
             print(f"Plottingwindow.PlottingWindowObj.read_dataframe: provided path does not meet the requirements of being a .json file in the table orientation, or the provided collection is")
         
         self.update_all_graphs()
@@ -505,14 +509,18 @@ class PlottingWindowObj(tk.Frame):
          1. locate the coils file, assuming that path is the dir. to the json.
          2. return the coils as a magpy collection object.
         """
+        c = mp.Collection()
         proot = str(Path(path).parents[0]) # boris_<nsteps>_<simtime>_<nparts>
         #print(f"{path}, {root}")
         coilpath = os.path.join(proot, "coils.txt") # boris_<nsteps>_<simtime>_<nparts>/coils.txt
-        print(coilpath)
-        df=None
         
+        # in case the output folder does not have a coils.txt file.
+        if(not os.path.exists(coilpath)):
+            messagebox.showwarning(Title_Notif.warning, Popup_Notifs.err_plot_missing_coil)
+            return c # return an empty collection 
+
+        df=None
         # store coils and rotations separately, so that we can apply the rotations afterwards
-        c = mp.Collection()
         df = CSV_to_Df(coilpath, converters={"Amp":tryEval, "RotationAngle":tryEval, "RotationAxis":tryEval}, isNum=False, header=0)
         #print(df)
         for i, row in df.iterrows():

@@ -11,19 +11,14 @@ from math import copysign
 from matplotlib import pyplot as plt
 from settings.fields.FieldMethods import *
 from settings.fields.FieldMethods_Impl import *
-from Gui_tkinter.widgets.ScrollableFrame import ScrollableFrame
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 # file stuff
 from PrefFile import PrefFile
-from pathlib import Path
-import os
-import pickle
-import ast
 import numpy as np
 
 # presets
-from settings.defaults.coils import (preset_hexahedron, preset_mirror)
+from settings.defaults.coils import (preset_hexahedron, preset_mirror, preset_cusp)
 
 class MainWindow(tk.Frame):
     '''
@@ -328,9 +323,14 @@ class CoilButtons():
                                     text="Mirror")
         self.Mirror.grid(row=0, column=1, sticky="W", padx=5, pady=5)
 
+        self.Cusp = tk.Button(master=configFrames,
+                                    text="Cusp")
+        self.Cusp.grid(row=0, column=2, sticky="W", padx=5, pady=5)
+
         ### Button function calls
         self.hexahedron.config(command=partial(self.table.Create_From_Preset, preset_hexahedron))
         self.Mirror.config(command=partial(self.table.Create_From_Preset, preset_mirror))
+        self.Cusp.config(command=partial(self.table.Create_From_Preset, preset_cusp))
 
         ## PARAMS
         ### checkbox that ensures that the coil is symmetric about origin
@@ -785,8 +785,6 @@ class FieldCoord_n_Graph():
         for k, v in params.items():
             self._checkInstance(self.table.chosenVal.get()).Set(k, v)
         return True
-
-
 
 def _Try_Float(list):
 
