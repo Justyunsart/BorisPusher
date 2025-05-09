@@ -22,6 +22,8 @@ import os
 from files.PusherClasses import UniqueFileName
 from Gui_tkinter.funcs.GuiEntryHelpers import *
 from ast import literal_eval
+from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
+from system.temp_file_names import manager_1, m1f1
 
 class EntryTable():
     '''
@@ -710,7 +712,13 @@ class CurrentEntryTable(EntryTable):
         self.plot.get_legend().remove()
         self.fig.tight_layout()
         self.canvas.draw()
+        self._updateTempFile()
         return True
+
+    def _updateTempFile(self):
+        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        d["coils"] = self.collection
+        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
     def EntryValidateCallback(self, entry):
         '''
@@ -719,6 +727,7 @@ class CurrentEntryTable(EntryTable):
         #print(self.data)
         #print(f"CurrentGuiClasses.CurrentEntryTable.EntryValidateCallback: self.entries is: {self.entries}")
         self.GraphCoils() if super().EntryValidateCallback(entry) else None
+        
         return True
     
     # Will not be used anymore, once the class moves to storing values via dataclass instances instead of a dict.

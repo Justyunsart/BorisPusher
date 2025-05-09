@@ -1,12 +1,6 @@
-# Global classes and structures that many scripts rely on.
-# Made to streamline coupling
-
 from definitions import DIR_ROOT, NAME_INPUTS, NAME_COILS, NAME_OUTPUTS
 from dataclasses import dataclass, asdict
-from magpylib import Collection
 import numpy as np
-
-from math import pi, cos, sin
 
 import pandas as pd
 import shutil
@@ -58,7 +52,6 @@ def InitializeAoSDf(AoS:np.ndarray):
 
     return dfo
 
-import csv
 def CreateOutput(inp, sim_time, num_points, num_parts, part, bf, ef, c, diags):
 
     # MAKE NEW FILE FOR EACH PARTICLE

@@ -1,0 +1,5 @@
+# What the heck is this for
+containers for runtime information. We need a centralized location for stuff like temporary files/dirs so that we can properly create and destroy them.
+
+This is important because GUI widgets are oftentimes not completely independent from each other. If left unchecked, this can result in a nasty web of coupling.
+Having widgets store and update this kind of information in an external file like so makes widgets less messy.

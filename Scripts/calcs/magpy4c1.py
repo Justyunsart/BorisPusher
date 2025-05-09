@@ -28,6 +28,14 @@ from settings.fields.FieldMethods_Impl import (bob_e_impl)
 # Linalg stuff
 from Alg.polarSpace import toCart, toCyl
 
+# Constants
+from Scripts.settings.constants import proton
+
+from calcs.bob_dt import bob_dt_step
+
+from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict
+from system.temp_file_names import m1f1
+
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
 
@@ -154,8 +162,8 @@ def borisPush(id:int):
     #print(f'magpy4c1.borisPush: side is: {side}')
     
     ## Mass and Charge are hard coded to be protons right now
-    mass = 1.67e-27 #kg
-    charge = 1.602e-19 #coulumb
+    mass = proton.mass # kg
+    charge = proton.q #coulumb
 
     vAc = 1
 
@@ -190,11 +198,6 @@ def borisPush(id:int):
                             ez = 0,
                             id = id,
                             step = 0)
-
-
-    #E = np.array([-9.5e5, 0., 0])
-    #Ef = np.array([0, 0., 0])
-    #Bf = np.array([0., 0., 1])
 
     # Step 2: do the actual boris logic
     for time in range(1, num_points + 1): # time: step number
@@ -246,7 +249,10 @@ def borisPush(id:int):
         #curr_time = 2 * np.pi / curr_gyrofreq
     
         #dt = curr_time/100
-
+        if fromTemp['dt_bob'] == 1 and time % 50 == 0:
+            _dt = dt
+            dt = bob_dt_step(Bp=Bf, B0_mag=fromTemp['bob_dt_B0']['B_mag'], dt0=fromTemp['bob_dt_dt0'], min=fromTemp['bob_dt_min'], max=fromTemp["bob_dt_max"])
+            print(f"dt changed to: {dt} from: {_dt}")
         if time % 1000 == 0:
             print(f"boris calc * {time} for particle {id}")
             print("total time: ", ft, dt, Ef, Bf)
@@ -264,8 +270,23 @@ def borisPush(id:int):
     }
     return out, diags
 
-def init_process(data, n1, n2, t, t1, Bf, Ef, coils):
-    global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args, c, c_cnr
+
+from multiprocessing import Manager
+fromTemp = None
+
+def create_shared_info():
+    manager = Manager()
+    shared = manager.dict()
+
+    shared.update(read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1]))
+    return shared
+
+def init_process(data, n1, n2, t, t1, Bf, Ef, coils, _fromTemp):
+    global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args, c, c_cnr, fromTemp
+    global fromTemp
+    
+    fromTemp = _fromTemp
+    
     df = data
     num_parts = n1
     num_points = n2
@@ -302,10 +323,11 @@ def runsim(fromGui:dict):
     Ef = fromGui['E-Field']
     coils = fromGui['coils']
     coilName = fromGui["Coil File"]
+    _fromTemp = create_shared_info()
 
-    init_process(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils)
+    init_process(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils, _fromTemp)
     values = range(numPa)
-    with ProcessPoolExecutor(initializer=init_process, initargs=(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils)) as executor:
+    with ProcessPoolExecutor(initializer=init_process, initargs=(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils, _fromTemp)) as executor:
         futures = executor.map(borisPush, values)
 
     out = []

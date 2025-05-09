@@ -3,7 +3,9 @@ import tkinter as tk
 import settings.palettes as p
 from functools import partial
 import os
+from events.events import Events # omg why did I name things like this
 import settings.fields.FieldMethods as fm
+from Gui_tkinter.widgets.dt_np import TimeStep_n_NumStep
 from Gui_tkinter.funcs.GuiHelpers import *
 from Gui_tkinter.widgets.CurrentGuiClasses import *
 from Gui_tkinter.widgets.BorisGuiClasses import *
@@ -12,7 +14,7 @@ from Gui_tkinter.widgets.PlottingWindow import PlottingWindowObj, on_main_notebo
 from definitions import (DIR_ROOT, NAME_INPUTS, NAME_COILS, NAME_PARTICLES, NAME_BOB_E_CHARGES, NAME_lastUsed, NAME_OUTPUTS)
 
 # events
-from events.on_start import on_start
+#from events.on_start import on_start
 
 """
 This script is directly called when running main.py - the function OpenGUI() defined below assembles the tkinter GUI and runs its mainloop.
@@ -24,7 +26,8 @@ def OpenGUI():
     This is the main hub for the GUI, with many helper files providing classes and functions.
     '''
     # Initialization checks. Run them.
-    on_start()
+    Events.ON_START.value.invoke()
+    Events.PRE_INIT_GUI.value.invoke()
 
     # Application Window
     root = tk.Tk()
@@ -277,7 +280,8 @@ def OpenGUI():
                                     y_label="Y (A)")
 
     ## Timestep stuff..
-    time_info = TimeStep_n_NumStep(CalcTimeStepFrame, coil_config.table)
+    time_info = TimeStep_n_NumStep(CalcTimeStepFrame)
+    calc_frame1_scroll._add_Subscriber(time_info)
 
     #=======#
     # FINAL #
@@ -333,6 +337,7 @@ def OpenGUI():
     FillWidgets(subs["params"], DIR_lastUsed)
 
     def on_close():
+        Events.ON_CLOSE.value.invoke()
         root.quit()
         root.destroy()
     root.protocol("WM_DELETE_WINDOW", on_close)

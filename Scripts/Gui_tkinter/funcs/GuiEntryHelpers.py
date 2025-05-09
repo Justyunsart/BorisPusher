@@ -1,4 +1,4 @@
-from Observer import Data
+from system.Observer import Data
 import tkinter as tk
 from tkinter import ttk
 from dataclasses import dataclass, field

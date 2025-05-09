@@ -499,7 +499,7 @@ class PlottingWindowObj(tk.Frame):
                 #print(self.df)
             else:
                 print(f"Path {path} does not exist.")
-        except:
+        except ValueError:
             print(f"Plottingwindow.PlottingWindowObj.read_dataframe: provided path does not meet the requirements of being a .json file in the table orientation, or the provided collection is")
         
         self.update_all_graphs()
@@ -522,7 +522,7 @@ class PlottingWindowObj(tk.Frame):
         df=None
         # store coils and rotations separately, so that we can apply the rotations afterwards
         df = CSV_to_Df(coilpath, converters={"Amp":tryEval, "RotationAngle":tryEval, "RotationAxis":tryEval}, isNum=False, header=0)
-        #print(df)
+        print(df)
         for i, row in df.iterrows():
             row = row.tolist()
             position = [float(row[0]), float(row[1]), float(row[2])]
@@ -536,10 +536,10 @@ class PlottingWindowObj(tk.Frame):
                     coil.rotate_from_angax(row[5], row[6])
                 case list():
                     for i in range(len(row[5])):
-                        coil.rotate_from_angax(row[5][i], row[6][i])
+                        coil.rotate_from_angax(float(row[5][i]), row[6][i])
             
             c.add(coil)
-        #print(c)
+       #print(c)
         return c
 
     def set_active(self):

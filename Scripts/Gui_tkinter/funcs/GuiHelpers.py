@@ -8,6 +8,9 @@ import pandas as pd
 import csv
 
 from calcs.magpy4c1 import runsim
+from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
+from system.temp_file_names import manager_1, m1f1
+from events.events import Events
 
 
 '''
@@ -115,6 +118,7 @@ def CalculateCallback(params:list, DIR_last:str):
     When the calculate button is pressed, the GUI passes key information to
     the backend and starts the simulation.
     '''
+    Events.PRE_CALC.value.invoke()
     data = GatherParams(params)
     toProgram = {
         'numsteps' : data['numsteps'],
@@ -154,6 +158,11 @@ def GatherParams(params:list):
         #print("data updated to: ", data)
     return data
 
+def updateTempFile(updates):
+        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        d.update(updates)
+        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+
 def FillWidgets(p:list, path:str):
     """
     takes a dictionary of parameter values, and fills the windows' widgets with their values.
@@ -175,6 +184,8 @@ def FillWidgets(p:list, path:str):
             for i in range(len(keys)):
                 values[keys[i]] = vals[i]
         #print(values)
+        # update tempfile
+        updateTempFile(values)
 
         fieldWidgets = {
             'numsteps' : p[0],
