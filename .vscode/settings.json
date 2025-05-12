@@ -1,5 +1,22 @@
 {
     "files.exclude": {
         "**/Outputs": true
-    }
+    },
+    "python.analysis.include": [
+        "${workspaceFolder}\\Scripts",
+        "${workspaceFolder}"
+    ],
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}",
+        "${workspaceFolder}\\Scripts"
+    ],
+    "terminal.integrated.env.windows": {
+    "PYTHONPATH": "${workspaceFolder}",
+  },
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}"
+  },
+  "terminal.integrated.env.osx": {
+    "PYTHONPATH": "${workspaceFolder}"
+  }
 }
