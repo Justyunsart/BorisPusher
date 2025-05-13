@@ -1,0 +1,20 @@
+add a kill button on top level to stop program execution
+using configuration-save buttons (calculate) are clicked,
+    provide an indication, e.g., change button color briefly for save duration
+changing the coil currents, change them all w/ same value (except +- signs),
+    single one is reset by deleting/re-adding it
+adding a new row (in calculate), use the same values as in the previous line
+saving the 3D trajectory (plot), capture the 3 V's, and coil current
+
+single particle, or multiparticles, multithreaded parallelized w/ ipython?
+    does importing multiprocessing or threading help? try it?
+        https://www.geeksforgeeks.org/parallel-processing-in-python/
+doesnt seem to plot second particle on 3D graph
+release Tkinter window during run
+show a plot of delta_t during run, if selected as option in calculate panel
+on the 3-D trajectory plot use default isometric angle perspectives to improve response
+is there a way to indicate exit point in 3D
+use bigger font size on windows (plot)
+
+what happened to the total energy, or velocity magnitude plot diagnostics?
+when adding a second particle use a different color map, maybe green to red?
