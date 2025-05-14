@@ -3,6 +3,8 @@ add a kill button on top level to stop program execution
 release Tkinter window during run
 using configuration-save buttons (in calculate mode),
      when clicked provide an indication, e.g., change button color briefly for save duration
+The "Inputs" directory in Git should contain run-guaranteed settings
+Another ~user/"Inputs" directory would take custom run settings
 
 CALCULATE WINDOW
 changing the coil currents, change them all w/ same value (except +- signs),
