@@ -12,6 +12,7 @@ from matplotlib import pyplot as plt
 from settings.fields.FieldMethods import *
 from settings.fields.FieldMethods_Impl import *
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from definitions import DIR_INPUTS_COILS, DIR_INPUTS_PARTICLES
 
 # file stuff
 from PrefFile import PrefFile
@@ -78,19 +79,36 @@ class ParticlePreview(EntryTable):
     '''
     An entrytable for viewing and editing particle initial condition csvs.
     '''
-    def __init__(self, master, fileWidget, dataclass=file_particle):
-        self.fileWidget = fileWidget
-        # add this class as a listener to the data changes.
-        fileWidget.PATH.attach(self)
-
+    def __init__(self, master, dataclass=file_particle):
         super().__init__(master, dataclass)
+        self.fileWidget = FileDropdown(self.frame0, dir=DIR_INPUTS_PARTICLES, default=self.create_default_input_file)
+        self.fileWidget.grid(row=0, column=0, sticky="nsew")
+        # add this class as a listener to the data changes.
+        self.fileWidget.PATH.attach(self)
         
         self.saveButton.configure(command=partial(self.SaveData, self.fileWidget.dir))
 
         #self.Read_Data()
         #self._SetSaveEntry(self.fileWidget.fileName.get())
         self.update()
-    
+
+    """
+    Called when self.fileWidget sees that its dir does not contain any files.
+    Instantiates a file that contains default params.
+    """
+    def create_default_input_file(self):
+        # print(f"new file creation attempt")
+        default_dataclass = self.data(self.frame1)  # construct dataclass with default parameters
+        df = default_dataclass.get_dict(
+            to_csv=True)  # we need to format this dict. so that rotations and angles are lists.
+        # print(df)
+        df = pd.DataFrame.from_dict(df)
+        # print(df)
+
+        def_name = "Default_Particle"
+        self._SetSaveEntry(def_name)
+        df.to_csv(os.path.join(DIR_INPUTS_PARTICLES, def_name), index=False)
+
     def EntryValidateCallback(self, entry):
         #print(f"BorisGuiClasses.ParticlePreview.EntryValidateCallback: self.instances is: {self.instances}")
         return super().EntryValidateCallback(entry)

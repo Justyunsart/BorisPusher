@@ -33,4 +33,10 @@ if __name__ == "__main__":
     
 """
 packages:
+
+tkinter and its dependencies
+
+magpylib 5.1.1:
+    - narwhals 1.39.0
+    - plotly 6.0.1 
 """

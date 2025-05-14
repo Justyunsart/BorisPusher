@@ -221,11 +221,10 @@ def OpenGUI():
     EGraphFrame_for_Buttons.grid(row=0, column=0)
 
     ## Particle condition stuff..
-    Combobox_particle_file = FileDropdown(DropdownFrame,
-                                                    dir=DIR_Particle)
-    Combobox_particle_file.grid(row=0, column=0)
-    particlePreview = ParticlePreview(ParticlePreviewFrame,
-                                    Combobox_particle_file)
+    #Combobox_particle_file = FileDropdown(DropdownFrame,
+    #                                              dir=DIR_Particle)
+    #Combobox_particle_file.grid(row=0, column=0)
+    particlePreview = ParticlePreview(ParticlePreviewFrame)
     calc_frame1_scroll._add_Subscriber(particlePreview) # I do this so that I can run the table's update function when this tab becomes selected.
     
     ## FIELDS!!!!!!

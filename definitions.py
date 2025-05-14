@@ -9,9 +9,6 @@ For settings involving project parameters, look in ().../BorisPusher/Scripts/set
 # SYSTEM INFO
 PLATFORM = sys.platform # win32, linux, or darwin
 
-# DIRECTORIES
-DIR_ROOT = os.path.dirname(os.path.abspath(__file__)) # project root (BorisPusher/)
-
 # FILE/FOLDER NAMES
 NAME_INPUTS = "Inputs"
 NAME_COILS = "CoilConfigurations"
@@ -20,6 +17,13 @@ NAME_BOB_E_CHARGES = "Bobs"
 NAME_lastUsed = "lastUsed" # a text file holding the last used configs.
 
 NAME_OUTPUTS = "Outputs"
+
+# DIRECTORIES
+DIR_ROOT = os.path.dirname(os.path.abspath(__file__)) # project root (BorisPusher/)
+DIR_INPUTS = os.path.join(DIR_ROOT, NAME_INPUTS)
+DIR_INPUTS_COILS = os.path.join(DIR_INPUTS, NAME_COILS)
+DIR_INPUTS_PARTICLES = os.path.join(DIR_INPUTS, NAME_PARTICLES)
+
 
 # FOLDER STRUCTS
 ## key = subdir, value = list of subsubdir(s)

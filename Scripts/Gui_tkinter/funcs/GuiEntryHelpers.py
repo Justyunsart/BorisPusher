@@ -168,7 +168,7 @@ class FileDropdown(tk.Frame):
 
     PATH:Data #the full path to the file.
 
-    def __init__(self, master, dir, last=0, default=None, **kwargs):
+    def __init__(self, master, dir, last=0, default:callable=None, **kwargs):
         self.master = master # parent frame.
         self.default_name = "New_File"
         self.default_callable = default # function to generate a default file (if the provided DIR is empty.)
@@ -625,11 +625,14 @@ class file_particle:
         for val in self.iterables:
             yield val
     
-    def get_dict(self, csv=False):
+    def get_dict(self, to_csv=False):
         """
         returns all attributes from the self.iterables list as a dictionary.
         The keys are the attribute names, and the values are, their values lol.
         """
-        out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
+        if to_csv:
+            out = {key: [value.get()] for key, value in vars(self).items() if value in self.iterables}
+        else:
+            out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
         return out
     
