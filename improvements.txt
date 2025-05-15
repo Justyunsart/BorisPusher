@@ -3,8 +3,13 @@ add a kill button on top level to stop program execution
 release Tkinter window during run
 using configuration-save buttons (in calculate mode),
      when clicked provide an indication, e.g., change button color briefly for save duration
+in the user home directory maybe use ~/user/PythonData/ for I/O data repository
 The "Inputs" directory in Git should contain run-guaranteed settings
 Another ~user/"Inputs" directory would take custom run settings
+
+
+include a square-shaped coil option, perhaps with angled (isosceles; 45,45,90), or rounded, corners
+add in the new window (indicator) something to display the path and filenames used in the calculation
 
 CALCULATE WINDOW
 changing the coil currents, change them all w/ same value (except +- signs),
@@ -15,7 +20,7 @@ saving the 3D trajectory (plot), capture the 3 V's, and coil current
 PLOTTING
 generally seems too slow for active user interaction
 use bigger font size on windows (plot)
-single particle, or multiparticles, multithreaded parallelized w/ ipython?
+single particle, or multi-particles, multithreaded parallelized w/ ipython?
     does importing multiprocessing or threading help? try it?
         https://www.geeksforgeeks.org/parallel-processing-in-python/
 doesn't seem to plot second particle on 3D graph
