@@ -21,22 +21,24 @@ The dropdown graphs use the function 'Param_v_Step_callable', in which:
 
 """
 from Gui_tkinter.BorisGui import OpenGUI
+from multiprocessing import Manager
 
 if __name__ == "__main__":
     # For whatever reason, instantiating the GUI window HAS to 
     # be encapsulated in a function.
 
     # If I call root.mainloop() here, it gets called when a process
-    # spawns, even when inside the main block. 
-    OpenGUI()
+    # spawns, even when inside the main block.
+    manager = Manager()
+    OpenGUI(manager)
     
     
 """
 packages:
 
 tkinter and its dependencies
-
 magpylib 5.1.1:
     - narwhals 1.39.0
     - plotly 6.0.1 
+configparser 7.2.0
 """

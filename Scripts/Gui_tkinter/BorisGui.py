@@ -7,11 +7,13 @@ from events.events import Events # omg why did I name things like this
 import settings.fields.FieldMethods as fm
 from Gui_tkinter.widgets.dt_np import TimeStep_n_NumStep
 from Gui_tkinter.funcs.GuiHelpers import *
-from Gui_tkinter.widgets.CurrentGuiClasses import *
 from Gui_tkinter.widgets.BorisGuiClasses import *
 from Gui_tkinter.widgets.ScrollableFrame import ScrollableFrame
 from Gui_tkinter.widgets.PlottingWindow import PlottingWindowObj, on_main_notebook_tab_changed
-from definitions import (DIR_ROOT, NAME_INPUTS, NAME_COILS, NAME_PARTICLES, NAME_BOB_E_CHARGES, NAME_lastUsed, NAME_OUTPUTS)
+from definitions import (DIR_ROOT, DIR_CONFIG, NAME_INPUTS, NAME_COILS, NAME_PARTICLES, NAME_BOB_E_CHARGES, NAME_lastUsed, NAME_OUTPUTS)
+import configparser
+from system.Observer import Data
+from system.path import Path
 
 # events
 #from events.on_start import on_start
@@ -19,7 +21,7 @@ from definitions import (DIR_ROOT, NAME_INPUTS, NAME_COILS, NAME_PARTICLES, NAME
 """
 This script is directly called when running main.py - the function OpenGUI() defined below assembles the tkinter GUI and runs its mainloop.
 """
-def OpenGUI():
+def OpenGUI(manager):
     '''
     Testing the code by changing parameters and numsteps and everything became too cumbersone, so I decided to
     bite the bullet and create some GUI for it. 
@@ -47,15 +49,35 @@ def OpenGUI():
 
     """
     DIRECTORY VARIABLES
+    
+    Generally, the structure of this involves an observer class storing the main DIR's value.
+    Subdirs are system.path.Path instances that contain an update() function to appropriately re-initialize
+    its path attribute when the main DIR is updated.
+    
+    Make sure that widgets pass references to these variables.
     """
+    # read config file
+    config = configparser.ConfigParser()
+    config.read(DIR_CONFIG)
+
     # Selected dirs for sims
-    DIR_Inputs = os.path.join(DIR_ROOT, NAME_INPUTS)
-    DIR_Particle = os.path.join(DIR_Inputs, NAME_PARTICLES)
-    DIR_Coil = os.path.join(DIR_Inputs, NAME_COILS)
+    DIR_Inputs = Data('DIR_INPUTS')
+    DIR_Inputs.data = config['Paths']["Inputs"]
+    #print(DIR_Inputs.data)
+
+        # Initial setters
+    DIR_Particle = Path(os.path.join(DIR_Inputs.data, NAME_PARTICLES), NAME_PARTICLES)
+    DIR_Coil = Path(os.path.join(DIR_Inputs.data, NAME_COILS), NAME_COILS)
     #DIR_coilDefs = os.path.join(DIR_Inputs, NAME_COILS)
-    DIR_lastUsed = os.path.join(DIR_Inputs, NAME_lastUsed)
-    DIR_Bob = os.path.join(DIR_Inputs, NAME_BOB_E_CHARGES)
-    DIR_Output = os.path.join(DIR_Inputs, NAME_OUTPUTS)
+    DIR_lastUsed = Path(os.path.join(DIR_Inputs.data, NAME_lastUsed), NAME_lastUsed)
+    DIR_Bob = Path(os.path.join(DIR_Inputs.data, NAME_BOB_E_CHARGES), NAME_BOB_E_CHARGES)
+
+    DIR_Output = Path(os.path.join(DIR_ROOT, NAME_OUTPUTS), NAME_OUTPUTS) # output is not a subdir of Inputs so it's spared from the next step
+
+        # Add to observer class so they update when DIR_Inputs is updated
+    subdirs = [DIR_Particle, DIR_Coil, DIR_lastUsed, DIR_Bob]
+    for subdir in subdirs:
+        DIR_Inputs.attach(subdir)
 
     # PLOT OR CALCULATE?
     """
@@ -224,7 +246,7 @@ def OpenGUI():
     #Combobox_particle_file = FileDropdown(DropdownFrame,
     #                                              dir=DIR_Particle)
     #Combobox_particle_file.grid(row=0, column=0)
-    particlePreview = ParticlePreview(ParticlePreviewFrame)
+    particlePreview = ParticlePreview(ParticlePreviewFrame, dir_observed=DIR_Particle)
     calc_frame1_scroll._add_Subscriber(particlePreview) # I do this so that I can run the table's update function when this tab becomes selected.
     
     ## FIELDS!!!!!!
@@ -332,13 +354,14 @@ def OpenGUI():
     # control what classes to send over to the program by adding it to params
     subs["params"] = [time_info, particlePreview, coil_config, b_field, E_field_graph]
 
-    calc_button.configure(command=partial(CalculateCallback, subs["params"], DIR_lastUsed)) # update calculate button's command after setting up params
+    calc_button.configure(command=partial(CalculateCallback, subs["params"], DIR_lastUsed.path.data, root, manager)) # update calculate button's command after setting up params
     FillWidgets(subs["params"], DIR_lastUsed)
 
     def on_close():
         Events.ON_CLOSE.value.invoke()
         root.quit()
         root.destroy()
+        manager.shutdown()
     root.protocol("WM_DELETE_WINDOW", on_close)
 
     calc_nested_notebook.event_generate("<<NotebookTabChanged>>") # really really really make sure that the active tab's elements are refreshed on start.

@@ -153,6 +153,7 @@ def borisPush(id:int):
             > as of now, this was calculated using the gyroradius formula assuming B = 1T, and the particle is a proton.
     """
     global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args,c # Should be fine in multiprocessing because these values are only read,,,
+    global manager_queue
     assert id <= (num_parts - 1), f"Input parameter 'id' received a value greater than the number of particles, {num_parts}"
     #print(df)
     
@@ -254,6 +255,7 @@ def borisPush(id:int):
             dt = bob_dt_step(Bp=Bf, B0_mag=fromTemp['bob_dt_B0']['B_mag'], dt0=fromTemp['bob_dt_dt0'], min=fromTemp['bob_dt_min'], max=fromTemp["bob_dt_max"])
             print(f"dt changed to: {dt} from: {_dt}")
         if time % 1000 == 0:
+            manager_queue.put(time)
             print(f"boris calc * {time} for particle {id}")
             print("total time: ", ft, dt, Ef, Bf)
 
@@ -281,11 +283,12 @@ def create_shared_info():
     shared.update(read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1]))
     return shared
 
-def init_process(data, n1, n2, t, t1, Bf, Ef, coils, _fromTemp):
+def init_process(data, n1, n2, t, t1, Bf, Ef, coils, _fromTemp, queue):
     global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args, c, c_cnr, fromTemp
-    global fromTemp
+    global fromTemp, manager_queue
     
     fromTemp = _fromTemp
+    manager_queue = queue
     
     df = data
     num_parts = n1
@@ -312,7 +315,7 @@ def init_process(data, n1, n2, t, t1, Bf, Ef, coils, _fromTemp):
 
     #print("data shared: ", data, n1, n2, t)
 
-def runsim(fromGui:dict):
+def runsim(fromGui:dict, manager_queue):
     #print('simulation starting')
     dfIn = pd.DataFrame(fromGui['particles'])
     numPa = dfIn.shape[0]
@@ -325,9 +328,9 @@ def runsim(fromGui:dict):
     coilName = fromGui["Coil File"]
     _fromTemp = create_shared_info()
 
-    init_process(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils, _fromTemp)
+    init_process(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils, _fromTemp, manager_queue)
     values = range(numPa)
-    with ProcessPoolExecutor(initializer=init_process, initargs=(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils, _fromTemp)) as executor:
+    with ProcessPoolExecutor(initializer=init_process, initargs=(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils, _fromTemp, manager_queue)) as executor:
         futures = executor.map(borisPush, values)
 
     out = []

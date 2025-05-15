@@ -12,6 +12,10 @@ from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_
 from system.temp_file_names import manager_1, m1f1
 from events.events import Events
 
+import threading
+from multiprocessing import Manager
+
+from Gui_tkinter.widgets.progress_window import calculate_progress_window
 
 '''
 File explorer for restart files
@@ -113,7 +117,7 @@ def FieldCallback(event, value:ttk.Combobox, xcontainer:Entry, ycontainer:Entry,
 
 # Run the simulation if you press calculate
 
-def CalculateCallback(params:list, DIR_last:str):
+def CalculateCallback(params:list, DIR_last:str, root, manager):
     '''
     When the calculate button is pressed, the GUI passes key information to
     the backend and starts the simulation.
@@ -141,7 +145,13 @@ def CalculateCallback(params:list, DIR_last:str):
 
     Dict_to_CSV(DIR_last, toFile, newline="")
     #print(toFile)
-    runsim(toProgram)
+
+    # a multiprocessing manager wraps the thread that creates the processpool.
+    queue = manager.Queue()
+    progress = calculate_progress_window(root, queue)
+    process_thread = threading.Thread(target=runsim, args=(toProgram, queue,), daemon=True)
+    process_thread.start()
+    progress.poll_queue()
 
 
 def GatherParams(params:list):

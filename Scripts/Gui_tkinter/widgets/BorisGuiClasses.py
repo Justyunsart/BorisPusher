@@ -12,7 +12,9 @@ from matplotlib import pyplot as plt
 from settings.fields.FieldMethods import *
 from settings.fields.FieldMethods_Impl import *
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from definitions import DIR_INPUTS_COILS, DIR_INPUTS_PARTICLES
+#from definitions import DIR_INPUTS_COILS, DIR_INPUTS_PARTICLES
+import configparser
+from definitions import DIR_CONFIG
 
 # file stuff
 from PrefFile import PrefFile
@@ -79,9 +81,9 @@ class ParticlePreview(EntryTable):
     '''
     An entrytable for viewing and editing particle initial condition csvs.
     '''
-    def __init__(self, master, dataclass=file_particle):
+    def __init__(self, master, dataclass=file_particle, dir_observed = None):
         super().__init__(master, dataclass)
-        self.fileWidget = FileDropdown(self.frame0, dir=DIR_INPUTS_PARTICLES, default=self.create_default_input_file)
+        self.fileWidget = FileDropdown(self.frame0, dir=dir_observed, default=self.create_default_input_file)
         self.fileWidget.grid(row=0, column=0, sticky="nsew")
         # add this class as a listener to the data changes.
         self.fileWidget.PATH.attach(self)

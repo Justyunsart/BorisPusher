@@ -20,9 +20,7 @@ NAME_OUTPUTS = "Outputs"
 
 # DIRECTORIES
 DIR_ROOT = os.path.dirname(os.path.abspath(__file__)) # project root (BorisPusher/)
-DIR_INPUTS = os.path.join(DIR_ROOT, NAME_INPUTS)
-DIR_INPUTS_COILS = os.path.join(DIR_INPUTS, NAME_COILS)
-DIR_INPUTS_PARTICLES = os.path.join(DIR_INPUTS, NAME_PARTICLES)
+DIR_CONFIG = os.path.join(DIR_ROOT, "config.ini")
 
 
 # FOLDER STRUCTS

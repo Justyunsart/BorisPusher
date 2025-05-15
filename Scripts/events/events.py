@@ -2,7 +2,7 @@ from enum import Enum
 from functools import partial
 
 from events.funcs import before_simulation_bob_dt
-from files.checks import folder_checks
+from files.checks import folder_checks, ini_checks
 from system.temp_manager import TEMPMANAGER_MANAGER
 import system.temp_file_names as names
 
@@ -48,6 +48,7 @@ to the event's list.
 class Events(Enum):
     # as soon as app is run: checks and big managers
     ON_START = Event([folder_checks, # check dir structure
+                      ini_checks, # create default .ini if it doesn't exist
                       ])
     
     # set up everything needed before widgets can be messed with

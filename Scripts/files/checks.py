@@ -2,11 +2,19 @@ import os
 from definitions import DIR_ROOT, NAME_INPUTS, FOLDER_INPUTS
 from files.create import create_inputs_folder
 from files.funcs import check_subdirs
-
+from settings.configs import create_config
 """
 Functions for checking the validity of file stuff.
 Expect these kinds of checks to run on application startup.
 """
+
+"""
+create the default .ini folder if it does not exist.
+"""
+def ini_checks():
+    if not os.path.exists(os.path.join(DIR_ROOT, 'config.ini')):
+        create_config()
+
 def folder_checks():
     """
     Location of all types of folder checking. Call this to check all necessary folders.

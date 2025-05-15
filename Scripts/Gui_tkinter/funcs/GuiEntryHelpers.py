@@ -163,13 +163,13 @@ class FileDropdown(tk.Frame):
 
     last = index of the last used file. Defaults to 0 unless overridden.
     '''
-    dir:str # path to the folder you want to make its contents a dropdown menu of
     fileName:tk.StringVar
 
     PATH:Data #the full path to the file.
 
     def __init__(self, master, dir, last=0, default:callable=None, **kwargs):
         self.master = master # parent frame.
+        self.last = last
         self.default_name = "New_File"
         self.default_callable = default # function to generate a default file (if the provided DIR is empty.)
 
@@ -182,35 +182,45 @@ class FileDropdown(tk.Frame):
 
         # dropdown tracking vars
         self.dir = dir
+        dir.path.attach(self) # add ref so you know when to call updates.
         self.fileName = tk.StringVar()
         self.PATH = Data('PATH')
 
+        self.update(self.dir.path.data, **kwargs)
+
+        # PACKING
+        self.label.pack(side='left')
+        self.combo_box.pack(side='left')
+
+    """
+    Called when the 'dir' parameter notifies the need for an update.
+    value = the path to read.
+    """
+    def update(self, value, **kwargs):
+        #print(f"Gui_tkinter.funcs.GuiEntryHelpers.FileDropdown.update: {value}")
         # check: make sure the dir exists. if not, create the dir.
-        os.makedirs(dir, exist_ok=True)
+        os.makedirs(value, exist_ok=True)
         self.dir_contents = self._DIR_to_List()
 
         # initialize the combobox
         self.combo_box = ttk.Combobox(master=self, values=self.dir_contents, textvariable=self.fileName, **kwargs)
-        self.combo_box.current(last)
+        self.combo_box.current(self.last)
         self._UpdatePath()
 
         # also add a trace to update all the field variables when it happens
         self.fileName.trace_add("write", self._UpdatePath)
 
-        # PACKING
-        self.label.pack(side='left')
-        self.combo_box.pack(side='left')
-    
+
     def _DIR_to_List(self):
         files = [] # the final output list 
         # filter the dir to get the list of files only.
-        _files = [f for f in os.listdir(self.dir) if os.path.isfile(os.path.join(self.dir, f))]
+        _files = [f for f in os.listdir(self.dir.path.data) if os.path.isfile(os.path.join(self.dir.path.data, f))]
         if len(_files) == 0:
             self.create_default()
-            _files = os.listdir(self.dir)
+            _files = os.listdir(self.dir.path.data)
 
         for file in _files:
-            path = os.path.join(self.dir, file)
+            path = os.path.join(self.dir.path.data, file)
             if os.path.isfile(path):
                 files.append(file)
         return files
@@ -226,11 +236,10 @@ class FileDropdown(tk.Frame):
 
     def _UpdatePath(self, *args):
         '''
-        there's probably a built in way to do this but oh well.
+        callback to update the full path to the edited file.
         '''
         #print("updating path to: ", self.fileName.get())
-        self.PATH.data = os.path.join(self.dir, self.fileName.get())
-
+        self.PATH.data = os.path.join(self.dir.path.data, self.fileName.get())
 
 class LabeledEntry():
     '''
