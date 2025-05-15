@@ -11,6 +11,7 @@ class TempManager_Manager():
         # A WeakValueDictionary makes it so that TempManagers not referenced anywhere else will make it be garbage collected
         self.managers = weakref.WeakValueDictionary() # Key = manager name, Value = manager ref
         self.files = {} # Key = file name, Value = file ref
+        self.imgs = []
 
     """
     Runs a check whether the given weakref has been garbage collected yet.
@@ -56,6 +57,9 @@ class TempManager_Manager():
         for manager in self.managers.valuerefs():
             if self.isActive(manager):
                 manager().delete_all_files()
+        for img in self.imgs:
+            if os.path.exists(img):
+                os.remove(img)
 
     """
     Attempts to tell its child TempManager instance to create a new file.
@@ -96,6 +100,7 @@ class TempManager():
         # call the close function on all stored file values.
         for file in list(self.tmps.values()):
             file.close()
+            os.remove(file.name)
         # reset the self.files dict
         self.tmps = {}
         

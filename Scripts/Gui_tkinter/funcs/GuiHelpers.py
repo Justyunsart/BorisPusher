@@ -16,6 +16,7 @@ import threading
 from multiprocessing import Manager
 
 from Gui_tkinter.widgets.progress_window import calculate_progress_window
+from events.events import Events
 
 '''
 File explorer for restart files
@@ -40,6 +41,7 @@ def PlotFileCallback(name:StringVar, dir):
     First calls browseFiles to prompt user for file.
     Then, FileCallback is called to enable the plot button (which is disabled by default)
     """
+    Events.PRE_PLOT.value.invoke() # run extra event logic (creating the tempfile for plotting)
     browseFiles(name, dir)
 
 def PlotConfirmCallback(name:ttk.Label, root:Tk):

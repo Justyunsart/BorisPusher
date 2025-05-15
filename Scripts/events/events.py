@@ -53,7 +53,9 @@ class Events(Enum):
     
     # set up everything needed before widgets can be messed with
     PRE_INIT_GUI = Event([partial(TEMPMANAGER_MANAGER.add_temp_manager, names.manager_1),
-                          partial(TEMPMANAGER_MANAGER.create_temp_file, names.manager_1, names.m1f1)])
+                          partial(TEMPMANAGER_MANAGER.create_temp_file, names.manager_1, names.m1f1),
+                          partial(TEMPMANAGER_MANAGER.create_temp_file, names.manager_1, names.m1f2), # holds png of trajectory
+                          ])
     
     INIT_GUI = Event([])
 
@@ -63,6 +65,9 @@ class Events(Enum):
 
     # after a sim finishes
     POST_CALC = Event([])
+
+    PRE_PLOT = Event([
+                      ])
 
     # when the program terminates
     ON_CLOSE = Event([TEMPMANAGER_MANAGER.del_all_temp])

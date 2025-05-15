@@ -41,4 +41,5 @@ magpylib 5.1.1:
     - narwhals 1.39.0
     - plotly 6.0.1 
 configparser 7.2.0
+pillow 10.3.0
 """

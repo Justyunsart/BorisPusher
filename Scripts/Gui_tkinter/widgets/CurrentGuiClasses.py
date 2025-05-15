@@ -803,7 +803,7 @@ class CurrentEntryTable(EntryTable):
         
         filename = self.saveEntryVal.get()
         df = pd.DataFrame.from_dict(container)
-        df.to_csv(os.path.join(self.DIR, filename), index=False)
+        df.to_csv(os.path.join(self.DIR.path.data, filename), index=False)
 
         # In addition to the super, also update the selected file's value in the field dropdown
         if self.saveEntryVal.get() not in self.dirWidget.combo_box['values']:

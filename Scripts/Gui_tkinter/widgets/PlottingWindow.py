@@ -19,6 +19,8 @@ from Gui_tkinter.funcs.GuiEntryHelpers import (JSON_to_Df, tryEval, CSV_to_Df)
 import pandas as pd
 from calcs.BorisAnalysis import *
 from settings.notifs import Popup_Notifs, Title_Notif
+from system.temp_manager import TEMPMANAGER_MANAGER
+import system.temp_file_names as names 
 
 """
 the following r settings and callables that the classes will implement.
@@ -49,7 +51,10 @@ It's done like this so I don't have to type literally everything.
 """
 trajectory_style = {
     "projection" : '3d',
-    'title' : 'Trajectory'
+    'title' : 'Trajectory',
+    'zlab' : 'Z (m)',
+    'ylab' : 'Y (m)',
+    'xlab' : 'X (m)'
 }
 
 vel_step_style = {
@@ -224,7 +229,97 @@ class CustomToolbar(NavigationToolbar2Tk):
 
 
 
-# CLASS
+# CLASSES
+from PIL import ImageTk, Image
+import definitions
+"""
+Update as of 5/15: the trajectory plot shown in the GUI will be a static image. Interactive options will be available via button press.
+
+The figure in this class only updates when a new dataset .json is selected. It saves the figure as an image to its corresponding tempfile,
+and its canvas draws that image.
+"""
+class StaticFigure(tk.Frame):
+    def __init__(self, master, png_path, graph_settings: dict = trajectory_style, **kwargs):
+            # tk Object(s) init
+        super().__init__(master, **kwargs)
+        self.graph_settings = graph_settings
+        self.png_full_path = f"{png_path}.png"
+        TEMPMANAGER_MANAGER.imgs.append(self.png_full_path)
+        #self.png_full_path = os.path.join(definitions.DIR_ROOT, f"system\\imgs\\cat.png")
+        self.img_frame = tk.Frame(self) # main container for the image
+        self.img_label = tk.Label(self.img_frame)
+
+            # mpl figure init
+        self.initFig()
+
+            # packing
+        self.img_frame.pack()
+        self.img_label.pack(side = "bottom", fill = "both", expand = "yes")
+    
+    """
+    Called in init. 
+    """
+    def initFig(self):
+        self.fig = plt.figure()
+        projection = self.graph_settings['projection']
+        self.plot = self.fig.add_subplot(1,1,1, projection=projection)
+        # apply labels outlined in graph settings.
+        self.renameLabels()
+        # initialize with tight layout so axes labels don't get cut off.
+        self.fig.tight_layout()
+    
+    """
+    Called in self.initFig, which is run in init.
+    """
+    def renameLabels(self):
+        if self.plot is not None:
+            # load settings
+            title = self.graph_settings['title']
+            xlab = self.graph_settings['xlab']
+            ylab = self.graph_settings['ylab']
+            # apply settings
+            self.plot.set_title(title)
+            self.plot.set_xlabel(xlab)
+            self.plot.set_ylabel(ylab)
+            # things to do if there is a 3d projection 
+            if self.graph_settings['projection'] == '3d':
+                self.plot.set_zlabel(self.graph_settings['zlab'])
+    
+    """
+    Display the image in the object's image frame
+    """
+    def displayImage(self):
+        self.im = ImageTk.PhotoImage(Image.open(self.png_full_path))
+        #self.im = ImageTk.PhotoImage(Image.open(os.path.join(definitions.DIR_ROOT, f"Scripts\\system\\imgs\\cat.png")))
+        #self.img_label.config(image = ImageTk.PhotoImage(Image.open(self.png_full_path)))
+        self.img_label.config(image = self.im)
+
+    """
+    Clears and renames the plot.
+    """
+    def prepareGraph(self):
+        # clear the plot of its impurities
+        self.plot.cla()
+        # replot the labels according to the settings.
+        self.renameLabels()
+
+    """
+    Called only when new plotfile is chosen
+    """
+    def updateGraph(self, df:pd.DataFrame, func:callable, **kwargs):
+        """
+        When called, the selected graphing logic will be called once more.
+
+        It is expected that the dataframe is externally provided upon the function call.
+        """
+        self.prepareGraph()
+        func(self.fig, self.plot, df, **kwargs) # the graphing logic is being applied here.
+        self.fig.savefig(self.png_full_path) # save to file. Will overwrite if file exists alr.
+
+        self.displayImage() # after saving, display the image to self.img_label (tk.Label)
+        return True
+
+
 class CanvasFigure(tk.Frame):
     """
     A class that contains a matplotlib figure inside of itself, navigable with tkinter.
@@ -415,7 +510,9 @@ class PlottingWindowObj(tk.Frame):
 
         # we want a 3-plot structure with the trajectory plot dominating a whole column to itself.
         # Create figures.
-        self.trajectory = CanvasFigure(master=self, projection='3d', title='Trajectory', root=root)
+        self.trajectory = StaticFigure(master=self, 
+                                       png_path=TEMPMANAGER_MANAGER.files[names.m1f2],
+                                       graph_settings=trajectory_style)
         self.trajectory.plot.set_box_aspect([1,1,1]) # make the 3d bounding box always square.
         self.graph1 = DropdownFigure(self, root)
         self.graph2 = DropdownFigure(self, root)
@@ -428,9 +525,9 @@ class PlottingWindowObj(tk.Frame):
 
         # Store figures and the canvases they live on.
         self.figs = [self.trajectory.fig, self.graph1.fig, self.graph2.fig] # the mpl fig object
-        self.graphs = [self.trajectory.graph, self.graph1.graph, self.graph2.graph] # the FigureCanvasTkAgg objects
+        self.graphs = [self.graph1.graph, self.graph2.graph] # the FigureCanvasTkAgg objects
         self.plots = [self.trajectory.plot, self.graph1.plot, self.graph2.plot] # the subplots in the mpl figs
-        self.canvases = [self.trajectory.canvas, self.graph1.canvas, self.graph2.canvas] # the canvases that hold the FigureCanvasTkAggs
+        self.canvases = [self.graph1.canvas, self.graph2.canvas] # the canvases that hold the FigureCanvasTkAggs
 
         # additional figure containers, for just holding the dropdown graphs.
         self.dropdown_figures = [self.graph1.fig, self.graph2.fig]
@@ -597,11 +694,11 @@ class PlottingWindowObj(tk.Frame):
             case 'all':
                assert (traj_rc is not None and dropdown_rc is not None)
                # in 'all' mode, the function calls itself to update the trajectory and dropdown graphs.
-               self.redraw_graphs('traj', traj_rc=traj_rc)
+               #self.redraw_graphs('traj', traj_rc=traj_rc)
                self.redraw_graphs('dropdown', dropdown_rc=dropdown_rc)
             case 'traj':
                 assert traj_rc is not None
-                self._redraw_graphs([self.trajectory.fig], [self.trajectory.graph], traj_rc, z=True)
+                self._redraw_graphs([self.trajectory.fig], traj_rc, z=True)
             case 'dropdown':
                 assert dropdown_rc is not None
                 self._redraw_graphs(self.dropdown_figures, self.dropdown_graphs, dropdown_rc)
@@ -626,9 +723,9 @@ class PlottingWindowObj(tk.Frame):
 
         # set canvas sizes.
         # To enforce strict size limits on the mpl figures, we set the FigureCanvasTkAgg object's internal canvas widget's size.
-        self.graphs[0].get_tk_widget().config(width=traj_width, height=traj_height)
+        #self.graphs[0].get_tk_widget().config(width=traj_width, height=traj_height)
+        self.graphs[0].get_tk_widget().config(width=g1_width, height=g1_height)
         self.graphs[1].get_tk_widget().config(width=g1_width, height=g1_height)
-        self.graphs[2].get_tk_widget().config(width=g1_width, height=g1_height)
 
         # GET TEMP. RC STYLE CONTEXTS FOR LABEL PADDING AND SCALING.
         # font sizing will get the ratio between the length and height of the frame (in pixels) and multiply it by their respective proportions.
