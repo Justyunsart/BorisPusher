@@ -1,6 +1,9 @@
 from tempfile import NamedTemporaryFile
 import weakref
 import os
+import shutil
+from definitions import DIR_ROOT
+from Scripts.system.temp_file_names import m1f1
 
 """
 Manages all the manager instances
@@ -68,6 +71,14 @@ class TempManager_Manager():
         manager:TempManager
         manager = self.managers.get(m_name)
         manager.add_tempfile(f_name)
+
+    """
+    Runs before the program closes. 
+    Before deleting all tempfiles, dump the one holding all params somewhere into the program.
+    """
+    def dump_params(self):
+        dst = os.path.join(DIR_ROOT, 'last_used')
+        shutil.copyfile(src=self.files[m1f1], dst=dst)
 
     """
     Run from child; happens when a new file is made

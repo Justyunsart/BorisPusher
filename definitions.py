@@ -9,6 +9,10 @@ For settings involving project parameters, look in ().../BorisPusher/Scripts/set
 # SYSTEM INFO
 PLATFORM = sys.platform # win32, linux, or darwin
 
+# SYSTEM FILE NAMES
+NAME_DEF_CONFIG = "default_configs.ini"
+NAME_USR_CONFIG = "user_configs.ini"
+
 # FILE/FOLDER NAMES
 NAME_INPUTS = "Inputs"
 NAME_COILS = "CoilConfigurations"
@@ -20,7 +24,7 @@ NAME_OUTPUTS = "Outputs"
 
 # DIRECTORIES
 DIR_ROOT = os.path.dirname(os.path.abspath(__file__)) # project root (BorisPusher/)
-DIR_CONFIG = os.path.join(DIR_ROOT, "config.ini")
+DIR_CONFIG = os.path.join(DIR_ROOT, "Scripts\\settings\\configs")
 
 
 # FOLDER STRUCTS

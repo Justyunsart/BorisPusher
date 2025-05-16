@@ -60,7 +60,7 @@ class Events(Enum):
     INIT_GUI = Event([])
 
     # when calculate button is pressed but before the calcs start.
-    PRE_CALC = Event([before_simulation_bob_dt,
+    PRE_CALC = Event([before_simulation_bob_dt, # set up constants if using bob's dt scaling solution
                      ])
 
     # after a sim finishes
@@ -70,4 +70,5 @@ class Events(Enum):
                       ])
 
     # when the program terminates
-    ON_CLOSE = Event([TEMPMANAGER_MANAGER.del_all_temp])
+    ON_CLOSE = Event([TEMPMANAGER_MANAGER.dump_params, 
+                      TEMPMANAGER_MANAGER.del_all_temp])

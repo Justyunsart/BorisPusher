@@ -1,5 +1,5 @@
 import tkinter as tk
-from Gui_tkinter.widgets.ScrollableFrame import ScrollableFrame
+from Scripts.Gui_tkinter.widgets.ScrollableFrame import ScrollableFrame
 
 """
 What gets spawned when the menubar's settings option is pressed. Basically is a popup window

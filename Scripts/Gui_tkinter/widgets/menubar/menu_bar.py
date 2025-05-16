@@ -1,6 +1,6 @@
 import tkinter as tk
 from functools import partial
-from Gui_tkinter.widgets.menubar.settings import SettingsWindow
+from Scripts.Gui_tkinter.widgets.menubar.settings import SettingsWindow
 
 """
 Parent class containing all the menu bar items.
