@@ -3,20 +3,20 @@
         "**/Outputs": true
     },
     "python.analysis.include": [
-        "${workspaceFolder}\\Scripts",
+        "${workspaceFolder}/Scripts",
         "${workspaceFolder}"
     ],
     "python.analysis.extraPaths": [
         "${workspaceFolder}",
-        "${workspaceFolder}\\Scripts"
+        "${workspaceFolder}/Scripts"
     ],
     "terminal.integrated.env.windows": {
-    "PYTHONPATH": "${workspaceFolder}",
+    "PYTHONPATH": "${workspaceFolder}:${workspaceFolder}/Scripts",
   },
   "terminal.integrated.env.linux": {
-    "PYTHONPATH": "${workspaceFolder}"
+    "PYTHONPATH": "${workspaceFolder}:${workspaceFolder}/Scripts"
   },
   "terminal.integrated.env.osx": {
-    "PYTHONPATH": "${workspaceFolder}"
+    "PYTHONPATH": "${workspaceFolder}:${workspaceFolder}/Scripts"
   }
 }

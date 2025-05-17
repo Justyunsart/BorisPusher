@@ -2,6 +2,7 @@ import os
 from definitions import FOLDER_INPUTS, NAME_INPUTS, DIR_ROOT
 from files.funcs import check_subdirs
 import configparser
+from settings.configs.funcs.config_reader import runtime_configs
 
 """
 Helper functions involving the creation of known directories (like the inputs folder).
@@ -21,13 +22,11 @@ def create_inputs_folder():
     Runs in case the program does not detect an inputs folder in the project root.
     Creates a new inputs folder for the user.
     """
-    inputs_path = os.path.join(DIR_ROOT, NAME_INPUTS) # full path to the new inputs folder
-
-    # create the folder
-    os.mkdir(inputs_path)
+    if not os.path.exists(runtime_configs['Paths']['inputs']):
+        os.mkdir(runtime_configs['Paths']['inputs'])
 
     # create subfolders
-    create_inputs_subdirs(inputs_path)
+    create_inputs_subdirs(runtime_configs['Paths']['inputs'])
     
     return True
 

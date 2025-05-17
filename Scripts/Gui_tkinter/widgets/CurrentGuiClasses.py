@@ -24,6 +24,7 @@ from Gui_tkinter.funcs.GuiEntryHelpers import *
 from ast import literal_eval
 from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
 from system.temp_file_names import manager_1, m1f1
+from settings.defaults.coils import default_coil
 
 class EntryTable():
     '''
@@ -48,7 +49,7 @@ class EntryTable():
         This will only run when we want to zip file contents or something.
         """
         out = []
-        for entry in self.instances:
+        for entry in self._instances:
             out.append(entry.get_dict(csv))
 
         if(not csv): # csv == False
@@ -83,6 +84,10 @@ class EntryTable():
 
             return out_merged
     
+    def _updateTempFile(self, field:str, val):
+        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        d[field] = val
+        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
     #===============#
     # INITIALIZAION #
     #===============#
@@ -92,7 +97,7 @@ class EntryTable():
         self.master = master
         self.entries = []
         self.widgets = []
-        self.instances = []
+        self._instances = []
 
         # read the fields from the supplied dataclass.
         self.data = dataclass
@@ -196,7 +201,7 @@ class EntryTable():
             return False
 
         widget.untrigger_warning() # remove the widget's warned state if it is warned.
-        instance = self.instances[rowInd] # the dataclass instance of the correspondng row
+        instance = self._instances[rowInd] # the dataclass instance of the correspondng row
         instance.iterables[colInd].paramWidget.var.set(entryValue) # modify the dataclass's corresponding value according the the colInd.
         #self.GetEntries()[rowInd][self.fields[colInd]] = entryValue
 
@@ -223,7 +228,7 @@ class EntryTable():
     
         self.widgets.pop(row-1)
         #self.entries.pop(row-1)
-        self.instances.pop(row-1)
+        self._instances.pop(row-1)
         #print(self.frame1.grid_size())
         return row
 
@@ -235,17 +240,34 @@ class EntryTable():
         
         if not creating a default row, you must pass an instance of a dataclass
         with the desired values.
+
+        if called at the time of more than one row in the table, then just copies the row at the last index
         '''
-        #print(defaults)
+        """
+        #print(self.instances)
         if (defaults == True):
             row = self.data(self.frame1)
             #print(row)
-            self.instances.append(row)
+            self._instances.append(row)
+            #print(self.instances)
+        """
+        if len(self._instances) >= 1 and defaults == True:
+            # when defaults are not provided, and there is more than 1 row.
+            #print("HEY!!!!!!!!")
+            #row = self._instances[-1]
+            row = self.data(self._instances[-1])
+            self._instances.append(row)
+        
+        elif len(self._instances) == 0 and defaults == True:
+            row = self.data(self.frame1)
+            #print(row)
+            self._instances.append(row)
+
         else:
             # when defaults is not provided, this function is being fed
             # pre-populated values.
             row = args[0]
-            self.instances.append(row)
+            self._instances.append(row)
         #print("row is: ", row)
         r = self.frame1.grid_size()[1]
         dict = {} # data extracted from each row
@@ -294,10 +316,10 @@ class EntryTable():
             for widget in self.frame1.grid_slaves(row=row):
                 widget.destroy()
                 #print(f"row destroyed")
-        self.entries = []
-        self.widgets = []
+        self.entries.clear()
+        self.widgets.clear()
         #print(f"before clear: {self.instances}")
-        self.instances.clear()
+        self._instances.clear()
         #print(f"after clear: {self.instances}")
 
     def SetRows(self, list):
@@ -318,6 +340,7 @@ class EntryTable():
             for row in list:
                 #print(row)
                 self.NewEntry(row, defaults=False)
+                #print(self.instances)
         else:
             print(f"SetRows called with NONE for parameter 'list'")
         return True
@@ -435,6 +458,7 @@ class EntryTable():
                 # READ TO THE SELECTED DIRECTORY IF NO EXPLICIT DIR PROVIDED
                 if((self.dirWidget.fileName) == "") or (self.dirWidget.fileName is None):
                     return False
+                #print(self.dirWidget.PATH.data)
                 data = CSV_to_Df(self.dirWidget.PATH.data, isNum=False, converters=converter, **kwargs)
 
             else:
@@ -668,13 +692,16 @@ class CurrentEntryTable(EntryTable):
         # draw canvas for the first time
         self.update()
 
-    def _Create_Default_File(self):
+    def _Create_Default_File(self, path):
         """
         run whenever the DIR for input files is empty.
         creates a file with the dataclass's default values.
         """
+        '''
         #print(f"new file creation attempt")
         default_dataclass = self.data(self.frame1) # construct dataclass with default parameters
+        
+        
         df = default_dataclass.get_dict(to_csv=True) # we need to format this dict. so that rotations and angles are lists.
         #print(df)
         df = pd.DataFrame.from_dict(df)
@@ -683,7 +710,9 @@ class CurrentEntryTable(EntryTable):
 
         def_name = "Default_Dan"
         self._SetSaveEntry(def_name)
-        df.to_csv(os.path.join(self.DIR, def_name), index=False)
+        df.to_csv(os.path.join(self.DIR.path.data, def_name), index=False)
+        '''
+        self.Create_From_Preset(default_coil, graph=False, path=path)
         
 
     def GraphCoils(self):
@@ -712,13 +741,10 @@ class CurrentEntryTable(EntryTable):
         self.plot.get_legend().remove()
         self.fig.tight_layout()
         self.canvas.draw()
-        self._updateTempFile()
-        return True
 
-    def _updateTempFile(self):
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-        d["coils"] = self.collection
-        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+            # Update tempfile entry for the coil collection object.
+        self._updateTempFile('coils', self.collection)
+        return True
 
     def EntryValidateCallback(self, entry):
         '''
@@ -736,9 +762,9 @@ class CurrentEntryTable(EntryTable):
         #print(self.instances)
         # run the NewEntry function and append the returned row to the instances list.
         super().NewEntry(*args, defaults=defaults)
-        widget = self.instances[-1].Rotations.paramWidget
+        widget = self._instances[-1].Rotations.paramWidget
 
-        self.instances[-1].Rotations.paramWidget.config(command=partial(self.NewWindow, widget))
+        self._instances[-1].Rotations.paramWidget.config(command=partial(self.NewWindow, widget))
         #if(self.isInit):
         #    self.rotations.append([{"RotationAngle": 0, "RotationAxis": 'x'}]) # this line does not scale with changing default values of the class.
 
@@ -751,7 +777,7 @@ class CurrentEntryTable(EntryTable):
         self.NewEntry()
         self.GraphCoils()
 
-    def Finalize_Reading(self, coils):
+    def Finalize_Reading(self, coils, graph=True):
         """
         The final steps of reading information.
         Sets the rows of the table to the provided values and updates the graph.
@@ -766,7 +792,8 @@ class CurrentEntryTable(EntryTable):
         self.setLim(coord[self.axis])
 
         # after everything is done, you can graph coils.
-        self.GraphCoils()
+        if graph:
+            self.GraphCoils()
         return True
         
 
@@ -775,6 +802,8 @@ class CurrentEntryTable(EntryTable):
         Expands the Read_Data method of its parent because of the (specialized) requirement
         of some parameters not fitting in a csv format.
         """
+        #print(self.dirWidget.dir.path.data)
+
         data = super().Read_Data(dir=dir, eval_ind=self.data.eval_inds)
 
         # REMINDER: these dataclass specific info. should be contained within the class instances instead.
@@ -787,6 +816,9 @@ class CurrentEntryTable(EntryTable):
             coils.append(coil)
 
         self.Finalize_Reading(coils)
+
+            # update tempfile for the coil file path
+        self._updateTempFile('coil_file', self.dirWidget.PATH.data)
         return True
     
     def GetData(self):
@@ -795,7 +827,7 @@ class CurrentEntryTable(EntryTable):
         out["Coil File"] = self.saveEntryVal.get()
         return out
     
-    def SaveData(self, dir:str, container=None, customContainer=False):
+    def SaveData(self, dir:str, container=None, customContainer=False, isFirst=False):
         # make a copy of self.entries just for this
         #container = self.entries.copy()
         if(container == None):
@@ -805,10 +837,11 @@ class CurrentEntryTable(EntryTable):
         df = pd.DataFrame.from_dict(container)
         df.to_csv(os.path.join(self.DIR.path.data, filename), index=False)
 
-        # In addition to the super, also update the selected file's value in the field dropdown
-        if self.saveEntryVal.get() not in self.dirWidget.combo_box['values']:
-            self.dirWidget.combo_box["values"] += (self.saveEntryVal.get(),)
-            self.dirWidget.combo_box.current(len(self.dirWidget.combo_box["values"]) - 1)
+        if not isFirst:
+            # In addition to the super, also update the selected file's value in the field dropdown
+            if self.saveEntryVal.get() not in self.dirWidget.combo_box['values']:
+                self.dirWidget.combo_box["values"] += (self.saveEntryVal.get(),)
+                self.dirWidget.combo_box.current(len(self.dirWidget.combo_box["values"]) - 1)
     
     def update(self, subject=None):
         '''
@@ -819,7 +852,7 @@ class CurrentEntryTable(EntryTable):
         self._SetSaveEntry(self.dirWidget.fileName.get())
 
     
-    def Create_From_Preset(self, preset):
+    def Create_From_Preset(self, preset, graph=True, path=None):
         """
         Say that there are predefined configurations that need to be loaded at
         the press of a button (eg. mirror, hexahedron shapes).
@@ -833,6 +866,10 @@ class CurrentEntryTable(EntryTable):
 
         To see an example of how presets are written, look at settings.defaults.coils.py.
         """
+        # explicitly clear the table
+        self.ClearTable()
+        #print(self.GetEntries())
+
         # parse the preset callable output
         info = preset.config # list of dataclass values
         parsed = []
@@ -841,12 +878,20 @@ class CurrentEntryTable(EntryTable):
             row_values = list(row.__dict__.values()) # all the instance attributes as a list.
             # the row_values list is passed as positional arguments.
             parsed.append(self.data(self.frame1, *row_values))
-        self.Finalize_Reading(parsed)
+        #print(parsed)
+        self.Finalize_Reading(parsed, graph=graph)
+
+        isFirst = True
+        if path is None:
+            path = self.dirWidget.dir.path.data
+            isFirst = False
 
         # get a unique filename (numbered if duplicates exist)
-        name = UniqueFileName(DIR=self.dirWidget.dir, fileName=preset.name)
+        name = UniqueFileName(DIR=path, fileName=preset.name)
         self._SetSaveEntry(name)
-        self.SaveData(dir=self.dirWidget.dir)
+
+        self.SaveData(dir=path, isFirst=isFirst)
+        #print(self.GetEntries())
         return True
 
     """
@@ -911,8 +956,8 @@ class CurrentEntryTable(EntryTable):
         '''
         #print(self.rotations)
         row = wid.grid_info()["row"] # so we know which particle this window is for
-        angles = self.instances[row-1].rotation_angles
-        axes = self.instances[row-1].rotation_axes
+        angles = self._instances[row-1].rotation_angles
+        axes = self._instances[row-1].rotation_axes
 
         # get info to best place this window on the screen.
         x_pos = wid.winfo_rootx()
@@ -947,15 +992,15 @@ class CurrentEntryTable(EntryTable):
     def _entry_window_close(self, table:RotationConfigEntryTable, window:tk.Toplevel, row:int):
         dict_lst = table.OnRotationEntryClose()
         #print(dict_lst)
-        self.instances[row-1].rotation_angles = [r["RotationAngle"] for r in dict_lst]
-        self.instances[row-1].rotation_axes = [r["RotationAxis"] for r in dict_lst]
+        self._instances[row-1].rotation_angles = [r["RotationAngle"] for r in dict_lst]
+        self._instances[row-1].rotation_axes = [r["RotationAxis"] for r in dict_lst]
         #print(self.instances[row-1].rotation_angles)
 
         window.destroy()
     def _graph_callback(self, row, table:RotationConfigEntryTable):
         dict_lst = table.ReturnRotations()
-        self.instances[row-1].rotation_angles = [r["RotationAngle"] for r in dict_lst]
-        self.instances[row-1].rotation_axes = [r["RotationAxis"] for r in dict_lst]
+        self._instances[row-1].rotation_angles = [r["RotationAngle"] for r in dict_lst]
+        self._instances[row-1].rotation_axes = [r["RotationAxis"] for r in dict_lst]
         
         try:
             self.GraphCoils()

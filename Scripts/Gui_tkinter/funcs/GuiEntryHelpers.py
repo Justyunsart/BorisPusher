@@ -204,7 +204,10 @@ class FileDropdown(tk.Frame):
 
         # initialize the combobox
         self.combo_box = ttk.Combobox(master=self, values=self.dir_contents, textvariable=self.fileName, **kwargs)
-        self.combo_box.current(self.last)
+        try:
+            self.combo_box.current(self.last)
+        except tk.TclError:
+            self.default_callable()
         self._UpdatePath()
 
         # also add a trace to update all the field variables when it happens
@@ -214,7 +217,7 @@ class FileDropdown(tk.Frame):
     def _DIR_to_List(self):
         files = [] # the final output list 
         # filter the dir to get the list of files only.
-        _files = [f for f in os.listdir(self.dir.path.data) if os.path.isfile(os.path.join(self.dir.path.data, f))]
+        _files = [f for f in os.listdir(self.dir.path.data) if os.path.isfile(os.path.join(self.dir.path.data, f)) and not (f[0] == '.')]
         if len(_files) == 0:
             self.create_default()
             _files = os.listdir(self.dir.path.data)
@@ -232,7 +235,7 @@ class FileDropdown(tk.Frame):
         """
         if self.default_callable is not None:
             # run the provided function if it's not None
-            self.default_callable()
+            self.default_callable(self.dir.path.data)
 
     def _UpdatePath(self, *args):
         '''
@@ -629,6 +632,7 @@ class file_particle:
         self.vz = EntryTableParam(vz, master=frame)
 
         self.iterables = [self.px, self.py, self.pz, self.vx, self.vy, self.vz]
+
     
     def __iter__(self):
         for val in self.iterables:

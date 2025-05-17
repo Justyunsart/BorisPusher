@@ -14,7 +14,7 @@ from settings.fields.FieldMethods_Impl import *
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 #from definitions import DIR_INPUTS_COILS, DIR_INPUTS_PARTICLES
 import configparser
-from definitions import DIR_CONFIG
+from definitions import NAME_PARTICLES
 
 # file stuff
 from PrefFile import PrefFile
@@ -22,6 +22,7 @@ import numpy as np
 
 # presets
 from settings.defaults.coils import (preset_hexahedron, preset_mirror, preset_cusp)
+from settings.configs.funcs.config_reader import runtime_configs
 
 class MainWindow(tk.Frame):
     '''
@@ -109,7 +110,7 @@ class ParticlePreview(EntryTable):
 
         def_name = "Default_Particle"
         self._SetSaveEntry(def_name)
-        df.to_csv(os.path.join(DIR_INPUTS_PARTICLES, def_name), index=False)
+        df.to_csv(os.path.join(os.path.join(runtime_configs['Paths']['Inputs'], NAME_PARTICLES),def_name), index=False)
 
     def EntryValidateCallback(self, entry):
         #print(f"BorisGuiClasses.ParticlePreview.EntryValidateCallback: self.instances is: {self.instances}")
@@ -119,9 +120,12 @@ class ParticlePreview(EntryTable):
         '''
         Suppress creating a new row on initialization.
         '''
+        #print(self._instances)
         if(self.isInit):
             #print("Creating new entry", defaults, *args)
+            #print(id(self._instances))
             super().NewEntry(*args, defaults = defaults)
+            #print(id(self._instances))
         else:
             #print("suppressing New Entry")
             return False
@@ -157,6 +161,7 @@ class ParticlePreview(EntryTable):
         '''
         self.Read_Data()
         self._SetSaveEntry(self.fileWidget.fileName.get())
+        self._updateTempFile("particle_file", self.fileWidget.PATH.data)
     
     def SaveData(self, dir:str, container=None, customContainer=False):
         super().SaveData(dir, container, customContainer)

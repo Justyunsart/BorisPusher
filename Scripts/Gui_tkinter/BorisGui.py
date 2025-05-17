@@ -14,6 +14,7 @@ from definitions import (DIR_ROOT, DIR_CONFIG, NAME_INPUTS, NAME_COILS, NAME_PAR
 import configparser
 from system.Observer import Data
 from system.path import Path
+from settings.configs.funcs.config_reader import runtime_configs
 
 # events
 #from events.on_start import on_start
@@ -56,13 +57,10 @@ def OpenGUI(manager):
     
     Make sure that widgets pass references to these variables.
     """
-    # read config file
-    config = configparser.ConfigParser()
-    config.read(DIR_CONFIG)
 
     # Selected dirs for sims
     DIR_Inputs = Data('DIR_INPUTS')
-    DIR_Inputs.data = config['Paths']["Inputs"]
+    DIR_Inputs.data = runtime_configs['Paths']["Inputs"]
     #print(DIR_Inputs.data)
 
         # Initial setters

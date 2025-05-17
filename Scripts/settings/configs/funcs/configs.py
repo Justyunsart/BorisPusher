@@ -8,13 +8,13 @@ def create_default_config():
         # CONFIGURE THE ACTUAL INI FILE
     config = configparser.ConfigParser()
     config['Paths'] = {
-        'usr_Documents' : os.path.join(os.path.join(os.environ["USERPROFILE"]), "Documents\\Boris_Usr"),
-        'Inputs' : "%(usr_Documents)s\\Inputs",
-        'Outputs' : "%(usr_Documents)s\\Outputs",
+        'usr_Documents' : os.path.join(os.path.expanduser('~/Documents'), "Boris_Usr"),
+        'Inputs' : "%(usr_Documents)s/Inputs",
+        'Outputs' : "%(usr_Documents)s/Outputs",
     }
         # SAVE TO A FILE.
     cwd = os.getcwd()
-    path = f"{cwd}\\Scripts\\settings\\configs"
+    path = f"{cwd}/Scripts/settings/configs"
     with open(os.path.join(path, NAME_DEF_CONFIG), 'w') as f:
         config.write(f)
 

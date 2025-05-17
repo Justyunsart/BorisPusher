@@ -56,3 +56,6 @@ class preset_cusp():
         circle_params(px=offset, py=0, pz=0, amp=amp, dia=dia, rot_ang=[90], rot_ax=['y']),
         circle_params(px=-offset, py=0, pz=0, amp=-amp, dia=dia, rot_ang=[90], rot_ax=['y'])
     ]
+
+    # What gets created whenever the program needs to create a new coils input file due to the coils dir having no other files.
+default_coil = preset_mirror()
