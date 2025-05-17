@@ -203,7 +203,7 @@ class FileDropdown(tk.Frame):
         self.dir_contents = self._DIR_to_List()
 
         # initialize the combobox
-        self.combo_box = ttk.Combobox(master=self, values=self.dir_contents, textvariable=self.fileName, **kwargs)
+        self.combo_box = ttk.Combobox(master=self, values=self.dir_contents, textvariable=self.fileName, state='readonly', **kwargs)
         try:
             self.combo_box.current(self.last)
         except tk.TclError:

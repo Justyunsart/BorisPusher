@@ -988,7 +988,12 @@ class CurrentEntryTable(EntryTable):
 
         # Set up the data collection function onclose.
         newWin.protocol('WM_DELETE_WINDOW', partial(self._entry_window_close, table, newWin, row))
-    
+
+        def _force_close_window(event):
+            newWin.destroy()
+        newWin.bind('<FocusOut>', _force_close_window)
+        newWin.focus_set()
+
     def _entry_window_close(self, table:RotationConfigEntryTable, window:tk.Toplevel, row:int):
         dict_lst = table.OnRotationEntryClose()
         #print(dict_lst)
@@ -1011,7 +1016,8 @@ class CurrentEntryTable(EntryTable):
             Ignores the error to avoid pinging the terminal.
             """
             pass
-    
+        
+
     def setLim(self, val):
         """
         when called, sets the internal lim property.
