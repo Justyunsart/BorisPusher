@@ -4,6 +4,7 @@ from files.create import create_inputs_folder
 from files.funcs import check_subdirs
 from settings.configs.funcs.configs import create_default_config
 from settings.configs.funcs.config_reader import runtime_configs
+
 """
 Functions for checking the validity of file stuff.
 Expect these kinds of checks to run on application startup.
@@ -41,9 +42,10 @@ def input_folder_check():
 checks the runtime config's supposed location for the output dir.
 creates it if it does not exist.
 
-There is nothing fancy planned to go inside this by default, so just 
-creating an empty dir will do.
+This just creates an empty dir: Its subdirs will be created during runtime if needed.
 """
 def output_folder_check():
     if(not os.path.exists(runtime_configs['Paths']['Outputs'])):
         os.mkdir(runtime_configs['Paths']['Outputs'])
+
+

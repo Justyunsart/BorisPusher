@@ -22,6 +22,13 @@ from events.events import Events
 File explorer for restart files
 '''
 inpd=""
+
+def updateTempFile(updates):
+        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        d.update(updates)
+        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+
+
 # Variable to store the dir of the input file
 def browseFiles(name:StringVar, dir):
     """
@@ -146,9 +153,15 @@ def CalculateCallback(params:list, DIR_last:str, root, manager):
         }
 
     Dict_to_CSV(DIR_last, toFile, newline="")
-    #print(toFile)
+    
+        # add some last minute info to the tempfile
+    updateTempFile({"Field_Methods" : {"B" : data["B_Methods"], "E" : data["E_Methods"].GetData()},
+                    "Particle_Df" : data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"],
+                    "coil_file_name" : data["Coil File"]})
 
-    # a multiprocessing manager wraps the thread that creates the processpool.
+    #####################################################################################
+    # STUFF FOR THE PROGRESS WINDOW (WHICH NEEDS RUNTIME DATA)
+        # a multiprocessing manager wraps the thread that creates the processpool.
     queue = manager.Queue()
     progress = calculate_progress_window(root, queue)
     process_thread = threading.Thread(target=runsim, args=(toProgram, queue,), daemon=True)
@@ -169,11 +182,6 @@ def GatherParams(params:list):
         data = {**data, **x} # merge the resulting dictionaries to update the original data container
         #print("data updated to: ", data)
     return data
-
-def updateTempFile(updates):
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-        d.update(updates)
-        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
 def FillWidgets(p:list, path:str):
     """

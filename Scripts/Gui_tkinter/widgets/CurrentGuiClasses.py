@@ -24,7 +24,9 @@ from Gui_tkinter.funcs.GuiEntryHelpers import *
 from ast import literal_eval
 from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
 from system.temp_file_names import manager_1, m1f1
-from settings.defaults.coils import default_coil
+from settings.defaults.coils import default_coil, coil_cust_attr_name
+
+from xattr import setxattr
 
 class EntryTable():
     '''
@@ -837,7 +839,7 @@ class CurrentEntryTable(EntryTable):
         df = pd.DataFrame.from_dict(container)
         df.to_csv(os.path.join(self.DIR.path.data, filename), index=False)
 
-        if not isFirst:
+        if not isFirst: #isFirst = initial reading before everything is initialized.
             # In addition to the super, also update the selected file's value in the field dropdown
             if self.saveEntryVal.get() not in self.dirWidget.combo_box['values']:
                 self.dirWidget.combo_box["values"] += (self.saveEntryVal.get(),)
@@ -866,9 +868,8 @@ class CurrentEntryTable(EntryTable):
 
         To see an example of how presets are written, look at settings.defaults.coils.py.
         """
-        # explicitly clear the table
+        # explicitly clear the table. Will be called later in self.SetRows(), but still.
         self.ClearTable()
-        #print(self.GetEntries())
 
         # parse the preset callable output
         info = preset.config # list of dataclass values
@@ -891,6 +892,10 @@ class CurrentEntryTable(EntryTable):
         self._SetSaveEntry(name)
 
         self.SaveData(dir=path, isFirst=isFirst)
+
+            # add metadata to keep track of the preset used
+        setxattr(os.path.join(path, name), coil_cust_attr_name, preset._attr_val)
+
         #print(self.GetEntries())
         return True
 

@@ -42,4 +42,5 @@ magpylib 5.1.1:
     - plotly 6.0.1 
 configparser 7.2.0
 pillow 10.3.0
+xattr 1.1.4
 """

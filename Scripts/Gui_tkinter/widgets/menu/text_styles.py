@@ -8,6 +8,6 @@ from settings.palettes import Font_n_Color
 import tkinter as tk
 
 class GUI_Label(tk.Label):
-    def __init__(self, master, font:Font_n_Color, **kwargs):
-        super().__init__(master, **kwargs)
+    def __init__(self, master, font:Font_n_Color, text, **kwargs):
+        super().__init__(master=master, text=text, **kwargs)
         self.configure(font=font.font, fg=font.color)

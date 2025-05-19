@@ -1,7 +1,17 @@
 """
 Holds presets for magpylib coil configs.
 These are created upon button press on the coils window.
+
+Also, creating a config through these presets will mark it with a custom
+metadata field showing what configuration it is.
+
+The func. that dictates how to create input files from these configured presets
+are in Gui_tkinter.widgets.CurrentGuiClasses.CurrentEntryTable
 """
+import xattr
+
+coil_cust_attr_name = "user.coil_config_type" # the name of the custom attribute
+
 
 """
 an intermediary container class that holds numbers only;
@@ -25,6 +35,8 @@ class preset_hexahedron():
 
     name = "hexahedron" # default file name
 
+    _attr_val = b"hexahedron" # custom file metadata value
+
     config =  [circle_params(px=offset, py=0, pz=0, amp=amp, dia=dia, rot_ang=[90], rot_ax=['y']),
      circle_params(px=-offset, py=0, pz=0, amp=-amp, dia=dia, rot_ang=[90], rot_ax=['y']),
      circle_params(px=0, py=offset, pz=0, amp=amp, dia=dia, rot_ang=[-90], rot_ax=['x']),
@@ -40,6 +52,8 @@ class preset_mirror():
 
     name = "mirror" # default file name
 
+    _attr_val = b"mirror"
+
     config =  [circle_params(px=offset, py=0, pz=0, amp=amp, dia=dia, rot_ang=[90], rot_ax=['y']),
      circle_params(px=-offset, py=0, pz=0, amp=amp, dia=dia, rot_ang=[90], rot_ax=['y'])]
 
@@ -51,6 +65,8 @@ class preset_cusp():
     dia = 1
 
     name = "cusp" #default file name
+
+    _attr_val = b"cusp"
 
     config = [
         circle_params(px=offset, py=0, pz=0, amp=amp, dia=dia, rot_ang=[90], rot_ax=['y']),

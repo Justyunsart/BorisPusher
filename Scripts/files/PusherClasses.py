@@ -1,4 +1,5 @@
 from definitions import DIR_ROOT, NAME_INPUTS, NAME_COILS, NAME_OUTPUTS
+from settings.configs.funcs.config_reader import runtime_configs
 from dataclasses import dataclass, asdict
 import numpy as np
 
@@ -21,7 +22,7 @@ Default name: "boris_nsteps_nsecs_nparticles"
     return the name
 '''
 def CreateOutDir(numsteps, numtime, numparts):
-    outd = os.path.join(DIR_ROOT, NAME_OUTPUTS)
+    outd = runtime_configs['Paths']["Outputs"]
     dName = "boris_" + str(numsteps) + "_" + str(numtime) + "_" + str(numparts)  
     path = os.path.join(outd, dName)
     
@@ -81,7 +82,7 @@ def CreateOutput(inp, sim_time, num_points, num_parts, part, bf, ef, c, diags):
 
     coil_dir = os.path.join(dir, f"coils.txt")
     coil_file = open(coil_dir, "w")
-    file_to_copy = os.path.join(os.path.join(DIR_ROOT, f"{NAME_INPUTS}\\{NAME_COILS}"), c)
+    file_to_copy = os.path.join(os.path.join(DIR_ROOT, f"{NAME_INPUTS}/{NAME_COILS}"), c)
 
     shutil.copy(file_to_copy, coil_dir)
 

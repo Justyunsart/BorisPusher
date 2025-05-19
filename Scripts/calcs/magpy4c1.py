@@ -317,16 +317,16 @@ def init_process(data, n1, n2, t, t1, Bf, Ef, coils, _fromTemp, queue):
 
 def runsim(fromGui:dict, manager_queue):
     #print('simulation starting')
-    dfIn = pd.DataFrame(fromGui['particles'])
-    numPa = dfIn.shape[0]
-    numPo = int(fromGui['numsteps'])
-    tScale = fromGui['timestep']
-    time = numPo * tScale
-    Bf = fromGui['B-Field']
-    Ef = fromGui['E-Field']
-    coils = fromGui['coils']
-    coilName = fromGui["Coil File"]
     _fromTemp = create_shared_info()
+    dfIn = pd.DataFrame(_fromTemp['Particle_Df'])
+    numPa = dfIn.shape[0]
+    numPo = int(_fromTemp['numsteps'])
+    tScale = _fromTemp['dt']
+    time = numPo * tScale
+    Bf = _fromTemp["Field_Methods"]["B"]
+    Ef = _fromTemp["Field_Methods"]["E"]
+    coils = _fromTemp['coils']
+    coilName = _fromTemp['coil_file_name']
 
     init_process(dfIn, numPa, numPo, tScale, time, Bf, Ef, coils, _fromTemp, manager_queue)
     values = range(numPa)

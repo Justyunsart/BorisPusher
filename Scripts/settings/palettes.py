@@ -40,9 +40,9 @@ Text formatting for different text types
 """
 def GUI_Fonts(master):
     return {
-        'title' : Font_n_Color(font.Font(master=master, family='Roboto', size=18, weight='bold'),
+        'title' : Font_n_Color(font.Font(family='Roboto', size=18, weight='bold'),
                          Drapion.Background.value),
-        'subtitle' : Font_n_Color(font.Font(master=master, family="Roboto", size=15, weight="bold"),
+        'subtitle' : Font_n_Color(font.Font(family="Roboto", size=15, weight="bold"),
                             Drapion.Background.value),
-        'body' : Font_n_Color(font.Font(master=master, family="Roboto", size=12, weight="normal"),
+        'body' : Font_n_Color(font.Font(family="Roboto", size=12, weight="normal"),
                             "black"),}
