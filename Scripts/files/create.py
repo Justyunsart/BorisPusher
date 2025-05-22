@@ -1,9 +1,10 @@
 import os
-from definitions import FOLDER_INPUTS, NAME_INPUTS, DIR_ROOT
+from definitions import FOLDER_INPUTS, NAME_INPUTS, DIR_ROOT, PLATFORM
 from files.funcs import check_subdirs
 import configparser
 from settings.configs.funcs.config_reader import runtime_configs
-from xattr import getxattr
+if PLATFORM != 'win32':
+    from xattr import getxattr
 from settings.defaults.coils import coil_cust_attr_name
 
 """
@@ -58,7 +59,10 @@ Returns the preset value if read, and "NULL" if any errors happen.
 """
 def get_coil_preset_attr_val(path):
     try:
-        return getxattr(path, coil_cust_attr_name).decode()
+        if PLATFORM != 'win32':
+            return getxattr(path, coil_cust_attr_name).decode()
+        else:
+            return os.getxattr(path, coil_cust_attr_name).decode()
     except OSError:
         return "Custom"
 

@@ -1,6 +1,7 @@
 import configparser
 from definitions import NAME_DEF_CONFIG, NAME_USR_CONFIG
 import os
+from files.windows.get_documents_path_win import get_documents_path_win
 
 
 
@@ -8,14 +9,16 @@ def create_default_config():
         # CONFIGURE THE ACTUAL INI FILE
     config = configparser.ConfigParser()
     config['Paths'] = {
-        'usr_Documents' : os.path.join(os.path.expanduser('~/Documents'), "Boris_Usr"),
-        'Inputs' : "%(usr_Documents)s/Inputs",
-        'Outputs' : "%(usr_Documents)s/Outputs",
+        'usr_Documents' : os.path.normpath(os.path.join(os.path.expanduser('~/Documents'), "Boris_Usr"))
+        if os.path.exists(os.path.normpath(os.path.expanduser('~/Documents')))
+        else os.path.normpath(os.path.join(get_documents_path_win(), "Boris_Usr")),
+        'Inputs' : "%(usr_Documents)s\\Inputs",
+        'Outputs' : "%(usr_Documents)s\\Outputs",
     }
         # SAVE TO A FILE.
     cwd = os.getcwd()
-    path = f"{cwd}/Scripts/settings/configs"
-    with open(os.path.join(path, NAME_DEF_CONFIG), 'w') as f:
+    path = os.path.normpath(f"{cwd}/settings/configs")
+    with open(os.path.join(path, NAME_DEF_CONFIG), 'w+') as f:
         config.write(f)
 
 

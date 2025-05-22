@@ -24,7 +24,7 @@ NAME_OUTPUTS = "Outputs"
 
 # DIRECTORIES
 DIR_ROOT = os.path.dirname(os.path.abspath(__file__)) # project root (BorisPusher/)
-DIR_CONFIG = os.path.join(DIR_ROOT, "Scripts/settings/configs/")
+DIR_CONFIG = os.path.normpath(os.path.join(DIR_ROOT, "Scripts/settings/configs/"))
 
 
 # FOLDER STRUCTS

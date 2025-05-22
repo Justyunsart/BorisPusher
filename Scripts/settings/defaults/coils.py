@@ -8,7 +8,6 @@ metadata field showing what configuration it is.
 The func. that dictates how to create input files from these configured presets
 are in Gui_tkinter.widgets.CurrentGuiClasses.CurrentEntryTable
 """
-import xattr
 
 coil_cust_attr_name = "user.coil_config_type" # the name of the custom attribute
 

@@ -12,9 +12,11 @@ runtime_configs = configparser.ConfigParser()
 def read_configs():
     global runtime_configs
     cwd = os.getcwd()
-    path = f"{cwd}/Scripts/settings/configs"
+    path = os.path.normpath(f"{cwd}/settings/configs")
     
-    if os.path.exists(f"{path}/usr_configs.ini"):
-        runtime_configs.read([f"{path}/default_configs.ini", f"{path}/usr_configs.ini"])
+    if os.path.exists(os.path.normpath(f"{path}/usr_configs.ini")):
+        runtime_configs.read([os.path.normpath(f"{path}/default_configs.ini"), os.path.normpath(f"{path}/usr_configs.ini")])
     else:
-            runtime_configs.read(f"{path}/default_configs.ini")
+        runtime_configs.read(os.path.normpath(f"{path}/default_configs.ini"))
+    #print(os.path.normpath(f"{path}/default_configs.ini"))
+    #print(runtime_configs.sections())

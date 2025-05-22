@@ -7,6 +7,7 @@ from system.temp_manager import TEMPMANAGER_MANAGER
 import system.temp_file_names as names
 
 from settings.configs.funcs.config_reader import read_configs
+from settings.configs.funcs.configs import create_default_config
 
 """
 Definitions for all the different GUI user events (that exist at a higher level than tkinter's widgets)
@@ -49,8 +50,8 @@ to the event's list.
 class Events(Enum):
     # as soon as app is run: checks and big managers
     ON_START = Event([
-                      ini_checks, # create default .ini if it doesn't exist
-                      read_configs, 
+                      create_default_config, # create default .ini
+                      read_configs, # get the runtime configs ConfigParser object
                       folder_checks, # check dir structure
                       ])
     

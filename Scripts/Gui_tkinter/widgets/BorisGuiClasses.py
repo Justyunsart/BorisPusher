@@ -99,7 +99,7 @@ class ParticlePreview(EntryTable):
     Called when self.fileWidget sees that its dir does not contain any files.
     Instantiates a file that contains default params.
     """
-    def create_default_input_file(self):
+    def create_default_input_file(self, *args):
         # print(f"new file creation attempt")
         default_dataclass = self.data(self.frame1)  # construct dataclass with default parameters
         df = default_dataclass.get_dict(

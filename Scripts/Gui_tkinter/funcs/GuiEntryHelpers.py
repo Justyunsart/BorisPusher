@@ -228,7 +228,7 @@ class FileDropdown(tk.Frame):
                 files.append(file)
         return files
     
-    def create_default(self):
+    def create_default(self, *args):
         """
         Run whenever there are no files in the current directory that is being read.
         If the default attribute is not None, then that file is created.

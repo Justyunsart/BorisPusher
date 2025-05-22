@@ -17,16 +17,18 @@ from functools import partial
 from magpylib import show
 from magpylib import Collection
 from magpylib.current import Circle
-import pandas as pd
-import os
 from files.PusherClasses import UniqueFileName
 from Gui_tkinter.funcs.GuiEntryHelpers import *
 from ast import literal_eval
 from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
 from system.temp_file_names import manager_1, m1f1
 from settings.defaults.coils import default_coil, coil_cust_attr_name
+from definitions import PLATFORM
 
-from xattr import setxattr
+if PLATFORM != "win32":
+    from xattr import setxattr
+else:
+    import os
 
 class EntryTable():
     '''
@@ -894,7 +896,12 @@ class CurrentEntryTable(EntryTable):
         self.SaveData(dir=path, isFirst=isFirst)
 
             # add metadata to keep track of the preset used
-        setxattr(os.path.join(path, name), coil_cust_attr_name, preset._attr_val)
+        if PLATFORM != 'win32':
+            setxattr(os.path.join(path, name), coil_cust_attr_name, preset._attr_val)
+        else:
+            with open(f"{os.path.join(path, name)}:{coil_cust_attr_name}", "w") as ads:
+                ads.write(preset._attr_val)
+            #os.setxattr(os.path.join(path, name), coil_cust_attr_name, preset._attr_val)
 
         #print(self.GetEntries())
         return True
