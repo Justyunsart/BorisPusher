@@ -75,12 +75,3 @@ def get_unique_coil_collection_amps(c:Collection):
     for coil in c.children:
         out.add(abs(coil.current))
     return ", ".join(map(str, out))
-
-"""
-runs BEFORE any calculations happen.
-Creates (if needed) the subdirs where all output diagnostics and checkpoint stuff will be stored
-"""
-def create_output_subdirs(output_root_path, c, coil_file_path):
-        # Gather the subdir names first
-    preset_name = get_coil_preset_attr_val(coil_file_path)
-    amp_name = get_unique_coil_collection_amps(c)

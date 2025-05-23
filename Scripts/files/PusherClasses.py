@@ -1,6 +1,6 @@
 from definitions import DIR_ROOT, NAME_INPUTS, NAME_COILS, NAME_OUTPUTS
 from settings.configs.funcs.config_reader import runtime_configs
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 import numpy as np
 
 import pandas as pd
@@ -126,6 +126,15 @@ class particle:
     ex: np.float64
     ey: np.float64
     ez: np.float64
+
+    # Diags
+    vperp: np.float64 = None
+    vpar: np.float64 = None
+    vmag: np.float64 = None
+
+    eperp: np.float64 = None
+    epar: np.float64 = None
+    emag: np.float64 = None
 
 @dataclass
 class charge:
