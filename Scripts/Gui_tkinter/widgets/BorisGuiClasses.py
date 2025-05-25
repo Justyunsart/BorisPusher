@@ -89,7 +89,7 @@ class ParticlePreview(EntryTable):
         # add this class as a listener to the data changes.
         self.fileWidget.PATH.attach(self)
         
-        self.saveButton.configure(command=partial(self.SaveData, self.fileWidget.dir))
+        self.saveButton.configure(command=partial(self.SaveData, self.fileWidget.dir.path.data))
 
         #self.Read_Data()
         #self._SetSaveEntry(self.fileWidget.fileName.get())

@@ -900,7 +900,7 @@ class CurrentEntryTable(EntryTable):
             setxattr(os.path.join(path, name), coil_cust_attr_name, preset._attr_val)
         else:
             with open(f"{os.path.join(path, name)}:{coil_cust_attr_name}", "w") as ads:
-                ads.write(preset._attr_val)
+                ads.write(str(preset._attr_val))
             #os.setxattr(os.path.join(path, name), coil_cust_attr_name, preset._attr_val)
 
         #print(self.GetEntries())

@@ -153,3 +153,6 @@ def UniqueFileName(DIR, fileName:str):
         counter += 1
         temp = f"{fileName}({counter})"
     return temp
+
+###############################################################################
+# custom np.dtype so that the hdf5 output file datasets will have column names.

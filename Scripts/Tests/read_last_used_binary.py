@@ -1,5 +1,9 @@
+import os, sys
+#print("PYTHONPATH:", os.environ.get('PYTHONPATH'))
+#print("sys.path:", sys.path)
+
 from definitions import DIR_ROOT
-import os
+
 from Scripts.system.temp_manager import read_temp_file_dict
 
 

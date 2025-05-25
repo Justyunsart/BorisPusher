@@ -36,6 +36,8 @@ from calcs.bob_dt import bob_dt_step
 from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict
 from system.temp_file_names import m1f1
 
+from settings.configs.funcs.config_reader import runtime_configs
+
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
 
@@ -47,9 +49,8 @@ pd.set_option('display.max_columns', None)
 #=========#
 
 # unless it is outside of the bounds given by 'side'
-def Bfield(y):
-    global B_Method, c
-    if(B_Method == "Zero"):
+def Bfield(y, method, c):
+    if(method == "Zero"):
         return np.zeros(3)
 
     Bf = c.getB(y, squeeze=True)
@@ -75,7 +76,7 @@ def Fw(coord:float):
     #print(f"coord: {coord}, A: {A}, B: {Bx}")
     return np.multiply(A * np.exp(-(coord / Bx)** 4), (coord/Bx)**15)
 
-def _Bob_e(inCoord, c):
+def _Bob_e(inCoord, c, args):
     """
     The internal function passed to each thread in Bob_e().
 
@@ -84,10 +85,9 @@ def _Bob_e(inCoord, c):
     cnr: the coordinate of the circle's center and its radius.
     """
 
-    global E_Args
     q = c.current # charge
     #print(f"running with the q:{q}")
-    res = float(E_Args["res"]) # amount of points to be used in the integration
+    res = float(args["res"]) # amount of points to be used in the integration
     
     # To make the target point relative to the coil, we call the bob_e.impl's alignment func.
     normCoord = bob_e_impl.OrientPoint(c=c, point=inCoord)
@@ -98,7 +98,7 @@ def _Bob_e(inCoord, c):
 
     return z, r
 
-def Bob_e(coord):
+def Bob_e(coord, args):
     global c_cnr, c    
     """
     This function will utlize multithreading, with each coil
@@ -107,9 +107,9 @@ def Bob_e(coord):
     zetas = []
     rhos = []
     cyl_coord = toCyl(coord)
-    E_collection = E_Args['collection']
+    E_collection = args['collection']
     with ThreadPoolExecutor(max_workers=8) as executor:
-        futures = {executor.submit(_Bob_e, cyl_coord, coil): coil for coil in E_collection}
+        futures = {executor.submit(_Bob_e, cyl_coord, coil, args): coil for coil in E_collection}
 
         # Gather the data from futures once completed.
         for index, task in enumerate(futures):
@@ -122,42 +122,89 @@ def Bob_e(coord):
 
     return toCart(r_sum, cyl_coord[1], z_sum)
 
-def EfieldX(p:np.ndarray):
+def EfieldX(p:np.ndarray, E_Method):
     """
     Controller for what E method is used.
 
     Inputs:
     p: the target coordinate.
     """
-    global E_Method, E_Args
     #print(f"E_method is: {E_Method}")
-    match E_Method:
+    match list(E_Method.keys())[0]:
         case "Zero":
-            return np.zeros(3)
+            E =  np.zeros(3)
         case "Fw":
             E = np.apply_along_axis(Fw, 0, p)
         case "Bob_e":
-            E = Bob_e(p)
+            E = Bob_e(p, E_Method['Bob_e'])
             #print(f"Bob_e says E is: {E}")
             
-            return np.array(E)
+    return np.array(E)
+
+import os
+import h5py
+def write_to_hdf5(from_temp, out, expand_length):
+        # notify terminal
+    print(f"Flushing to h5 file")
+
+        # take away al None type entries
+    mask = out != np.array(None)
+    _out = out[mask]
+
+    df = pd.DataFrame([p.__dict__ for p in _out])
+    print(df)
+    path = os.path.join(str(runtime_configs['Paths']['outputs']), from_temp['hdf5_path'])
+    print(path)
+
+    # append to position dataset
+    df_pos = df[['px', 'py', 'pz']].astype(np.float64).to_numpy()
+    #df_pos.to_hdf(path, key='src/position', mode='a', append=True)
+    # append to velocity dataset
+    df_vel = df[['vx', 'vy', 'vz', 'vperp', 'vpar', 'vmag']].astype(np.float64).to_numpy()
+    #df_vel.to_hdf(path, key='src/velocity', mode='a', append=True)
+    # append to field datasets
+    df_fields_b = df[['bx', 'by', 'bz']].astype(np.float64).to_numpy()
+    #df_fields_b.to_hdf(path, key='src/fields/b', mode='a', append=True)
+    df_fields_e = df[['ex', 'ey', 'ez', 'eperp', 'epar', 'emag']].astype(np.float64).to_numpy()
+    #df_fields_e.to_hdf(path, key='src/fields/e', mode='a', append=True)
+
+    with h5py.File(path, 'a') as f:
+        old_shape = f['/src/position'].shape[0]
+        f['/src/position'].resize((old_shape + len(df_pos), 3))
+        f['/src/position'][old_shape:] = df_pos
+
+        old_shape = f['/src/velocity'].shape[0]
+        f['src/velocity'].resize((old_shape + len(df_vel), 6))
+        f['/src/velocity'][old_shape:] = df_vel
+
+        old_shape = f['src/fields/b'].shape[0]
+        f['src/fields/b'].resize((old_shape + len(df_fields_b), 3))
+        f['src/fields/e'].resize((old_shape + len(df_fields_e), 6))
+        f['src/fields/b'][old_shape:] = df_fields_b
+        f['src/fields/e'][old_shape:] = df_fields_e
+    
+        # reset the internal container array
+    last_struct = _out[-1] # indexing _out so this is guaranteed to not be None for whatever reason.
+    out = np.empty(out.shape, dtype=particle)
+    out[0] = last_struct
 
 
 # boris push calculation
 # this is used to move the particle in a way that simulates movement from a magnetic field
-def borisPush(executor=None, output=None):
+def borisPush(executor=None, from_temp=None, manager_queue=None):
     """
     INTERNAL VARS
     Gyroradius:
         gyro_time: the time in sec it takes for one gyration.
             > as of now, this was calculated using the gyroradius formula assuming B = 1T, and the particle is a proton.
     """
-    global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args,c # Should be fine in multiprocessing because these values are only read,,,
-    global manager_queue
+    #global df, num_parts, num_points, dt, sim_time, B_Method, E_Method, E_Args,c # Should be fine in multiprocessing because these values are only read,,,
     #print(df)
     temp = 100000  # replace later with flush_count param after adding it to the tempfile
 
     ## Collect coil location to know when the particle escapes
+    c = from_temp['coils']
+    dt = from_temp['dt']
     side = c[0].position
     side = np.absolute(max(side.min(), side.max(), key=abs))
 
@@ -173,13 +220,13 @@ def borisPush(executor=None, output=None):
 
     # Step 1: Create the AoS the process will work with
     #     > These conditions are read from inp file, currently stored in df.
-
-    out = np.empty(shape = (temp + 1), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
+    expand_length = (temp * len(from_temp['Particle_Df']))
+    out = np.empty(shape = ((temp * len(from_temp['Particle_Df'])) + 1), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
 
     #temp = df["starting_pos"].to_numpy()[id] # Populate it with the initial conditions at index 0.
     #temp1 = df["starting_vel"].to_numpy()[id] * 6
-
-    row = df.iloc[id]
+    df = from_temp['Particle_Df']
+    row = df.iloc[0]
     starting_pos = [row["px"], row["py"], row["pz"]]
     starting_pos = [float(item) for item in starting_pos]
     starting_vel = [row['vx'], row['vy'], row['vz']]
@@ -200,20 +247,22 @@ def borisPush(executor=None, output=None):
                             step = 0)
 
     # Step 2: do the actual boris logic
+    num_points = int(from_temp['numsteps'])
+    i = 1
     for time in range(1, num_points + 1): # time: step number
-        x = np.array([out[time - 1].px, out[time - 1].py, out[time - 1].pz])
-        v = np.array([out[time - 1].vx, out[time - 1].vy, out[time - 1].vz])
+        x = np.array([out[i - 1].px, out[i - 1].py, out[i - 1].pz])
+        v = np.array([out[i - 1].vx, out[i - 1].vy, out[i - 1].vz])
         ##########################################################################
         # COLLECT FIELDS
             # submit the field calculations to the threadpool
-        _Ef = executor.submit(EfieldX, x)
-        _Bf = executor.submit(Bfield, x)
+        _Ef = executor.submit(EfieldX, x, from_temp['Field_Methods']['E'])
+        _Bf = executor.submit(Bfield, x, from_temp['Field_Methods']['B'], from_temp['coils'])
             # collect the results
         Ef = _Ef.result()
         Bf = _Bf.result()
             # update array entry with results
-        out[time - 1].bx, out[time - 1].by,out[time - 1].bz = Bf # update B field for particle we just found
-        out[time - 1].ex, out[time - 1].ey,out[time - 1].ez = Ef # update E field for particle we just found
+        out[i - 1].bx, out[i - 1].by,out[i - 1].bz = Bf # update B field for particle we just found
+        out[i - 1].ex, out[i - 1].ey,out[i - 1].ez = Ef # update E field for particle we just found
 
         ##########################################################################
         # BORIS LOGIC
@@ -225,11 +274,10 @@ def borisPush(executor=None, output=None):
         def _v_minus_get():
             return v + charge / (mass * vAc) * Ef * 0.5 * dt
             # submit to executor
-        _tt, _ss = executor.submit(_tt_and_ss_get)
+        _tt_ss = executor.submit(_tt_and_ss_get)
         _v_minus = executor.submit(_v_minus_get)
             # get values from future
-        tt = _tt.result()
-        ss = _ss.result()
+        tt, ss = _tt_ss.result()
         v_minus = _v_minus.result()
 
             # The rest are entangled enough to rule out multithreading.
@@ -240,7 +288,7 @@ def borisPush(executor=None, output=None):
         # Update particle information with the pos and vel
         position = x + v * dt 
         # velocity = v_plus + charge / (mass * vAc) * E * 0.5 * dt
-        out[time] = particle(px = position[0], 
+        out[i] = particle(px = position[0],
                             py = position[1],
                             pz = position[2],
                             vx = v[0],
@@ -268,10 +316,6 @@ def borisPush(executor=None, output=None):
         #curr_time = 2 * np.pi / curr_gyrofreq
     
         #dt = curr_time/100
-        if fromTemp['dt_bob'] == 1 and time % 50 == 0:
-            _dt = dt
-            dt = bob_dt_step(Bp=Bf, B0_mag=fromTemp['bob_dt_B0']['B_mag'], dt0=fromTemp['bob_dt_dt0'], min=fromTemp['bob_dt_min'], max=fromTemp["bob_dt_max"])
-            print(f"dt changed to: {dt} from: {_dt}")
         if time % 1000 == 0:
             manager_queue.put(time)
             print(f"boris calc * {time} for particle {id}")
@@ -280,35 +324,23 @@ def borisPush(executor=None, output=None):
         Periodically add contents to the appropriate datasets in the h5 outputs file.
         """
         if time % temp == 0:
-                # convert the data array of structures to pd.DataFrame
-            df = pd.DataFrame([p.__dict__ for p in out])
-
-                # append to position dataset
-            df_pos = df[['px', 'py', 'pz']]
-            df_pos.to_hdf(f"{output}/src/position", mode='a', append=True, index=False)
-                # append to velocity dataset
-            df_vel = df[['vx', 'vy', 'vz', 'vperp', 'vpar', 'vmag']]
-            df_vel.to_hdf(f"{output}/src/velocity", mode='a', append=True, index=False)
-                # append to field datasets
-            df_fields_b = df[['bx', 'by', 'bz']]
-            df_fields_b.to_hdf(f"{output}/src/fields/b", mode='a', append=True, index=False)
-            df_fields_e = df[['ex', 'ey', 'ez']]
-            df_fields_e.to_hdf(f"{output}/src/fields/e", mode='a', append=True, index=False)
-
-            out = np.empty(shape=(temp + 1), dtype=particle)  # reset the internal AoS
+            write_to_hdf5(from_temp, out, temp)
+            #out[0] = out[time]
+            #out[1:] = None
+            i = 1  # reset the internal AoS
 
         if np.absolute(max(x.min(), x.max(), key=abs)) > side:
                 out = out[out != np.array(None)]
                 print('Exited Boris Push Early')
                 break
-    
+        i += 1
     comp_time = t.time() - comp_start
     diags = {
         "Particle id" : id,
         "Computation Time" : comp_time,
         "Simulation Time" : ft
     }
-    return out, diags
+    write_to_hdf5(from_temp, out, expand_length)
 
 
 from multiprocessing import Manager
@@ -358,7 +390,7 @@ Will eventually replace runsim(), development grounds for a new structure.
 def _runsim(manager_queue):
     _fromTemp = create_shared_info()
     with ThreadPoolExecutor() as executor:
-        borisPush(executor, _fromTemp['output_file'])
+        borisPush(executor, _fromTemp, manager_queue)
 
 
 def runsim(fromGui:dict, manager_queue):

@@ -9,6 +9,8 @@ import system.temp_file_names as names
 from settings.configs.funcs.config_reader import read_configs
 from settings.configs.funcs.configs import create_default_config
 
+from files.create import get_output_subdir
+
 """
 Definitions for all the different GUI user events (that exist at a higher level than tkinter's widgets)
 """
@@ -65,6 +67,7 @@ class Events(Enum):
 
     # when calculate button is pressed but before the calcs start.
     PRE_CALC = Event([before_simulation_bob_dt, # set up constants if using bob's dt scaling solution
+                      get_output_subdir
                      ])
 
     # after a sim finishes

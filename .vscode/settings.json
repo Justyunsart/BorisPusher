@@ -18,5 +18,7 @@
   },
   "terminal.integrated.env.osx": {
     "PYTHONPATH": "${workspaceFolder}:${workspaceFolder}/Scripts"
-  }
+  },
+  "python.envFile": "${workspaceFolder}/.env"
+
 }

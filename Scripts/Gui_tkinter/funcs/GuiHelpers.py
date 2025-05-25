@@ -8,6 +8,7 @@ import pandas as pd
 import csv
 
 from calcs.magpy4c1 import runsim
+from calcs.magpy4c1_01 import _runsim
 from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
 from system.temp_file_names import manager_1, m1f1
 from events.events import Events
@@ -131,40 +132,41 @@ def CalculateCallback(params:list, DIR_last:str, root, manager):
     When the calculate button is pressed, the GUI passes key information to
     the backend and starts the simulation.
     '''
-    Events.PRE_CALC.value.invoke()
     data = GatherParams(params)
     toProgram = {
-        'numsteps' : data['numsteps'],
-        'timestep' : data['dt'],
-        'coils' : data['coils'],
-        'B-Field' : data['B_Methods'],
-        'E-Field' : data['E_Methods'].GetData(),
-        'particles':data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"],
-        "Coil File" : data["Coil File"]
-        }
-    #print(toProgram)
+        'numsteps': data['numsteps'],
+        'timestep': data['dt'],
+        'coils': data['coils'],
+        'B-Field': data['B_Methods'],
+        'E-Field': data['E_Methods'].GetData(),
+        'particles': data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"],
+        "Coil File": data["Coil File"]
+    }
+    # print(toProgram)
     toFile = {
-        'numsteps' : data['numsteps'],
-        'timestep' : data['dt'],
-        'coilFile' : data['Coil File'],
-        'B-Field' : data['B_Methods'],
-        'E-Field' : data['E_Methods'].GetData(),
-        'particleFile':data["Particle File"]
-        }
+        'numsteps': data['numsteps'],
+        'timestep': data['dt'],
+        'coilFile': data['Coil File'],
+        'B-Field': data['B_Methods'],
+        'E-Field': data['E_Methods'].GetData(),
+        'particleFile': data["Particle File"]
+    }
 
     Dict_to_CSV(DIR_last, toFile, newline="")
-    
-        # add some last minute info to the tempfile
-    updateTempFile({"Field_Methods" : {"B" : data["B_Methods"], "E" : data["E_Methods"].GetData()},
-                    "Particle_Df" : data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"],
-                    "coil_file_name" : data["Coil File"]})
+
+    # add some last minute info to the tempfile
+    updateTempFile({"Field_Methods": {"B": data["B_Methods"], "E": data["E_Methods"].GetData()},
+                    "Particle_Df": data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"],
+                    "coil_file_name": data["Coil File"],
+                    "numsteps": data['numsteps']})
+    Events.PRE_CALC.value.invoke()
 
     #####################################################################################
     # STUFF FOR THE PROGRESS WINDOW (WHICH NEEDS RUNTIME DATA)
         # a multiprocessing manager wraps the thread that creates the processpool.
     queue = manager.Queue()
     progress = calculate_progress_window(root, queue)
-    process_thread = threading.Thread(target=runsim, args=(toProgram, queue,), daemon=True)
+    process_thread = threading.Thread(target=_runsim, args=(queue,), daemon=True)
     process_thread.start()
     progress.poll_queue()
 
