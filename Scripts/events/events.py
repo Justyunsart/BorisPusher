@@ -1,7 +1,7 @@
 from enum import Enum
 from functools import partial
 
-from events.funcs import before_simulation_bob_dt
+from events.funcs import before_simulation_bob_dt, copy_diags_to_output_subdir
 from files.checks import folder_checks, ini_checks
 from system.temp_manager import TEMPMANAGER_MANAGER
 import system.temp_file_names as names
@@ -67,7 +67,8 @@ class Events(Enum):
 
     # when calculate button is pressed but before the calcs start.
     PRE_CALC = Event([before_simulation_bob_dt, # set up constants if using bob's dt scaling solution
-                      get_output_subdir
+                      get_output_subdir,
+                      copy_diags_to_output_subdir
                      ])
 
     # after a sim finishes

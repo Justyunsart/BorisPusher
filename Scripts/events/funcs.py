@@ -46,3 +46,24 @@ def before_simulation_bob_dt(particle=constants.proton, drange=10):
         "bob_dt_min" : dt0 / drange,
         "bob_dt_max" : dt0 * drange
                   })
+import shutil
+import os
+from settings.configs.funcs.config_reader import runtime_configs
+def copy_diags_to_output_subdir():
+    d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+    out_path = os.path.join(str(runtime_configs['Paths']['outputs']), d["output_path"])
+    coil_path = d['coil_file']
+    particle_path = d['particle_file']
+
+    # TODO: ADD BOB_E FILE IF USED
+
+        # copy the used coil file to the output
+    with open(os.path.join(out_path, "coils.txt"), 'w') as f:
+        pass
+    with open(os.path.join(out_path, "particles.txt"), 'w') as f:
+        pass
+
+    shutil.copyfile(coil_path, os.path.join(out_path, "coils.txt"))
+    shutil.copyfile(particle_path, os.path.join(out_path, "particles.txt"))
+
+

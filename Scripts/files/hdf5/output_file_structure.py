@@ -19,7 +19,7 @@ def create_h5_output_file(file_name, length, **kwargs):
         # CREATE BASE GROUP
     grp = f.create_group('/src')
 
-        # THINGS INSIDE THE BASE GROUPS
+        # THINGS INSIDE THE SRC GROUP
     grp_ds = f.create_dataset("/src/position", (0, 3), chunks=True, maxshape=(None, 3)) # px, py, pz
     grp_ds2 = f.create_dataset("/src/velocity", (0, 6), chunks=True, maxshape=(None, 6)) # vx, vy, vz, vperp, vpar, vmag
     grp_grp = f.create_group('/src/fields')

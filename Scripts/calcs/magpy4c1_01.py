@@ -165,21 +165,21 @@ def write_to_hdf5(from_temp, out, expand_length):
     # append to field datasets
     df_fields_b = df[['bx', 'by', 'bz']].astype(np.float64).to_numpy()
     #df_fields_b.to_hdf(path, key='src/fields/b', mode='a', append=True)
-    df_fields_e = df[['ex', 'ey', 'ez', 'eperp', 'epar', 'emag']].astype(np.float64).to_numpy()
+    df_fields_e = df[['ex', 'ey', 'ez']].astype(np.float64).to_numpy()
     #df_fields_e.to_hdf(path, key='src/fields/e', mode='a', append=True)
 
     with h5py.File(path, 'a') as f:
         old_shape = f['/src/position'].shape[0]
-        f['/src/position'].resize((old_shape + len(df_pos), 3))
+        f['/src/position'].resize((old_shape + len(df), 3))
         f['/src/position'][old_shape:] = df_pos
 
         old_shape = f['/src/velocity'].shape[0]
-        f['src/velocity'].resize((old_shape + len(df_vel), 6))
+        f['src/velocity'].resize((old_shape + len(df), 6))
         f['/src/velocity'][old_shape:] = df_vel
 
         old_shape = f['src/fields/b'].shape[0]
-        f['src/fields/b'].resize((old_shape + len(df_fields_b), 3))
-        f['src/fields/e'].resize((old_shape + len(df_fields_e), 6))
+        f['src/fields/b'].resize((old_shape + len(df), 3))
+        f['src/fields/e'].resize((old_shape + len(df), 3))
         f['src/fields/b'][old_shape:] = df_fields_b
         f['src/fields/e'][old_shape:] = df_fields_e
     
@@ -327,7 +327,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
             write_to_hdf5(from_temp, out, temp)
             #out[0] = out[time]
             #out[1:] = None
-            i = 1  # reset the internal AoS
+            i = 1  # reset the internal AoS index
 
         if np.absolute(max(x.min(), x.max(), key=abs)) > side:
                 out = out[out != np.array(None)]
@@ -388,7 +388,9 @@ def init_process(data, n1, n2, t, t1, Bf, Ef, coils, _fromTemp, queue):
 Will eventually replace runsim(), development grounds for a new structure.    
 """
 def _runsim(manager_queue):
+        # Access tempfile dict for all threads
     _fromTemp = create_shared_info()
+
     with ThreadPoolExecutor() as executor:
         borisPush(executor, _fromTemp, manager_queue)
 

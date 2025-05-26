@@ -574,7 +574,14 @@ class PlottingWindowObj(tk.Frame):
             dropdown.updateGraph(self.df)
             self.resize_callback(None)
     
+    """
+    path is expected to lead to a known .h5 file with the same structure as defined in files.hdf5.output_file_structure
+    
+    """
     def read_dataframe(self, *args):
+        pass
+
+    '''def read_dataframe(self, *args):
         """
         path is expected to be the full dataset path.
         The dataset is also expected to be a .json file in the 'table' orientation, as it's what the program spits out.
@@ -599,7 +606,7 @@ class PlottingWindowObj(tk.Frame):
         except ValueError:
             print(f"Plottingwindow.PlottingWindowObj.read_dataframe: provided path does not meet the requirements of being a .json file in the table orientation, or the provided collection is")
         
-        self.update_all_graphs()
+        self.update_all_graphs()'''
     
     def File_to_Collection(self, path):
         """
