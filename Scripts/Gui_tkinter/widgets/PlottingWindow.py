@@ -20,7 +20,8 @@ import pandas as pd
 from calcs.BorisAnalysis import *
 from settings.notifs import Popup_Notifs, Title_Notif
 from system.temp_manager import TEMPMANAGER_MANAGER
-import system.temp_file_names as names 
+import system.temp_file_names as names
+import h5py
 
 """
 the following r settings and callables that the classes will implement.
@@ -87,82 +88,98 @@ Also, they do not call the draw function. That should be done externally.
 
 Pls note that right now, they will only graph the data of particle 0.
 """
-def Param_v_Step_callable(fig, plot, df:pd.DataFrame, id, **kwargs):
+def Param_v_Step_callable(fig, plot, path, id, **kwargs):
     """
     for tracking a single parameter involved in the simulation as a linegraph respective to the step count.
     used for the vel, b-mag, e-mag v, step graphs.
     """
-    xn = None
-    yn = None # these are strings that will be populated with the appropriate df col names.
-    zn = None
-    
-    # the id parameter lets this function know what to look for in the dataframe.
-    match id:
-        case 'v':
-            xn = 'vx'
-            yn = 'vy'
-            zn = 'vz'
-        case 'b':
-            xn = 'bx'
-            yn = 'by'
-            zn = 'bz'
-        case 'e':
-            xn = 'ex'
-            yn = 'ey'
-            zn = 'ez'
-        case _:
-            print(f"YOU PROVIDED AN UNSUPPORTED ID TO PlottingWindow.Param_v_Step_callable!! {id} is not v, b, nor e!")
+    h5_dct = {"v" : {'xn' : 'vx',
+                     'yn' : 'vy',
+                     'zn' : 'vz',
+                     'mag_key' : 'vmag',
+                     'perp_key' : 'vperp',
+                     'par_key' : 'vpar',
+                     'src' : '/src/velocity'},
+
+              "b" : {'xn' : 'bx',
+                     'yn' : 'by',
+                     'zn' : 'bz',
+                     'mag_key' : 'bmag',
+                     'perp_key' : 'bperp',
+                     'par_key' : 'bpar',
+                     'src' : 'src/fields/b'},
+
+              'e' : {'xn' : 'ex',
+                     'yn' : 'ey',
+                     'zn' : 'ez',
+                     'mag_key' : 'emag',
+                     'perp_key' : 'eperp',
+                     'par_key' : 'epar',
+                     'src' : 'src/fields/e'}}
+
+        # the id parameter lets this function know what to look for in the dataframe.
+    assert id in ('v', 'b', 'e'), f"YOU PROVIDED AN UNSUPPORTED ID TO PlottingWindow.Param_v_Step_callable!! {id} is not v, b, nor e!"
 
     # now that we know the column names associated with the data we want, we index the dataframe with the relevant info
-    dfslice = df[df['id'] == 0] # right now, we only look at the 1st particle.
-    x, y, z = dfslice[xn].to_numpy(), dfslice[yn].to_numpy(), dfslice[zn].to_numpy() #x, y, z coord points at each step
-    coords = np.column_stack((x,y,z))
+    #dfslice = df[df['id'] == 0] # right now, we only look at the 1st particle.
+    #x, y, z = dfslice[xn].to_numpy(), dfslice[yn].to_numpy(), dfslice[zn].to_numpy() #x, y, z coord points at each step
+    with h5py.File(path, 'r+') as f:
+        ds = f[h5_dct[id]['src']]
+        x, y, z = ds[h5_dct[id]['xn']], ds[h5_dct[id]['yn']], ds[h5_dct[id]['zn']]
+        coords = np.column_stack((x,y,z))
+        #print(coords)
 
-    # get the graphable components
-    # 1. the magnitude of the component at each step.
-    step_mag = magnitude_at_each_step(coords)[:-1]
+            # get the graphable components
+            # 1. the magnitude of the component at each step.
+        step_mag = magnitude_at_each_step(coords, f, h5_dct[id]['src'], h5_dct[id]['mag_key'])[:-1]
+        #print(step_mag)
 
-    # for now, b has only this line.
-    if id == 'b':
-        plot.plot(step_mag)
-        return True
-    else:
-        # everyone else gets parallel and perpendicular components also graphed, which are calculated relative to b.
-        bx,by,bz = dfslice["bx"].to_numpy(), dfslice["by"].to_numpy(), dfslice["bz"].to_numpy() # b components at each step to calculate v||, e||
-        bs = np.column_stack((bx, by, bz)) # b coordinates all in one array.
+            # for now, b has only this line.
+        if id == 'b':
+            plot.plot(step_mag)
+            return True
+        else:
+            b_ds = f[h5_dct['b']['src']]
+                # everyone else gets parallel and perpendicular components also graphed, which are calculated relative to b.
+            #bx,by,bz = dfslice["bx"].to_numpy(), dfslice["by"].to_numpy(), dfslice["bz"].to_numpy() # b components at each step to calculate v||, e||
+            bx, by, bz = b_ds[h5_dct['b']['xn']], b_ds[h5_dct['b']['yn']], b_ds[h5_dct['b']['zn']]
+            bs = np.column_stack((bx, by, bz)) # b coordinates all in one array.
 
-        # get the parallel and perpendicular components relative to b
-        step_parallel = get_parallel(bs, coords)[:-1]
-        step_perpendicular = get_perpendicular(bs, coords)[:-1]
+                # get the parallel and perpendicular components relative to b
+            step_parallel = get_parallel(bs, coords, f, h5_dct[id]['src'], h5_dct[id]['par_key'])[:-1]
+            step_perpendicular = get_perpendicular(bs, coords, f, h5_dct[id]['src'], h5_dct[id]['perp_key'])[:-1]
 
-        # graph these guys.
-        plot.plot(step_mag, label='mag', color='green')
-        plot.plot(step_parallel, label='p', color='blue')
-        plot.plot(step_perpendicular, label='perp', color='red')
+                # graph these guys.
+            plot.plot(step_mag, label='mag', color='green')
+            plot.plot(step_parallel, label='p', color='blue')
+            plot.plot(step_perpendicular, label='perp', color='red')
 
-        # add a legend
-        plot.legend(bbox_to_anchor=(0, 1.15), loc='lower left', fontsize=4, ncol=3 )
+                # add a legend
+            plot.legend(bbox_to_anchor=(0, 1.15), loc='lower left', fontsize=4, ncol=3 )
 
 
-def Trajectory_callable(fig, plot, df:pd.DataFrame, c:mp.Collection, **kwargs):
+def Trajectory_callable(fig, plot, path, c:mp.Collection, **kwargs):
     """
     for graphing the 3d trajectory of a single particle.
     """
     palettes = ["copper", "gist_heat"] # supported palettes for multiple particles.
-    # get the number of particles. Because 'id' is working with a 0 index, add 1.
-    nump = df["id"].max() + 1
-    
-    # Graph trajectory for each particle
-    for part in range(nump):
-        # extract data from dataframe
-        dfslice = df[df["id"] == part] # only using info from the corresponding particle id.
-        x, y, z = dfslice["px"].to_numpy(), dfslice["py"].to_numpy(), dfslice["pz"].to_numpy() #x, y, z coord points at each step
-        
-        # make the matching index's color palette a colormap distributed across the steps.
-        colors = mpl.colormaps[palettes[part]]
-        
-        # actually plot everything.
-        plot.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
+
+    with h5py.File(path, 'r') as f:
+        # get the number of particles. Because 'id' is working with a 0 index, add 1.
+        #nump = df["id"].max() + 1
+        nump=1
+        # Graph trajectory for each particle
+        df = f['src/position']
+        for part in range(nump):
+            # extract data from dataframe
+            #dfslice = df[df["id"] == part] # only using info from the corresponding particle id.
+            #x, y, z = dfslice["px"].to_numpy(), dfslice["py"].to_numpy(), dfslice["pz"].to_numpy() #x, y, z coord points at each step
+            x, y, z = df["px"], df["py"], df["pz"]  # x, y, z coord points at each step
+            # make the matching index's color palette a colormap distributed across the steps.
+            colors = mpl.colormaps[palettes[part]]
+
+            # actually plot everything.
+            plot.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
 
     # Additionally, we want to also show the coil configuration.
     mp.show(c, canvas=plot)
@@ -399,14 +416,14 @@ class CanvasFigure(tk.Frame):
         # replot the labels according to the settings.
         self.renameLabels()
 
-    def updateGraph(self, df:pd.DataFrame, func:callable, **kwargs):
+    def updateGraph(self, func:callable, path, **kwargs):
         """
         When called, the selected graphing logic will be called once more.
 
         It is expected that the dataframe is externally provided upon the function call.
         """
         self.prepareGraph()
-        func(self.fig, self.plot, df, **kwargs) # the graphing logic is being applied here.
+        func(self.fig, self.plot, path, **kwargs) # the graphing logic is being applied here.
         return True
 
 class DropdownFigure(tk.Frame):
@@ -464,7 +481,7 @@ class DropdownFigure(tk.Frame):
         self.settings = self.canvFig.graph_settings.update(new_dict)
         #print(self.settings)
     
-    def updateGraph(self, df:pd.DataFrame, **kwargs):
+    def updateGraph(self, path, **kwargs):
         """
         calls the updateGraph function (with identical parameters) to the CanvasFigure object.
         """
@@ -475,7 +492,7 @@ class DropdownFigure(tk.Frame):
             # only do graphing stuff if id is not none; if something is acutally chosen lol.
             if id is not None:
                 #print("you should be updating a dropdown graph.")
-                self.canvFig.updateGraph(df, Param_v_Step_callable, id=id)
+                self.canvFig.updateGraph(Param_v_Step_callable, path, id=id)
         except:
             return False
 
@@ -505,6 +522,8 @@ class PlottingWindowObj(tk.Frame):
         self.df = None # the dataset read from the .json output file.
         self.c = None # the magpylib.collection object that was used to run the simulation.
         self.path = label
+        self._path = self.path.get()
+        self._h_path = None
         super().__init__(master)
         self.config(highlightbackground='black', highlightthickness='2') # visualize frame bounds
 
@@ -549,15 +568,14 @@ class PlottingWindowObj(tk.Frame):
         (like when a dataset file is selected).
         """
         #print(self.df)
-        if self.df is not None and self.c is not None:
-            # trajectory callable needs: the fig, plot, dataframe, collection.
-            traj_args = {'c' : self.c}
-            self.trajectory.updateGraph(self.df, Trajectory_callable, **traj_args)
-            # everything else's callable needs: the fig, plot, dataframe, id.
-            # these are decided in the DropdownFigure object themselves.
-            self.graph1.updateGraph(self.df)
-            self.graph2.updateGraph(self.df)
-            self.resize_callback(None)
+        # trajectory callable needs: the fig, plot, dataframe, collection.
+        traj_args = {'c' : self.c}
+        self.trajectory.updateGraph(self._h_path, Trajectory_callable, **traj_args)
+        # everything else's callable needs: the fig, plot, dataframe, id.
+        # these are decided in the DropdownFigure object themselves.
+        self.graph1.updateGraph(self._h_path)
+        self.graph2.updateGraph(self._h_path)
+        self.resize_callback(None)
 
     def update_dropdown(self, event, dropdown):
         """
@@ -569,17 +587,21 @@ class PlottingWindowObj(tk.Frame):
         PARAMS:
         dropdown = the instance of DropdownFigure responsible for this trigger. 
         """
-        if self.df is not None and self.c is not None:
-            dropdown.update_graph_settings(event)
-            dropdown.updateGraph(self.df)
-            self.resize_callback(None)
+        dropdown.update_graph_settings(event)
+        dropdown.updateGraph(self._h_path)
+        self.resize_callback(None)
     
     """
-    path is expected to lead to a known .h5 file with the same structure as defined in files.hdf5.output_file_structure
+    path is expected to be the parent dir to a known .h5 file with the same structure as defined in files.hdf5.output_file_structure
     
     """
     def read_dataframe(self, *args):
-        pass
+        path = self.path.get()
+        self._path = str(Path(path).parents[0])
+        self._h_path = os.path.join(self._path, 'data.hdf5')
+        self.c = self.File_to_Collection(path)  # reconstructs the magpylib collection object that was used.
+        self.update_all_graphs()
+
 
     '''def read_dataframe(self, *args):
         """

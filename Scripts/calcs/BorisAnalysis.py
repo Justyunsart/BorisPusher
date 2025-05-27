@@ -3,26 +3,40 @@ Holds functions for calculating loss, moment, etc.
 '''
 
 import numpy as np
+import h5py
 
-def magnitude_at_each_step(arr):
+def magnitude_at_each_step(arr, f, ds_key, col_key):
     """
     takes in a 2D input array and returns a 1D array containing the magnitudes at axis 1.
     in: [[x1,y1,z1],[x2,y2,z2],...[xn,yn,zn]]
     out: [mag1, mag2, mag3]
     """
-    return np.linalg.norm(arr, axis=1)
+        # if any of the selected magnitude dataset column has a None value,
+        # then it is a sign to calculate and populate it.
+    #print(f[ds_key][col_key])
+    if np.isnan(f[ds_key][col_key]).any():
+        #print("yes")
+        f[ds_key][col_key] = np.linalg.norm(arr, axis=1)
+    return f[ds_key][col_key]
 
-def get_parallel(bs, arr):
+    #return np.linalg.norm(arr, axis=1)
+
+def get_parallel(bs, arr, f, ds_key, col_key):
     """
     returns the elementwise dot product of the two input arrays.
     """
-    return np.einsum('ij, ij->i', bs, arr)
+        # if any of the selected magnitude dataset column has a None value,
+        # then it is a sign to calculate and populate it.
+    if np.isnan(f[ds_key][col_key]).any():
+        f[ds_key][col_key] = np.einsum('ij, ij->i', bs, arr)
+    return f[ds_key][col_key]
 
-def get_perpendicular(bs, arr):
+
+def get_perpendicular(bs, arr, f, ds_key, col_key):
     """
     returns the cross product's magnitude of the two arrays.
     """
-    return magnitude_at_each_step(np.cross(arr, bs))
+    return magnitude_at_each_step(np.cross(arr, bs), f, ds_key, col_key)
 
 def CalculateLoss(vels:np.ndarray, bs:np.ndarray, intervals:int):
     '''

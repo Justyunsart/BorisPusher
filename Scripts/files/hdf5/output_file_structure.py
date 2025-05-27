@@ -1,4 +1,5 @@
 import h5py
+from files.PusherClasses import position_dt, velocity_dt, field_b_dt, field_e_dt
 
 """
 Place to define the file structure of the output HDF5 file
@@ -20,11 +21,11 @@ def create_h5_output_file(file_name, length, **kwargs):
     grp = f.create_group('/src')
 
         # THINGS INSIDE THE SRC GROUP
-    grp_ds = f.create_dataset("/src/position", (0, 3), chunks=True, maxshape=(None, 3)) # px, py, pz
-    grp_ds2 = f.create_dataset("/src/velocity", (0, 6), chunks=True, maxshape=(None, 6)) # vx, vy, vz, vperp, vpar, vmag
+    grp_ds = f.create_dataset("/src/position", (0,), chunks=True, maxshape=(None,), dtype=position_dt) # px, py, pz
+    grp_ds2 = f.create_dataset("/src/velocity", (0,), chunks=True, maxshape=(None,), dtype=velocity_dt) # vx, vy, vz, vperp, vpar, vmag
     grp_grp = f.create_group('/src/fields')
-    grp_grp_ds = f.create_dataset("/src/fields/b", (0, 3), chunks=True, maxshape=(None, 3)) # bx, by, bz
-    grp_grp_ds2 = f.create_dataset("/src/fields/e", (0, 6), chunks=True, maxshape=(None, 6))  # bx, by, bz, eperp, epar, emag
+    grp_grp_ds = f.create_dataset("/src/fields/b", (0,), chunks=True, maxshape=(None,), dtype=field_b_dt) # bx, by, bz
+    grp_grp_ds2 = f.create_dataset("/src/fields/e", (0,), chunks=True, maxshape=(None,), dtype=field_e_dt)  # bx, by, bz, eperp, epar, emag
 
 if __name__ == "__main__":
     h5py.run_tests()

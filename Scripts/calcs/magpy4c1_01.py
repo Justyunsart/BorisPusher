@@ -13,7 +13,7 @@ import pandas as pd
 
 # Pusher specific stuff
 ## Currents, dataclasses
-from files.PusherClasses import particle
+from files.PusherClasses import particle, position_dt, velocity_dt, field_e_dt, field_b_dt
 from files.PusherClasses import CreateOutput
 ## Calculations
 import numpy as np
@@ -152,34 +152,35 @@ def write_to_hdf5(from_temp, out, expand_length):
     _out = out[mask]
 
     df = pd.DataFrame([p.__dict__ for p in _out])
-    print(df)
+    #print(df)
     path = os.path.join(str(runtime_configs['Paths']['outputs']), from_temp['hdf5_path'])
-    print(path)
+    #print(path)
 
     # append to position dataset
-    df_pos = df[['px', 'py', 'pz']].astype(np.float64).to_numpy()
+    df_pos = np.ascontiguousarray(df[['px', 'py', 'pz']].astype(dtype=np.float64).to_numpy()).view(dtype=position_dt).reshape(-1)
+    #print(df_pos)
     #df_pos.to_hdf(path, key='src/position', mode='a', append=True)
     # append to velocity dataset
-    df_vel = df[['vx', 'vy', 'vz', 'vperp', 'vpar', 'vmag']].astype(np.float64).to_numpy()
+    df_vel = np.ascontiguousarray(df[['vx', 'vy', 'vz', 'vperp', 'vpar', 'vmag']].astype(np.float64).to_numpy()).view(dtype=velocity_dt).reshape(-1)
     #df_vel.to_hdf(path, key='src/velocity', mode='a', append=True)
     # append to field datasets
-    df_fields_b = df[['bx', 'by', 'bz']].astype(np.float64).to_numpy()
+    df_fields_b = np.ascontiguousarray(df[['bx', 'by', 'bz', 'bmag']].astype(np.float64).to_numpy()).view(dtype=field_b_dt).reshape(-1)
     #df_fields_b.to_hdf(path, key='src/fields/b', mode='a', append=True)
-    df_fields_e = df[['ex', 'ey', 'ez']].astype(np.float64).to_numpy()
+    df_fields_e = np.ascontiguousarray(df[['ex', 'ey', 'ez', 'eperp', 'epar', 'emag']].astype(np.float64).to_numpy()).view(dtype=field_e_dt).reshape(-1)
     #df_fields_e.to_hdf(path, key='src/fields/e', mode='a', append=True)
 
     with h5py.File(path, 'a') as f:
         old_shape = f['/src/position'].shape[0]
-        f['/src/position'].resize((old_shape + len(df), 3))
+        f['/src/position'].resize((old_shape + len(df),))
         f['/src/position'][old_shape:] = df_pos
 
         old_shape = f['/src/velocity'].shape[0]
-        f['src/velocity'].resize((old_shape + len(df), 6))
+        f['src/velocity'].resize((old_shape + len(df),))
         f['/src/velocity'][old_shape:] = df_vel
 
         old_shape = f['src/fields/b'].shape[0]
-        f['src/fields/b'].resize((old_shape + len(df), 3))
-        f['src/fields/e'].resize((old_shape + len(df), 3))
+        f['src/fields/b'].resize((old_shape + len(df),))
+        f['src/fields/e'].resize((old_shape + len(df),))
         f['src/fields/b'][old_shape:] = df_fields_b
         f['src/fields/e'][old_shape:] = df_fields_e
     
