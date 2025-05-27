@@ -159,7 +159,7 @@ def read_temp_file_dict(path):
 Write to tempfile path
 """
 def write_dict_to_temp(path, data):
-    debug = False
+    debug = True
     if debug:
         print(f"system.temp_manager.write_dict_to_temp(): data is: ")
         print(data)

@@ -10,3 +10,23 @@ manager_1 = "m_params" # files die after calculate button is pressed.
 # TEMP FILE NAMES
 m1f1 = "params"
 m1f2 = "traj_1"
+
+################################################################################
+# Below are definitions for field names inside m1f1
+from enum import Enum
+class param_keys(Enum):
+    coil_file = "Location of the magnetic coil configuration input file"
+    mag_coil = "Binary of the magpylib.Collection object of the selected coil input"
+    coil_name = "Name of the coil input file"
+
+    particle_file = "Location of the magnetic particle configuration input file"
+
+    dt = "Default timestep value (seconds)"
+    dt_bob = "boolean value for whether the simulation should run with bob's variable timestep"
+    numsteps = "Number of time steps to simulate"
+
+    field_methods = "Nested dictionary of b, e field methods and associated parameters"
+    b = "the b-field parameters inside the field_methods dictionary"
+    e = "the e-field parameters inside the field_methods dictionary"
+    method = "the name of the field method used"
+    params = "the parameters that are involved with the given field method"

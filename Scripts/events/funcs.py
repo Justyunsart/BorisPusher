@@ -2,6 +2,7 @@ import numpy as np
 import settings.constants as constants
 from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file_dict
 from system.temp_file_names import m1f1
+from definitions import DIR_ROOT
 """
 Extra logic to run before a simulation for Bob's variable timestep.
 Defines constants that need to be calculated.
@@ -67,3 +68,14 @@ def copy_diags_to_output_subdir():
     shutil.copyfile(particle_path, os.path.join(out_path, "particles.txt"))
 
 
+"""
+Function to direct all widgets to extract relevant data from the last_used file (if it exists)
+then update the current runtime tempfile dictionary with it.
+
+Updates the tempfile with default values at the hint of a failure (implemented at each widget definition)
+"""
+def initialize_tempfile_dict(widgets:list):
+        # first step: read the last_used file dictionary, which is placed in the project root
+    lu = read_temp_file_dict(os.path.join(DIR_ROOT, 'last_used'))
+    for widget in widgets:
+        widget.init_tempfile(lu)

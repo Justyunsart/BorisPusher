@@ -157,8 +157,7 @@ def CalculateCallback(params:list, DIR_last:str, root, manager):
     # add some last minute info to the tempfile
     updateTempFile({"Field_Methods": {"B": data["B_Methods"], "E": data["E_Methods"].GetData()},
                     "Particle_Df": data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"],
-                    "coil_file_name": data["Coil File"],
-                    "numsteps": data['numsteps']})
+                    "coil_file_name": data["Coil File"]})
     Events.PRE_CALC.value.invoke()
 
     #####################################################################################

@@ -2,11 +2,10 @@ import tkinter as tk
 import numpy as np
 
 from Gui_tkinter.funcs.GuiEntryHelpers import LabeledEntry
-from Gui_tkinter.widgets.CurrentGuiClasses import CurrentEntryTable
 from Gui_tkinter.widgets.BorisGuiClasses import _Try_Float
 
 from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
-from system.temp_file_names import manager_1, m1f1
+from system.temp_file_names import manager_1, m1f1, param_keys
 
 """
 Widget controlling the amount of steps and the starting timestep.
@@ -49,10 +48,11 @@ class TimeStep_n_NumStep():
         self.dt = LabeledEntry(self.frame, val=0.0000001, row=1, title="Timestep (sec): ", width = 10)
         self.dt.value.trace_add("write", self._Total_Sim_Time)
         self.dt.value.trace_add("write", self.dt_Callback)
-        self.do_bob.trace_add("write", self.dt_Callback)
+        self.do_bob.trace_add("write", self.update_do_bob)
         
         self.numsteps = LabeledEntry(self.frame, val=50000, row=0, title="Num Steps: ", width = 10)
         self.numsteps.value.trace_add("write", self._Total_Sim_Time)
+        self.numsteps.value.trace_add("write", self.update_numsteps)
 
         # display the simulation time
         self.simFrame = tk.LabelFrame(self.master, text="Total Sim Time: ", bg="gray")
@@ -69,21 +69,35 @@ class TimeStep_n_NumStep():
 
         #table.lim.attach(self)
         #self.dt_Callback()
+            # attach trace to the value of the numsteps entry to update the tempfile
 
+    """
+    Necessary for the observer pattern to work; a function of this name is expected to exist for all event subs
+    """
     def update(self, *args):
         """
         when the 'lim' Data in the current table is updated, you have to re-run the Dt size check.
         """
         self.dt_Callback()
-    
+
+    def update_numsteps(self, *args):
+        d = {param_keys.numsteps.name : self.numsteps.entry.get()}
+        self.update_tempfile(d)
+
     def update_tempfile(self, updates):
         d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1]) | (updates)
+        #print(d)
         write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
+    def update_do_bob(self, *args):
+        d = {param_keys.dt_bob.name : int(self.do_bob.get())}
+        self.update_tempfile(d)
+
     def dt_Callback(self, *args):
+        #print(f"dt_callback called")
         lim = self._Check_Timestep_Size()
-        self.update_tempfile(self.GetData())
-        if (float(self.dt.value.get()) < lim):
+        self.update_tempfile({"dt": self.dt.entry.get()})
+        if float(self.dt.value.get()) < lim:
             self.dt_str.set(self.responses["good"])
         else:
             self.dt_str.set(f'Dt is too big, upper lim is: {lim}')
@@ -124,7 +138,7 @@ class TimeStep_n_NumStep():
         # extract the thing.
         coils = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
         #print(coils)
-        return np.max(abs(coils['coils'][0].position))
+        return np.max(abs(coils[param_keys.mag_coil.name][0].position))
     
     def _Check_Timestep_Size(self):
         """

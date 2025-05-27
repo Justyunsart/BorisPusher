@@ -3,8 +3,6 @@ Contains object-oriented GUI classes for general use.
 Some are general, some are one time use.
 '''
 
-import tkinter as tk
-from tkinter import ttk
 from Gui_tkinter.widgets.CurrentGuiClasses import *
 from Gui_tkinter.funcs.GuiEntryHelpers import *
 from math import copysign
@@ -12,8 +10,6 @@ from matplotlib import pyplot as plt
 from settings.fields.FieldMethods import *
 from settings.fields.FieldMethods_Impl import *
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-#from definitions import DIR_INPUTS_COILS, DIR_INPUTS_PARTICLES
-import configparser
 from definitions import NAME_PARTICLES
 
 # file stuff
@@ -23,6 +19,8 @@ import numpy as np
 # presets
 from settings.defaults.coils import (preset_hexahedron, preset_mirror, preset_cusp)
 from settings.configs.funcs.config_reader import runtime_configs
+from system.temp_file_names import param_keys, m1f1
+from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file_dict
 
 class MainWindow(tk.Frame):
     '''
@@ -161,7 +159,7 @@ class ParticlePreview(EntryTable):
         '''
         self.Read_Data()
         self._SetSaveEntry(self.fileWidget.fileName.get())
-        self._updateTempFile("particle_file", self.fileWidget.PATH.data)
+        self._updateTempFile(param_keys.particle_file.name, self.fileWidget.PATH.data)
     
     def SaveData(self, dir:str, container=None, customContainer=False):
         super().SaveData(dir, container, customContainer)
@@ -430,12 +428,24 @@ class CurrentConfig:
 
 class FieldDropdown(Dropdown):
     options:Enum
-    def __init__(self, master, options:Enum, label, **kwargs):
+    def __init__(self, master, options:Enum, label, key=None, **kwargs):
         self.options = options
+        self.key = key # the field name for the temp file
         names = options._member_names_
         super().__init__(master, names, label=label, **kwargs)
+        if self.key is not None:
+            self.chosenVal.trace_add('write', self.update_tempfile)
+
+    """
+    updates the tempfile with the associated field method used (magpy, zero, etc.)
+    """
+    def update_tempfile(self, event, *args):
+        d = {param_keys.field_methods.name: {self.key: {param_keys.method.name: self.chosenVal.get()}}}
+        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+
     def GetData(self):
         return {str(self.options.__name__):self.chosenVal.get()}
+
     def _Set(self, key, value):
         try:
             ind = self.dropdown['values'].index(value)
@@ -450,11 +460,7 @@ class FieldDropdown(Dropdown):
 
 class FieldCoord_n_Graph():
     """
-    THE WIDGET COLLECTION WHERE YOU CHOOSE THE B AND E FIELDS USED.
-    ALSO GRAPHS FOR THEM.
-    """
-    """
-    vars for the graph
+    Graph, widget controls for field methods.
     """
     fig = None
     plot = None
@@ -463,7 +469,7 @@ class FieldCoord_n_Graph():
     
     def __init__(self, root, table:FieldDropdown, graphOptions:FieldDropdown, graphFrame:tk.LabelFrame, canvasFrame:tk.Frame, currentTable:CurrentEntryTable,
                  title="title", x_label="x", y_label="y"):
-        """
+        """the b-field parameters inside the field_methods dictionary
         expects an instance of a coordinate table, and a frame where the graph will be made.
         """
         self.root = root # reference to the main window
@@ -506,8 +512,16 @@ class FieldCoord_n_Graph():
         curr = self.table.chosenVal.get()
         self._checkInstance(curr).ShowWidget()
 
+        # then, update the tempfile (field_methods/E/params)
+        d = {param_keys.field_methods.name:
+                 {param_keys.e.name:
+                      {param_keys.params.name:
+                           self._checkInstance(self.table.chosenVal.get()).GetData()[self.table.chosenVal.get()]}}}
+        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+
         # lastly, update the prevVal property
         self.prevVal = curr
+
         return True
         
 

@@ -5,9 +5,7 @@ Users will basically create instances of this to customize the current.
 It's basically a container for parameters to create magpylib objects
 '''
 from collections import defaultdict
-import tkinter as tk
-from tkinter import ttk
-from dataclasses import dataclass, field
+
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2Tk)
@@ -25,10 +23,14 @@ from system.temp_file_names import manager_1, m1f1
 from settings.defaults.coils import default_coil, coil_cust_attr_name
 from definitions import PLATFORM
 
+from system.temp_file_names import param_keys
+
 if PLATFORM != "win32":
     from xattr import setxattr
 else:
     import os
+
+from pathlib import Path
 
 class EntryTable():
     '''
@@ -91,6 +93,8 @@ class EntryTable():
     def _updateTempFile(self, field:str, val):
         d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
         d[field] = val
+        #print(f"RUNNING FROM _updateTempFile from CurrentGuiClasses.py, line 94")
+        #print(d)
         write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
     #===============#
     # INITIALIZAION #
@@ -109,7 +113,6 @@ class EntryTable():
         self.fieldDefaults = list(dataclass.__dataclass_fields__.values())
 
         self.numcols = len(self.fields)
-
 
         #---------#
         # WIDGETS #
@@ -546,8 +549,6 @@ class RotationConfigEntryTable(EntryTable):
     """
     A special kind of entry table that expects an input of data from external sources.
     It is opened when a button is pressed in a current entry table.
-    
-    TODO: It's okay to hard code the column names because this class is specifically made for two variables.
     """
     axisIndices = {"x" : 0,
                    "y" : 1,
@@ -747,7 +748,7 @@ class CurrentEntryTable(EntryTable):
         self.canvas.draw()
 
             # Update tempfile entry for the coil collection object.
-        self._updateTempFile('coils', self.collection)
+        self._updateTempFile(param_keys.mag_coil.name, self.collection)
         return True
 
     def EntryValidateCallback(self, entry):
@@ -822,7 +823,8 @@ class CurrentEntryTable(EntryTable):
         self.Finalize_Reading(coils)
 
             # update tempfile for the coil file path
-        self._updateTempFile('coil_file', self.dirWidget.PATH.data)
+        self._updateTempFile(param_keys.coil_file.name, self.dirWidget.PATH.data)
+        self._updateTempFile(param_keys.coil_name.name, str(Path(self.dirWidget.PATH.data).name))
         return True
     
     def GetData(self):

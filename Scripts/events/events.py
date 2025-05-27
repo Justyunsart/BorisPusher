@@ -27,9 +27,9 @@ class Event():
     """
     runs all the callables that the object is responsible for.
     """
-    def invoke(self):
+    def invoke(self, **kwargs):
         for c in self.callables:
-            c()
+            c(**kwargs)
 
 def _whatis_file():
     print(TEMPMANAGER_MANAGER.files[names.m1f1])
@@ -62,7 +62,9 @@ class Events(Enum):
                           partial(TEMPMANAGER_MANAGER.create_temp_file, names.manager_1, names.m1f1),
                           partial(TEMPMANAGER_MANAGER.create_temp_file, names.manager_1, names.m1f2), # holds png of trajectory
                           ])
-    
+
+    # after creating the tempfile(s), you can then fill widgets with the last used values.
+    # this also functions to fill the tempfile with all of the expected fields (as every widget gets to update the tempfile)
     INIT_GUI = Event([])
 
     # when calculate button is pressed but before the calcs start.

@@ -14,7 +14,9 @@ from definitions import (DIR_ROOT, DIR_CONFIG, NAME_INPUTS, NAME_COILS, NAME_PAR
 import configparser
 from system.Observer import Data
 from system.path import Path
+from system.temp_file_names import param_keys
 from settings.configs.funcs.config_reader import runtime_configs
+
 
 # events
 #from events.on_start import on_start
@@ -251,12 +253,13 @@ def OpenGUI(manager):
     b_field = FieldDropdown(Fields0,
                         fm.B_Methods,
                         "B-Field: ",
-                        default=1)
+                        key=param_keys.b.name)
     b_field.grid(row=0, column=0)
 
     e_field= FieldDropdown(Fields0,
                         fm.E_Methods,
-                        "E-Field: ")
+                        "E-Field: ",
+                        key=param_keys.e.name)
     e_field.grid(row=1, column=0)
 
     # Graphing options for the field parameter settings.
@@ -337,23 +340,24 @@ def OpenGUI(manager):
     calc_frame3_scroll.RegisterScrollArea()
 
     """
-    REGISTER EVENT FUNCTIONS
-    """
-    # Refresh tables when switching between param and coil tabs
-    # Reminds the program to switch classes when dealing with their class functions.
-    calc_nested_notebook.bind('<<NotebookTabChanged>>', OnNotebookTabChanged)
-    tabControl.bind('<<NotebookTabChanged>>', lambda event, i=trajectoryGraph:on_main_notebook_tab_changed(event, i))
-    
-    """
     LOGIC FOR PASSING PARAMS BACK TO THE PROGRAM.
     """
     subs = {}
 
     # control what classes to send over to the program by adding it to params
     subs["params"] = [time_info, particlePreview, coil_config, b_field, E_field_graph]
+    Events.INIT_GUI.value.invoke(widgets=subs['params'])
 
     calc_button.configure(command=partial(CalculateCallback, subs["params"], DIR_lastUsed.path.data, root, manager)) # update calculate button's command after setting up params
     FillWidgets(subs["params"], DIR_lastUsed)
+
+    """
+    REGISTER EVENT FUNCTIONS
+    """
+    # Refresh tables when switching between param and coil tabs
+    # Reminds the program to switch classes when dealing with their class functions.
+    calc_nested_notebook.bind('<<NotebookTabChanged>>', OnNotebookTabChanged)
+    tabControl.bind('<<NotebookTabChanged>>', lambda event, i=trajectoryGraph: on_main_notebook_tab_changed(event, i))
 
     def on_close():
         Events.ON_CLOSE.value.invoke()
