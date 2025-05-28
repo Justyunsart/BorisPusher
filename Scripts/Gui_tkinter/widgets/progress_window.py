@@ -86,6 +86,24 @@ class param_summary(tk.Frame):
         _coil_position.grid(row=2, column=0)
         coil_position.grid(row=2, column=2)
 
+            # heading 2: particle info
+        particle_info_frame = tk.LabelFrame(self, text="Particle Info")
+            # info leaders
+        _particle_name = tk.Label(particle_info_frame, text="File Name: ")
+        _particle_position = tk.Label(particle_info_frame, text="Position: ")
+        _particle_velocity = tk.Label(particle_info_frame, text="Velocity: ")
+            # actual info
+        particle_name = tk.Label(particle_info_frame, text=self.params['particle_file'])
+        particle_position = tk.Label(particle_info_frame, text=self.params['Particle_Df'][['px', 'py', 'pz']].to_numpy())
+        particle_velocity = tk.Label(particle_info_frame, text=self.params['Particle_Df'][['vx', 'vy', 'vz']].to_numpy())
+            # PACKING
+        particle_info_frame.grid(row=2, column=0)
+        _particle_name.grid(row=0, column=0)
+        particle_name.grid(row=0, column=1)
+        _particle_position.grid(row=1, column=0)
+        particle_position.grid(row=1, column=1)
+        _particle_velocity.grid(row=2, column=0)
+        particle_velocity.grid(row=2, column=1)
 """
 the leftside of the popup window, contains updating information from the calculation.
 """     
