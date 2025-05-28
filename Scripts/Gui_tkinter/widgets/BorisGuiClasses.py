@@ -190,7 +190,10 @@ class ParticlePreview(EntryTable):
     
     def init_temp(self, lu):
         if lu is not None:
-            self.fileWidget.combo_box.set(lu[param_keys.particle_name.name])
+            try:
+                self.fileWidget.combo_box.set(lu[param_keys.particle_name.name])
+            except KeyError:
+                pass
         self.update()
         
 
@@ -473,7 +476,10 @@ class FieldDropdown(Dropdown):
     
     def init_temp(self, lu):
         if lu is not None:
-            self.dropdown.set(lu['field_methods'][self.key]['method'])
+            try:
+                self.dropdown.set(lu['field_methods'][self.key]['method'])
+            except KeyError:
+                pass
         self.update_tempfile(None)
 
 
@@ -731,7 +737,10 @@ class FieldCoord_n_Graph():
     
     def init_temp(self, lu):
         if lu is not None:
-            self._Set(lu[param_keys.field_methods.name]['e']['method'], lu[param_keys.field_methods.name]['e']['params'])
+            try:
+                self._Set(lu[param_keys.field_methods.name]['e']['method'], lu[param_keys.field_methods.name]['e']['params'])
+            except KeyError:
+                pass
         self.WidgetVisibility()
 
 def _Try_Float(list):

@@ -1051,8 +1051,10 @@ class CurrentEntryTable(EntryTable):
     
     def init_temp(self, lu):
         if lu is not None:
-            self.dirWidget.combo_box.set(lu[self.name_key])
-
+            try:
+                self.dirWidget.combo_box.set(lu[self.name_key])
+            except KeyError:
+                pass
 
 if __name__ == "__main__":
     from pathlib import Path

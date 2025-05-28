@@ -164,9 +164,11 @@ class TimeStep_n_NumStep():
     """
     def init_temp(self, lu):
         if lu is not None:
-            self._Set('numsteps', lu[param_keys.numsteps.name])
-            self._Set('timestep', lu[param_keys.dt.name])
-        
+            try:
+                self._Set('numsteps', lu[param_keys.numsteps.name])
+                self._Set('timestep', lu[param_keys.dt.name])
+            except KeyError:
+                pass
         self.update_do_bob()
         self.update_numsteps()
         self.dt_Callback()
