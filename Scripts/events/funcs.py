@@ -77,5 +77,7 @@ Updates the tempfile with default values at the hint of a failure (implemented a
 def initialize_tempfile_dict(widgets:list):
         # first step: read the last_used file dictionary, which is placed in the project root
     lu = read_temp_file_dict(os.path.join(DIR_ROOT, 'last_used'))
+    if not os.path.exists(lu):
+        lu = None
     for widget in widgets:
         widget.init_tempfile(lu)

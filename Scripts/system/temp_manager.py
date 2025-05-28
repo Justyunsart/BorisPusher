@@ -4,6 +4,7 @@ import os
 import shutil
 from definitions import DIR_ROOT
 from Scripts.system.temp_file_names import m1f1
+from functools import reduce
 
 """
 Manages all the manager instances
@@ -171,7 +172,21 @@ def update_temp(temp, update, nested=False, key=None):
     if not nested:
         d.update(update)
     else:
-        if key not in d:
-            d[key] = {}
-        d[key].update(update)
+
+        #The function accepts a list of keys for deeper nests.
+        if type(key) == list:
+            _d = d
+            for k in key:
+                if k not in _d:
+                    _d[k] = {}
+                _d = _d[k]
+            _val = reduce(dict.__getitem__, key, d)
+            _val.update(update)
+            print(_val)
+
+        #If 'key' is not a list, it is assumed to be at a nest depth of 1.
+        else:
+            if key not in d:
+                d[key] = {}
+            d[key].update(update)
     write_dict_to_temp(temp, d)

@@ -21,6 +21,7 @@ from settings.defaults.coils import (preset_hexahedron, preset_mirror, preset_cu
 from settings.configs.funcs.config_reader import runtime_configs
 from system.temp_file_names import param_keys, m1f1
 from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file_dict
+from functools import reduce
 
 class MainWindow(tk.Frame):
     '''
@@ -443,8 +444,8 @@ class FieldDropdown(Dropdown):
     updates the tempfile with the associated field method used (magpy, zero, etc.)
     """
     def update_tempfile(self, event, *args):
-        d = {self.key: {param_keys.method.name: self.chosenVal.get()}}
-        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d, nested=True, key=param_keys.field_methods.name)
+        d = {param_keys.method.name: self.chosenVal.get()}
+        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d, nested=True, key=[param_keys.field_methods.name, self.key])
 
     def GetData(self):
         return {str(self.options.__name__):self.chosenVal.get()}
@@ -520,7 +521,8 @@ class FieldCoord_n_Graph():
                  {param_keys.e.name:
                       {param_keys.params.name:
                            self._checkInstance(self.table.chosenVal.get()).GetData()[self.table.chosenVal.get()]}}}
-        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+        _val = reduce(dict.__getitem__, [param_keys.field_methods.name, param_keys.e.name], d)
+        update_temp(TEMPMANAGER_MANAGER.files[m1f1], _val, nested=True, key=[param_keys.field_methods.name, param_keys.e.name])
 
         # lastly, update the prevVal property
         self.prevVal = curr
