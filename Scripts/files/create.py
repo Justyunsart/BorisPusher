@@ -14,6 +14,9 @@ from files.hdf5.output_file_structure import create_h5_output_file
 
 from settings.configs.funcs.config_reader import runtime_configs
 
+default_output_file_name = ""
+default_output_file_dir = ""
+
 """
 Helper functions involving the creation of known directories (like the inputs folder).
 Right now it's only limited to the Inputs folder, but it totally could expand maybe if need be.
@@ -86,11 +89,35 @@ def get_unique_coil_collection_amps(c:Collection):
 
 """
 returns a string formatted with 
-numsteps_dt
+numsteps_dt. This is considered the default name for the file.
 """
-def get_output_name():
+def get_output_name(path):
+    global default_output_file_name
     d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-    return f"ns-{d['numsteps']}_dt-{d['dt']}"
+    default_output_file_name =  f"ns-{d['numsteps']}_dt-{d['dt']}"
+    i = 1
+    while os.path.exists(os.path.join(path, default_output_file_name)):
+        default_output_file_name = f"ns-{d['numsteps']}_dt-{d['dt']}_{i}"
+        i += 1
+    return default_output_file_name
+
+"""
+populates global var with the default location of the output subdir, based on the runtimeconfigs.
+"""
+def get_default_output_dir():
+    global default_output_file_dir
+        # subdir structure based on parameters
+    d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+    preset = get_coil_preset_attr_val(d['particle_file'])
+    current = get_unique_coil_collection_amps(d['mag_coil'])
+    b = d['field_methods']['b']['method']
+    e = d['field_methods']['e']['method']
+    _p = os.path.join(preset, current, b, e)
+
+        # also need to get the runtimeconfig for the default output location
+    def_out = runtime_configs['Paths']['output']
+    default_output_file_dir = os.path.join(str(def_out), str(_p))
+
 
 """
 returns a path of the placement for the output file based on params
@@ -104,7 +131,7 @@ def get_output_subdir():
     current = get_unique_coil_collection_amps(d['mag_coil'])
     b = d['field_methods']['b']['method']
     e = d['field_methods']['e']['method']
-    name = get_output_name()
+    name = get_output_name(os.path.join(preset, current, b, e))
 
     d["output_path"] = os.path.join(preset, current, b, e, name)
     d["hdf5_path"] = os.path.join(d["output_path"], 'data.hdf5')

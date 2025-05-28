@@ -133,7 +133,8 @@ def CalculateCallback(params:list, DIR_last:str, root, manager):
     the backend and starts the simulation.
     '''
     data = GatherParams(params)
-    toProgram = {
+    """    
+        toProgram = {
         'numsteps': data['numsteps'],
         'timestep': data['dt'],
         'coils': data['coils'],
@@ -150,9 +151,9 @@ def CalculateCallback(params:list, DIR_last:str, root, manager):
         'B-Field': data['B_Methods'],
         'E-Field': data['E_Methods'].GetData(),
         'particleFile': data["Particle File"]
-    }
+    }"""
 
-    Dict_to_CSV(DIR_last, toFile, newline="")
+    # Dict_to_CSV(DIR_last, toFile, newline="")
 
     # add some last minute info to the tempfile
     updateTempFile({"Particle_Df": data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"]})

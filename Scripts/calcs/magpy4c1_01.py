@@ -222,7 +222,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
     # Step 1: Create the AoS the process will work with
     #     > These conditions are read from inp file, currently stored in df.
     expand_length = (temp * len(from_temp['Particle_Df']))
-    out = np.empty(shape = ((temp * len(from_temp['Particle_Df'])) + 1), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
+    out = np.empty(shape = ((temp * len(from_temp['Particle_Df'])) + 2), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
 
     #temp = df["starting_pos"].to_numpy()[id] # Populate it with the initial conditions at index 0.
     #temp1 = df["starting_vel"].to_numpy()[id] * 6
