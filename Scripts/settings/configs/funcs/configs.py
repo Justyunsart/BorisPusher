@@ -1,5 +1,5 @@
 import configparser
-from definitions import NAME_DEF_CONFIG, NAME_USR_CONFIG
+from definitions import NAME_DEF_CONFIG, NAME_USR_CONFIG, DIR_ROOT
 import os
 from files.windows.get_documents_path_win import get_documents_path_win
 
@@ -16,10 +16,10 @@ def create_default_config():
         'Outputs' : "%(usr_Documents)s\\Outputs",
     }
         # SAVE TO A FILE.
-    cwd = os.getcwd()
-    path = os.path.normpath(f"{cwd}/settings/configs")
+    path = os.path.normpath(f"{DIR_ROOT}/Scripts/settings/configs")
     with open(os.path.join(path, NAME_DEF_CONFIG), 'w+') as f:
         config.write(f)
+
 
 
 '''

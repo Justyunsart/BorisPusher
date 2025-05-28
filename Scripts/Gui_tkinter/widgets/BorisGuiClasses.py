@@ -387,7 +387,10 @@ class CurrentConfig:
         self.table = CurrentEntryTable(master=CurrentEntry, 
                             dataclass=CircleCurrentConfig,
                             graphFrame=CurrentGraph,
-                            DIR = DIR)
+                            DIR = DIR,
+                            collection_key=param_keys.mag_coil.name,
+                            path_key=param_keys.coil_file.name,
+                            name_key=param_keys.coil_name.name)
         
         self.param = CoilButtons(ParamFrame,
                                  table=self.table)

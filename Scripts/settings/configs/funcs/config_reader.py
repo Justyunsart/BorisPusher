@@ -1,5 +1,6 @@
 import configparser
 import os
+from definitions import DIR_ROOT
 
 
 """
@@ -11,8 +12,7 @@ It is expected that the user configs file only stores deviations from the defaul
 runtime_configs = configparser.ConfigParser()
 def read_configs():
     global runtime_configs
-    cwd = os.getcwd()
-    path = os.path.normpath(f"{cwd}/settings/configs")
+    path = os.path.normpath(f"{DIR_ROOT}/Scripts/settings/configs")
     
     if os.path.exists(os.path.normpath(f"{path}/usr_configs.ini")):
         runtime_configs.read([os.path.normpath(f"{path}/default_configs.ini"), os.path.normpath(f"{path}/usr_configs.ini")])

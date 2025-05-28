@@ -648,11 +648,14 @@ class CurrentEntryTable(EntryTable):
     (param: ) DIR: the path to the dir containing all the saved config files of the desired dataclass.
     '''
 
-    def __init__(self, master, dataclass, graphFrame, DIR, graph_toolbar = False):
+    def __init__(self, master, dataclass, graphFrame, DIR, graph_toolbar = False, collection_key=None, path_key=None, name_key=None):
         self.collection = Collection() # magpy object for visualization
         self.rotations = [] # container to store coil rotation info.
         # self.lim: the max. offset of the coil in the entry table.
         self.lim:Data = Data() # when updated, outside subscribers will run their respective update functions.
+        self.collection_key = collection_key
+        self.path_key = path_key
+        self.name_key = name_key
 
         #self.instances = [] # references to the instantiated dataclasses (rows).
         self.defaultFileName = "Coil"
@@ -748,7 +751,7 @@ class CurrentEntryTable(EntryTable):
         self.canvas.draw()
 
             # Update tempfile entry for the coil collection object.
-        self._updateTempFile(param_keys.mag_coil.name, self.collection)
+        self._updateTempFile(self.collection_key, self.collection)
         return True
 
     def EntryValidateCallback(self, entry):
@@ -823,8 +826,8 @@ class CurrentEntryTable(EntryTable):
         self.Finalize_Reading(coils)
 
             # update tempfile for the coil file path
-        self._updateTempFile(param_keys.coil_file.name, self.dirWidget.PATH.data)
-        self._updateTempFile(param_keys.coil_name.name, str(Path(self.dirWidget.PATH.data).name))
+        self._updateTempFile(self.path_key, self.dirWidget.PATH.data)
+        self._updateTempFile(self.name_key, str(Path(self.dirWidget.PATH.data).name))
         return True
     
     def GetData(self):

@@ -9,6 +9,7 @@ from Gui_tkinter.widgets.CurrentGuiClasses import CurrentEntryTable
 from Gui_tkinter.funcs.GuiEntryHelpers import Bob_e_Config_Dataclass
 import tkinter as tk
 from system.path import Path
+from system.temp_file_names import param_keys
 
 # NOTE: For this class to work, the class will need a reference to the tk root.
 # Because the GUI mainloop is encapsulated in a function, it cannot be done as an import.
@@ -30,9 +31,12 @@ class Bob_e_Circle_Config(tk.Frame):
         self.dir = Path(dir, "bob_e")
         # widgets here
         self.entry_table = CurrentEntryTable(master=self.table_frame,
-                                             dataclass=Bob_e_Config_Dataclass,
-                                             graphFrame=self.graph_frame,
-                                             DIR=self.dir)
+                                            dataclass=Bob_e_Config_Dataclass,
+                                            graphFrame=self.graph_frame,
+                                            DIR=self.dir,
+                                            collection_key=param_keys.bob_e_coil.name, 
+                                            path_key=param_keys.bob_e_file.name, 
+                                            name_key=param_keys.bob_e_name.name,)
 
         # packing step
         self.main_frame.pack(fill='both', expand=1)

@@ -19,6 +19,10 @@ class param_keys(Enum):
     mag_coil = "Binary of the magpylib.Collection object of the selected coil input"
     coil_name = "Name of the coil input file"
 
+    bob_e_file = "Location of the input file representing the circle charges used for the bob_e e-field method"
+    bob_e_coil = "The magpylib.Collection binary container for the bob_e method. This is used purely for graphs, the built-in magpy funcs don't apply"
+    bob_e_name = "Name of the bob_e input file"
+
     particle_file = "Location of the magnetic particle configuration input file"
 
     dt = "Default timestep value (seconds)"
