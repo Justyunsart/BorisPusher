@@ -130,13 +130,13 @@ def EfieldX(p:np.ndarray, E_Method):
     p: the target coordinate.
     """
     #print(f"E_method is: {E_Method}")
-    match list(E_Method.keys())[0]:
+    match E_Method:
         case "Zero":
             E =  np.zeros(3)
         case "Fw":
             E = np.apply_along_axis(Fw, 0, p)
         case "Bob_e":
-            E = Bob_e(p, E_Method['Bob_e'])
+            E = Bob_e(p, fromTemp["field_methods"]['e']['params'])
             #print(f"Bob_e says E is: {E}")
             
     return np.array(E)
@@ -204,7 +204,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
     temp = 100000  # replace later with flush_count param after adding it to the tempfile
 
     ## Collect coil location to know when the particle escapes
-    c = from_temp['coils']
+    c = from_temp['mag_coil']
     dt = from_temp['dt']
     side = c[0].position
     side = np.absolute(max(side.min(), side.max(), key=abs))
@@ -256,8 +256,8 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         ##########################################################################
         # COLLECT FIELDS
             # submit the field calculations to the threadpool
-        _Ef = executor.submit(EfieldX, x, from_temp['Field_Methods']['E'])
-        _Bf = executor.submit(Bfield, x, from_temp['Field_Methods']['B'], from_temp['coils'])
+        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'])
+        _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'])
             # collect the results
         Ef = _Ef.result()
         Bf = _Bf.result()

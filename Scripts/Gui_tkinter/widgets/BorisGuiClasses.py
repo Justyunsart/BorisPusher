@@ -161,6 +161,7 @@ class ParticlePreview(EntryTable):
         self.Read_Data()
         self._SetSaveEntry(self.fileWidget.fileName.get())
         self._updateTempFile(param_keys.particle_file.name, self.fileWidget.PATH.data)
+        self._updateTempFile(param_keys.particle_name.name, self.fileWidget.combo_box.get())
     
     def SaveData(self, dir:str, container=None, customContainer=False):
         super().SaveData(dir, container, customContainer)
@@ -186,6 +187,12 @@ class ParticlePreview(EntryTable):
             self.fileWidget.combo_box.current(ind)
         except ValueError:
             self.fileWidget.combo_box.current(0)
+    
+    def init_temp(self, lu):
+        if lu is not None:
+            self.fileWidget.combo_box.set(lu[param_keys.particle_name.name])
+        self.update()
+        
 
 class ParticlePreviewSettings():
     '''
@@ -428,6 +435,9 @@ class CurrentConfig:
         """
         #print(f"BorisGuiClasses.CurrentConfig: Update table")
         self.table.update()
+    
+    def init_temp(self, lu):
+        self.table.init_temp(lu)
 
 
 class FieldDropdown(Dropdown):
@@ -460,6 +470,11 @@ class FieldDropdown(Dropdown):
         #print(f"setting dropdown to: {ind}")
         self.dropdown.current(ind)
         return True
+    
+    def init_temp(self, lu):
+        if lu is not None:
+            self.dropdown.set(lu['field_methods'][self.key]['method'])
+        self.update_tempfile(None)
 
 
 class FieldCoord_n_Graph():
@@ -517,12 +532,9 @@ class FieldCoord_n_Graph():
         self._checkInstance(curr).ShowWidget()
 
         # then, update the tempfile (field_methods/E/params)
-        d = {param_keys.field_methods.name:
-                 {param_keys.e.name:
-                      {param_keys.params.name:
-                           self._checkInstance(self.table.chosenVal.get()).GetData()[self.table.chosenVal.get()]}}}
-        _val = reduce(dict.__getitem__, [param_keys.field_methods.name, param_keys.e.name], d)
-        update_temp(TEMPMANAGER_MANAGER.files[m1f1], _val, nested=True, key=[param_keys.field_methods.name, param_keys.e.name])
+        d = {param_keys.params.name:
+             self._checkInstance(self.table.chosenVal.get()).GetData()[self.table.chosenVal.get()]}
+        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d, nested=True, key=[param_keys.field_methods.name, param_keys.e.name])
 
         # lastly, update the prevVal property
         self.prevVal = curr
@@ -698,28 +710,29 @@ class FieldCoord_n_Graph():
         """
         return {str(self.table.options.__name__):self._checkInstance(self.table.chosenVal.get())}
     
-    def _Set(self, key, value:dict):
+    def _Set(self, key='E-field', method=None, params=None):
         """
         when loading in last used values, populate the given widget's entries automatically.
 
         EXPECTED INPUT:
         key = E-Field, value = {'Fw': {'A': '0.2', 'B': '02'}}
         """
-        method = ""
-        params = None
-        value = literal_eval(value)
-        for k, v in value.items():
-            method = k
-            params = v
+        #value = literal_eval(value)
         # set the dropdown first
         #print(f'setting e field to: {method}')
-        self.table._Set(key, method)
+        #self.table._Set(key, method)
         if method == "Zero":
             return True
         # set the entries.
-        for k, v in params.items():
-            self._checkInstance(self.table.chosenVal.get()).Set(k, v)
+        if params is not None:
+            for k, v in params.items():
+                self._checkInstance(self.table.chosenVal.get()).Set(k, v)
         return True
+    
+    def init_temp(self, lu):
+        if lu is not None:
+            self._Set(lu[param_keys.field_methods.name]['e']['method'], lu[param_keys.field_methods.name]['e']['params'])
+        self.WidgetVisibility()
 
 def _Try_Float(list):
 

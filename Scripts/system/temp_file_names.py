@@ -24,6 +24,7 @@ class param_keys(Enum):
     bob_e_name = "Name of the bob_e input file"
 
     particle_file = "Location of the magnetic particle configuration input file"
+    particle_name = "Name of the particle input file"
 
     dt = "Default timestep value (seconds)"
     dt_bob = "boolean value for whether the simulation should run with bob's variable timestep"

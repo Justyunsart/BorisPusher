@@ -155,9 +155,7 @@ def CalculateCallback(params:list, DIR_last:str, root, manager):
     Dict_to_CSV(DIR_last, toFile, newline="")
 
     # add some last minute info to the tempfile
-    updateTempFile({"Field_Methods": {"B": data["B_Methods"], "E": data["E_Methods"].GetData()},
-                    "Particle_Df": data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"],
-                    "coil_file_name": data["Coil File"]})
+    updateTempFile({"Particle_Df": data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"]})
     Events.PRE_CALC.value.invoke()
 
     #####################################################################################

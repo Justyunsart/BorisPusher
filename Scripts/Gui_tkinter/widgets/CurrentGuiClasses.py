@@ -1048,6 +1048,10 @@ class CurrentEntryTable(EntryTable):
         x-axis.
         """
         return self.lim.data
+    
+    def init_temp(self, lu):
+        if lu is not None:
+            self.dirWidget.combo_box.set(lu[self.name_key])
 
 
 if __name__ == "__main__":

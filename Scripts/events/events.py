@@ -1,7 +1,7 @@
 from enum import Enum
 from functools import partial
 
-from events.funcs import before_simulation_bob_dt, copy_diags_to_output_subdir
+from events.funcs import before_simulation_bob_dt, copy_diags_to_output_subdir, initialize_tempfile_dict
 from files.checks import folder_checks, ini_checks
 from system.temp_manager import TEMPMANAGER_MANAGER
 import system.temp_file_names as names
@@ -65,7 +65,7 @@ class Events(Enum):
 
     # after creating the tempfile(s), you can then fill widgets with the last used values.
     # this also functions to fill the tempfile with all of the expected fields (as every widget gets to update the tempfile)
-    INIT_GUI = Event([])
+    INIT_GUI = Event([initialize_tempfile_dict])
 
     # when calculate button is pressed but before the calcs start.
     PRE_CALC = Event([before_simulation_bob_dt, # set up constants if using bob's dt scaling solution

@@ -81,8 +81,11 @@ class TimeStep_n_NumStep():
         self.dt_Callback()
 
     def update_numsteps(self, *args):
-        d = {param_keys.numsteps.name : self.numsteps.entry.get()}
-        self.update_tempfile(d)
+        try:
+            d = {param_keys.numsteps.name : int(self.numsteps.entry.get())}
+            self.update_tempfile(d)
+        except:
+            pass
 
     def update_tempfile(self, updates):
         d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1]) | (updates)
@@ -95,12 +98,15 @@ class TimeStep_n_NumStep():
 
     def dt_Callback(self, *args):
         #print(f"dt_callback called")
-        lim = self._Check_Timestep_Size()
-        self.update_tempfile({"dt": self.dt.entry.get()})
-        if float(self.dt.value.get()) < lim:
-            self.dt_str.set(self.responses["good"])
-        else:
-            self.dt_str.set(f'Dt is too big, upper lim is: {lim}')
+        try:
+            lim = self._Check_Timestep_Size()
+            self.update_tempfile({"dt": float(self.dt.entry.get())})
+            if float(self.dt.value.get()) < lim:
+                self.dt_str.set(self.responses["good"])
+            else:
+                self.dt_str.set(f'Dt is too big, upper lim is: {lim}')
+        except:
+            pass
         
     
     def _Total_Sim_Time(self, *args):
@@ -152,3 +158,15 @@ class TimeStep_n_NumStep():
         dt_lim = distance/(desired_steps * desired_rate)
         
         return dt_lim
+    
+    """
+    Called during the Init_GUI event.
+    """
+    def init_temp(self, lu):
+        if lu is not None:
+            self._Set('numsteps', lu[param_keys.numsteps.name])
+            self._Set('timestep', lu[param_keys.dt.name])
+        
+        self.update_do_bob()
+        self.update_numsteps()
+        self.dt_Callback()

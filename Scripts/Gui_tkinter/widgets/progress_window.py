@@ -72,8 +72,8 @@ class param_summary(tk.Frame):
         _coil_position = tk.Label(coil_info_frame, text="Offset (M)")
                 # actual info
         coil_name = tk.Label(coil_info_frame, text=self.params["coil_file"])
-        coil_amp = tk.Label(coil_info_frame, text=get_unique_coil_collection_amps(self.params['coils']))
-        coil_position = tk.Label(coil_info_frame, text=str(abs(self.params['coils'].children[0].position[0])))
+        coil_amp = tk.Label(coil_info_frame, text=get_unique_coil_collection_amps(self.params['mag_coil']))
+        coil_position = tk.Label(coil_info_frame, text=str(abs(self.params['mag_coil'].children[0].position[0])))
 
             # PACKING
         title.grid(row=0, column=0)

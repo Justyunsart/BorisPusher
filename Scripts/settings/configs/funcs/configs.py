@@ -12,8 +12,8 @@ def create_default_config():
         'usr_Documents' : os.path.normpath(os.path.join(os.path.expanduser('~/Documents'), "Boris_Usr"))
         if os.path.exists(os.path.normpath(os.path.expanduser('~/Documents')))
         else os.path.normpath(os.path.join(get_documents_path_win(), "Boris_Usr")),
-        'Inputs' : "%(usr_Documents)s\\Inputs",
-        'Outputs' : "%(usr_Documents)s\\Outputs",
+        'Inputs' : "%(usr_Documents)s/Inputs",
+        'Outputs' : "%(usr_Documents)s/Outputs",
     }
         # SAVE TO A FILE.
     path = os.path.normpath(f"{DIR_ROOT}/Scripts/settings/configs")

@@ -345,7 +345,7 @@ def OpenGUI(manager):
     subs = {}
 
     # control what classes to send over to the program by adding it to params
-    subs["params"] = [time_info, particlePreview, coil_config, b_field, E_field_graph]
+    subs["params"] = [time_info, particlePreview, coil_config, b_field, e_field, E_field_graph]
     Events.INIT_GUI.value.invoke(widgets=subs['params'])
 
     calc_button.configure(command=partial(CalculateCallback, subs["params"], DIR_lastUsed.path.data, root, manager)) # update calculate button's command after setting up params

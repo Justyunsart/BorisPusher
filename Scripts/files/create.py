@@ -101,9 +101,9 @@ preset/current/b/e
 def get_output_subdir():
     d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
     preset = get_coil_preset_attr_val(d['particle_file'])
-    current = get_unique_coil_collection_amps(d['coils'])
-    b = d['Field_Methods']['B']
-    e = list(d['Field_Methods']['E'].keys())[0]
+    current = get_unique_coil_collection_amps(d['mag_coil'])
+    b = d['field_methods']['b']['method']
+    e = d['field_methods']['e']['method']
     name = get_output_name()
 
     d["output_path"] = os.path.join(preset, current, b, e, name)
