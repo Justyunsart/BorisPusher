@@ -166,7 +166,12 @@ def write_dict_to_temp(path, data):
     with open(path, 'wb') as f:
         pickle.dump(data, f)
 
-def update_temp(temp, update):
+def update_temp(temp, update, nested=False, key=None):
     d = read_temp_file_dict(temp)
-    d.update(update)
+    if not nested:
+        d.update(update)
+    else:
+        if key not in d:
+            d[key] = {}
+        d[key].update(update)
     write_dict_to_temp(temp, d)

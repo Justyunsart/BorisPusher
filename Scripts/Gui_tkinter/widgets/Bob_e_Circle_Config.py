@@ -8,6 +8,7 @@ magpylib's circle object for this because graphing and rotation is easy.
 from Gui_tkinter.widgets.CurrentGuiClasses import CurrentEntryTable
 from Gui_tkinter.funcs.GuiEntryHelpers import Bob_e_Config_Dataclass
 import tkinter as tk
+from system.path import Path
 
 # NOTE: For this class to work, the class will need a reference to the tk root.
 # Because the GUI mainloop is encapsulated in a function, it cannot be done as an import.
@@ -26,11 +27,12 @@ class Bob_e_Circle_Config(tk.Frame):
         self.table_frame = tk.Frame(self.main_frame)
         self.graph_frame = tk.Frame(self.main_frame)
 
+        self.dir = Path(dir, "bob_e")
         # widgets here
         self.entry_table = CurrentEntryTable(master=self.table_frame,
                                              dataclass=Bob_e_Config_Dataclass,
                                              graphFrame=self.graph_frame,
-                                             DIR=dir)
+                                             DIR=self.dir)
 
         # packing step
         self.main_frame.pack(fill='both', expand=1)

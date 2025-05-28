@@ -440,8 +440,8 @@ class FieldDropdown(Dropdown):
     updates the tempfile with the associated field method used (magpy, zero, etc.)
     """
     def update_tempfile(self, event, *args):
-        d = {param_keys.field_methods.name: {self.key: {param_keys.method.name: self.chosenVal.get()}}}
-        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+        d = {self.key: {param_keys.method.name: self.chosenVal.get()}}
+        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d, nested=True, key=param_keys.field_methods.name)
 
     def GetData(self):
         return {str(self.options.__name__):self.chosenVal.get()}
