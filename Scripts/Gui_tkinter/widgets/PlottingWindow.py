@@ -13,6 +13,7 @@ from tkinter import ttk
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.gridspec as gridspec
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2Tk)
 from Gui_tkinter.funcs.GuiEntryHelpers import (JSON_to_Df, tryEval, CSV_to_Df)
@@ -158,7 +159,7 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
             plot.legend(bbox_to_anchor=(0, 1.15), loc='lower left', fontsize=4, ncol=3 )
 
 
-def Trajectory_callable(fig, plot, path, c:mp.Collection, **kwargs):
+def Trajectory_callable(fig, plot, v1, v2, v3, path, c:mp.Collection, **kwargs):
     """
     for graphing the 3d trajectory of a single particle.
     """
@@ -179,11 +180,39 @@ def Trajectory_callable(fig, plot, path, c:mp.Collection, **kwargs):
             colors = mpl.colormaps[palettes[part]]
 
             # actually plot everything.
+                # isometric
             plot.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
+                # XY
+            v1.scatter(x,y,z, cmap=colors, c=np.linspace(0,1,len(x)), s=2.5)
+            v1.view_init(elev=90, azim=-90, roll=0)
+            v1.set_title("XY Plane", pad=0)
+                # YZ
+            v2.scatter(x, y, z, cmap=colors, c=np.linspace(0, 1, len(x)), s=2.5)
+            v2.view_init(elev=0, azim=0, roll=0)
+            v2.set_title("YZ Plane", pad=0)
+                # XZ
+            v3.scatter(x, y, z, cmap=colors, c=np.linspace(0, 1, len(x)), s=2.5)
+            v3.view_init(elev=0, azim=-90, roll=0)
+            v3.set_title("XZ Plane", pad=0)
 
     # Additionally, we want to also show the coil configuration.
     mp.show(c, canvas=plot)
+    mp.show(c, canvas=v1)
+    mp.show(c, canvas=v2)
+    mp.show(c, canvas=v3)
+
     plot.get_legend().remove()
+    v1.get_legend().remove()
+    v2.get_legend().remove()
+    v3.get_legend().remove()
+
+    v1.set_zlabel("")
+    v2.set_xlabel("")
+    v3.set_ylabel("")
+
+    v1.get_zaxis().set_ticks([])
+    v2.get_xaxis().set_ticks([])
+    v3.get_yaxis().set_ticks([])
 
 
 
@@ -258,6 +287,7 @@ and its canvas draws that image.
 class StaticFigure(tk.Frame):
     def __init__(self, master, png_path, graph_settings: dict = trajectory_style, **kwargs):
             # tk Object(s) init
+        self.gs = gridspec.GridSpec(3, 2, width_ratios=[3, 1])
         super().__init__(master, **kwargs)
         self.graph_settings = graph_settings
         self.png_full_path = f"{png_path}.png"
@@ -277,13 +307,21 @@ class StaticFigure(tk.Frame):
     Called in init. 
     """
     def initFig(self):
-        self.fig = plt.figure()
+        self.fig = plt.figure(constrained_layout=True)
+        self.gs = self.fig.add_gridspec(3, 2, width_ratios=[3, 1], wspace=0.3)
         projection = self.graph_settings['projection']
-        self.plot = self.fig.add_subplot(1,1,1, projection=projection)
+        self.plot = self.fig.add_subplot(self.gs[:, 0], projection=projection)
+        self.v1 = self.fig.add_subplot(self.gs[0,1], projection=projection)
+        self.v2 = self.fig.add_subplot(self.gs[1,1], projection=projection)
+        self.v3 = self.fig.add_subplot(self.gs[2,1], projection=projection)
+        _vs = [self.v1, self.v2, self.v3]
+        for view in _vs:
+            view.set_proj_type('ortho')
+
         # apply labels outlined in graph settings.
         self.renameLabels()
-        # initialize with tight layout so axes labels don't get cut off.
-        self.fig.tight_layout()
+
+        self.fig.subplots_adjust(wspace=0.1, hspace=0.1)
     
     """
     Called in self.initFig, which is run in init.
@@ -330,8 +368,9 @@ class StaticFigure(tk.Frame):
         It is expected that the dataframe is externally provided upon the function call.
         """
         self.prepareGraph()
-        func(self.fig, self.plot, df, **kwargs) # the graphing logic is being applied here.
-        self.fig.savefig(self.png_full_path) # save to file. Will overwrite if file exists alr.
+        func(self.fig, self.plot, self.v1, self.v2, self.v3, df, **kwargs) # the graphing logic is being applied here.
+        self.gs.tight_layout(self.fig)
+        self.fig.savefig(self.png_full_path, bbox_inches='tight') # save to file. Will overwrite if file exists alr.
 
         self.displayImage() # after saving, display the image to self.img_label (tk.Label)
         return True
@@ -761,7 +800,8 @@ class PlottingWindowObj(tk.Frame):
         w_h_ratio = width/height
 
         traj_font_size = trajectory_font_textsize_proportion
-        dropdown_font_size = w_h_ratio * dropdown_font_textsize_proportion
+        #dropdown_font_size = w_h_ratio * dropdown_font_textsize_proportion
+        dropdown_font_size = 12
 
         #print(f"{traj_font_size}")
         #print(f"{dropdown_font_size}")
