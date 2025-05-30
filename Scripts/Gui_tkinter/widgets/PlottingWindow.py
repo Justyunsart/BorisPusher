@@ -156,7 +156,7 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
             plot.plot(step_perpendicular, label='perp', color='red')
 
                 # add a legend
-            plot.legend(bbox_to_anchor=(0, 1.15), loc='lower left', fontsize=4, ncol=3 )
+            plot.legend(bbox_to_anchor=(0, 1.15), loc='lower left', fontsize=8, ncol=3 )
 
 
 def Trajectory_callable(fig, plot, v1, v2, v3, path, c:mp.Collection, **kwargs):
@@ -307,8 +307,8 @@ class StaticFigure(tk.Frame):
     Called in init. 
     """
     def initFig(self):
-        self.fig = plt.figure(constrained_layout=True)
-        self.gs = self.fig.add_gridspec(3, 2, width_ratios=[3, 1], wspace=0.3)
+        self.fig = plt.figure(figsize=(5,8), constrained_layout=True)
+        self.gs = self.fig.add_gridspec(3, 2, width_ratios=[1, 1],wspace=0.2, hspace=0.1)
         projection = self.graph_settings['projection']
         self.plot = self.fig.add_subplot(self.gs[:, 0], projection=projection)
         self.v1 = self.fig.add_subplot(self.gs[0,1], projection=projection)
@@ -905,7 +905,7 @@ class TrajGraph(tk.Canvas):
         self.plot_vcross.set_title('Velocity')
         self.plot_vcross.set_xlabel('Step Number')
         self.plot_vcross.set_ylabel('M/s')
-        self.plot_vcross.legend(['Vel Magnitude', 'Vx', 'Vy', 'Vz'], ncol=2, fancybox=True, shadow=True, loc="upper center", bbox_to_anchor=(0.5, -0.25))
+        self.plot_vcross.legend(['Vel Magnitude', 'Vx', 'Vy', 'Vz'], ncol=2, fancybox=True, shadow=True, loc="upper center", bbox_to_anchor=(0.5, -0.25), fontsize=8)
 
         self.plot.set_xlabel("X (m)")
         self.plot.set_ylabel("Y (m)")
