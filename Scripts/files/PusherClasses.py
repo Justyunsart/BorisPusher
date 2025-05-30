@@ -137,6 +137,9 @@ class particle:
     emag: np.float64 = None
 
     bmag: np.float64 = None
+    bhx: np.float64 = None
+    bhy: np.float64 = None
+    bhz: np.float64 = None
 
 @dataclass
 class charge:
@@ -160,5 +163,5 @@ def UniqueFileName(DIR, fileName:str):
 # custom np.dtype so that the hdf5 output file datasets will have column names.
 position_dt = np.dtype([('px', np.float64), ('py', np.float64), ('pz', np.float64)])
 velocity_dt = np.dtype([('vx', np.float64), ('vy', np.float64), ('vz', np.float64), ('vperp', np.float64), ('vpar', np.float64), ('vmag', np.float64)])
-field_b_dt = np.dtype([('bx', np.float64), ('by', np.float64), ('bz', np.float64), ('bmag', np.float64)])
+field_b_dt = np.dtype([('bx', np.float64), ('by', np.float64), ('bz', np.float64), ('bmag', np.float64), ('bhx', np.float64), ('bhy', np.float64), ('bhz', np.float64)])
 field_e_dt = np.dtype([('ex', np.float64), ('ey', np.float64), ('ez', np.float64), ('eperp', np.float64), ('epar', np.float64), ('emag', np.float64)])

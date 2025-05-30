@@ -24,7 +24,7 @@ def create_h5_output_file(file_name, length, **kwargs):
     grp_ds = f.create_dataset("/src/position", (0,), chunks=True, maxshape=(None,), dtype=position_dt) # px, py, pz
     grp_ds2 = f.create_dataset("/src/velocity", (0,), chunks=True, maxshape=(None,), dtype=velocity_dt) # vx, vy, vz, vperp, vpar, vmag
     grp_grp = f.create_group('/src/fields')
-    grp_grp_ds = f.create_dataset("/src/fields/b", (0,), chunks=True, maxshape=(None,), dtype=field_b_dt) # bx, by, bz
+    grp_grp_ds = f.create_dataset("/src/fields/b", (0,), chunks=True, maxshape=(None,), dtype=field_b_dt) # bx, by, bz, bmag, bhat
     grp_grp_ds2 = f.create_dataset("/src/fields/e", (0,), chunks=True, maxshape=(None,), dtype=field_e_dt)  # bx, by, bz, eperp, epar, emag
 
 if __name__ == "__main__":

@@ -16,19 +16,52 @@ def magnitude_at_each_step(arr, f, ds_key, col_key):
     #print(f[ds_key][col_key])
     if np.isnan(f[ds_key][col_key]).any():
         #print("yes")
-        f[ds_key][col_key] = np.linalg.norm(arr, axis=1)
+        mag = np.linalg.norm(arr, axis=1)
+        f[ds_key][col_key] = np.where(mag == 0, 1e-12, mag)
     return f[ds_key][col_key]
 
     #return np.linalg.norm(arr, axis=1)
 
 def get_parallel(bs, arr, f, ds_key, col_key):
     """
-    returns the elementwise dot product of the two input arrays.
+    Returns the parallel decomposition of the arr 'arr' that is travelling in the 'bs' direction.
+
+    out = (arr dot bs / mag(bs)) * bs
     """
+    #print(f"parallel called")
+        # since all the reasons this function will be called will involve the magnitude of b,
+        # I can hard code its reference in the h5 file.
+    if np.isnan(f['src/fields/b']['bmag']).any():
+        f['src/fields/b']['bmag'] = magnitude_at_each_step(bs, f, 'src/fields/b', 'bmag')
+
+    #print(f"bmag finished")
+    if np.isnan(f['src/fields/b']['bhx']).any():
+        #print(f"calculating bhat")
+        mag = f['src/fields/b']['bmag']
+        f['src/fields/b']['bmag'] = np.where(mag == 0, 1e-12, mag)
+        #print(bs.shape, mag.shape)
+        #print(bs / np.array(mag)[:, np.newaxis])
+        bhat = bs / np.array(mag)[:, np.newaxis]
+        #print(bhat)
+        bhx, bhy, bhz = np.split(bhat,3, axis=1)
+        #print(bhy)
+        #print(bhz)
+        # (n, 3) / (n, )
+        # (n, )
+
+        f['src/fields/b']['bhx'] = bhx.reshape(bhx.shape[0],)
+        f['src/fields/b']['bhy'] = bhy.reshape(bhy.shape[0],)
+        f['src/fields/b']['bhz'] = bhz.reshape(bhz.shape[0],)
+    #print(f"bhat finished")
         # if any of the selected magnitude dataset column has a None value,
         # then it is a sign to calculate and populate it.
     if np.isnan(f[ds_key][col_key]).any():
-        f[ds_key][col_key] = np.einsum('ij, ij->i', bs, arr)
+        bhat = np.stack((f['src/fields/b']['bhx'], f['src/fields/b']['bhy'], f['src/fields/b']['bhz']), axis=1)
+        #print(bhat.shape, arr.shape)
+        dot = np.einsum('ij,ij->i',bhat,arr)
+        #print(dot.shape)
+        f[ds_key][col_key] = dot.reshape(dot.shape[0],)
+    #print(f"Parallel is: {f[ds_key][col_key]}")
     return f[ds_key][col_key]
 
 
@@ -36,7 +69,15 @@ def get_perpendicular(bs, arr, f, ds_key, col_key):
     """
     returns the cross product's magnitude of the two arrays.
     """
-    return magnitude_at_each_step(np.cross(arr, bs), f, ds_key, col_key)
+    # since all the reasons this function will be called will involve the magnitude of b,
+        # I can hard code its reference in the h5 file.
+    if np.isnan(f['src/fields/b']['bmag']).any():
+        f['src/fields/b']['bmag'] = magnitude_at_each_step(bs, f, 'src/fields/b', 'bmag')
+    #print('bmag obtained')
+
+    bhat = np.stack((f['src/fields/b']['bhx'], f['src/fields/b']['bhy'], f['src/fields/b']['bhz']), axis=1)
+    #print(magnitude_at_each_step((np.cross(arr, bhat)), f, ds_key, col_key))
+    return magnitude_at_each_step((np.cross(arr, bhat)), f, ds_key, col_key)
 
 def CalculateLoss(vels:np.ndarray, bs:np.ndarray, intervals:int):
     '''

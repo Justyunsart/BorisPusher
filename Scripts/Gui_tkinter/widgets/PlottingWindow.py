@@ -140,6 +140,7 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
             plot.plot(step_mag)
             return True
         else:
+            #print("hi")
             b_ds = f[h5_dct['b']['src']]
                 # everyone else gets parallel and perpendicular components also graphed, which are calculated relative to b.
             #bx,by,bz = dfslice["bx"].to_numpy(), dfslice["by"].to_numpy(), dfslice["bz"].to_numpy() # b components at each step to calculate v||, e||
@@ -154,6 +155,8 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
             plot.plot(step_mag, label='mag', color='green')
             plot.plot(step_parallel, label='p', color='blue')
             plot.plot(step_perpendicular, label='perp', color='red')
+
+            #print(f"plotting done")
 
                 # add a legend
             plot.legend(bbox_to_anchor=(0, 1.15), loc='lower left', fontsize=8, ncol=3 )
