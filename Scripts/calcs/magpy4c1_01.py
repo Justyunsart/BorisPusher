@@ -164,7 +164,7 @@ def write_to_hdf5(from_temp, out, expand_length):
     df_vel = np.ascontiguousarray(df[['vx', 'vy', 'vz', 'vperp', 'vpar', 'vmag']].astype(np.float64).to_numpy()).view(dtype=velocity_dt).reshape(-1)
     #df_vel.to_hdf(path, key='src/velocity', mode='a', append=True)
     # append to field datasets
-    df_fields_b = np.ascontiguousarray(df[['bx', 'by', 'bz', 'bmag']].astype(np.float64).to_numpy()).view(dtype=field_b_dt).reshape(-1)
+    df_fields_b = np.ascontiguousarray(df[['bx', 'by', 'bz', 'bmag', 'bhx', 'bhy', 'bhz']].astype(np.float64).to_numpy()).view(dtype=field_b_dt).reshape(-1)
     #df_fields_b.to_hdf(path, key='src/fields/b', mode='a', append=True)
     df_fields_e = np.ascontiguousarray(df[['ex', 'ey', 'ez', 'eperp', 'epar', 'emag']].astype(np.float64).to_numpy()).view(dtype=field_e_dt).reshape(-1)
     #df_fields_e.to_hdf(path, key='src/fields/e', mode='a', append=True)

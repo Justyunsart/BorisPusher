@@ -163,9 +163,9 @@ class FileDropdown(tk.Frame):
 
     last = index of the last used file. Defaults to 0 unless overridden.
     '''
-    fileName:tk.StringVar
+    #fileName:tk.StringVar
 
-    PATH:Data #the full path to the file.
+    #PATH:Data #the full path to the file.
 
     def __init__(self, master, dir, last=0, default:callable=None, **kwargs):
         self.master = master # parent frame.
@@ -241,7 +241,7 @@ class FileDropdown(tk.Frame):
         '''
         callback to update the full path to the edited file.
         '''
-        #print("updating path to: ", self.fileName.get())
+        print("updating path to: ", self.fileName.get())
         self.PATH.data = os.path.join(self.dir.path.data, self.fileName.get())
 
 class LabeledEntry():
