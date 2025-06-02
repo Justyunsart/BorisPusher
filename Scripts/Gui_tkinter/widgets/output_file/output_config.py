@@ -19,7 +19,7 @@ class output_popup(tk.Toplevel):
             # as this widget is created after some events, this global var should be populated.
         self.out_name.set(default_output_file_name) # initialize the tk stringvar with the value.
 
-            # WIDGETS
+            # WIDGETS - functionality
         self.title("Output File Params")
         self.description = tk.Label(text="Check it out")
 

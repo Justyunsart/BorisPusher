@@ -149,7 +149,7 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
             bs = np.column_stack((bx, by, bz)) # b coordinates all in one array.
 
                 # get the parallel and perpendicular components relative to b
-            step_parallel = get_parallel(bs, coords, f, h5_dct[id]['src'], h5_dct[id]['par_key'])[:-1]
+            step_parallel = np.abs(get_parallel(bs, coords, f, h5_dct[id]['src'], h5_dct[id]['par_key'])[:-1])
             step_perpendicular = get_perpendicular(bs, coords, f, h5_dct[id]['src'], h5_dct[id]['perp_key'])[:-1]
 
                 # graph these guys.
