@@ -241,7 +241,7 @@ class FileDropdown(tk.Frame):
         '''
         callback to update the full path to the edited file.
         '''
-        print("updating path to: ", self.fileName.get())
+        #print("updating path to: ", self.fileName.get())
         self.PATH.data = os.path.join(self.dir.path.data, self.fileName.get())
 
 class LabeledEntry():

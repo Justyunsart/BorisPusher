@@ -4,9 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="added grid to dropdown figure, now trajectory subplots properly clear the magpylib collection so that there are no doubled up coils">
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="changed the layout of the plot window graphs so that the trajectory and dropdowns are laid horizontally.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/PlottingWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/PlottingWindow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/output_file/output_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/output_file/output_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/events/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/events.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/events/funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/funcs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/settings/configs/funcs/configs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/configs/funcs/configs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/system/temp_file_names.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/system/temp_file_names.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/system/temp_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/system/temp_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -238,7 +245,7 @@
       <workItem from="1748380435081" duration="9919000" />
       <workItem from="1748468027389" duration="6814000" />
       <workItem from="1748895517692" duration="1171000" />
-      <workItem from="1748896701772" duration="2340000" />
+      <workItem from="1748896701772" duration="5134000" />
     </task>
     <task id="LOCAL-00001" summary="inputs create emergency default files when their parent dir is empty">
       <option name="closed" value="true" />
@@ -328,7 +335,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748898166402</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="changed the layout of the plot window graphs so that the trajectory and dropdowns are laid horizontally.">
+      <option name="closed" value="true" />
+      <created>1748899095005</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1748899095005</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -359,7 +374,8 @@
     <MESSAGE value="stash 2?" />
     <MESSAGE value="parity" />
     <MESSAGE value="added grid to dropdown figure, now trajectory subplots properly clear the magpylib collection so that there are no doubled up coils" />
-    <option name="LAST_COMMIT_MESSAGE" value="added grid to dropdown figure, now trajectory subplots properly clear the magpylib collection so that there are no doubled up coils" />
+    <MESSAGE value="changed the layout of the plot window graphs so that the trajectory and dropdowns are laid horizontally." />
+    <option name="LAST_COMMIT_MESSAGE" value="changed the layout of the plot window graphs so that the trajectory and dropdowns are laid horizontally." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -387,7 +403,7 @@
     <SUITE FILE_PATH="coverage/BorisPusher$configs.coverage" NAME="configs Coverage Results" MODIFIED="1747264446248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings" />
     <SUITE FILE_PATH="coverage/BorisPusher$output_file_structure.coverage" NAME="output_file_structure Coverage Results" MODIFIED="1747949379891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/hdf5" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
-    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1748898957342" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1748900237033" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
     <SUITE FILE_PATH="coverage/BorisPusher$read_last_used_binary.coverage" NAME="read_last_used_binary Coverage Results" MODIFIED="1747958449557" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$dt_np.coverage" NAME="dt_np Coverage Results" MODIFIED="1748382025060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$file_write_speed.coverage" NAME="file_write_speed Coverage Results" MODIFIED="1748468073546" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />

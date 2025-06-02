@@ -182,7 +182,7 @@ def update_temp(temp, update, nested=False, key=None):
                 _d = _d[k]
             _val = reduce(dict.__getitem__, key, d)
             _val.update(update)
-            print(_val)
+            #print(_val)
 
         #If 'key' is not a list, it is assumed to be at a nest depth of 1.
         else:

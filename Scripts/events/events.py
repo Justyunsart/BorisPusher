@@ -32,6 +32,7 @@ class Event():
             c(**kwargs)
 
 def _whatis_file():
+    print(f"events._whatis_file()")
     print(TEMPMANAGER_MANAGER.files[names.m1f1])
 
 """

@@ -138,6 +138,7 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
             # for now, b has only this line.
         if id == 'b':
             plot.plot(step_mag)
+            plot.grid()
             return True
         else:
             #print("hi")

@@ -80,6 +80,6 @@ def initialize_tempfile_dict(widgets:list):
         lu = None
     else:
         lu = read_temp_file_dict(os.path.join(DIR_ROOT, 'last_used'))
-        print(lu)
+        #print(lu)
     for widget in widgets:
         widget.init_temp(lu)

@@ -45,7 +45,7 @@ def read_config():
     path = f"{cwd}\\Scripts\\settings\\configs"
     config = configparser.ConfigParser()
     config.read(f"{path}\\default_configs.ini")
-    print(config["Paths"]['inputs'])
+    #print(config["Paths"]['inputs'])
 
 if __name__ == "__main__":
     # create the default config settings object.

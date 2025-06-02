@@ -35,3 +35,6 @@ class param_keys(Enum):
     e = "the e-field parameters inside the field_methods dictionary"
     method = "the name of the field method used"
     params = "the parameters that are involved with the given field method"
+
+    output_location = "runtime-configured location for the output file"
+    output_name = "runtime-configured name for the output file"
