@@ -311,13 +311,13 @@ class StaticFigure(tk.Frame):
     Called in init. 
     """
     def initFig(self):
-        self.fig = plt.figure(figsize=(5,8), constrained_layout=True)
-        self.gs = self.fig.add_gridspec(3, 2, width_ratios=[1, 1],wspace=0.2, hspace=0.1)
+        self.fig = plt.figure(figsize=(10,6), constrained_layout=True)
+        self.gs = self.fig.add_gridspec(1, 4, wspace=0.01, hspace=0.1)
         projection = self.graph_settings['projection']
-        self.plot = self.fig.add_subplot(self.gs[:, 0], projection=projection)
+        self.plot = self.fig.add_subplot(self.gs[0, 0], projection=projection)
         self.v1 = self.fig.add_subplot(self.gs[0,1], projection=projection)
-        self.v2 = self.fig.add_subplot(self.gs[1,1], projection=projection)
-        self.v3 = self.fig.add_subplot(self.gs[2,1], projection=projection)
+        self.v2 = self.fig.add_subplot(self.gs[0,2], projection=projection)
+        self.v3 = self.fig.add_subplot(self.gs[0,3], projection=projection)
         _vs = [self.v1, self.v2, self.v3]
         for view in _vs:
             view.set_proj_type('ortho')
@@ -325,7 +325,6 @@ class StaticFigure(tk.Frame):
         # apply labels outlined in graph settings.
         self.renameLabels()
 
-        self.fig.subplots_adjust(wspace=0.1, hspace=0.1)
     
     """
     Called in self.initFig, which is run in init.
@@ -599,9 +598,9 @@ class PlottingWindowObj(tk.Frame):
         self.dropdown_graphs = [self.graph1.graph, self.graph2.graph]
 
         # packing step
-        self.trajectory.pack(expand=1, side=tk.LEFT, anchor="w", ipadx=3, ipady=3, padx=5)
-        self.graph1.pack(side=tk.TOP, anchor='ne', expand=1, ipadx=3, ipady=3, padx=1, pady=2)
-        self.graph2.pack(side=tk.TOP, anchor='se', expand=1, ipadx=3, ipady=3, padx=1, pady=2)
+        self.trajectory.pack(expand=1, side=tk.TOP, anchor="n", ipadx=3, ipady=3, padx=5, fill='both')
+        self.graph1.pack(side=tk.LEFT, anchor='w', expand=0, ipadx=3, ipady=3, padx=1, pady=2)
+        self.graph2.pack(side=tk.RIGHT, anchor='e', expand=0, ipadx=3, ipady=3, padx=1, pady=2)
 
         # event bindings:
         self.set_active() # resizing based on window size
