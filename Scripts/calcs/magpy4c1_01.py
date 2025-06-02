@@ -143,7 +143,7 @@ def EfieldX(p:np.ndarray, E_Method):
 
 import os
 import h5py
-def write_to_hdf5(from_temp, out, expand_length):
+def write_to_hdf5(from_temp, out, expand_length, num_points):
         # notify terminal
     print(f"Flushing to h5 file")
 
@@ -171,18 +171,19 @@ def write_to_hdf5(from_temp, out, expand_length):
 
     with h5py.File(path, 'a') as f:
         old_shape = f['/src/position'].shape[0]
-        f['/src/position'].resize((old_shape + len(df),))
-        f['/src/position'][old_shape:] = df_pos
+        if old_shape < num_points + 1:
+            f['/src/position'].resize((old_shape + len(df),))
+            f['/src/position'][old_shape:] = df_pos
 
-        old_shape = f['/src/velocity'].shape[0]
-        f['src/velocity'].resize((old_shape + len(df),))
-        f['/src/velocity'][old_shape:] = df_vel
+            old_shape = f['/src/velocity'].shape[0]
+            f['src/velocity'].resize((old_shape + len(df),))
+            f['/src/velocity'][old_shape:] = df_vel
 
-        old_shape = f['src/fields/b'].shape[0]
-        f['src/fields/b'].resize((old_shape + len(df),))
-        f['src/fields/e'].resize((old_shape + len(df),))
-        f['src/fields/b'][old_shape:] = df_fields_b
-        f['src/fields/e'][old_shape:] = df_fields_e
+            old_shape = f['src/fields/b'].shape[0]
+            f['src/fields/b'].resize((old_shape + len(df),))
+            f['src/fields/e'].resize((old_shape + len(df),))
+            f['src/fields/b'][old_shape:] = df_fields_b
+            f['src/fields/e'][old_shape:] = df_fields_e
     
         # reset the internal container array
     last_struct = _out[-1] # indexing _out so this is guaranteed to not be None for whatever reason.
@@ -325,7 +326,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         Periodically add contents to the appropriate datasets in the h5 outputs file.
         """
         if time % temp == 0:
-            write_to_hdf5(from_temp, out, temp)
+            write_to_hdf5(from_temp, out, temp, num_points)
             #out[0] = out[time]
             #out[1:] = None
             i = 1  # reset the internal AoS index
@@ -341,7 +342,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         "Computation Time" : comp_time,
         "Simulation Time" : ft
     }
-    write_to_hdf5(from_temp, out, expand_length)
+    write_to_hdf5(from_temp, out, expand_length, num_points)
 
 
 from multiprocessing import Manager

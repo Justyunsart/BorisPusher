@@ -156,6 +156,7 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
             plot.plot(step_parallel, label='p', color='blue')
             plot.plot(step_perpendicular, label='perp', color='red')
 
+            plot.grid()
             #print(f"plotting done")
 
                 # add a legend
@@ -358,6 +359,9 @@ class StaticFigure(tk.Frame):
     def prepareGraph(self):
         # clear the plot of its impurities
         self.plot.cla()
+        self.v1.cla()
+        self.v2.cla()
+        self.v3.cla()
         # replot the labels according to the settings.
         self.renameLabels()
 
