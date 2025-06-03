@@ -38,3 +38,6 @@ class param_keys(Enum):
 
     output_location = "runtime-configured location for the output file"
     output_name = "runtime-configured name for the output file"
+    output_path = "output location plus output name"
+
+    hdf5_path = "the location of the hdf5 output file"

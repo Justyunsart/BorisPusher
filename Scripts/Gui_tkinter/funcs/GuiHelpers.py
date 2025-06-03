@@ -125,6 +125,16 @@ def FieldCallback(event, value:ttk.Combobox, xcontainer:Entry, ycontainer:Entry,
             zcontainer.config(state="normal",
                               text = "0.0")
 
+# open the output_popup widget.
+# after the popup closes, invoke the calculate callback function.
+from Gui_tkinter.widgets.output_file.output_config import output_popup
+from functools import partial
+def open_output_config(params:list, DIR_last:str, root, manager):
+    #get_output_name()
+    popup = output_popup(master=root, close_callable=partial(CalculateCallback,params, DIR_last, root, manager))
+    return popup
+
+
 # Run the simulation if you press calculate
 
 def CalculateCallback(params:list, DIR_last:str, root, manager):

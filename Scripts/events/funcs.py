@@ -1,7 +1,7 @@
 import numpy as np
 import settings.constants as constants
 from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file_dict
-from system.temp_file_names import m1f1
+from system.temp_file_names import m1f1, param_keys
 from definitions import DIR_ROOT
 """
 Extra logic to run before a simulation for Bob's variable timestep.
@@ -52,9 +52,15 @@ import os
 from settings.configs.funcs.config_reader import runtime_configs
 def copy_diags_to_output_subdir():
     d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-    out_path = os.path.join(str(runtime_configs['Paths']['outputs']), d["output_path"])
+    #out_path = os.path.join(str(runtime_configs['Paths']['outputs']), d["output_path"])
+    out_path = d[param_keys.output_path.name]
     coil_path = d['coil_file']
     particle_path = d['particle_file']
+
+        # update the tempfile with the used path names.
+    d[param_keys.hdf5_path.name] = os.path.join(out_path, 'data.hdf5')
+    d[param_keys.output_path.name] = out_path
+    update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
     # TODO: ADD BOB_E FILE IF USED
 
