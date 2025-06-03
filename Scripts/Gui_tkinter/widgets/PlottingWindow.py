@@ -78,7 +78,7 @@ e_step_style = {
 }
 
 b_corner_style = {
-    'title' : "B-mag from (0,0,0) to (3,3,3)",
+    'title' : "haha",
     'ylab' : 'T',
     'xlab' : 'x=y=z, m'
 }
@@ -114,6 +114,8 @@ def graph_b_corner(plot, c:mp.Collection, res=100):
     bs_norm = np.linalg.norm(bs, axis=1)
     plot.plot(_x, bs_norm)
     plot.grid()
+
+    plot.set_title(f"B-mag from (0,0,0) to ({lim}, {lim}, {lim})")
 
 
 
