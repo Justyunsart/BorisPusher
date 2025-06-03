@@ -77,12 +77,46 @@ e_step_style = {
     'xlab' : 'step'
 }
 
+b_corner_style = {
+    'title' : "B-mag from (0,0,0) to (3,3,3)",
+    'ylab' : 'T',
+    'xlab' : 'x=y=z, m'
+}
+
 # available graphing options. Stored in a ttk.combobx.
 graph_options = ('Vel vs. Step',
                  'B-mag vs. Step',
-                 'E-mag vs. Step')
+                 'E-mag vs. Step',
+                 'B corner lineout')
+
+# option, style mapping, so the program knows what style goes with each option:
+graph_option_style_map = {'Vel vs. Step' : {'id' : 'v', 'style': vel_step_style},
+                          'B-mag vs. Step' : {'id' : 'b', 'style' : b_step_style},
+                          'E-mag vs. Step': {'id' : 'e', 'style' : e_step_style},
+                          'B corner lineout': {'id' : 'b_corner', 'style' : b_corner_style}}
 
 # GRAPHING FUNCTIONS - each option should be accompanied by a function.
+"""
+This function is used for graphing the B-field lineout.
+"""
+def graph_b_corner(plot, c:mp.Collection, res=100):
+    #print(c)
+        # get a 2d array of coordinates (stacked linspace, as x = y = z)
+    lim = np.max(abs(c[0].position)) + 1
+    _x = np.linspace(0, lim, res)
+    _y = np.linspace(0, lim, res)
+    _z = np.linspace(0, lim, res)
+    coords = np.column_stack((_x, _y, _z))
+    #print(coords)
+
+        # get the b field values at the coordinates
+    bs = np.array(c.getB(coords))
+    bs_norm = np.linalg.norm(bs, axis=1)
+    plot.plot(_x, bs_norm)
+    plot.grid()
+
+
+
 """
 These functions expect a pre-labelled, empty subplot to draw on.
 Also, they do not call the draw function. That should be done externally.
@@ -119,11 +153,19 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
                      'src' : 'src/fields/e'}}
 
         # the id parameter lets this function know what to look for in the dataframe.
-    assert id in ('v', 'b', 'e'), f"YOU PROVIDED AN UNSUPPORTED ID TO PlottingWindow.Param_v_Step_callable!! {id} is not v, b, nor e!"
+    assert id in ('v', 'b', 'e', 'b_corner'), f"YOU PROVIDED AN UNSUPPORTED ID TO PlottingWindow.Param_v_Step_callable!! {id} is not v, b, nor e!"
 
     # now that we know the column names associated with the data we want, we index the dataframe with the relevant info
     #dfslice = df[df['id'] == 0] # right now, we only look at the 1st particle.
     #x, y, z = dfslice[xn].to_numpy(), dfslice[yn].to_numpy(), dfslice[zn].to_numpy() #x, y, z coord points at each step
+
+    match id:
+        case 'b_corner':
+            #print( kwargs['c'])
+            graph_b_corner(plot, kwargs['c'])
+            return True
+
+
     with h5py.File(path, 'r+') as f:
         ds = f[h5_dct[id]['src']]
         x, y, z = ds[h5_dct[id]['xn']], ds[h5_dct[id]['yn']], ds[h5_dct[id]['zn']]
@@ -218,13 +260,6 @@ def Trajectory_callable(fig, plot, v1, v2, v3, path, c:mp.Collection, **kwargs):
     v1.get_zaxis().set_ticks([])
     v2.get_xaxis().set_ticks([])
     v3.get_yaxis().set_ticks([])
-
-
-
-# option, style mapping, so the program knows what style goes with each option:
-graph_option_style_map = {'Vel vs. Step' : {'id' : 'v', 'style': vel_step_style},
-                          'B-mag vs. Step' : {'id' : 'b', 'style' : b_step_style},
-                          'E-mag vs. Step': {'id' : 'e', 'style' : e_step_style}}
 
 '''
 the following r the actual classes that implement the previously established settings and functions.
@@ -538,7 +573,7 @@ class DropdownFigure(tk.Frame):
             # only do graphing stuff if id is not none; if something is acutally chosen lol.
             if id is not None:
                 #print("you should be updating a dropdown graph.")
-                self.canvFig.updateGraph(Param_v_Step_callable, path, id=id)
+                self.canvFig.updateGraph(Param_v_Step_callable, path, id=id, **kwargs)
         except:
             return False
 
@@ -619,8 +654,8 @@ class PlottingWindowObj(tk.Frame):
         self.trajectory.updateGraph(self._h_path, Trajectory_callable, **traj_args)
         # everything else's callable needs: the fig, plot, dataframe, id.
         # these are decided in the DropdownFigure object themselves.
-        self.graph1.updateGraph(self._h_path)
-        self.graph2.updateGraph(self._h_path)
+        self.graph1.updateGraph(self._h_path, c=self.c)
+        self.graph2.updateGraph(self._h_path, c=self.c)
         self.resize_callback(None)
 
     def update_dropdown(self, event, dropdown):
@@ -634,7 +669,7 @@ class PlottingWindowObj(tk.Frame):
         dropdown = the instance of DropdownFigure responsible for this trigger. 
         """
         dropdown.update_graph_settings(event)
-        dropdown.updateGraph(self._h_path)
+        dropdown.updateGraph(self._h_path, c=self.c)
         self.resize_callback(None)
     
     """

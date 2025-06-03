@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="clamped the limits of the b-field streamplot on the calculation tab to be 1m + maximum coil offset.&#10;&#10;The plotting tab now graphs the absolute value of the parallel component (dot product) to better match the nature of the perpendicular component (which already ignores signs because it's graphing the magnitude)">
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="programmable output file directory">
+      <change beforePath="$PROJECT_DIR$/.idea/BorisPusher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BorisPusher.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiHelpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiHelpers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/output_file/output_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/output_file/output_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/events/events.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/events.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/events/funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/funcs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/files/create.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/files/create.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/system/temp_file_names.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/system/temp_file_names.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/PlottingWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/PlottingWindow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +63,7 @@
     "Python.configs.executor": "Run",
     "Python.dt_np.executor": "Run",
     "Python.file_write_speed.executor": "Run",
+    "Python.magpy4c1_01.executor": "Run",
     "Python.main.executor": "Run",
     "Python.menu_bar (1).executor": "Run",
     "Python.menu_bar.executor": "Run",
@@ -244,7 +241,8 @@
       <workItem from="1748380435081" duration="9919000" />
       <workItem from="1748468027389" duration="6814000" />
       <workItem from="1748895517692" duration="1171000" />
-      <workItem from="1748896701772" duration="12505000" />
+      <workItem from="1748896701772" duration="12516000" />
+      <workItem from="1748986806082" duration="4414000" />
     </task>
     <task id="LOCAL-00001" summary="inputs create emergency default files when their parent dir is empty">
       <option name="closed" value="true" />
@@ -358,7 +356,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748904179549</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="programmable output file directory">
+      <option name="closed" value="true" />
+      <created>1748911330840</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1748911330840</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -392,7 +398,8 @@
     <MESSAGE value="changed the layout of the plot window graphs so that the trajectory and dropdowns are laid horizontally." />
     <MESSAGE value="b-field graph now has a grid." />
     <MESSAGE value="clamped the limits of the b-field streamplot on the calculation tab to be 1m + maximum coil offset.&#10;&#10;The plotting tab now graphs the absolute value of the parallel component (dot product) to better match the nature of the perpendicular component (which already ignores signs because it's graphing the magnitude)" />
-    <option name="LAST_COMMIT_MESSAGE" value="clamped the limits of the b-field streamplot on the calculation tab to be 1m + maximum coil offset.&#10;&#10;The plotting tab now graphs the absolute value of the parallel component (dot product) to better match the nature of the perpendicular component (which already ignores signs because it's graphing the magnitude)" />
+    <MESSAGE value="programmable output file directory" />
+    <option name="LAST_COMMIT_MESSAGE" value="programmable output file directory" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -414,16 +421,17 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1747264500256" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar.coverage" NAME="menu_bar Coverage Results" MODIFIED="1747259073002" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$multiprocessing_gui_freezing.coverage" NAME="multiprocessing_gui_freezing Coverage Results" MODIFIED="1747273380034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$configs.coverage" NAME="configs Coverage Results" MODIFIED="1747264446248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings" />
-    <SUITE FILE_PATH="coverage/BorisPusher$output_file_structure.coverage" NAME="output_file_structure Coverage Results" MODIFIED="1747949379891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/hdf5" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
-    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1748911282253" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1748991132842" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
     <SUITE FILE_PATH="coverage/BorisPusher$read_last_used_binary.coverage" NAME="read_last_used_binary Coverage Results" MODIFIED="1747958449557" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
-    <SUITE FILE_PATH="coverage/BorisPusher$dt_np.coverage" NAME="dt_np Coverage Results" MODIFIED="1748382025060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
-    <SUITE FILE_PATH="coverage/BorisPusher$file_write_speed.coverage" NAME="file_write_speed Coverage Results" MODIFIED="1748468073546" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$PlottingWindow.coverage" NAME="PlottingWindow Coverage Results" MODIFIED="1748898945754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
+    <SUITE FILE_PATH="coverage/BorisPusher$magpy4c1_01.coverage" NAME="magpy4c1_01 Coverage Results" MODIFIED="1748989537291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/calcs" />
+    <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1747264500256" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
+    <SUITE FILE_PATH="coverage/BorisPusher$output_file_structure.coverage" NAME="output_file_structure Coverage Results" MODIFIED="1747949379891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/hdf5" />
+    <SUITE FILE_PATH="coverage/BorisPusher$file_write_speed.coverage" NAME="file_write_speed Coverage Results" MODIFIED="1748468073546" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$dt_np.coverage" NAME="dt_np Coverage Results" MODIFIED="1748382025060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
   </component>
 </project>
