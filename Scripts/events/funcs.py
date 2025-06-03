@@ -24,8 +24,11 @@ def before_simulation_bob_dt(particle=constants.proton, drange=10):
     # GET THE POSITION FOR B0
     # since we are assuming that the first coil is displaced only on one axis and that the configuration is 
     # symmetric, I index the first child and find its maximum to know how much the coils are displaced.
-    offset = c[0].position[np.argmax(c[0].position)]
-    B0_pos = [0, 0, offset/2]
+    offset = c[0].position[np.argmax(abs(c[0].position))]
+    _ax = np.argmax(abs(c[0].position))
+
+    B0_pos = np.zeros(3)
+    B0_pos[_ax] = offset / 2
     
     # GET INFORMATION FROM B0 POSITION
     B0_B = c.getB(B0_pos)

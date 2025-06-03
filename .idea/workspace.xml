@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="added a b magnitude lineout option that graphs the b field's magnitude from the origin to a corner (defined by the limit of the coil center + 1 meter)">
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="b to corner graph now has an accurate title">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/PlottingWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/PlottingWindow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/events/funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/funcs.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -240,7 +241,7 @@
       <workItem from="1748468027389" duration="6814000" />
       <workItem from="1748895517692" duration="1171000" />
       <workItem from="1748896701772" duration="12516000" />
-      <workItem from="1748986806082" duration="5010000" />
+      <workItem from="1748986806082" duration="6977000" />
     </task>
     <task id="LOCAL-00001" summary="inputs create emergency default files when their parent dir is empty">
       <option name="closed" value="true" />
@@ -370,7 +371,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748991227982</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="b to corner graph now has an accurate title">
+      <option name="closed" value="true" />
+      <created>1748991822951</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1748991822951</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -406,7 +415,8 @@
     <MESSAGE value="clamped the limits of the b-field streamplot on the calculation tab to be 1m + maximum coil offset.&#10;&#10;The plotting tab now graphs the absolute value of the parallel component (dot product) to better match the nature of the perpendicular component (which already ignores signs because it's graphing the magnitude)" />
     <MESSAGE value="programmable output file directory" />
     <MESSAGE value="added a b magnitude lineout option that graphs the b field's magnitude from the origin to a corner (defined by the limit of the coil center + 1 meter)" />
-    <option name="LAST_COMMIT_MESSAGE" value="added a b magnitude lineout option that graphs the b field's magnitude from the origin to a corner (defined by the limit of the coil center + 1 meter)" />
+    <MESSAGE value="b to corner graph now has an accurate title" />
+    <option name="LAST_COMMIT_MESSAGE" value="b to corner graph now has an accurate title" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -432,7 +442,7 @@
     <SUITE FILE_PATH="coverage/BorisPusher$multiprocessing_gui_freezing.coverage" NAME="multiprocessing_gui_freezing Coverage Results" MODIFIED="1747273380034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$configs.coverage" NAME="configs Coverage Results" MODIFIED="1747264446248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
-    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1748991772009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1748993184130" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
     <SUITE FILE_PATH="coverage/BorisPusher$read_last_used_binary.coverage" NAME="read_last_used_binary Coverage Results" MODIFIED="1747958449557" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$PlottingWindow.coverage" NAME="PlottingWindow Coverage Results" MODIFIED="1748898945754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$magpy4c1_01.coverage" NAME="magpy4c1_01 Coverage Results" MODIFIED="1748989537291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/calcs" />
