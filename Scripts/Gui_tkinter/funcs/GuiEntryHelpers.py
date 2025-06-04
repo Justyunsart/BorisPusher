@@ -448,27 +448,25 @@ class Bob_e_Config_Dataclass():
     PosY: EntryTableParam = field(init=False)
     PosZ: EntryTableParam = field(init=False)
 
-    Diameter: EntryTableParam = field(init=False)
-
     Q: EntryTableParam = field(init=False)
+    Diameter: EntryTableParam = field(init=False)
 
     Rotations: EntryTableParam = field(init=False)
 
     eval_inds = (5, 6) # index reference of the rotation_angles and rotation_axes lists
     power_name = "Q"
 
-    def __init__(self, frame, px = 0, py = 0, pz = 0, dia = 1, q=0.00000000001, rotation_angles = [], rotation_axes = []):
+    def __init__(self, frame, px = 0, py = 0, pz = 0, q=0.00000000001, dia = 1, rotation_angles = [], rotation_axes = []):
         self.PosX = EntryTableParam(px, master=frame)
         self.PosY = EntryTableParam(py, master=frame)
         self.PosZ = EntryTableParam(pz, master=frame)
 
-        self.Diameter = EntryTableParam(dia, master=frame)
-
         self.Q = EntryTableParam(q, master=frame)
+        self.Diameter = EntryTableParam(dia, master=frame)
 
         self.Rotations = EntryTableParam(None, EntryButton, master=frame, text="Rotations")
 
-        self.iterables = [self.PosX, self.PosY, self.PosZ, self.Diameter, self.Q, self.Rotations]
+        self.iterables = [self.PosX, self.PosY, self.PosZ, self.Q, self.Diameter, self.Rotations]
 
         # properties that are useful, and are hidden from iteration.
         self.rotation_angles = rotation_angles

@@ -66,11 +66,11 @@ accel = None
 """
 Extra wrapper functions to gather inputs to plug into the implementation.
 """
-def Fw(coord:float):
+def Fw(coord:float, fromTemp):
     """
     Fw analytic E field equation
     """
-    global E_Args
+    E_Args = fromTemp["field_methods"]['e']['params']
     A = float(E_Args["A"])
     Bx = float(E_Args["B"])
     #print(f"coord: {coord}, A: {A}, B: {Bx}")
@@ -122,7 +122,7 @@ def Bob_e(coord, args):
 
     return toCart(r_sum, cyl_coord[1], z_sum)
 
-def EfieldX(p:np.ndarray, E_Method):
+def EfieldX(p:np.ndarray, E_Method, fromTemp):
     """
     Controller for what E method is used.
 
@@ -134,7 +134,7 @@ def EfieldX(p:np.ndarray, E_Method):
         case "Zero":
             E =  np.zeros(3)
         case "Fw":
-            E = np.apply_along_axis(Fw, 0, p)
+            E = np.apply_along_axis(Fw, 0, p, fromTemp)
         case "Bob_e":
             E = Bob_e(p, fromTemp["field_methods"]['e']['params'])
             #print(f"Bob_e says E is: {E}")
@@ -257,7 +257,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         ##########################################################################
         # COLLECT FIELDS
             # submit the field calculations to the threadpool
-        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'])
+        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp)
         _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'])
             # collect the results
         Ef = _Ef.result()

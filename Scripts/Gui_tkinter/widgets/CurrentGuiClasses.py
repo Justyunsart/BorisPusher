@@ -292,7 +292,7 @@ class EntryTable():
 
             match self.widget:
                 case OnlyNumEntry():
-                    self.widget.bind_class("OnlyNumEntry", "<Key>", self.EntryValidateCallback)
+                    self.widget.bind("<KeyRelease>", self.EntryValidateCallback)
                 case ttk.Combobox():
                     self.widget.bind("<<ComboboxSelected>>", self.EntryValidateCallback)
 
