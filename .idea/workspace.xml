@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="b to corner graph now has an accurate title">
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="added bob_dt to magpy4c1, need to change the scaling logic">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/events/funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/funcs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,33 +54,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.BorisGui.executor": "Run",
-    "Python.PlottingWindow.executor": "Run",
-    "Python.configs.executor": "Run",
-    "Python.dt_np.executor": "Run",
-    "Python.file_write_speed.executor": "Run",
-    "Python.magpy4c1_01.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.menu_bar (1).executor": "Run",
-    "Python.menu_bar.executor": "Run",
-    "Python.multiprocessing_gui_freezing.executor": "Run",
-    "Python.output_file_structure.executor": "Run",
-    "Python.read_last_used_binary.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/fwessel/PycharmProjects/BorisPusher/Scripts/calcs",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.BorisGui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PlottingWindow.executor&quot;: &quot;Run&quot;,
+    &quot;Python.configs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dt_np.executor&quot;: &quot;Run&quot;,
+    &quot;Python.file_write_speed.executor&quot;: &quot;Run&quot;,
+    &quot;Python.magpy4c1_01.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar.executor&quot;: &quot;Run&quot;,
+    &quot;Python.multiprocessing_gui_freezing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.output_file_structure.executor&quot;: &quot;Run&quot;,
+    &quot;Python.read_last_used_binary.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/fwessel/PycharmProjects/BorisPusher/Scripts/calcs&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
@@ -241,7 +240,8 @@
       <workItem from="1748468027389" duration="6814000" />
       <workItem from="1748895517692" duration="1171000" />
       <workItem from="1748896701772" duration="12516000" />
-      <workItem from="1748986806082" duration="6977000" />
+      <workItem from="1748986806082" duration="7008000" />
+      <workItem from="1749073138766" duration="1210000" />
     </task>
     <task id="LOCAL-00001" summary="inputs create emergency default files when their parent dir is empty">
       <option name="closed" value="true" />
@@ -379,7 +379,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748991822951</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="added bob_dt to magpy4c1, need to change the scaling logic">
+      <option name="closed" value="true" />
+      <created>1748993791360</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1748993791360</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -416,7 +424,8 @@
     <MESSAGE value="programmable output file directory" />
     <MESSAGE value="added a b magnitude lineout option that graphs the b field's magnitude from the origin to a corner (defined by the limit of the coil center + 1 meter)" />
     <MESSAGE value="b to corner graph now has an accurate title" />
-    <option name="LAST_COMMIT_MESSAGE" value="b to corner graph now has an accurate title" />
+    <MESSAGE value="added bob_dt to magpy4c1, need to change the scaling logic" />
+    <option name="LAST_COMMIT_MESSAGE" value="added bob_dt to magpy4c1, need to change the scaling logic" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
