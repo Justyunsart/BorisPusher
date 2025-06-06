@@ -318,7 +318,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         #curr_time = 2 * np.pi / curr_gyrofreq
     
         #dt = curr_time/100
-        if from_temp['dt_bob'] == 1 and time % 50 == 0:
+        if from_temp['dt_bob'] == 1:
             _dt = dt
             dt = bob_dt_step(Bp=Bf, B0_mag=from_temp['bob_dt_B0']['B_mag'], dt0=from_temp['bob_dt_dt0'], min=from_temp['bob_dt_min'], max=from_temp["bob_dt_max"])
             print(f"dt changed to: {dt} from: {_dt}")

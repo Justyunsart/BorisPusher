@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="bob_e option now points to the right dir in documents">
-      <change beforePath="$PROJECT_DIR$/.idea/BorisPusher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BorisPusher.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/events/funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/funcs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/system/temp_file_names.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/system/temp_file_names.py" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="dt widget now shows more information about the timestep scaling parameters. &#10;&#10;You can now configure the reference particle location and the dynamic range used in the bob_dt calculation">
+      <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -400,7 +394,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749074442742</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="dt widget now shows more information about the timestep scaling parameters. &#10;&#10;You can now configure the reference particle location and the dynamic range used in the bob_dt calculation">
+      <option name="closed" value="true" />
+      <created>1749242182978</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1749242182978</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -439,7 +441,8 @@
     <MESSAGE value="b to corner graph now has an accurate title" />
     <MESSAGE value="added bob_dt to magpy4c1, need to change the scaling logic" />
     <MESSAGE value="bob_e option now points to the right dir in documents" />
-    <option name="LAST_COMMIT_MESSAGE" value="bob_e option now points to the right dir in documents" />
+    <MESSAGE value="dt widget now shows more information about the timestep scaling parameters. &#10;&#10;You can now configure the reference particle location and the dynamic range used in the bob_dt calculation" />
+    <option name="LAST_COMMIT_MESSAGE" value="dt widget now shows more information about the timestep scaling parameters. &#10;&#10;You can now configure the reference particle location and the dynamic range used in the bob_dt calculation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
