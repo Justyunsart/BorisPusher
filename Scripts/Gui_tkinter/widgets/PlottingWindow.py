@@ -77,12 +77,48 @@ e_step_style = {
     'xlab' : 'step'
 }
 
+b_corner_style = {
+    'title' : "haha",
+    'ylab' : 'T',
+    'xlab' : 'x=y=z, m'
+}
+
 # available graphing options. Stored in a ttk.combobx.
 graph_options = ('Vel vs. Step',
                  'B-mag vs. Step',
-                 'E-mag vs. Step')
+                 'E-mag vs. Step',
+                 'B corner lineout')
+
+# option, style mapping, so the program knows what style goes with each option:
+graph_option_style_map = {'Vel vs. Step' : {'id' : 'v', 'style': vel_step_style},
+                          'B-mag vs. Step' : {'id' : 'b', 'style' : b_step_style},
+                          'E-mag vs. Step': {'id' : 'e', 'style' : e_step_style},
+                          'B corner lineout': {'id' : 'b_corner', 'style' : b_corner_style}}
 
 # GRAPHING FUNCTIONS - each option should be accompanied by a function.
+"""
+This function is used for graphing the B-field lineout.
+"""
+def graph_b_corner(plot, c:mp.Collection, res=100):
+    #print(c)
+        # get a 2d array of coordinates (stacked linspace, as x = y = z)
+    lim = np.max(abs(c[0].position)) + 1
+    _x = np.linspace(0, lim, res)
+    _y = np.linspace(0, lim, res)
+    _z = np.linspace(0, lim, res)
+    coords = np.column_stack((_x, _y, _z))
+    #print(coords)
+
+        # get the b field values at the coordinates
+    bs = np.array(c.getB(coords))
+    bs_norm = np.linalg.norm(bs, axis=1)
+    plot.plot(_x, bs_norm)
+    plot.grid()
+
+    plot.set_title(f"B-mag from (0,0,0) to ({lim}, {lim}, {lim})")
+
+
+
 """
 These functions expect a pre-labelled, empty subplot to draw on.
 Also, they do not call the draw function. That should be done externally.
@@ -119,11 +155,19 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
                      'src' : 'src/fields/e'}}
 
         # the id parameter lets this function know what to look for in the dataframe.
-    assert id in ('v', 'b', 'e'), f"YOU PROVIDED AN UNSUPPORTED ID TO PlottingWindow.Param_v_Step_callable!! {id} is not v, b, nor e!"
+    assert id in ('v', 'b', 'e', 'b_corner'), f"YOU PROVIDED AN UNSUPPORTED ID TO PlottingWindow.Param_v_Step_callable!! {id} is not v, b, nor e!"
 
     # now that we know the column names associated with the data we want, we index the dataframe with the relevant info
     #dfslice = df[df['id'] == 0] # right now, we only look at the 1st particle.
     #x, y, z = dfslice[xn].to_numpy(), dfslice[yn].to_numpy(), dfslice[zn].to_numpy() #x, y, z coord points at each step
+
+    match id:
+        case 'b_corner':
+            #print( kwargs['c'])
+            graph_b_corner(plot, kwargs['c'])
+            return True
+
+
     with h5py.File(path, 'r+') as f:
         ds = f[h5_dct[id]['src']]
         x, y, z = ds[h5_dct[id]['xn']], ds[h5_dct[id]['yn']], ds[h5_dct[id]['zn']]
@@ -138,6 +182,7 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
             # for now, b has only this line.
         if id == 'b':
             plot.plot(step_mag)
+            plot.grid()
             return True
         else:
             #print("hi")
@@ -148,7 +193,7 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
             bs = np.column_stack((bx, by, bz)) # b coordinates all in one array.
 
                 # get the parallel and perpendicular components relative to b
-            step_parallel = get_parallel(bs, coords, f, h5_dct[id]['src'], h5_dct[id]['par_key'])[:-1]
+            step_parallel = np.abs(get_parallel(bs, coords, f, h5_dct[id]['src'], h5_dct[id]['par_key'])[:-1])
             step_perpendicular = get_perpendicular(bs, coords, f, h5_dct[id]['src'], h5_dct[id]['perp_key'])[:-1]
 
                 # graph these guys.
@@ -156,6 +201,7 @@ def Param_v_Step_callable(fig, plot, path, id, **kwargs):
             plot.plot(step_parallel, label='p', color='blue')
             plot.plot(step_perpendicular, label='perp', color='red')
 
+            plot.grid()
             #print(f"plotting done")
 
                 # add a legend
@@ -216,13 +262,6 @@ def Trajectory_callable(fig, plot, v1, v2, v3, path, c:mp.Collection, **kwargs):
     v1.get_zaxis().set_ticks([])
     v2.get_xaxis().set_ticks([])
     v3.get_yaxis().set_ticks([])
-
-
-
-# option, style mapping, so the program knows what style goes with each option:
-graph_option_style_map = {'Vel vs. Step' : {'id' : 'v', 'style': vel_step_style},
-                          'B-mag vs. Step' : {'id' : 'b', 'style' : b_step_style},
-                          'E-mag vs. Step': {'id' : 'e', 'style' : e_step_style}}
 
 '''
 the following r the actual classes that implement the previously established settings and functions.
@@ -310,13 +349,13 @@ class StaticFigure(tk.Frame):
     Called in init. 
     """
     def initFig(self):
-        self.fig = plt.figure(figsize=(5,8), constrained_layout=True)
-        self.gs = self.fig.add_gridspec(3, 2, width_ratios=[1, 1],wspace=0.2, hspace=0.1)
+        self.fig = plt.figure(figsize=(10,6), constrained_layout=True)
+        self.gs = self.fig.add_gridspec(1, 4, wspace=0.01, hspace=0.1)
         projection = self.graph_settings['projection']
-        self.plot = self.fig.add_subplot(self.gs[:, 0], projection=projection)
+        self.plot = self.fig.add_subplot(self.gs[0, 0], projection=projection)
         self.v1 = self.fig.add_subplot(self.gs[0,1], projection=projection)
-        self.v2 = self.fig.add_subplot(self.gs[1,1], projection=projection)
-        self.v3 = self.fig.add_subplot(self.gs[2,1], projection=projection)
+        self.v2 = self.fig.add_subplot(self.gs[0,2], projection=projection)
+        self.v3 = self.fig.add_subplot(self.gs[0,3], projection=projection)
         _vs = [self.v1, self.v2, self.v3]
         for view in _vs:
             view.set_proj_type('ortho')
@@ -324,7 +363,6 @@ class StaticFigure(tk.Frame):
         # apply labels outlined in graph settings.
         self.renameLabels()
 
-        self.fig.subplots_adjust(wspace=0.1, hspace=0.1)
     
     """
     Called in self.initFig, which is run in init.
@@ -358,6 +396,9 @@ class StaticFigure(tk.Frame):
     def prepareGraph(self):
         # clear the plot of its impurities
         self.plot.cla()
+        self.v1.cla()
+        self.v2.cla()
+        self.v3.cla()
         # replot the labels according to the settings.
         self.renameLabels()
 
@@ -534,7 +575,7 @@ class DropdownFigure(tk.Frame):
             # only do graphing stuff if id is not none; if something is acutally chosen lol.
             if id is not None:
                 #print("you should be updating a dropdown graph.")
-                self.canvFig.updateGraph(Param_v_Step_callable, path, id=id)
+                self.canvFig.updateGraph(Param_v_Step_callable, path, id=id, **kwargs)
         except:
             return False
 
@@ -595,9 +636,9 @@ class PlottingWindowObj(tk.Frame):
         self.dropdown_graphs = [self.graph1.graph, self.graph2.graph]
 
         # packing step
-        self.trajectory.pack(expand=1, side=tk.LEFT, anchor="w", ipadx=3, ipady=3, padx=5)
-        self.graph1.pack(side=tk.TOP, anchor='ne', expand=1, ipadx=3, ipady=3, padx=1, pady=2)
-        self.graph2.pack(side=tk.TOP, anchor='se', expand=1, ipadx=3, ipady=3, padx=1, pady=2)
+        self.trajectory.pack(expand=1, side=tk.TOP, anchor="n", ipadx=3, ipady=3, padx=5, fill='both')
+        self.graph1.pack(side=tk.LEFT, anchor='w', expand=0, ipadx=3, ipady=3, padx=1, pady=2)
+        self.graph2.pack(side=tk.RIGHT, anchor='e', expand=0, ipadx=3, ipady=3, padx=1, pady=2)
 
         # event bindings:
         self.set_active() # resizing based on window size
@@ -615,8 +656,8 @@ class PlottingWindowObj(tk.Frame):
         self.trajectory.updateGraph(self._h_path, Trajectory_callable, **traj_args)
         # everything else's callable needs: the fig, plot, dataframe, id.
         # these are decided in the DropdownFigure object themselves.
-        self.graph1.updateGraph(self._h_path)
-        self.graph2.updateGraph(self._h_path)
+        self.graph1.updateGraph(self._h_path, c=self.c)
+        self.graph2.updateGraph(self._h_path, c=self.c)
         self.resize_callback(None)
 
     def update_dropdown(self, event, dropdown):
@@ -630,7 +671,7 @@ class PlottingWindowObj(tk.Frame):
         dropdown = the instance of DropdownFigure responsible for this trigger. 
         """
         dropdown.update_graph_settings(event)
-        dropdown.updateGraph(self._h_path)
+        dropdown.updateGraph(self._h_path, c=self.c)
         self.resize_callback(None)
     
     """

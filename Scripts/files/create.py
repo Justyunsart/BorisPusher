@@ -7,8 +7,8 @@ if PLATFORM != 'win32':
     from xattr import getxattr
 from settings.defaults.coils import coil_cust_attr_name
 
-from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
-from system.temp_file_names import manager_1, m1f1
+from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp, update_temp
+from system.temp_file_names import manager_1, m1f1, param_keys
 
 from files.hdf5.output_file_structure import create_h5_output_file
 
@@ -115,8 +115,11 @@ def get_default_output_dir():
     _p = os.path.join(preset, current, b, e)
 
         # also need to get the runtimeconfig for the default output location
-    def_out = runtime_configs['Paths']['output']
-    default_output_file_dir = os.path.join(str(def_out), str(_p))
+
+    def_out = runtime_configs['Paths']['outputs']
+    default_output_file_dir = os.path.normpath(os.path.join(str(def_out), str(_p)))
+
+    return default_output_file_dir
 
 
 """
@@ -127,17 +130,27 @@ preset/current/b/e
 """
 def get_output_subdir():
     d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+    # out_path = os.path.join(str(runtime_configs['Paths']['outputs']), d["output_path"])
+    out_path = os.path.normpath(os.path.join(d[param_keys.output_location.name], d[param_keys.output_name.name]))
+
+    # update the tempfile with the used path names.
+    d[param_keys.hdf5_path.name] = os.path.join(out_path, 'data.hdf5')
+    d[param_keys.output_path.name] = out_path
+    update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+
+    '''    
     preset = get_coil_preset_attr_val(d['particle_file'])
     current = get_unique_coil_collection_amps(d['mag_coil'])
     b = d['field_methods']['b']['method']
     e = d['field_methods']['e']['method']
-    name = get_output_name(os.path.join(preset, current, b, e))
+    name = get_output_name(os.path.join(preset, current, b, e))'''
 
-    d["output_path"] = os.path.join(preset, current, b, e, name)
-    d["hdf5_path"] = os.path.join(d["output_path"], 'data.hdf5')
-    write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+    #d["output_path"] = os.path.join(preset, current, b, e, name)
+    #write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
+    os.makedirs(os.path.join(str(runtime_configs['Paths']['outputs']), out_path), exist_ok=True)
+
+def create_output_file():
+    d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
     length = (d['numsteps'] * len(d["Particle_Df"])) + 1
-
-    os.makedirs(os.path.join(str(runtime_configs['Paths']['outputs']), d['output_path']), exist_ok=True)
     create_h5_output_file(os.path.join(str(runtime_configs['Paths']['outputs']), d["hdf5_path"]), length)

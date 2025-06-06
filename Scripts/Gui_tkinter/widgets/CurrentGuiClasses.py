@@ -292,7 +292,7 @@ class EntryTable():
 
             match self.widget:
                 case OnlyNumEntry():
-                    self.widget.bind_class("OnlyNumEntry", "<Key>", self.EntryValidateCallback)
+                    self.widget.bind("<KeyRelease>", self.EntryValidateCallback)
                 case ttk.Combobox():
                     self.widget.bind("<<ComboboxSelected>>", self.EntryValidateCallback)
 
@@ -939,10 +939,12 @@ class CurrentEntryTable(EntryTable):
         with a mpl subplot as an input, graph the currently selected magnetic coil's B field's cross section.
         """
         c = self.collection
+        l = self.getLim() + 1
+
         
         # construct grid for the cross section
-        x = np.linspace(-5, 5, 100)
-        z = np.linspace(-5, 5, 100)
+        x = np.linspace(-l, l, 100)
+        z = np.linspace(-l, l, 100)
         y = np.array([0])
 
         grid = np.array(np.meshgrid(x,y,z)).T #shape = (100, 100, 3, 1)
@@ -963,9 +965,10 @@ class CurrentEntryTable(EntryTable):
         #stream = fig.streamplot(X, Z, U, V, color= Bamp, density=2, norm=colors.LogNorm(vmin = Bamp.min(), vmax = Bamp.max()))
         fig.set_xlabel("X-axis (m)")
         fig.set_ylabel("Z-axis (m)")
-        fig.set_title("Magnetic Field Cross Section on the X-Z plane at Y=0")
+        fig.set_title("Magnetic Field Cross Section on the X-Z plane at Y=0", pad=20)
     
-        root.colorbar(stream.lines, cax=cax)
+        cbar = root.colorbar(stream.lines, cax=cax)
+        cbar.ax.set_title('log. of B-norm')
     
     def NewWindow(self, wid, *args):
         '''

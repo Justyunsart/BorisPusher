@@ -1,7 +1,7 @@
 import numpy as np
 import settings.constants as constants
 from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file_dict
-from system.temp_file_names import m1f1
+from system.temp_file_names import m1f1, param_keys
 from definitions import DIR_ROOT
 """
 Extra logic to run before a simulation for Bob's variable timestep.
@@ -24,8 +24,11 @@ def before_simulation_bob_dt(particle=constants.proton, drange=10):
     # GET THE POSITION FOR B0
     # since we are assuming that the first coil is displaced only on one axis and that the configuration is 
     # symmetric, I index the first child and find its maximum to know how much the coils are displaced.
-    offset = c[0].position[np.argmax(c[0].position)]
-    B0_pos = [0, 0, offset/2]
+    offset = c[0].position[np.argmax(abs(c[0].position))]
+    _ax = np.argmax(abs(c[0].position))
+
+    B0_pos = np.zeros(3)
+    B0_pos[_ax] = offset / 2
     
     # GET INFORMATION FROM B0 POSITION
     B0_B = c.getB(B0_pos)
@@ -52,9 +55,15 @@ import os
 from settings.configs.funcs.config_reader import runtime_configs
 def copy_diags_to_output_subdir():
     d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-    out_path = os.path.join(str(runtime_configs['Paths']['outputs']), d["output_path"])
+    #out_path = os.path.join(str(runtime_configs['Paths']['outputs']), d["output_path"])
+    out_path = d[param_keys.output_path.name]
     coil_path = d['coil_file']
     particle_path = d['particle_file']
+
+        # update the tempfile with the used path names.
+    d[param_keys.hdf5_path.name] = os.path.join(out_path, 'data.hdf5')
+    d[param_keys.output_path.name] = out_path
+    update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
     # TODO: ADD BOB_E FILE IF USED
 
@@ -80,6 +89,6 @@ def initialize_tempfile_dict(widgets:list):
         lu = None
     else:
         lu = read_temp_file_dict(os.path.join(DIR_ROOT, 'last_used'))
-        print(lu)
+        #print(lu)
     for widget in widgets:
         widget.init_temp(lu)

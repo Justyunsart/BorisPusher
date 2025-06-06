@@ -66,11 +66,11 @@ accel = None
 """
 Extra wrapper functions to gather inputs to plug into the implementation.
 """
-def Fw(coord:float):
+def Fw(coord:float, fromTemp):
     """
     Fw analytic E field equation
     """
-    global E_Args
+    E_Args = fromTemp["field_methods"]['e']['params']
     A = float(E_Args["A"])
     Bx = float(E_Args["B"])
     #print(f"coord: {coord}, A: {A}, B: {Bx}")
@@ -122,7 +122,7 @@ def Bob_e(coord, args):
 
     return toCart(r_sum, cyl_coord[1], z_sum)
 
-def EfieldX(p:np.ndarray, E_Method):
+def EfieldX(p:np.ndarray, E_Method, fromTemp):
     """
     Controller for what E method is used.
 
@@ -134,7 +134,7 @@ def EfieldX(p:np.ndarray, E_Method):
         case "Zero":
             E =  np.zeros(3)
         case "Fw":
-            E = np.apply_along_axis(Fw, 0, p)
+            E = np.apply_along_axis(Fw, 0, p, fromTemp)
         case "Bob_e":
             E = Bob_e(p, fromTemp["field_methods"]['e']['params'])
             #print(f"Bob_e says E is: {E}")
@@ -143,7 +143,7 @@ def EfieldX(p:np.ndarray, E_Method):
 
 import os
 import h5py
-def write_to_hdf5(from_temp, out, expand_length):
+def write_to_hdf5(from_temp, out, expand_length, num_points):
         # notify terminal
     print(f"Flushing to h5 file")
 
@@ -171,18 +171,19 @@ def write_to_hdf5(from_temp, out, expand_length):
 
     with h5py.File(path, 'a') as f:
         old_shape = f['/src/position'].shape[0]
-        f['/src/position'].resize((old_shape + len(df),))
-        f['/src/position'][old_shape:] = df_pos
+        if old_shape < num_points + 1:
+            f['/src/position'].resize((old_shape + len(df),))
+            f['/src/position'][old_shape:] = df_pos
 
-        old_shape = f['/src/velocity'].shape[0]
-        f['src/velocity'].resize((old_shape + len(df),))
-        f['/src/velocity'][old_shape:] = df_vel
+            old_shape = f['/src/velocity'].shape[0]
+            f['src/velocity'].resize((old_shape + len(df),))
+            f['/src/velocity'][old_shape:] = df_vel
 
-        old_shape = f['src/fields/b'].shape[0]
-        f['src/fields/b'].resize((old_shape + len(df),))
-        f['src/fields/e'].resize((old_shape + len(df),))
-        f['src/fields/b'][old_shape:] = df_fields_b
-        f['src/fields/e'][old_shape:] = df_fields_e
+            old_shape = f['src/fields/b'].shape[0]
+            f['src/fields/b'].resize((old_shape + len(df),))
+            f['src/fields/e'].resize((old_shape + len(df),))
+            f['src/fields/b'][old_shape:] = df_fields_b
+            f['src/fields/e'][old_shape:] = df_fields_e
     
         # reset the internal container array
     last_struct = _out[-1] # indexing _out so this is guaranteed to not be None for whatever reason.
@@ -256,7 +257,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         ##########################################################################
         # COLLECT FIELDS
             # submit the field calculations to the threadpool
-        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'])
+        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp)
         _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'])
             # collect the results
         Ef = _Ef.result()
@@ -317,6 +318,11 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         #curr_time = 2 * np.pi / curr_gyrofreq
     
         #dt = curr_time/100
+        if from_temp['dt_bob'] == 1 and time % 50 == 0:
+            _dt = dt
+            dt = bob_dt_step(Bp=Bf, B0_mag=from_temp['bob_dt_B0']['B_mag'], dt0=from_temp['bob_dt_dt0'], min=from_temp['bob_dt_min'], max=from_temp["bob_dt_max"])
+            print(f"dt changed to: {dt} from: {_dt}")
+
         if time % 1000 == 0:
             manager_queue.put(time)
             print(f"boris calc * {time} for particle {id}")
@@ -325,7 +331,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         Periodically add contents to the appropriate datasets in the h5 outputs file.
         """
         if time % temp == 0:
-            write_to_hdf5(from_temp, out, temp)
+            write_to_hdf5(from_temp, out, temp, num_points)
             #out[0] = out[time]
             #out[1:] = None
             i = 1  # reset the internal AoS index
@@ -341,7 +347,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         "Computation Time" : comp_time,
         "Simulation Time" : ft
     }
-    write_to_hdf5(from_temp, out, expand_length)
+    write_to_hdf5(from_temp, out, expand_length, num_points)
 
 
 from multiprocessing import Manager

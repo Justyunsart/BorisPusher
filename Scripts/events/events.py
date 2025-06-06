@@ -9,7 +9,7 @@ import system.temp_file_names as names
 from settings.configs.funcs.config_reader import read_configs
 from settings.configs.funcs.configs import create_default_config
 
-from files.create import get_output_subdir
+from files.create import get_output_subdir, create_output_file
 
 """
 Definitions for all the different GUI user events (that exist at a higher level than tkinter's widgets)
@@ -32,6 +32,7 @@ class Event():
             c(**kwargs)
 
 def _whatis_file():
+    print(f"events._whatis_file()")
     print(TEMPMANAGER_MANAGER.files[names.m1f1])
 
 """
@@ -69,9 +70,10 @@ class Events(Enum):
 
     # when calculate button is pressed but before the calcs start.
     PRE_CALC = Event([before_simulation_bob_dt, # set up constants if using bob's dt scaling solution
-                      get_output_subdir,
-                      copy_diags_to_output_subdir
-                     ])
+                      get_output_subdir, # creates subdirs according to path keys
+                      copy_diags_to_output_subdir, # copy diagnostic files to them
+                      create_output_file, # creates the default h5 file
+                      ])
 
     # after a sim finishes
     POST_CALC = Event([])
