@@ -28,6 +28,8 @@ class param_keys(Enum):
 
     dt = "Default timestep value (seconds)"
     dt_bob = "boolean value for whether the simulation should run with bob's variable timestep"
+    dt_bob_prop = "Location of the reference particle based on a proportion (0 to 1), with 0 being the origin and 1 being the center of the circle."
+    dt_bob_dyn_rng = "Dynamic range used in the bob_dt scaling"
     numsteps = "Number of time steps to simulate"
 
     field_methods = "Nested dictionary of b, e field methods and associated parameters"

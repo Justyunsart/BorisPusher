@@ -250,7 +250,7 @@ class LabeledEntry():
     '''
     value:tk.StringVar
 
-    def __init__(self, master, val, row, col=0, title="title", **kwargs):
+    def __init__(self, master, val, row, col=0, col_span=2, title="title", **kwargs):
         self.master = master
         self.title = title
         self.value = tk.StringVar(value=val)
@@ -258,12 +258,12 @@ class LabeledEntry():
         self.label = tk.Label(self.master,
                               text=self.title,
                               justify="left")
-        self.label.grid(row=row, column=col, columnspan=2, sticky="W")
+        self.label.grid(row=row, column=col, columnspan=col_span, sticky="W")
 
         self.entry = tk.Entry(self.master,
                               textvariable=self.value,
                               **kwargs)
-        self.entry.grid(row=row, column=col+2, columnspan=2, sticky="W")
+        self.entry.grid(row=row, column=col + col_span, columnspan=col_span, sticky="E")
     
     def toggle(self, state:str):
         """

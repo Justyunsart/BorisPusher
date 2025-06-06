@@ -5,10 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="bob_e option now points to the right dir in documents">
+      <change beforePath="$PROJECT_DIR$/.idea/BorisPusher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BorisPusher.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/events/funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/funcs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/system/temp_file_names.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/system/temp_file_names.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,12 +45,12 @@
     &quot;assignee&quot;: &quot;fwessel&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Justyunsart/BorisPusher&quot;,
-    &quot;accountId&quot;: &quot;fcd17405-9168-4ed4-900c-276c61b0da39&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Justyunsart/BorisPusher.git",
+    "accountId": "f4d963f1-90ba-4775-84cf-325240e534ab"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -56,34 +59,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.Bob_e_Circle_Config.executor": "Run",
-    "Python.BorisGui.executor": "Run",
-    "Python.PlottingWindow.executor": "Run",
-    "Python.configs.executor": "Run",
-    "Python.dt_np.executor": "Run",
-    "Python.file_write_speed.executor": "Run",
-    "Python.magpy4c1_01.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.menu_bar (1).executor": "Run",
-    "Python.menu_bar.executor": "Run",
-    "Python.multiprocessing_gui_freezing.executor": "Run",
-    "Python.output_file_structure.executor": "Run",
-    "Python.read_last_used_binary.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/fwessel/PycharmProjects/BorisPusher/Scripts/calcs",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.Bob_e_Circle_Config.executor&quot;: &quot;Run&quot;,
+    &quot;Python.BorisGui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PlottingWindow.executor&quot;: &quot;Run&quot;,
+    &quot;Python.configs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dt_np.executor&quot;: &quot;Run&quot;,
+    &quot;Python.file_write_speed.executor&quot;: &quot;Run&quot;,
+    &quot;Python.magpy4c1_01.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar.executor&quot;: &quot;Run&quot;,
+    &quot;Python.multiprocessing_gui_freezing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.output_file_structure.executor&quot;: &quot;Run&quot;,
+    &quot;Python.read_last_used_binary.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/fwessel/PycharmProjects/BorisPusher/Scripts/calcs&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
@@ -222,8 +225,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PY-243.22562.220" />
-        <option value="bundled-python-sdk-0fc6c617c4bd-9a18a617cbe4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.22562.220" />
+        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
       </set>
     </attachedChunks>
   </component>

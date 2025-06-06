@@ -17,10 +17,12 @@ PARAMETERS:
 c (magpylib.Collection): the coil configuration
 particle (ion class): the particle used in the simulation; defaults to a proton
 """
-def before_simulation_bob_dt(particle=constants.proton, drange=10):
+def before_simulation_bob_dt(particle=constants.proton):
     #print(TEMPMANAGER_MANAGER.files[m1f1])
-    c = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])['mag_coil']
-    
+    d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+    c = d[param_keys.mag_coil.name]
+    ref_p = float(d[param_keys.dt_bob_prop.name])
+    dyn_rng = float(d[param_keys.dt_bob_dyn_rng.name])
     # GET THE POSITION FOR B0
     # since we are assuming that the first coil is displaced only on one axis and that the configuration is 
     # symmetric, I index the first child and find its maximum to know how much the coils are displaced.
@@ -28,7 +30,7 @@ def before_simulation_bob_dt(particle=constants.proton, drange=10):
     _ax = np.argmax(abs(c[0].position))
 
     B0_pos = np.zeros(3)
-    B0_pos[_ax] = offset / 2
+    B0_pos[_ax] = offset * ref_p
     
     # GET INFORMATION FROM B0 POSITION
     B0_B = c.getB(B0_pos)
@@ -40,16 +42,19 @@ def before_simulation_bob_dt(particle=constants.proton, drange=10):
     # GET dt0
     dt0 = 1/f0
 
-    update_temp(TEMPMANAGER_MANAGER.files[m1f1], 
-                {
+    d = {
         "bob_dt_B0": {"position" : B0_pos,
                   "B" : B0_B,
                   "B_mag" : B0_B_norm},
         "bob_dt_f0" : f0,
         "bob_dt_dt0" : dt0,
-        "bob_dt_min" : dt0 / drange,
-        "bob_dt_max" : dt0 * drange
-                  })
+        "bob_dt_min" : dt0 / dyn_rng,
+        "bob_dt_max" : dt0 * dyn_rng
+                  }
+
+    update_temp(TEMPMANAGER_MANAGER.files[m1f1], 
+                d)
+    return d
 import shutil
 import os
 from settings.configs.funcs.config_reader import runtime_configs
