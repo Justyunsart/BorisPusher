@@ -261,6 +261,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'])
             # collect the results
         Ef = _Ef.result()
+        print(Ef)
         Bf = _Bf.result()
             # update array entry with results
         out[i - 1].bx, out[i - 1].by,out[i - 1].bz = Bf # update B field for particle we just found

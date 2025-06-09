@@ -1,6 +1,7 @@
 import configparser
 from definitions import NAME_DEF_CONFIG, NAME_USR_CONFIG, DIR_ROOT
 import os
+from pathlib import Path
 from files.windows.get_documents_path_win import get_documents_path_win
 
 

@@ -1014,7 +1014,7 @@ class CurrentEntryTable(EntryTable):
 
         def _force_close_window(event):
             newWin.destroy()
-        newWin.bind('<FocusOut>', _force_close_window)
+        #newWin.bind('<FocusOut>', _force_close_window)
         newWin.focus_set()
 
     def _entry_window_close(self, table:RotationConfigEntryTable, window:tk.Toplevel, row:int):
