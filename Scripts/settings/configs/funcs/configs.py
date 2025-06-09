@@ -1,7 +1,7 @@
 import configparser
 from definitions import NAME_DEF_CONFIG, NAME_USR_CONFIG, DIR_ROOT
 import os
-from pathlib import Path
+from definitions import PLATFORM
 from files.windows.get_documents_path_win import get_documents_path_win
 
 
@@ -11,7 +11,7 @@ def create_default_config():
     config = configparser.ConfigParser()
     config['Paths'] = {
         'usr_Documents' : os.path.normpath(os.path.join(os.path.expanduser('~/Documents'), "Boris_Usr"))
-        if os.path.exists(os.path.normpath(os.path.expanduser('~/Documents')))
+        if os.path.exists(os.path.normpath(os.path.expanduser('~/Documents'))) and PLATFORM == 'darwin'
         else os.path.normpath(os.path.join(get_documents_path_win(), "Boris_Usr")),
         'Inputs' : "%(usr_Documents)s/Inputs",
         'Outputs' : "%(usr_Documents)s/Outputs",
