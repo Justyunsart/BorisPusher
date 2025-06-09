@@ -291,7 +291,7 @@ class OnlyNumEntry(tk.Entry):
     def __init__(self, master, **kwargs):
         self.is_warned = False # attribute that keeps track of the widget's current state.
         # other initialization
-        self.var = tk.StringVar(master)
+        self.var = tk.StringVar(master=master)
         self.isNum = False
         super().__init__(master, textvariable=self.var, width=10, **kwargs, **self.normal_style)
         #print(self.cget('highlightbackground'))
@@ -343,9 +343,9 @@ class EntryTableParam:
     paramDefault: None
     paramWidget: callable
 
-    def __init__(self, default, widget=OnlyNumEntry, **kwargs):
+    def __init__(self, default, master, widget=OnlyNumEntry, **kwargs):
         self.paramDefault = default
-        self.paramWidget = widget(**kwargs)
+        self.paramWidget = widget(master, **kwargs)
         self._SetDefault()
     
     def _SetDefault(self):
@@ -464,7 +464,7 @@ class Bob_e_Config_Dataclass():
         self.Q = EntryTableParam(q, master=frame)
         self.Diameter = EntryTableParam(dia, master=frame)
 
-        self.Rotations = EntryTableParam(None, EntryButton, master=frame, text="Rotations")
+        self.Rotations = EntryTableParam(None, widget=EntryButton, master=frame, text="Rotations")
 
         self.iterables = [self.PosX, self.PosY, self.PosZ, self.Q, self.Diameter, self.Rotations]
 
@@ -520,7 +520,7 @@ class RotationConfig():
 
     def __init__ (self, frame, angle=0, axis=0):
         self.RotationAngle = EntryTableParam(angle, master=frame)
-        self.RotationAxis = EntryTableParam(axis, ttk.Combobox, master=frame, state="readonly", width=5)
+        self.RotationAxis = EntryTableParam(axis, widget=ttk.Combobox, master=frame, state="readonly", width=5)
         self.iterables = [self.RotationAngle, self.RotationAxis]
     def __iter__(self):
         for val in self.iterables:
@@ -561,7 +561,7 @@ class CircleCurrentConfig():
         self.Amp = EntryTableParam(amp, master=frame)
         self.Diameter = EntryTableParam(dia, master=frame)
 
-        self.Rotations = EntryTableParam(None, EntryButton, master=frame, text="Rotations")
+        self.Rotations = EntryTableParam(None, widget=EntryButton, master=frame, text="Rotations")
         
         self.iterables = [self.PosX, self.PosY, self.PosZ, self.Amp, self.Diameter, self.Rotations]
 

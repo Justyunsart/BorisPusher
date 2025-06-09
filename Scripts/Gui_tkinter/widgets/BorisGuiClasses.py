@@ -356,10 +356,13 @@ class CoilButtons():
         entries = self.table.GetEntries()
         self.table.setLim(gapVal)
         for i in range(len(entries)):
-            posInd = inds[entries[i]["RotationAxis"]]
+            #print(entries[i])
+            entry = entries[i]
+            position = np.array((entry['PosX'], entry['PosY'], entry['PosZ']), dtype=float)
+            ax = np.argmax(abs(position))
 
             # add if positive, subtract if negative
-            widget = self.table.frame1.grid_slaves(column=posInd, row=i+1)[0]
+            widget = self.table.frame1.grid_slaves(column=ax, row=i+1)[0]
 
             current = float(widget.var.get())
             sign = float(copysign(1, current))

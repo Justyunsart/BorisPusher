@@ -22,6 +22,7 @@ from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_
 from system.temp_file_names import manager_1, m1f1
 from settings.defaults.coils import default_coil, coil_cust_attr_name
 from definitions import PLATFORM
+import copy
 
 from system.temp_file_names import param_keys
 
@@ -262,7 +263,9 @@ class EntryTable():
             # when defaults are not provided, and there is more than 1 row.
             #print("HEY!!!!!!!!")
             #row = self._instances[-1]
-            row = self.data(self._instances[-1])
+            #print(self._instances[-1])
+            #row = self.data(self._instances[-1])
+            row = self.data(self.frame1)
             self._instances.append(row)
         
         elif len(self._instances) == 0 and defaults == True:
