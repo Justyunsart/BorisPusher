@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="updated nothing about magpy4c1_01.py but now the e field doesnt shoot out so thats neat">
-      <change beforePath="$PROJECT_DIR$/.idea/BorisPusher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BorisPusher.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="reimplemented the rotations window autoclosing when clicking away from it. Now doesn't flag false positives when clicking within the window">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/events/funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/funcs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/BorisGuiClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/BorisGuiClasses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -426,7 +423,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749511694633</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="reimplemented the rotations window autoclosing when clicking away from it. Now doesn't flag false positives when clicking within the window">
+      <option name="closed" value="true" />
+      <created>1749584500963</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1749584500963</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -468,7 +473,8 @@
     <MESSAGE value="dt widget now shows more information about the timestep scaling parameters. &#10;&#10;You can now configure the reference particle location and the dynamic range used in the bob_dt calculation" />
     <MESSAGE value="updated the global adjustments widget in the coils tab" />
     <MESSAGE value="updated nothing about magpy4c1_01.py but now the e field doesnt shoot out so thats neat" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated nothing about magpy4c1_01.py but now the e field doesnt shoot out so thats neat" />
+    <MESSAGE value="reimplemented the rotations window autoclosing when clicking away from it. Now doesn't flag false positives when clicking within the window" />
+    <option name="LAST_COMMIT_MESSAGE" value="reimplemented the rotations window autoclosing when clicking away from it. Now doesn't flag false positives when clicking within the window" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

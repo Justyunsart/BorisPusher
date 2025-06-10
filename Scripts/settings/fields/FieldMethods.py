@@ -20,3 +20,4 @@ class FieldGraph_Methods(Enum):
     E = 0
     B = 1
     E_B_lineout = 2
+    E_Streamline = 3

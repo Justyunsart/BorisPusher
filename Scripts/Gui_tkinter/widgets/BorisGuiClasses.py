@@ -689,6 +689,9 @@ class FieldCoord_n_Graph():
                                transform=self.plot.transAxes) # what coordinates were plugged in
 
                 self.canvas.draw()
+            case 'E_Streamline':
+                self.cax.set_axis_on()
+
     
     def update(self):
         # expected function to run when coordtable's trigger_listener is invoked.
