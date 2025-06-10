@@ -19,11 +19,12 @@ from magpylib.current import Circle
 from files.PusherClasses import UniqueFileName
 from Gui_tkinter.funcs.GuiEntryHelpers import *
 from ast import literal_eval
+
+from settings.configs.funcs.config_reader import runtime_configs
 from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
 from system.temp_file_names import manager_1, m1f1
 from settings.defaults.coils import default_coil, coil_cust_attr_name
-from definitions import PLATFORM
-import copy
+from definitions import PLATFORM, NAME_COILS
 
 from system.temp_file_names import param_keys
 
@@ -1078,7 +1079,7 @@ class CurrentEntryTable(EntryTable):
         return self.lim.data
     
     def init_temp(self, lu):
-        if lu is not None:
+        if lu is not None and lu[self.name_key] in os.listdir(os.path.join(runtime_configs["Paths"]['Inputs'], NAME_COILS)):
             try:
                 self.dirWidget.combo_box.set(lu[self.name_key])
             except KeyError:

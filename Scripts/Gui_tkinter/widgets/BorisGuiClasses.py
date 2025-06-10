@@ -189,7 +189,7 @@ class ParticlePreview(EntryTable):
             self.fileWidget.combo_box.current(0)
     
     def init_temp(self, lu):
-        if lu is not None:
+        if lu is not None and lu[param_keys.particle_name.name] in os.listdir(os.path.join(runtime_configs['Paths']['inputs'], NAME_PARTICLES)):
             try:
                 self.fileWidget.combo_box.set(lu[param_keys.particle_name.name])
             except KeyError:

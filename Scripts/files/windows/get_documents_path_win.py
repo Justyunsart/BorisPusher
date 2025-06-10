@@ -14,3 +14,6 @@ def get_documents_path_win():
     ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_PERSONAL, None, SHGFP_TYPE_CURRENT, buf)
 
     return buf.value
+
+if __name__ == '__main__':
+    print(get_documents_path_win())
