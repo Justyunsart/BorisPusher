@@ -37,6 +37,7 @@ from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict
 from system.temp_file_names import m1f1
 
 from settings.configs.funcs.config_reader import runtime_configs
+from calcs.magpy4c1_manager_queue_datatype import Manager_Data
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
@@ -325,7 +326,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
             print(f"dt changed to: {dt} from: {_dt}")
 
         if time % 1000 == 0:
-            manager_queue.put(time)
+            manager_queue.put(Manager_Data(step=time, do_stop=False))
             print(f"boris calc * {time} for particle {id}")
             print("total time: ", ft, dt, Ef, Bf)
         """
@@ -349,6 +350,8 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         "Simulation Time" : ft
     }
     write_to_hdf5(from_temp, out, expand_length, num_points)
+    #print(f"finished writing to file")
+    manager_queue.put(Manager_Data(step=num_points, do_stop=True))
 
 
 from multiprocessing import Manager

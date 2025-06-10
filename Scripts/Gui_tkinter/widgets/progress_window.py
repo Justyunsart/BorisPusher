@@ -5,6 +5,7 @@ from system.temp_file_names import manager_1, m1f1
 from Gui_tkinter.widgets.menu.text_styles import GUI_Label
 from settings.palettes import GUI_Fonts
 from files.create import get_unique_coil_collection_amps
+from calcs.magpy4c1_manager_queue_datatype import Manager_Data
 
 """
 a pop-up window created right after the 'calculate' button is pressed.
@@ -36,9 +37,15 @@ class calculate_progress_window(tk.Toplevel):
     def poll_queue(self):
         try:
             while not self.result_queue.empty():
+                result:Manager_Data
                 result = self.result_queue.get_nowait()
-                print(result)
-                self.step_var.set(result)
+                #print(result)
+                self.step_var.set(str(result.step))
+
+                # close the window if you get the queue flag to do so
+                if result.do_stop:
+                    #print(f"should destroy progress window")
+                    self.destroy()
         except Exception as e:
             print(f"Error reading from queue: {e}")
         finally:
