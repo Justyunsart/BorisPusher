@@ -35,9 +35,11 @@ def before_simulation_bob_dt(particle=constants.proton):
     # GET INFORMATION FROM B0 POSITION
     B0_B = c.getB(B0_pos)
     B0_B_norm = np.linalg.norm(B0_B)
+    #print(f"funcs.before_simulation_bob_dt; B0_B_norm: {B0_B_norm}")
 
     # GET f0
     f0 = 1.52e7 * particle.anum * B0_B_norm
+    #print(f0)
 
     # GET dt0
     dt0 = 1/f0

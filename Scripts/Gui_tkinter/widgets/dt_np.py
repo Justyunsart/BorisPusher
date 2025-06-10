@@ -77,11 +77,13 @@ class bob_dt_widget(tk.Frame):
         key = self.temp_key_map[widget]
         d = {}
         d[key] = widget.get()
-        try:
-            float(d[key])
-            update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
-        except ValueError:
-            pass
+        # only update the tempfile with these values if it is not empty, and is a valid float.
+        if d[key] != "":
+            try:
+                float(d[key])
+                update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+            except ValueError:
+                pass
     
 
 """

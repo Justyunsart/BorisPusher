@@ -4,6 +4,7 @@ Users will basically create instances of this to customize the current.
 
 It's basically a container for parameters to create magpylib objects
 '''
+import tkinter.ttk
 from collections import defaultdict
 
 from matplotlib import pyplot as plt
@@ -176,7 +177,7 @@ class EntryTable():
     # CALLBACKS #
     #===========#
     
-    def EntryValidateCallback(self, entry):
+    def EntryValidateCallback(self, entry, check_float=True):
         '''
         Callback function that is called by entryboxes.
 
@@ -201,14 +202,14 @@ class EntryTable():
         #print(entryValue)
         # Don't update anything if the entryValue is illegal.
         #   If it's blank or cannot be converted into a float.
-        try:
-            float(entryValue)
-        except:
-            # if the value is illegal, then trigger the widget's warning state.
-            widget.trigger_warning()
-            return False
-
-        widget.untrigger_warning() # remove the widget's warned state if it is warned.
+        if check_float:
+            try:
+                float(entryValue)
+                widget.untrigger_warning()  # remove the widget's warned state if it is warned.
+            except:
+                # if the value is illegal, then trigger the widget's warning state.
+                widget.trigger_warning()
+                return False
         instance = self._instances[rowInd] # the dataclass instance of the correspondng row
         instance.iterables[colInd].paramWidget.var.set(entryValue) # modify the dataclass's corresponding value according the the colInd.
         #self.GetEntries()[rowInd][self.fields[colInd]] = entryValue
@@ -621,13 +622,14 @@ class RotationConfigEntryTable(EntryTable):
 
     def EntryValidateCallback(self, entry):
         #print(self.isActive)
-        if (self.isActive):
-            super().EntryValidateCallback(entry)
-        else:
-            self.parent.EntryValidateCallback(entry)
+        if not isinstance(entry.widget, tkinter.ttk.Combobox):
+            if (self.isActive):
+                super().EntryValidateCallback(entry, check_float=True)
+            else:
+                self.parent.EntryValidateCallback(entry, check_float=True)
         if (self.func != None):
             self.func(table=self)
-    
+
     def DelEntry(self, button):
         super().DelEntry(button)
         self.EntryValidateCallback
@@ -757,7 +759,7 @@ class CurrentEntryTable(EntryTable):
         self._updateTempFile(self.collection_key, self.collection)
         return True
 
-    def EntryValidateCallback(self, entry):
+    def EntryValidateCallback(self, entry, check_float=True):
         '''
         override of base class function, graphs the configuration upon each change.
         '''
@@ -1012,12 +1014,32 @@ class CurrentEntryTable(EntryTable):
         # Set up the data collection function onclose.
         newWin.protocol('WM_DELETE_WINDOW', partial(self._entry_window_close, table, newWin, row))
 
-        def _force_close_window(event):
-            newWin.destroy()
-        #newWin.bind('<FocusOut>', _force_close_window)
+        newWin.bind('<FocusOut>', partial(self._force_close_window, newWin))
+        newWin.bind('<<Save_Close>>', lambda e: self._entry_window_close(table, newWin, row))
         newWin.focus_set()
 
+    """
+    Closes the toplevel window if the focus has shifted outside the window.
+    """
+    def _force_close_window(self, newWin, event):
+        # made into an internal func so that we can delay it (ensure the focus is set properly when run)
+        def check_focus():
+            try:
+                focused_widget = event.widget.focus_get()
+
+                if focused_widget is None or not str(focused_widget).startswith(str(event.widget)):
+                    #print(f"should be destroying window")
+                    newWin.event_generate('<<Save_Close>>')
+                else:
+                    pass
+            except KeyError:
+                # KeyError will happen in combobox widgets, as they create a popdown widget on click.
+                # We ignore these because we know that a combobox widget will still maintain focus on toplevel.
+                pass
+        event.widget.after(10, check_focus)
+
     def _entry_window_close(self, table:RotationConfigEntryTable, window:tk.Toplevel, row:int):
+        #print(f"entry window close protocol run.")
         dict_lst = table.OnRotationEntryClose()
         #print(dict_lst)
         self._instances[row-1].rotation_angles = [r["RotationAngle"] for r in dict_lst]
