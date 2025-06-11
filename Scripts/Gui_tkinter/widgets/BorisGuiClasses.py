@@ -695,7 +695,6 @@ class FieldCoord_n_Graph():
 
                 self.canvas.draw()
             case 'E_Streamline':
-                from Alg.polarSpace import toCart, toCyl
                 from copy import deepcopy
                 # Generate a grid of points in a cross-section plane
                 # Get the E field values at all of these points
@@ -768,7 +767,47 @@ class FieldCoord_n_Graph():
                 #cbar.ax.set_title('log. of E-norm')
 
                 self.canvas.draw()
+            case 'E_lineout':
+                from copy import deepcopy
+                self.cax.set_axis_off()
+                # lineout of the E field's magnitude from the center of the FIRST coil, along the y and x axes.
+                    # First, get a list of points to calculate the fields for.
+                instance = self.instances["Bob_e"]
+                data = instance.GetData()["Bob_e"]
+                coils = deepcopy(data['collection'])
+                lim = self.currentTable.getLim() + 1
 
+                    # y-axis line
+                _y = np.linspace(-lim, lim, 100) # the span of y coordinate values
+                _x = np.ones(100) * coils[0].position[0] # x location of the first coil
+                _z = np.ones(100) * coils[0].position[2] # z location of the first coil
+                points = np.column_stack((_x, _y, _z))
+
+                    # x-axis line
+                _xx = np.linspace(-lim, lim, 100)
+                _xy = np.ones(100) * coils[0].position[1]
+                points_x = np.column_stack((_xx, _xy, _z))
+
+
+                    # Then, calculate and store the magnitudes at each step
+                mags = []
+                mags_x = []
+                for i in range(len(points)):
+                    mag, _ = bob_e_impl._ecalc(points[i], coils, int(data['res']), sums=True)
+                    mag_x, _ = bob_e_impl._ecalc(points_x[i], coils, int(data['res']), sums=True)
+                    mags.append(np.log(mag))
+                    mags_x.append(np.log(mag_x))
+                mags = np.array(mags) # convert to array
+
+                self.plot.plot(_y, mags, color="blue", label="Y")
+                self.plot.plot(_xx, mags_x, linestyle='dashed', color='red', label="X")
+                self.plot.legend(loc="upper left")
+
+                self.plot.set_xlabel("Axis Value")
+                self.plot.set_ylabel("Magnitude")
+                self.plot.set_title(f"log(E-Mag) lineout from (-{lim}) to ({lim})")
+                self.plot.grid()
+                self.canvas.draw()
     
     def update(self):
         # expected function to run when coordtable's trigger_listener is invoked.

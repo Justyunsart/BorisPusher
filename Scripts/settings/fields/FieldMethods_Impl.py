@@ -376,7 +376,7 @@ class bob_e_impl(FieldMethod):
             out.append(cart)
         _sum = np.sum(out, axis=0)
         if sums:
-            _sum=np.sqrt(_sum[0] ** 2 + _sum[1] ** 2)
+            _sum=np.sqrt(_sum[0] ** 2 + _sum[1] ** 2 + _sum[2] ** 2)
             #print(f"point: {point}, sum: {sum}, rect: {rect}")
 
         #print(_sum)
