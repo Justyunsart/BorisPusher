@@ -330,7 +330,7 @@ def OpenGUI(manager):
 
     calc_nested_notebook.add(calc_frame1, text="Particle")
 
-    calc_nested_notebook.add(calc_frame3, text="Coil")
+    calc_nested_notebook.add(calc_frame3, text="Coils")
     calc_nested_notebook.pack(expand=True, fill='both', side=LEFT)
     
     """
