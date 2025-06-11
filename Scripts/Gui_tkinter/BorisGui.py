@@ -36,6 +36,7 @@ def OpenGUI(manager):
 
     # Application Window
     root = tk.Tk()
+    root.iconify()
     root.title("Configure Sim")
     root.geometry("1041x1210")
 
@@ -347,6 +348,7 @@ def OpenGUI(manager):
     # control what classes to send over to the program by adding it to params
     subs["params"] = [time_info, particlePreview, coil_config, b_field, e_field, E_field_graph]
     Events.INIT_GUI.value.invoke(widgets=subs['params'])
+    root.deiconify()
 
     calc_button.configure(command=partial(open_output_config, subs["params"], DIR_lastUsed.path.data, root, manager)) # update calculate button's command after setting up params
     FillWidgets(subs["params"], DIR_lastUsed)
