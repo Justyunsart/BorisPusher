@@ -21,3 +21,8 @@ def toCart(r, theta, z):
     x = r * np.cos(theta)
     y = r * np.sin(theta)
     return [x, y, z]
+
+if __name__ == "__main__":
+    print(toCyl([1,2,3]))
+    print(toCyl([1, 4, 3]))
+    print(toCyl([1, 2, 2]))

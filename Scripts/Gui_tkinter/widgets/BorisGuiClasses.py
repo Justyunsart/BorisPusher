@@ -22,6 +22,8 @@ from settings.configs.funcs.config_reader import runtime_configs
 from system.temp_file_names import param_keys, m1f1
 from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file_dict
 from functools import reduce
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
+                                               NavigationToolbar2Tk)
 
 class MainWindow(tk.Frame):
     '''
@@ -562,6 +564,9 @@ class FieldCoord_n_Graph():
         self.updateGraphButton = tk.Button(master=self.frame, text="Update Graph", command=self.UpdateGraph)
         self.updateGraphButton.grid(row=0, column=2)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.canvasFrame)
+        self.toolbar = NavigationToolbar2Tk(self.canvas, pack_toolbar=False)
+        self.toolbar.update()
+        self.toolbar.grid(row=1, column=0)
         self.canvas.get_tk_widget().grid(row=0, column=0)
         
         # have everything be off by default
@@ -690,7 +695,75 @@ class FieldCoord_n_Graph():
 
                 self.canvas.draw()
             case 'E_Streamline':
+                from Alg.polarSpace import toCart, toCyl
+                from copy import deepcopy
+                # Generate a grid of points in a cross-section plane
+                # Get the E field values at all of these points
+                # Turn this data into a streamplot
+                # Because the analytic equation zonks out near 0s, we need to just. translate everything away from it
+
+                    # Will use the colorbar for this
                 self.cax.set_axis_on()
+
+                    # Get axis limits and other high level info
+                lim = self.currentTable.getLim() + 1
+                instance = self.instances["Bob_e"]
+                data = instance.GetData()["Bob_e"]
+                coils = deepcopy(data['collection'])
+                res = int(data['res'])
+                #print(coils.children)
+                    # move coils to accommodate
+                for c in coils:
+                    c.position += [lim, lim, lim]
+
+                    # construct grid for cross-section
+                x = np.linspace(0, lim * 2, 100)
+                z = np.linspace(0, lim * 2, 100)
+                y = np.array(np.ones(100) * lim)
+
+                grid = np.array(np.meshgrid(x, y, z)).T  # shape = (100, 100, 3, 1)
+                grid = np.moveaxis(grid, 2, 0)[0]  # shape = (100, 100, 3)
+                X, _, Z = np.moveaxis(grid, 2, 0)  # 3 arrays of shape (100, 100)
+                X = X-(lim)
+                Z = Z-(lim)
+                grid = grid.reshape(100*100, 3) # shape= (100*100, 3)
+
+                    # get E results from the grid
+                Es = []
+                Ex = []
+                Ez = []
+                for point in grid:
+                        # get the point's E field value
+                    #print(point)
+                    #_cyl = toCyl(point)
+                    _E, _cyl = bob_e_impl._ecalc(point, coils, res, sums=False) # [z, r]
+                        # convert into cartesian coords from cyl coords and append it to the results
+                        # since this is in the XZ plane, ignore the y axis
+                    cart = toCart(_E[1], _cyl[1], _E[0]) # [r, th, rho]
+                    Es.append(cart)
+                    Ex.append(cart[0])
+                    Ez.append(cart[2])
+
+                    # graph the streamline plot
+                #print(np.array(Ex).shape)
+                #print(np.array(X).shape)
+                #print(Es)
+                plt = self.plot.streamplot(np.array(X), np.array(Z), np.array(Ex).reshape(100, 100), np.array(Ez).reshape(100, 100),
+                                           color=np.log(np.linalg.norm(Es, axis=1)).reshape(100, 100), density=1)
+                #plt = self.plot.quiver(np.array(X), np.array(Z),
+                #                       np.array(Ex).reshape(100, 100), np.array(Ez).reshape(100, 100),
+                #                       np.log(np.linalg.norm(Es, axis=1)).reshape(100, 100),
+                #                       units='width')
+                #self.plot.quiverkey(plt, 0.9, 0.9, 2, 'E', coordinates='figure')
+
+                self.plot.set_xlabel("X-axis (m)")
+                self.plot.set_ylabel("Z-axis (m)")
+                self.plot.set_title("E. Field Cross Section on the X-Z plane at Y=0", pad=20)
+
+                cbar = self.fig.colorbar(plt.lines, cax=self.cax)
+                cbar.ax.set_title('log. of E-norm')
+
+                self.canvas.draw()
 
     
     def update(self):

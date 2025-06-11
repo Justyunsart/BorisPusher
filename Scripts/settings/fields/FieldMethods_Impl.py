@@ -13,6 +13,7 @@ from magpylib.current import Circle
 from Gui_tkinter.widgets.Bob_e_Circle_Config import Bob_e_Circle_Config
 from definitions import DIR_ROOT, NAME_BOB_E_CHARGES, NAME_INPUTS
 from settings.configs.funcs.config_reader import runtime_configs
+from Alg.polarSpace import toCyl, toCart
 
 ##############
 # BASE CLASS #
@@ -313,18 +314,20 @@ class bob_e_impl(FieldMethod):
 
         ## Construct grid
         x_linspace = np.linspace(x_l, x_u, resolution)
-        y_linspace = np.linspace(y_l, y_u, resolution)
-        z_linspace = np.zeros(resolution**2)
+        y_linspace = np.zeros(1)
+        z_linspace = np.linspace(y_l, y_u, resolution)
 
-        gX,gY = np.meshgrid(x_linspace, y_linspace)
-        points = np.column_stack(np.vstack([gX.ravel(), z_linspace, gY.ravel()]))
-
+        grid = np.array(np.meshgrid(x_linspace, y_linspace, z_linspace, indexing='ij')).T
+        #points = np.column_stack(np.vstack([gX.ravel(), z_linspace, gY.ravel()]))
+        grid = np.moveaxis(grid, 1, 0)[0]
+        X, Y, Z = np.moveaxis(grid, 2, 0)  # 3 arrays of shape (100, 100)
+        points = grid.reshape(100 ** 2, 3)
         # For every point, for every coil, orient the point and plug it in the function.
 
         z_data = bob_e_impl.fx_calc(points, data["collection"], int(data["res"]))
 
-        sum_Z = np.array(z_data["sum"]).reshape(resolution, resolution)
-        smesh = plot.contourf(x_linspace, y_linspace, sum_Z, levels=100,
+        sum_Z = np.array(z_data).reshape(resolution, resolution)
+        smesh = plot.contourf(X, Z, sum_Z, levels=100,
                                 cmap="gist_ncar")
         
         # Colorbar checking
@@ -336,34 +339,44 @@ class bob_e_impl(FieldMethod):
     def fx_calc(points, coils, r):
         #print(points)
         #print(coils)
-        sum = []
+        sums = []
         results = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            futures = {executor.submit(bob_e_impl._ecalc, point, coils, r): point for point in points}
-            #print(len(futures))
-            
-            for index, task in enumerate(futures):
-                result = task.result()
-                #print(result)
-                sum.append(result)
-        
-        return {
-            "sum" : sum
-        }
+
+        for point in points:
+            sum, _ = bob_e_impl._ecalc(point, coils, r)
+            sums.append(sum)
+
+        #with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        #    futures = {executor.submit(bob_e_impl._ecalc, point, coils, r): point for point in points}
+        #    #print(len(futures))
+        #
+        #    for index, task in enumerate(futures):
+        #        result = task.result()
+        #        #print(result)
+        #        sum.append(result[0])
+
+        return sums
+
     
-    def _ecalc(point, collection, res):
+    def _ecalc(point, collection, res, sums=True):
         """
         wrapper to orient the point for each coil in the collection, and to call the integration for that point.
         """
-        sums = []
+        out = []
         for c in collection.children_all:
             transformed = bob_e_impl.OrientPoint(c, point)
+            #transformed = toCyl(transformed)
             #print(transformed)
-            z, r = bob_e_impl.at(transformed, radius = (c.diameter/2), convert=False, q=c.current, resolution=res)
+            z, r = bob_e_impl.at(coord=transformed, radius = (c.diameter/2), convert=True, q=c.current, resolution=res)
             #sums.append(z + r)
-            sums.append(np.sqrt(z**2 + r**2))
-        sums = sum(sums)
-        return sums
+            out.append([z, r])
+        sum = np.sum(out, axis=0)
+        if sums:
+            sum=np.sqrt(sum[0] ** 2 + sum[1] ** 2)
+            #print(f"point: {point}, sum: {sum}, rect: {rect}")
+
+
+        return sum, transformed
 
     
     def OrientPoint(c:Circle, point):
@@ -377,7 +390,7 @@ class bob_e_impl(FieldMethod):
         p = point - c.position
         # after subtracting, the rotation then can be applied. This makes the point rotate about the coil center.
         inv_rotation = rotation.inv()
-        rotated_point = inv_rotation.apply(p)
+        rotated_point = inv_rotation.apply(p) * -1
 
 
         #print(f"started with {point}, ended with {rotated_point}")

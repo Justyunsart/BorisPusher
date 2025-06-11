@@ -782,6 +782,9 @@ class CurrentEntryTable(EntryTable):
         #if(self.isInit):
         #    self.rotations.append([{"RotationAngle": 0, "RotationAxis": 'x'}]) # this line does not scale with changing default values of the class.
 
+    def DelEntry(self, button):
+        super().DelEntry(button)
+        self.GraphCoils()
 
     def _new_Button_Callback(self):
         """
