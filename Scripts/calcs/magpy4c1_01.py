@@ -93,7 +93,7 @@ def _Bob_e(inCoord, c, args):
     # To make the target point relative to the coil, we call the bob_e.impl's alignment func.
     normCoord = bob_e_impl.OrientPoint(c=c, point=inCoord)
     radius = c.diameter / 2
-    normCoord = toCart(normCoord)
+    normCoord = toCyl(normCoord)
     # Then pass this as the coordinate parameter of the implementation.
     z, r = bob_e_impl.at(coord = normCoord, q=q, resolution=int(res), radius= radius, convert=False)
     cart = toCart(r, normCoord[1], z)
