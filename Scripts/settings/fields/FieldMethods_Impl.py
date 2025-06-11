@@ -363,20 +363,27 @@ class bob_e_impl(FieldMethod):
         wrapper to orient the point for each coil in the collection, and to call the integration for that point.
         """
         out = []
+        out1 = []
+        transformed=None
         for c in collection.children_all:
-            transformed = bob_e_impl.OrientPoint(c, point)
-            #transformed = toCyl(transformed)
-            #print(transformed)
-            z, r = bob_e_impl.at(coord=transformed, radius = (c.diameter/2), convert=True, q=c.current, resolution=res)
+            _transformed = bob_e_impl.OrientPoint(c, point)
+            transformed = toCyl(_transformed)
+            #print(f'{_transformed} became {transformed}')
+            z, r = bob_e_impl.at(coord=transformed, radius = (c.diameter/2), convert=False, q=c.current, resolution=res)
             #sums.append(z + r)
-            out.append([z, r])
-        sum = np.sum(out, axis=0)
+                # apply rotation back to the thing to restore context
+            cart = toCart(r, transformed[1], z)
+            cart = c.orientation.apply(cart)
+            out.append(cart)
+            out1.append([z,r])
+        _sum = np.sum(out, axis=0)
         if sums:
-            sum=np.sqrt(sum[0] ** 2 + sum[1] ** 2)
+            _sum = np.sum(out1, axis=0)
+            _sum=np.sqrt(_sum[0] ** 2 + _sum[1] ** 2)
             #print(f"point: {point}, sum: {sum}, rect: {rect}")
 
-
-        return sum, transformed
+        #print(_sum)
+        return _sum, transformed
 
     
     def OrientPoint(c:Circle, point):
@@ -390,7 +397,7 @@ class bob_e_impl(FieldMethod):
         p = point - c.position
         # after subtracting, the rotation then can be applied. This makes the point rotate about the coil center.
         inv_rotation = rotation.inv()
-        rotated_point = inv_rotation.apply(p) * -1
+        rotated_point = inv_rotation.apply(p)
 
 
         #print(f"started with {point}, ended with {rotated_point}")

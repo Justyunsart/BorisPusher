@@ -97,18 +97,25 @@ def test_rho_range_contour():
 
     grid = np.array(np.meshgrid(x, y, z, indexing='ij')).T  # shape = (3, 100, 100, 1)
     grid = np.moveaxis(grid, 0, 0)[0]
-    print(grid.shape)
+    #print(grid.shape)
     X, Y, Z = np.moveaxis(grid, 2, 0)  # 3 arrays of shape (100, 100)
     grid = grid.reshape(100 ** 2, 3)
 
     mags = []
+    Ex = []
+    Ey = []
     for coord in grid:
         c = toCyl(coord)
+        #print(c)
         zeta, rho = at(c)
         mags.append(np.sqrt(rho ** 2 + zeta ** 2))
+        cart = toCart(rho, c[1], z)
+        Ex.append(cart[0])
+        Ey.append(cart[1])
     mags = np.array(mags).reshape(100, 100)
-    print(mags)
+    #print(mags)
     ax.contourf(X, Y, mags)
+    ax.streamplot(X,Y, np.array(Ex).reshape(100,100), np.array(Ey).reshape(100,100))
 
 
 def test_grid_creation():

@@ -713,19 +713,19 @@ class FieldCoord_n_Graph():
                 res = int(data['res'])
                 #print(coils.children)
                     # move coils to accommodate
-                for c in coils:
-                    c.position += [lim, lim, lim]
+                #for c in coils:
+                #    c.position += [lim, 0, lim]
 
                     # construct grid for cross-section
-                x = np.linspace(0, lim * 2, 100)
-                z = np.linspace(0, lim * 2, 100)
-                y = np.array(np.ones(100) * lim)
+                #x = np.linspace(0, lim * 2, 100)
+                #z = np.linspace(0, lim * 2, 100)
+                x = np.linspace(-lim, lim, 100)
+                z = np.linspace(-lim, lim, 100)
+                y = np.zeros(1)
 
-                grid = np.array(np.meshgrid(x, y, z)).T  # shape = (100, 100, 3, 1)
-                grid = np.moveaxis(grid, 2, 0)[0]  # shape = (100, 100, 3)
+                grid = np.array(np.meshgrid(x, y, z, indexing='ij')).T  # shape = (100, 100, 3, 1)
+                grid = np.moveaxis(grid, 1, 0)[0]  # shape = (100, 100, 3)
                 X, _, Z = np.moveaxis(grid, 2, 0)  # 3 arrays of shape (100, 100)
-                X = X-(lim)
-                Z = Z-(lim)
                 grid = grid.reshape(100*100, 3) # shape= (100*100, 3)
 
                     # get E results from the grid
@@ -735,11 +735,13 @@ class FieldCoord_n_Graph():
                 for point in grid:
                         # get the point's E field value
                     #print(point)
-                    #_cyl = toCyl(point)
                     _E, _cyl = bob_e_impl._ecalc(point, coils, res, sums=False) # [z, r]
                         # convert into cartesian coords from cyl coords and append it to the results
                         # since this is in the XZ plane, ignore the y axis
-                    cart = toCart(_E[1], _cyl[1], _E[0]) # [r, th, rho]
+
+                    #cart = toCart(_E[1], _cyl[1], _E[0]) # [r, th, z]
+                    cart = _E
+
                     Es.append(cart)
                     Ex.append(cart[0])
                     Ez.append(cart[2])
@@ -748,6 +750,8 @@ class FieldCoord_n_Graph():
                 #print(np.array(Ex).shape)
                 #print(np.array(X).shape)
                 #print(Es)
+                #X = X - (lim)
+                #Z = Z - (lim)
                 plt = self.plot.streamplot(np.array(X), np.array(Z), np.array(Ex).reshape(100, 100), np.array(Ez).reshape(100, 100),
                                            color=np.log(np.linalg.norm(Es, axis=1)).reshape(100, 100), density=1)
                 #plt = self.plot.quiver(np.array(X), np.array(Z),
@@ -760,8 +764,8 @@ class FieldCoord_n_Graph():
                 self.plot.set_ylabel("Z-axis (m)")
                 self.plot.set_title("E. Field Cross Section on the X-Z plane at Y=0", pad=20)
 
-                cbar = self.fig.colorbar(plt.lines, cax=self.cax)
-                cbar.ax.set_title('log. of E-norm')
+                #cbar = self.fig.colorbar(plt.lines, cax=self.cax)
+                #cbar.ax.set_title('log. of E-norm')
 
                 self.canvas.draw()
 
