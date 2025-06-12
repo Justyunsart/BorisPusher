@@ -93,35 +93,32 @@ def _Bob_e(inCoord, c, args):
     # To make the target point relative to the coil, we call the bob_e.impl's alignment func.
     normCoord = bob_e_impl.OrientPoint(c=c, point=inCoord)
     radius = c.diameter / 2
-
+    normCoord = toCart(normCoord)
     # Then pass this as the coordinate parameter of the implementation.
     z, r = bob_e_impl.at(coord = normCoord, q=q, resolution=int(res), radius= radius, convert=False)
-
-    return z, r
+    cart = toCart(r, normCoord[1], z)
+        # since we most likely rotated the point by the inverse rotation of the coil,
+        # we need to also forward rotate the results to get the E field oriented correctly.
+    cart = c.orientation.apply(cart)
+    return cart
 
 def Bob_e(coord, args):
-    global c_cnr, c    
     """
     This function will utlize multithreading, with each coil
     calculating its own e-field on a new thread.
     """
-    zetas = []
-    rhos = []
-    cyl_coord = toCyl(coord)
+    es = [] # collection of cartesian E field components for each coil
     E_collection = args['collection']
     with ThreadPoolExecutor(max_workers=8) as executor:
-        futures = {executor.submit(_Bob_e, cyl_coord, coil, args): coil for coil in E_collection}
+        futures = {executor.submit(_Bob_e, coord, coil, args): coil for coil in E_collection}
 
         # Gather the data from futures once completed.
         for index, task in enumerate(futures):
-            result = task.result()
-            zetas.append(result[0])
-            rhos.append(result[1])
-        z_sum = sum(zetas)
-        r_sum = sum(rhos)
+            result = task.result() # cartesian form of E field
+            es.append(result)
         # since the ring e field is rotationally symmetrical, the theta value can be something easy like 0.
-
-    return toCart(r_sum, cyl_coord[1], z_sum)
+        # after getting the cartesian coordinates, you also need to
+    return np.sum(es, axis=0) # sum the E field components column-wise
 
 def EfieldX(p:np.ndarray, E_Method, fromTemp):
     """

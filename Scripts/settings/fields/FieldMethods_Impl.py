@@ -363,7 +363,6 @@ class bob_e_impl(FieldMethod):
         wrapper to orient the point for each coil in the collection, and to call the integration for that point.
         """
         out = []
-        out1 = []
         transformed=None
         for c in collection.children_all:
             _transformed = bob_e_impl.OrientPoint(c, point)
@@ -375,10 +374,8 @@ class bob_e_impl(FieldMethod):
             cart = toCart(r, transformed[1], z)
             cart = c.orientation.apply(cart)
             out.append(cart)
-            out1.append([z,r])
         _sum = np.sum(out, axis=0)
         if sums:
-            _sum = np.sum(out1, axis=0)
             _sum=np.sqrt(_sum[0] ** 2 + _sum[1] ** 2)
             #print(f"point: {point}, sum: {sum}, rect: {rect}")
 
