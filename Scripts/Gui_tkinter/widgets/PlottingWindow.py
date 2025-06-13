@@ -95,6 +95,49 @@ graph_option_style_map = {'Vel vs. Step' : {'id' : 'v', 'style': vel_step_style}
                           'E-mag vs. Step': {'id' : 'e', 'style' : e_step_style},
                           'B corner lineout': {'id' : 'b_corner', 'style' : b_corner_style}}
 
+"""
+Helper function to read csv data to a magpylib.Collection object
+"""
+def File_to_Collection(path, filename='coils.txt'):
+    """
+     1. locate the coils file, assuming that path is the dir. to the json.
+     2. return the coils as a magpy collection object.
+    """
+    c = mp.Collection()
+    proot = str(Path(path).parents[0])  # boris_<nsteps>_<simtime>_<nparts>
+    # print(f"{path}, {root}")
+    coilpath = os.path.join(proot, filename)  # boris_<nsteps>_<simtime>_<nparts>/coils.txt
+
+    # in case the output folder does not have a coils.txt file.
+    if (not os.path.exists(coilpath)):
+        messagebox.showwarning(Title_Notif.warning, Popup_Notifs.err_plot_missing_coil)
+        return c  # return an empty collection
+
+    df = None
+    # store coils and rotations separately, so that we can apply the rotations afterwards
+    df = CSV_to_Df(coilpath, converters={"Amp": tryEval, "RotationAngle": tryEval, "RotationAxis": tryEval},
+                   isNum=False, header=0)
+    # print(df)
+    for i, row in df.iterrows():
+        row = row.tolist()
+        position = [float(row[0]), float(row[1]), float(row[2])]
+        # print(tryEval(row[6]))
+        coil = Circle(position, current=float(row[3]), diameter=float(row[4]))
+        # print(coil)
+        match row[5]:
+            case float():
+                coil.rotate_from_angax(row[5], row[6])
+            case int():
+                coil.rotate_from_angax(row[5], row[6])
+            case list():
+                for i in range(len(row[5])):
+                    coil.rotate_from_angax(float(row[5][i]), row[6][i])
+
+        c.add(coil)
+    return c
+
+
+
 # GRAPHING FUNCTIONS - each option should be accompanied by a function.
 """
 This function is used for graphing the B-field lineout.
@@ -244,11 +287,17 @@ def Trajectory_callable(fig, plot, v1, v2, v3, path, c:mp.Collection, **kwargs):
             v3.view_init(elev=0, azim=-90, roll=0)
             v3.set_title("XZ Plane", pad=0)
 
+    canvases = [plot, v1, v2, v3]
     # Additionally, we want to also show the coil configuration.
-    mp.show(c, canvas=plot)
-    mp.show(c, canvas=v1)
-    mp.show(c, canvas=v2)
-    mp.show(c, canvas=v3)
+    for canvas in canvases:
+        mp.show(c, canvas=canvas)
+
+    # if an e-coil file exists, then construct the magpylib collections object from it and graph
+    if os.path.exists(os.path.join(str(Path(path).parents[0]), 'e_rings.txt')):
+        ec = File_to_Collection(path, 'e_rings.txt')
+        for canvas in canvases:
+            mp.show(ec, canvas=canvas, style_color='red')
+
 
     plot.get_legend().remove()
     v1.get_legend().remove()
@@ -682,7 +731,7 @@ class PlottingWindowObj(tk.Frame):
         path = self.path.get()
         self._path = str(Path(path).parents[0])
         self._h_path = os.path.join(self._path, 'data.hdf5')
-        self.c = self.File_to_Collection(path)  # reconstructs the magpylib collection object that was used.
+        self.c = File_to_Collection(path)  # reconstructs the magpylib collection object that was used.
         self.update_all_graphs()
 
 
@@ -712,44 +761,6 @@ class PlottingWindowObj(tk.Frame):
             print(f"Plottingwindow.PlottingWindowObj.read_dataframe: provided path does not meet the requirements of being a .json file in the table orientation, or the provided collection is")
         
         self.update_all_graphs()'''
-    
-    def File_to_Collection(self, path):
-        """
-         1. locate the coils file, assuming that path is the dir. to the json.
-         2. return the coils as a magpy collection object.
-        """
-        c = mp.Collection()
-        proot = str(Path(path).parents[0]) # boris_<nsteps>_<simtime>_<nparts>
-        #print(f"{path}, {root}")
-        coilpath = os.path.join(proot, "coils.txt") # boris_<nsteps>_<simtime>_<nparts>/coils.txt
-        
-        # in case the output folder does not have a coils.txt file.
-        if(not os.path.exists(coilpath)):
-            messagebox.showwarning(Title_Notif.warning, Popup_Notifs.err_plot_missing_coil)
-            return c # return an empty collection 
-
-        df=None
-        # store coils and rotations separately, so that we can apply the rotations afterwards
-        df = CSV_to_Df(coilpath, converters={"Amp":tryEval, "RotationAngle":tryEval, "RotationAxis":tryEval}, isNum=False, header=0)
-        #print(df)
-        for i, row in df.iterrows():
-            row = row.tolist()
-            position = [float(row[0]), float(row[1]), float(row[2])]
-            #print(tryEval(row[6]))
-            coil = Circle(position, current=float(row[3]), diameter=float(row[4]))
-            #print(coil)
-            match row[5]:
-                case float():
-                    coil.rotate_from_angax(row[5], row[6])
-                case int():
-                    coil.rotate_from_angax(row[5], row[6])
-                case list():
-                    for i in range(len(row[5])):
-                        coil.rotate_from_angax(float(row[5][i]), row[6][i])
-            
-            c.add(coil)
-       #print(c)
-        return c
 
     def set_active(self):
         """

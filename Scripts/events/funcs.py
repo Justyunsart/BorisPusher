@@ -3,6 +3,7 @@ import settings.constants as constants
 from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file_dict
 from system.temp_file_names import m1f1, param_keys
 from definitions import DIR_ROOT
+import pickle
 """
 Extra logic to run before a simulation for Bob's variable timestep.
 Defines constants that need to be calculated.
@@ -73,6 +74,15 @@ def copy_diags_to_output_subdir():
     update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
     # TODO: ADD BOB_E FILE IF USED
+        # check whether the current tempfile has the bob_e rings configured to be used.
+    if d[param_keys.field_methods.name]['e']['method'] == "Bob_e":
+        # if the method is used, then copy the configured coil file and binary to the input folder
+            # create an empty file for the csv
+            with open(os.path.join(out_path, 'e_rings.txt'), 'w') as f:
+                pass
+            # copy the configured bob_e coil f
+            shutil.copyfile(src=d['bob_e_file'], dst=os.path.join(out_path, 'e_rings.txt'))
+
 
         # copy the used coil file to the output
     with open(os.path.join(out_path, "coils.txt"), 'w') as f:
