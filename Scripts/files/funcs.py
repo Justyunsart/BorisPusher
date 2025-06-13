@@ -35,6 +35,6 @@ def sorted_files_by_datetime(dir, extension='.h5', order='descending'):
         for f in sorted(subdir.rglob(f'*.{extension}'), key=os.path.getctime)[:-1]:
             print(f)
 
-if __name__ == '__main__':
-    outpath = os.path.normpath(os.path.join("D:\FromCDocuments\Boris_Usr", "Outputs"))
-    sorted_files_by_datetime(outpath)
+#if __name__ == '__main__':
+#    outpath = os.path.normpath(os.path.join("D:\FromCDocuments\Boris_Usr", "Outputs"))
+#    sorted_files_by_datetime(outpath)

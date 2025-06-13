@@ -135,7 +135,7 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp):
             E = np.apply_along_axis(Fw, 0, p, fromTemp)
         case "Bob_e":
             E = Bob_e(p, fromTemp["field_methods"]['e']['params'])
-            #print(f"Bob_e says E is: {E}")
+            print(f"Bob_e says E is: {E}")
             
     return np.array(E)
 
