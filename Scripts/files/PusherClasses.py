@@ -108,24 +108,24 @@ class particle:
     step: int
     
     #position
-    px: np.float64
-    py: np.float64
-    pz: np.float64
+    px: np.float64 = None
+    py: np.float64 = None
+    pz: np.float64 = None
 
     # Velocity
-    vx: np.float64
-    vy: np.float64
-    vz: np.float64
+    vx: np.float64 = None
+    vy: np.float64 = None
+    vz: np.float64 = None
 
     # B field
-    bx: np.float64
-    by: np.float64
-    bz: np.float64
+    bx: np.float64 = None
+    by: np.float64 = None
+    bz: np.float64 = None
 
     # E field
-    ex: np.float64
-    ey: np.float64
-    ez: np.float64
+    ex: np.float64 = None
+    ey: np.float64 = None
+    ez: np.float64 = None
 
     # Diags
     vperp: np.float64 = None

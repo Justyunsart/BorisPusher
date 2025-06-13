@@ -145,10 +145,11 @@ def write_to_hdf5(from_temp, out, expand_length, num_points):
         # notify terminal
     print(f"Flushing to h5 file")
 
-        # take away al None type entries
-    mask = out != np.array(None)
-    _out = out[mask]
-
+        # take away all None type entries
+    #print(out.shape)
+    _out = out[out != np.array(None)]
+    _out = _out[1:]
+    #print(_out)
     df = pd.DataFrame([p.__dict__ for p in _out])
     #print(df)
     path = os.path.join(str(runtime_configs['Paths']['outputs']), from_temp['hdf5_path'])
@@ -170,16 +171,16 @@ def write_to_hdf5(from_temp, out, expand_length, num_points):
     with h5py.File(path, 'a') as f:
         old_shape = f['/src/position'].shape[0]
         if old_shape < num_points + 1:
-            f['/src/position'].resize((old_shape + len(df),))
+            f['/src/position'].resize((old_shape + len(df)), axis=0)
             f['/src/position'][old_shape:] = df_pos
 
             old_shape = f['/src/velocity'].shape[0]
-            f['src/velocity'].resize((old_shape + len(df),))
+            f['src/velocity'].resize((old_shape + len(df)), axis=0)
             f['/src/velocity'][old_shape:] = df_vel
 
             old_shape = f['src/fields/b'].shape[0]
-            f['src/fields/b'].resize((old_shape + len(df),))
-            f['src/fields/e'].resize((old_shape + len(df),))
+            f['src/fields/b'].resize((old_shape + len(df)), axis=0)
+            f['src/fields/e'].resize((old_shape + len(df)), axis=0)
             f['src/fields/b'][old_shape:] = df_fields_b
             f['src/fields/e'][old_shape:] = df_fields_e
     
@@ -187,6 +188,8 @@ def write_to_hdf5(from_temp, out, expand_length, num_points):
     last_struct = _out[-1] # indexing _out so this is guaranteed to not be None for whatever reason.
     out = np.empty(out.shape, dtype=particle)
     out[0] = last_struct
+
+    return out
 
 
 # boris push calculation
@@ -221,7 +224,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
     # Step 1: Create the AoS the process will work with
     #     > These conditions are read from inp file, currently stored in df.
     expand_length = (temp * len(from_temp['Particle_Df']))
-    out = np.empty(shape = ((temp * len(from_temp['Particle_Df'])) + 2), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
+    out = np.empty(((temp * len(from_temp['Particle_Df'])) + 1), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
 
     #temp = df["starting_pos"].to_numpy()[id] # Populate it with the initial conditions at index 0.
     #temp1 = df["starting_vel"].to_numpy()[id] * 6
@@ -330,10 +333,25 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         Periodically add contents to the appropriate datasets in the h5 outputs file.
         """
         if time % temp == 0:
-            write_to_hdf5(from_temp, out, temp, num_points)
+            x = np.array([out[i].px, out[i].py, out[i].pz])
+            v = np.array([out[i].vx, out[i].vy, out[i].vz])
+            ##########################################################################
+            # COLLECT FIELDS
+            # submit the field calculations to the threadpool
+            _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp)
+            _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'])
+            # collect the results
+            Ef = _Ef.result()
+            Bf = _Bf.result()
+            # update array entry with results
+            out[i].bx, out[i].by, out[i].bz = Bf  # update B field for particle we just found
+            out[i].ex, out[i].ey, out[i].ez = Ef  # update E field for particle we just found
+            _out = write_to_hdf5(from_temp, out, temp, num_points)
             #out[0] = out[time]
             #out[1:] = None
-            i = 1  # reset the internal AoS index
+            i = 0  # reset the internal AoS index
+            out = _out
+            print(out)
 
         if np.absolute(max(x.min(), x.max(), key=abs)) > side:
                 out = out[out != np.array(None)]
