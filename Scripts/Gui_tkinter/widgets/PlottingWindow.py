@@ -255,6 +255,7 @@ def Trajectory_callable(fig, plot, v1, v2, v3, path, c:mp.Collection, **kwargs):
     """
     for graphing the 3d trajectory of a single particle.
     """
+    d = TEMPMANAGER_MANAGER.files[names.m1f1]
     palettes = ["copper", "gist_heat"] # supported palettes for multiple particles.
 
     with h5py.File(path, 'r') as f:

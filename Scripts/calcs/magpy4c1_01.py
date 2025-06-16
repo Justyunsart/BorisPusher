@@ -102,7 +102,7 @@ def _Bob_e(inCoord, c, args):
     cart = c.orientation.apply(cart)
     return cart
 
-def Bob_e(coord, args):
+def __Bob_e(coord, args):
     """
     This function will utlize multithreading, with each coil
     calculating its own e-field on a new thread.
@@ -116,8 +116,19 @@ def Bob_e(coord, args):
         for index, task in enumerate(futures):
             result = task.result() # cartesian form of E field
             es.append(result)
-        # since the ring e field is rotationally symmetrical, the theta value can be something easy like 0.
-        # after getting the cartesian coordinates, you also need to
+    return np.sum(es, axis=0) # sum the E field components column-wise
+
+def Bob_e(coord, args):
+    """
+    This function will utlize multithreading, with each coil
+    calculating its own e-field on a new thread.
+    """
+    es = [] # collection of cartesian E field components for each coil
+    E_collection = args['collection']
+    for coil in E_collection:
+        cart = _Bob_e(coord, coil, args)
+        es.append(cart)
+
     return np.sum(es, axis=0) # sum the E field components column-wise
 
 def EfieldX(p:np.ndarray, E_Method, fromTemp):
