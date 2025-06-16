@@ -326,9 +326,9 @@ class bob_e_impl(FieldMethod):
 
         z_data = bob_e_impl.fx_calc(points, data["collection"], int(data["res"]))
 
-        sum_Z = np.array(z_data).reshape(resolution, resolution)
+        sum_Z = np.log(np.array(z_data)).reshape(resolution, resolution)
         smesh = plot.contourf(X, Z, sum_Z, levels=100,
-                                cmap="gist_ncar")
+                                cmap="turbo")
         
         # Colorbar checking
         last_axis_label = fig.axes[-1].get_label() # colorbar is assumed to be the last added axis. So we check the last axis label for existing colorbars.
