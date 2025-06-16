@@ -263,7 +263,7 @@ class bob_e_impl(FieldMethod):
         # Integration
         # Circle is broken into {resolution} slices; with each result being appended to the lists below.
 
-        thetas = np.linspace(0, np.pi, resolution) # np.array of all the theta values used in the integration (of shape {resolution})
+        thetas = np.linspace(0, np.pi, resolution, dtype=np.float64) # np.array of all the theta values used in the integration (of shape {resolution})
         cosines = np.cos(thetas) # np.array of all the cosine values of the thetas
         denominators = (1-((2 * rho * cosines)/mag)) ** (3/2) # shared denominator values of fzeta and frho
         
