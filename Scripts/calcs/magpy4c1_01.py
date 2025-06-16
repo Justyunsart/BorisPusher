@@ -42,6 +42,7 @@ from calcs.magpy4c1_manager_queue_datatype import Manager_Data
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
 
+
 ####################
 # PHYSICS SETTINGS #
 ####################
@@ -147,6 +148,7 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp):
         case "Bob_e":
             E = Bob_e(p, fromTemp["field_methods"]['e']['params'])
             print(f"Bob_e says E is: {E}")
+    np.empty(0).sum() # force numpy thread finish
             
     return np.array(E)
 
@@ -273,7 +275,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'])
             # collect the results
         Ef = _Ef.result()
-        print(Ef)
+        #print(Ef)
         Bf = _Bf.result()
             # update array entry with results
         out[i - 1].bx, out[i - 1].by,out[i - 1].bz = Bf # update B field for particle we just found
@@ -354,6 +356,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
             # collect the results
             Ef = _Ef.result()
             Bf = _Bf.result()
+
             # update array entry with results
             out[i].bx, out[i].by, out[i].bz = Bf  # update B field for particle we just found
             out[i].ex, out[i].ey, out[i].ez = Ef  # update E field for particle we just found
