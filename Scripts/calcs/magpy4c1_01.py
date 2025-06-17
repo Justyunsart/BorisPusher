@@ -147,8 +147,8 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp):
             E = np.apply_along_axis(Fw, 0, p, fromTemp)
         case "Bob_e":
             E = Bob_e(p, fromTemp["field_methods"]['e']['params'])
+            np.empty(0).sum()  # force numpy thread finish
             print(f"Bob_e says E is: {E}")
-    np.empty(0).sum() # force numpy thread finish
             
     return np.array(E)
 
