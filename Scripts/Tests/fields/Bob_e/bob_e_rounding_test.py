@@ -8,6 +8,7 @@ import os
 from definitions import PLATFORM
 from magpylib.current import Circle
 from magpylib import Collection
+from math import isclose
 
 """
 Helper function to ensure background numpy threads complete by running a cheap numpy
@@ -54,8 +55,8 @@ def logged_bob_e_rounding()->None:
             coord = toCyl(coord)
         zeta = coord[2] / radius
         rho = coord[0] / radius
-        if rho == 0:
-            rho = 1e-20
+        if isclose(0, rho):
+            rho = 1e-10
         logger.debug(f"rho: {rho}, zeta: {zeta}")
         # Integral Constants - pg.3 of document
         mag = (rho ** 2 + zeta ** 2 + 1)
