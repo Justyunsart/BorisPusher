@@ -13,8 +13,8 @@ def Circle(a, dia, d, gap):
     # current Loop creation, superimpose Loops and their fields
     s1 = C(current=a, diameter=dia).move([-(d)-gap,0,0]).rotate_from_angax(90, [0, 1, 0])
     s2 = C(current=-a, diameter=dia).move([(d)+gap,0,0]).rotate_from_angax(90, [0, 1, 0])
-    s3 = C(current=-a, diameter=dia).move([0,-(d)-gap,0]).rotate_from_angax(90, [1, 0, 0])
-    s4 = C(current=a, diameter=dia).move([0,(d)+gap,0]).rotate_from_angax(90, [1, 0, 0])
+    s3 = C(current=-a, diameter=dia).move([0,-(d)-gap,0]).rotate_from_angax(-90, [1, 0, 0])
+    s4 = C(current=a, diameter=dia).move([0,(d)+gap,0]).rotate_from_angax(-90, [1, 0, 0])
     s5 = C(current=a, diameter=dia).move([0,0,-(d)-gap]).rotate_from_angax(90, [0, 0, 1])
     s6 = C(current=-a, diameter=dia).move([0,0,(d)+gap]).rotate_from_angax(90, [0, 0, 1])
 

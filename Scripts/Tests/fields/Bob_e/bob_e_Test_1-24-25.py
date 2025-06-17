@@ -1,5 +1,7 @@
 """
 Test implementation of Bob's e field
+Before putting it in the program implementation.
+
 """
 import numpy as np
 from matplotlib import pyplot as plt
