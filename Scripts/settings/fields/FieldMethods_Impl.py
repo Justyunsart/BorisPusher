@@ -8,12 +8,12 @@ from Gui_tkinter.funcs.GuiEntryHelpers import LabeledEntry
 from Alg.polarSpace import toCyl
 import tkinter as tk
 import numpy as np
-import concurrent.futures
 from magpylib.current import Circle
 from Gui_tkinter.widgets.Bob_e_Circle_Config import Bob_e_Circle_Config
 from definitions import DIR_ROOT, NAME_BOB_E_CHARGES, NAME_INPUTS
 from settings.configs.funcs.config_reader import runtime_configs
 from Alg.polarSpace import toCyl, toCart
+from math import isclose
 
 ##############
 # BASE CLASS #
@@ -248,9 +248,8 @@ class bob_e_impl(FieldMethod):
             coord = toCyl(coord)
         zeta = coord[2] / radius
         rho = coord[0] / radius
-        if rho == 0:
-            rho = 0.00001
-        r1 = rho
+        if isclose(rho, 0, abs_tol=1e-10):
+            rho = 1e-10
 
         # Integral Constants - pg.3 of document
         mag = (rho ** 2 + zeta ** 2 + 1)
