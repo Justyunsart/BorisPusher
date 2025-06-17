@@ -23,7 +23,7 @@ Isolated step of Bob_e solution to see where the numbers diverge across systems
 def logged_bob_e_rounding()->None:
     # SET UP THE TESTING ENVIRONMENT
         # Create the debug log file
-    def create_debug_log(filename='rounding_debug.log'):
+    def create_debug_log(filename='debug_log.log'):
             # get a path to the logging file
         current_path_dir = Path(__file__).resolve().parent #.../BorisPusher/Scripts/Tests/fields/Bob_e
         # .../BorisPusher/Scripts/Tests/fields/Bob_e/debug/filename.log
@@ -55,7 +55,7 @@ def logged_bob_e_rounding()->None:
             coord = toCyl(coord)
         zeta = coord[2] / radius
         rho = coord[0] / radius
-        if isclose(0, rho):
+        if isclose(0, rho, abs_tol=1e-20):
             rho = 1e-10
         logger.debug(f"rho: {rho}, zeta: {zeta}")
         # Integral Constants - pg.3 of document
