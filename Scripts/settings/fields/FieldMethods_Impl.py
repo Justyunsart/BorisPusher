@@ -248,7 +248,7 @@ class bob_e_impl(FieldMethod):
             coord = toCyl(coord)
         zeta = coord[2] / radius
         rho = coord[0] / radius
-        if isclose(rho, 0, abs_tol=1e-10):
+        if abs(rho) < 1e-10:
             rho = 1e-10
 
         # Integral Constants - pg.3 of document
@@ -381,11 +381,12 @@ class bob_e_impl(FieldMethod):
         """
         Points plugged into the self.at function need to be transformed to be in the assumed config.
         """
+        point = np.array(point, dtype=np.float64)
         # Reset rotation to identity
         rotation = c.orientation
         #print(f"coil rotation: {rotation.as_euler('xyz', degrees=True)}")
         # subtract the coil's position from the rotated point to make it centered at the origin.
-        p = point - c.position
+        p = np.array(point - np.array(c.position, dtype=np.float64), dtype=np.float64)
         # after subtracting, the rotation then can be applied. This makes the point rotate about the coil center.
         inv_rotation = rotation.inv()
         rotated_point = inv_rotation.apply(p)
