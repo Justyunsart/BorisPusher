@@ -224,7 +224,7 @@ class Zero_impl(FieldMethod):
         return {"Zero" : 0}
 
 class bob_e_impl(FieldMethod):
-    autoUpdate = False
+    autoUpdate = True
     def __init__(self, master, root, widget=Bob_e_widget):
         super().__init__(master, widget, root)
         # register the graph button to the graphing function
@@ -305,17 +305,12 @@ class bob_e_impl(FieldMethod):
         # Resolution parameters - determines fidelity of graph
         resolution = 100 # determines the number of points created between the bounds
         
-        x_l = -3
-        x_u = 3
-
-        y_l = -3
-        y_u = 3
-
+        lim = lim + 1
 
         ## Construct grid
-        x_linspace = np.linspace(x_l, x_u, resolution)
+        x_linspace = np.linspace(-lim, lim, resolution)
         y_linspace = np.zeros(1)
-        z_linspace = np.linspace(y_l, y_u, resolution)
+        z_linspace = np.linspace(-lim, lim, resolution)
 
         grid = np.array(np.meshgrid(x_linspace, y_linspace, z_linspace, indexing='ij')).T
         #points = np.column_stack(np.vstack([gX.ravel(), z_linspace, gY.ravel()]))
@@ -376,7 +371,7 @@ class bob_e_impl(FieldMethod):
             out.append(cart)
         _sum = np.sum(out, axis=0)
         if sums:
-            _sum=np.sqrt(_sum[0] ** 2 + _sum[1] ** 2 + _sum[2] ** 2)
+            _sum=np.linalg.norm(_sum)
             #print(f"point: {point}, sum: {sum}, rect: {rect}")
 
         #print(_sum)

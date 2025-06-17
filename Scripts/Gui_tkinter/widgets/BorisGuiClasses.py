@@ -625,7 +625,7 @@ class FieldCoord_n_Graph():
                     lims = self.currentTable.getLim()
 
                     # plot
-                    self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims)
+                    self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims, cax=self.cax)
                     self.canvas.draw()
                 else:
 
@@ -779,13 +779,13 @@ class FieldCoord_n_Graph():
 
                     # y-axis line
                 _y = np.linspace(-lim, lim, 100) # the span of y coordinate values
-                _x = np.ones(100) * coils[0].position[0] # x location of the first coil
-                _z = np.ones(100) * coils[0].position[2] # z location of the first coil
+                _x = np.zeros(100)
+                _z = np.zeros(100)
                 points = np.column_stack((_x, _y, _z))
 
                     # x-axis line
                 _xx = np.linspace(-lim, lim, 100)
-                _xy = np.ones(100) * coils[0].position[1]
+                _xy = np.zeros(100)
                 points_x = np.column_stack((_xx, _xy, _z))
 
 
