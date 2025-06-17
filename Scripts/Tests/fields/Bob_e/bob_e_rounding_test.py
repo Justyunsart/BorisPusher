@@ -55,7 +55,7 @@ def logged_bob_e_rounding()->None:
             coord = toCyl(coord)
         zeta = coord[2] / radius
         rho = coord[0] / radius
-        if isclose(0, rho, abs_tol=1e-20):
+        if isclose(rho, 0, abs_tol=1e-5):
             rho = 1e-10
         logger.debug(f"rho: {rho}, zeta: {zeta}")
         # Integral Constants - pg.3 of document
