@@ -8,7 +8,8 @@ Q = 1e-9     # Total charge on the ring (C)
 R = 1.0      # Radius of the ring (m)
 
 # Grid settings
-grid_size = 10
+grid_size = 101
+middle = grid_size // 2
 x = np.linspace(-2, 2, grid_size)
 y = np.linspace(-2, 2, grid_size)
 z = np.linspace(-2, 2, grid_size)
@@ -38,12 +39,15 @@ for i in range(num_points):
     Ey += k * dq * ry / r3
     Ez += k * dq * rz / r3
 
-# Plotting the electric field vectors
-fig = plt.figure(figsize=(10, 8))
-ax = fig.add_subplot(111, projection='3d')
-
 # Normalize vectors for quiver
 magnitude = np.sqrt(Ex**2 + Ey**2 + Ez**2)
+print(magnitude.shape)
+# Plotting the electric field vectors
+fig = plt.figure(figsize=(10, 8))
+#ax = fig.add_subplot(121, projection='3d')
+ax1= fig.add_subplot(111)
+ax1.plot(x,np.log(magnitude[:,middle,middle]))
+'''
 skip = (slice(None, None, 2), slice(None, None, 2), slice(None, None, 2))  # Skip points to reduce clutter
 
 ax.quiver(
@@ -62,5 +66,6 @@ ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
 ax.set_box_aspect([1, 1, 1])
+'''
 plt.tight_layout()
 plt.show()
