@@ -13,7 +13,7 @@ from Gui_tkinter.widgets.Bob_e_Circle_Config import Bob_e_Circle_Config
 from definitions import DIR_ROOT, NAME_BOB_E_CHARGES, NAME_INPUTS
 from settings.configs.funcs.config_reader import runtime_configs
 from Alg.polarSpace import toCyl, toCart
-from math import isclose
+import mpmath as mp
 
 ##############
 # BASE CLASS #
@@ -389,6 +389,7 @@ class bob_e_impl(FieldMethod):
         p = np.array(point - np.array(c.position, dtype=np.float64), dtype=np.float64)
         # after subtracting, the rotation then can be applied. This makes the point rotate about the coil center.
         inv_rotation = rotation.inv()
+
         rotated_point = inv_rotation.apply(p)
 
 

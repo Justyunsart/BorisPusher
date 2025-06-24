@@ -4,11 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="added more failsafes to file reading; if the name of the file doesn't exist, doesn't try to read it">
-      <change afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_manager_queue_datatype.py" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="lineout changes to the ring field version 2">
+      <change afterPath="$PROJECT_DIR$/Scripts/Alg/circle.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/efieldring_4.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/debug/debug_log.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/rotation_errors.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/fwysr/graphs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/progress_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/progress_window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EField FJW/3DRing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/3DRing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EField FJW/Efield.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/Efield.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EField FJW/Efield2DRing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/Efield2DRing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EField FJW/Efield3DRing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/Efield3DRing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EField FJW/Efield3DRing_PyVista.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/Efield3DRing_PyVista.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EField FJW/Efield3DRing_Version2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/Efield3DRing_Version2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EField FJW/Efield3DRing_Version3.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/Efield3DRing_Version3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EField FJW/dipole.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/dipole.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EField FJW/s_dipoles.dat" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/s_dipoles.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/settings/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,20 +71,34 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python tests.Python tests in e_test.py.executor": "Run",
+    "Python tests.Python tests in e_things.py.executor": "Run",
+    "Python tests.Python tests in graphs.py.executor": "Run",
     "Python.Bob_e_Circle_Config.executor": "Run",
     "Python.BorisGui.executor": "Run",
+    "Python.Efield3DRing_Version2.executor": "Run",
+    "Python.Efield3DRing_Version3.executor": "Run",
+    "Python.FieldMethods.executor": "Run",
+    "Python.FieldMethods_Impl.executor": "Run",
     "Python.PlottingWindow.executor": "Run",
+    "Python.bob_e_rounding_test.executor": "Run",
+    "Python.collection_rotations.executor": "Run",
     "Python.configs.executor": "Run",
     "Python.dt_np.executor": "Run",
+    "Python.e_things.executor": "Run",
+    "Python.efieldring_4.executor": "Run",
     "Python.file_write_speed.executor": "Run",
     "Python.find_user_docs.executor": "Run",
+    "Python.funcs.executor": "Run",
     "Python.get_documents_path_win.executor": "Run",
+    "Python.graphs.executor": "Run",
     "Python.magpy4c1_01.executor": "Run",
     "Python.main.executor": "Run",
     "Python.menu_bar (1).executor": "Run",
     "Python.menu_bar.executor": "Run",
     "Python.multiprocessing_gui_freezing.executor": "Run",
     "Python.output_file_structure.executor": "Run",
+    "Python.polarSpace.executor": "Run",
     "Python.read_last_used_binary.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -91,12 +118,62 @@
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts" />
+      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields\Bob_e\debug" />
+      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields\Bob_e" />
+      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\output_write_read" />
-      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Gui_tkinter\widgets\menubar" />
     </key>
   </component>
   <component name="RunManager">
-    <configuration name="file_write_speed" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="collection_rotations" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests/magpylib" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/Tests/magpylib/collection_rotations.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="e_things" type="PythonConfigurationType" factoryName="Python">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="C:\Users\fwessel\anaconda3" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields\Bob_e\e_graphing.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="file_write_speed" type="PythonConfigurationType" factoryName="Python" activateToolWindowBeforeRun="false" temporary="true" nameIsGenerated="true">
       <module name="BorisPusher" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -142,7 +219,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="multiprocessing_gui_freezing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="funcs" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="BorisPusher" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -151,35 +228,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/files" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/Tests/multiprocessing_gui_freezing.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="output_file_structure" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="BorisPusher" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/files/hdf5" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/files/hdf5/output_file_structure.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/files/funcs.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -211,13 +265,38 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests in e_graphing.py" type="tests" factoryName="Autodetect" activateToolWindowBeforeRun="false" nameIsGenerated="true">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/e_graphing.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.e_things" />
+      <item itemvalue="Python.funcs" />
+      <item itemvalue="Python.collection_rotations" />
+      <item itemvalue="Python.file_write_speed" />
+      <item itemvalue="Python.find_user_docs" />
+      <item itemvalue="Python.read_last_used_binary" />
+      <item itemvalue="Python tests.Python tests in e_graphing.py" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.find_user_docs" />
         <item itemvalue="Python.read_last_used_binary" />
+        <item itemvalue="Python.funcs" />
+        <item itemvalue="Python.collection_rotations" />
         <item itemvalue="Python.file_write_speed" />
-        <item itemvalue="Python.output_file_structure" />
-        <item itemvalue="Python.multiprocessing_gui_freezing" />
+        <item itemvalue="Python.find_user_docs" />
       </list>
     </recent_temporary>
   </component>
@@ -248,6 +327,14 @@
       <workItem from="1748986806082" duration="7008000" />
       <workItem from="1749073138766" duration="4030000" />
       <workItem from="1749504867807" duration="8002000" />
+      <workItem from="1749698615943" duration="9644000" />
+      <workItem from="1749685107653" duration="348000" />
+      <workItem from="1750105014219" duration="2120000" />
+      <workItem from="1750110028543" duration="8824000" />
+      <workItem from="1750191243940" duration="14073000" />
+      <workItem from="1750278587516" duration="4700000" />
+      <workItem from="1750710652440" duration="11271000" />
+      <workItem from="1750721980238" duration="1312000" />
     </task>
     <task id="LOCAL-00001" summary="inputs create emergency default files when their parent dir is empty">
       <option name="closed" value="true" />
@@ -441,7 +528,175 @@
       <option name="project" value="LOCAL" />
       <updated>1749587816950</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="the progress window now closes automatically after a simulation finishes running and writing">
+      <option name="closed" value="true" />
+      <created>1749589093344</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1749589093344</updated>
+    </task>
+    <task id="LOCAL-00026" summary="updated graphs">
+      <option name="closed" value="true" />
+      <created>1749609640407</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1749609640407</updated>
+    </task>
+    <task id="LOCAL-00027" summary="E-field graphs for contour, streamlines implemented by fixing an orientation error. Results from the E field need to be rotated back after calculating w/ the coil's inverse rotation applied.">
+      <option name="closed" value="true" />
+      <created>1749700771072</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1749700771072</updated>
+    </task>
+    <task id="LOCAL-00028" summary="fixed typo in magpy4c1_01.py where I was using toCart instead of toCyl">
+      <option name="closed" value="true" />
+      <created>1749678112618</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1749678112618</updated>
+    </task>
+    <task id="LOCAL-00029" summary="added log(emag) lineout graph">
+      <option name="closed" value="true" />
+      <created>1749679452584</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1749679452584</updated>
+    </task>
+    <task id="LOCAL-00030" summary="the program now opens after widget init. to prevent flashing images from widgets loading on startup">
+      <option name="closed" value="true" />
+      <created>1749679899422</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1749679899422</updated>
+    </task>
+    <task id="LOCAL-00031" summary="parity">
+      <option name="closed" value="true" />
+      <created>1749684963689</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1749684963689</updated>
+    </task>
+    <task id="LOCAL-00032" summary="removed the threading for the calculation step's  bob_e implementation to test whether it is the source of e-value inconsistency between runs">
+      <option name="closed" value="true" />
+      <created>1750110536046</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1750110536046</updated>
+    </task>
+    <task id="LOCAL-00033" summary="e contour plot is now on the log of the magnitude">
+      <option name="closed" value="true" />
+      <created>1750112581903</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1750112581903</updated>
+    </task>
+    <task id="LOCAL-00034" summary="made the field_methods_impl's theta have the np.float64 dtype just in case">
+      <option name="closed" value="true" />
+      <created>1750115021531</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1750115021531</updated>
+    </task>
+    <task id="LOCAL-00035" summary="added 'np.empty(0).sum()' in EfieldX inside magpy4c1_01.py to test whether numpy's backend multithreading could cause e_field differences on the same system.&#10;&#10;e_field differences on different systems are currently theorized to be because of floating point rounding and is separate from this.">
+      <option name="closed" value="true" />
+      <created>1750117520231</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1750117520231</updated>
+    </task>
+    <task id="LOCAL-00036" summary="added 'np.empty(0).sum()' in EfieldX inside magpy4c1_01.py to test whether numpy's backend multithreading could cause e_field differences on the same system.&#10;&#10;e_field differences on different systems are currently theorized to be because of floating point rounding and is separate from this.">
+      <option name="closed" value="true" />
+      <created>1750118836208</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1750118836208</updated>
+    </task>
+    <task id="LOCAL-00037" summary="added 'np.empty(0).sum()' in EfieldX inside magpy4c1_01.py to test whether numpy's backend multithreading could cause e_field differences on the same system.&#10;&#10;e_field differences on different systems are currently theorized to be because of floating point rounding and is separate from this.">
+      <option name="closed" value="true" />
+      <created>1750118843236</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1750118843236</updated>
+    </task>
+    <task id="LOCAL-00038" summary="added a bob_e debug logger test to compare values across systems">
+      <option name="closed" value="true" />
+      <created>1750196638608</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1750196638608</updated>
+    </task>
+    <task id="LOCAL-00039" summary="changed rho comparison from == to math.isclose when checking if value is 0">
+      <option name="closed" value="true" />
+      <created>1750198080108</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1750198080108</updated>
+    </task>
+    <task id="LOCAL-00040" summary="added abs_tol argument to isclose argument">
+      <option name="closed" value="true" />
+      <created>1750198623807</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1750198623807</updated>
+    </task>
+    <task id="LOCAL-00041" summary="added abs_tol argument to isclose argument again to 1e-5">
+      <option name="closed" value="true" />
+      <created>1750199317829</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1750199317829</updated>
+    </task>
+    <task id="LOCAL-00042" summary="added abs_tol argument to isclose argument again to 1e-10">
+      <option name="closed" value="true" />
+      <created>1750199521670</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1750199521670</updated>
+    </task>
+    <task id="LOCAL-00043" summary="edited the implementation of bob_e used in the program with the math.isclose() logic experimented with in tests.&#10;&#10;The culprit of different values across systems was shown to be due to scipy's rotation functions returning floating point values ~1e-16 instead of 0 on some, while others do return 0. &#10;&#10;While the acutal values of floating point numbers ~1e-16 and 0 are both very small, this large absolute magnitude difference has huge repercussions when plugged into the solution.&#10;&#10;The currently implemented absolute tolerance value of 1e-10 means that any given value greater than 1e-10 will be used as is, while smaller values will always be clamped to 1e-10. This change will ideally cover the entire range of possible variation of values from scipy's rotate, or enough where there is negligible differences between operating systems.">
+      <option name="closed" value="true" />
+      <created>1750200467149</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1750200467149</updated>
+    </task>
+    <task id="LOCAL-00044" summary="another change to the 0 comparison.&#10;Added several numpy array conversions to dtype np.float64 in the orienting point step to ensure that all numbers are using double precision">
+      <option name="closed" value="true" />
+      <created>1750202880314</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1750202880314</updated>
+    </task>
+    <task id="LOCAL-00045" summary="lineout changes to the ring field version 2">
+      <option name="closed" value="true" />
+      <created>1750292510911</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1750292510911</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -459,32 +714,32 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="gui does not freeze during calculation. Rudimentary popup now shows what step the first particle is at." />
-    <MESSAGE value="handling added for documents folders that exist externally. Also creates a new default config everytime on startup. &#10;&#10;Need to find a way to explicitly set the python path for this project to include /Scripts, as right now it depends on ide specific worlplace settings. This introduces an extra headache layer for working with paths and import statements, as it has to be manually set up every time you clone this repo.&#10;&#10;This is very annoying because VSCode's environment PYTHONPATH variable refuses to work with multiple paths sometimes. I want to add both the project root and Scripts/, but it has a hard time running with those in mind. The IDE totally finds it though. Very annoying." />
-    <MESSAGE value="deleted a few user generated files so I can add them to .gitingore" />
-    <MESSAGE value="updated .gitignore" />
-    <MESSAGE value="in progress: changing the output structure to hdf5" />
-    <MESSAGE value="in progress: having every widget be able to initialize w/ the tempfile and last_used file" />
-    <MESSAGE value="the init_temp method to populate the runtime tempfile dict now passes default values instead of throwing a KeyError when the expected key is missing from the lastused file." />
-    <MESSAGE value="fixed indexing issue preventing more than one file flush" />
-    <MESSAGE value="stash 1" />
-    <MESSAGE value="stash 2?" />
-    <MESSAGE value="parity" />
-    <MESSAGE value="added grid to dropdown figure, now trajectory subplots properly clear the magpylib collection so that there are no doubled up coils" />
-    <MESSAGE value="changed the layout of the plot window graphs so that the trajectory and dropdowns are laid horizontally." />
-    <MESSAGE value="b-field graph now has a grid." />
-    <MESSAGE value="clamped the limits of the b-field streamplot on the calculation tab to be 1m + maximum coil offset.&#10;&#10;The plotting tab now graphs the absolute value of the parallel component (dot product) to better match the nature of the perpendicular component (which already ignores signs because it's graphing the magnitude)" />
-    <MESSAGE value="programmable output file directory" />
-    <MESSAGE value="added a b magnitude lineout option that graphs the b field's magnitude from the origin to a corner (defined by the limit of the coil center + 1 meter)" />
-    <MESSAGE value="b to corner graph now has an accurate title" />
-    <MESSAGE value="added bob_dt to magpy4c1, need to change the scaling logic" />
     <MESSAGE value="bob_e option now points to the right dir in documents" />
     <MESSAGE value="dt widget now shows more information about the timestep scaling parameters. &#10;&#10;You can now configure the reference particle location and the dynamic range used in the bob_dt calculation" />
     <MESSAGE value="updated the global adjustments widget in the coils tab" />
     <MESSAGE value="updated nothing about magpy4c1_01.py but now the e field doesnt shoot out so thats neat" />
     <MESSAGE value="reimplemented the rotations window autoclosing when clicking away from it. Now doesn't flag false positives when clicking within the window" />
     <MESSAGE value="added more failsafes to file reading; if the name of the file doesn't exist, doesn't try to read it" />
-    <option name="LAST_COMMIT_MESSAGE" value="added more failsafes to file reading; if the name of the file doesn't exist, doesn't try to read it" />
+    <MESSAGE value="the progress window now closes automatically after a simulation finishes running and writing" />
+    <MESSAGE value="updated graphs" />
+    <MESSAGE value="E-field graphs for contour, streamlines implemented by fixing an orientation error. Results from the E field need to be rotated back after calculating w/ the coil's inverse rotation applied." />
+    <MESSAGE value="fixed typo in magpy4c1_01.py where I was using toCart instead of toCyl" />
+    <MESSAGE value="added log(emag) lineout graph" />
+    <MESSAGE value="the program now opens after widget init. to prevent flashing images from widgets loading on startup" />
+    <MESSAGE value="parity" />
+    <MESSAGE value="removed the threading for the calculation step's  bob_e implementation to test whether it is the source of e-value inconsistency between runs" />
+    <MESSAGE value="e contour plot is now on the log of the magnitude" />
+    <MESSAGE value="made the field_methods_impl's theta have the np.float64 dtype just in case" />
+    <MESSAGE value="added 'np.empty(0).sum()' in EfieldX inside magpy4c1_01.py to test whether numpy's backend multithreading could cause e_field differences on the same system.&#10;&#10;e_field differences on different systems are currently theorized to be because of floating point rounding and is separate from this." />
+    <MESSAGE value="added a bob_e debug logger test to compare values across systems" />
+    <MESSAGE value="changed rho comparison from == to math.isclose when checking if value is 0" />
+    <MESSAGE value="added abs_tol argument to isclose argument" />
+    <MESSAGE value="added abs_tol argument to isclose argument again to 1e-5" />
+    <MESSAGE value="added abs_tol argument to isclose argument again to 1e-10" />
+    <MESSAGE value="edited the implementation of bob_e used in the program with the math.isclose() logic experimented with in tests.&#10;&#10;The culprit of different values across systems was shown to be due to scipy's rotation functions returning floating point values ~1e-16 instead of 0 on some, while others do return 0. &#10;&#10;While the acutal values of floating point numbers ~1e-16 and 0 are both very small, this large absolute magnitude difference has huge repercussions when plugged into the solution.&#10;&#10;The currently implemented absolute tolerance value of 1e-10 means that any given value greater than 1e-10 will be used as is, while smaller values will always be clamped to 1e-10. This change will ideally cover the entire range of possible variation of values from scipy's rotate, or enough where there is negligible differences between operating systems." />
+    <MESSAGE value="another change to the 0 comparison.&#10;Added several numpy array conversions to dtype np.float64 in the orienting point step to ensure that all numbers are using double precision" />
+    <MESSAGE value="lineout changes to the ring field version 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="lineout changes to the ring field version 2" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -508,18 +763,30 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BorisPusher$find_user_docs.coverage" NAME="find_user_docs Coverage Results" MODIFIED="1749507660617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/output_write_read" />
     <SUITE FILE_PATH="coverage/BorisPusher$get_documents_path_win.coverage" NAME="get_documents_path_win Coverage Results" MODIFIED="1749587148422" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/windows" />
-    <SUITE FILE_PATH="coverage/BorisPusher$menu_bar.coverage" NAME="menu_bar Coverage Results" MODIFIED="1747259073002" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$multiprocessing_gui_freezing.coverage" NAME="multiprocessing_gui_freezing Coverage Results" MODIFIED="1747273380034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$e_things.coverage" NAME="e_things Coverage Results" MODIFIED="1749699149166" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$bob_e_rounding_test.coverage" NAME="bob_e_rounding_test Coverage Results" MODIFIED="1750711108470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
+    <SUITE FILE_PATH="coverage/BorisPusher$funcs.coverage" NAME="funcs Coverage Results" MODIFIED="1749681885095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files" />
+    <SUITE FILE_PATH="coverage/BorisPusher$magpy4c1_01.coverage" NAME="magpy4c1_01 Coverage Results" MODIFIED="1749509898529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/calcs" />
+    <SUITE FILE_PATH="coverage/BorisPusher$graphs.coverage" NAME="graphs Coverage Results" MODIFIED="1750723220266" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr" />
+    <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1747264500256" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
+    <SUITE FILE_PATH="coverage/BorisPusher$.coverage" NAME=" Coverage Results" MODIFIED="1750722084322" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr" />
+    <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version2.coverage" NAME="Efield3DRing_Version2 Coverage Results" MODIFIED="1750722829601" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$dt_np.coverage" NAME="dt_np Coverage Results" MODIFIED="1748382025060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
+    <SUITE FILE_PATH="coverage/BorisPusher$efieldring_4.coverage" NAME="efieldring_4 Coverage Results" MODIFIED="1750722954315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$menu_bar.coverage" NAME="menu_bar Coverage Results" MODIFIED="1747259073002" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$configs.coverage" NAME="configs Coverage Results" MODIFIED="1747264446248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
-    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1749589027120" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
-    <SUITE FILE_PATH="coverage/BorisPusher$read_last_used_binary.coverage" NAME="read_last_used_binary Coverage Results" MODIFIED="1749074939532" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods_Impl.coverage" NAME="FieldMethods_Impl Coverage Results" MODIFIED="1750118600099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
+    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1750712072977" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$read_last_used_binary.coverage" NAME="read_last_used_binary Coverage Results" MODIFIED="1749685127742" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$PlottingWindow.coverage" NAME="PlottingWindow Coverage Results" MODIFIED="1748898945754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
-    <SUITE FILE_PATH="coverage/BorisPusher$magpy4c1_01.coverage" NAME="magpy4c1_01 Coverage Results" MODIFIED="1749509898529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/calcs" />
-    <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1747264500256" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
+    <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version3.coverage" NAME="Efield3DRing_Version3 Coverage Results" MODIFIED="1750290780658" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EField FJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$Bob_e_Circle_Config.coverage" NAME="Bob_e_Circle_Config Coverage Results" MODIFIED="1749076833519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$output_file_structure.coverage" NAME="output_file_structure Coverage Results" MODIFIED="1747949379891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/hdf5" />
-    <SUITE FILE_PATH="coverage/BorisPusher$file_write_speed.coverage" NAME="file_write_speed Coverage Results" MODIFIED="1748468073546" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
-    <SUITE FILE_PATH="coverage/BorisPusher$dt_np.coverage" NAME="dt_np Coverage Results" MODIFIED="1748382025060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
+    <SUITE FILE_PATH="coverage/BorisPusher$collection_rotations.coverage" NAME="collection_rotations Coverage Results" MODIFIED="1749607727545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />
+    <SUITE FILE_PATH="coverage/BorisPusher$polarSpace.coverage" NAME="polarSpace Coverage Results" MODIFIED="1749600138185" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Alg" />
+    <SUITE FILE_PATH="coverage/BorisPusher$file_write_speed.coverage" NAME="file_write_speed Coverage Results" MODIFIED="1749603520912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods.coverage" NAME="FieldMethods Coverage Results" MODIFIED="1749678464994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
   </component>
 </project>

@@ -15,3 +15,4 @@ class ion():
     anum : float # atomic number
 
 proton = ion(name="proton", mass=1.672e-27, q=1.602e-19, anum=1)
+coulomb = 8.99e9  # Coulomb constant (N·m²/C²)

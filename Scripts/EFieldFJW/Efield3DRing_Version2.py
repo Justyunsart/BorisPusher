@@ -44,10 +44,10 @@ magnitude = np.sqrt(Ex**2 + Ey**2 + Ez**2)
 print(magnitude.shape)
 # Plotting the electric field vectors
 fig = plt.figure(figsize=(10, 8))
-#ax = fig.add_subplot(121, projection='3d')
-ax1= fig.add_subplot(111)
-ax1.plot(x,np.log(magnitude[:,middle,middle]))
-'''
+ax = fig.add_subplot(121, projection='3d')
+#ax1= fig.add_subplot(111)
+#ax1.plot(x,np.log(magnitude[:,middle,middle]))
+
 skip = (slice(None, None, 2), slice(None, None, 2), slice(None, None, 2))  # Skip points to reduce clutter
 
 ax.quiver(
@@ -66,6 +66,6 @@ ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
 ax.set_box_aspect([1, 1, 1])
-'''
+
 plt.tight_layout()
 plt.show()
