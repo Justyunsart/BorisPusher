@@ -88,7 +88,7 @@ def _Bob_e(inCoord, c, args):
     """
 
     q = c.current # charge
-    #print(f"running with the q:{q}")
+    print(f"running with the q:{q}")
     res = float(args["res"]) # amount of points to be used in the integration
     
     # To make the target point relative to the coil, we call the bob_e.impl's alignment func.
@@ -119,14 +119,13 @@ def __Bob_e(coord, args):
             es.append(result)
     return np.sum(es, axis=0) # sum the E field components column-wise
 
-def Bob_e(coord, args):
+def Bob_e(coord, args, collection):
     """
     This function will utlize multithreading, with each coil
     calculating its own e-field on a new thread.
     """
     es = [] # collection of cartesian E field components for each coil
-    E_collection = args['collection']
-    for coil in E_collection:
+    for coil in collection:
         cart = _Bob_e(coord, coil, args)
         es.append(cart)
 
@@ -146,7 +145,7 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp):
         case "Fw":
             E = np.apply_along_axis(Fw, 0, p, fromTemp)
         case "Bob_e":
-            E = Bob_e(p, fromTemp["field_methods"]['e']['params'])
+            E = Bob_e(p, fromTemp["field_methods"]['e']['params'], fromTemp['bob_e_coil'])
             np.empty(0).sum()  # force numpy thread finish
             print(f"Bob_e says E is: {E}")
             

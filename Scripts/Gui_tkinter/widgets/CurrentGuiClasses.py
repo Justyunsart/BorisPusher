@@ -758,6 +758,7 @@ class CurrentEntryTable(EntryTable):
 
             # Update tempfile entry for the coil collection object.
         self._updateTempFile(self.collection_key, self.collection)
+        print(f"Collection updated: {self.collection_key}")
         return True
 
     def EntryValidateCallback(self, entry, check_float=True):

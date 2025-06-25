@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from Alg.polarSpace import toCyl, toCart
+import matplotlib as mpl
 
 
 def at(coord, q=1, radius=1, resolution=100):
@@ -88,12 +89,12 @@ def test_rho_range_cart():
 It's not going to be the exact same as the above, but gonna be the same idea
 """
 def test_rho_range_contour():
-    fig, ax = plt.subplots()
-    lim = 2
+    fig, (ax, ax1) = plt.subplots(1,2, sharey=False)
+    lim = 1.25
     # construct grid for cross-section
     x = np.linspace(-lim, lim, 100)
     y = np.linspace(-lim, lim, 100)
-    z = np.ones(1)
+    z = np.ones(1) * 0.01
 
     grid = np.array(np.meshgrid(x, y, z, indexing='ij')).T  # shape = (3, 100, 100, 1)
     grid = np.moveaxis(grid, 0, 0)[0]
@@ -107,16 +108,23 @@ def test_rho_range_contour():
     for coord in grid:
         c = toCyl(coord)
         #print(c)
-        zeta, rho = at(c)
+        zeta, rho = at(c, resolution=200, q=(1e-11/200))
         mags.append(np.sqrt(rho ** 2 + zeta ** 2))
         cart = toCart(rho, c[1], z)
         Ex.append(cart[0])
         Ey.append(cart[1])
-    mags = np.array(mags).reshape(100, 100)
+    mags = np.log(np.array(mags).reshape(100, 100))
     #print(mags)
-    ax.contourf(X, Y, mags)
-    ax.streamplot(X,Y, np.array(Ex).reshape(100,100), np.array(Ey).reshape(100,100))
+    cmap = plt.get_cmap('turbo')
+    norm = mpl.colors.Normalize(vmin=-8, vmax=8)
+    cbarticks = np.arange(-8.0, 8.0, 0.5)
+    contour=ax.contourf(X, Y, mags, levels=cbarticks, cmap=cmap, norm=norm, vmin=-8, vmax=8)
+    ax.streamplot(X,Y, np.array(Ex).reshape(100,100), np.array(Ey).reshape(100,100), color='black')
+    ax.set_title('Bob_e horizontal ring')
+    fig.colorbar(contour, ax=ax, ticks=cbarticks)
 
+    # lineout at i=50 (when x is a small value approaching 0)
+    lines = ax1.plot(y, mags[50][:])
 
 def test_grid_creation():
     fig, ax = plt.subplots()

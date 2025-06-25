@@ -37,6 +37,12 @@ def fwysr_e(field_coord, coils: Collection, num_points:int=200):
     r = np.linalg.norm(inps, axis=1)
     r3 = np.where(r != 0, r ** 3, np.inf) # precaution against 0 division
     Es = k * dq * inps / r3.reshape(-1,1)
+    # apply the forward rotations for each E
+    for i in range(len(coils.children)):
+        # index the appropriate elements of Es based on the coil index i
+        start_ind = i * num_points
+        end_ind = start_ind + num_points - 1
+        Es[start_ind:end_ind] = coils[i].orientation.apply(Es[start_ind:end_ind], inverse=False)
     return np.sum(Es, axis=0)
 
 if __name__ == '__main__':
