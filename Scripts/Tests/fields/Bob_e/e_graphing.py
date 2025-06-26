@@ -108,9 +108,11 @@ def test_rho_range_contour():
     for coord in grid:
         c = toCyl(coord)
         #print(c)
-        zeta, rho = at(c, resolution=200, q=(1e-11/200))
+        zeta, rho = at(c, resolution=200, q=(1e-11))
+        #print(zeta, rho)
         mags.append(np.sqrt(rho ** 2 + zeta ** 2))
         cart = toCart(rho, c[1], z)
+        print(cart)
         Ex.append(cart[0])
         Ey.append(cart[1])
     mags = np.log(np.array(mags).reshape(100, 100))
