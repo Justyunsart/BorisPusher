@@ -39,6 +39,8 @@ from system.temp_file_names import m1f1
 from settings.configs.funcs.config_reader import runtime_configs
 from calcs.magpy4c1_manager_queue_datatype import Manager_Data
 
+from EFieldFJW.efieldring_4 import fwysr_e
+
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
 
@@ -145,9 +147,13 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp):
         case "Fw":
             E = np.apply_along_axis(Fw, 0, p, fromTemp)
         case "Bob_e":
-            E = Bob_e(p, fromTemp["field_methods"]['e']['params'], fromTemp['bob_e_coil'])
+            E = Bob_e(p, fromTemp["field_methods"]['e']['params'], fromTemp["field_methods"]['e']['params']['collection'])
             np.empty(0).sum()  # force numpy thread finish
             print(f"Bob_e says E is: {E}")
+        case "Ai_e":
+            # call the appropriate function to get the value
+            E = fwysr_e(p, fromTemp["field_methods"]['e']['params']['collection'])
+            np.empty(0).sum()  # force numpy thread finish
             
     return np.array(E)
 

@@ -5,13 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="e field now looks at the updated collection">
-      <change afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/celxx.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/fwysr_e_1.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/debug/debug_log.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/fwysr/integrals.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_1/graphs.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/precision_error.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/BorisPusher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BorisPusher.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/e_graphing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/e_graphing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/celxx.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/celxx.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/fwysr_e_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/fwysr_e_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/Bob_e_Circle_Config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/Bob_e_Circle_Config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,8 +51,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Justyunsart/BorisPusher&quot;,
-    &quot;accountId&quot;: &quot;fcd17405-9168-4ed4-900c-276c61b0da39&quot;
+    &quot;url&quot;: &quot;https://github.com/Justyunsart/BorisPusher.git&quot;,
+    &quot;accountId&quot;: &quot;f4d963f1-90ba-4775-84cf-325240e534ab&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -59,52 +63,53 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.Python tests in e_graphing.py.executor": "Run",
-    "Python tests.Python tests in e_test.py.executor": "Run",
-    "Python tests.Python tests in e_things.py.executor": "Run",
-    "Python tests.Python tests in graphs.py.executor": "Run",
-    "Python.Bob_e_Circle_Config.executor": "Run",
-    "Python.BorisGui.executor": "Run",
-    "Python.Efield3DRing_Version2.executor": "Run",
-    "Python.Efield3DRing_Version3.executor": "Run",
-    "Python.FieldMethods.executor": "Run",
-    "Python.FieldMethods_Impl.executor": "Run",
-    "Python.PlottingWindow.executor": "Run",
-    "Python.bob_e_rounding_test.executor": "Run",
-    "Python.collection_rotations.executor": "Run",
-    "Python.configs.executor": "Run",
-    "Python.dt_np.executor": "Run",
-    "Python.e_things.executor": "Run",
-    "Python.efieldring_4.executor": "Run",
-    "Python.file_write_speed.executor": "Run",
-    "Python.find_user_docs.executor": "Run",
-    "Python.funcs.executor": "Run",
-    "Python.get_documents_path_win.executor": "Run",
-    "Python.graphs.executor": "Run",
-    "Python.integrals.executor": "Run",
-    "Python.magpy4c1_01.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.menu_bar (1).executor": "Run",
-    "Python.menu_bar.executor": "Run",
-    "Python.multiprocessing_gui_freezing.executor": "Run",
-    "Python.output_file_structure.executor": "Run",
-    "Python.polarSpace.executor": "Run",
-    "Python.read_last_used_binary.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/fwessel/PycharmProjects/BorisPusher/Scripts/calcs",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.Python tests in e_graphing.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in e_test.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in e_things.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in graphs.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Bob_e_Circle_Config.executor&quot;: &quot;Run&quot;,
+    &quot;Python.BorisGui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Efield3DRing_Version2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Efield3DRing_Version3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FieldMethods.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FieldMethods_Impl.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PlottingWindow.executor&quot;: &quot;Run&quot;,
+    &quot;Python.bob_e_rounding_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.collection_rotations.executor&quot;: &quot;Run&quot;,
+    &quot;Python.configs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dt_np.executor&quot;: &quot;Run&quot;,
+    &quot;Python.e_things.executor&quot;: &quot;Run&quot;,
+    &quot;Python.efieldring_4.executor&quot;: &quot;Run&quot;,
+    &quot;Python.file_write_speed.executor&quot;: &quot;Run&quot;,
+    &quot;Python.find_user_docs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.funcs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.fwysr_e_1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.get_documents_path_win.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graphs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.integrals.executor&quot;: &quot;Run&quot;,
+    &quot;Python.magpy4c1_01.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar.executor&quot;: &quot;Run&quot;,
+    &quot;Python.multiprocessing_gui_freezing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.output_file_structure.executor&quot;: &quot;Run&quot;,
+    &quot;Python.polarSpace.executor&quot;: &quot;Run&quot;,
+    &quot;Python.read_last_used_binary.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/fwessel/PycharmProjects/BorisPusher/Scripts/calcs&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
@@ -150,7 +155,6 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="SDK_NAME" value="C:\Users\fwessel\anaconda3" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -188,29 +192,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="find_user_docs" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="BorisPusher" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests/output_write_read" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/Tests/output_write_read/find_user_docs.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="funcs" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="BorisPusher" />
       <option name="ENV_FILES" value="" />
@@ -226,6 +207,28 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/files/funcs.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="fwysr_e_1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/EFieldFJW" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/EFieldFJW/fwysr_e_1.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -275,28 +278,27 @@
     </configuration>
     <list>
       <item itemvalue="Python.e_things" />
+      <item itemvalue="Python.fwysr_e_1" />
       <item itemvalue="Python.funcs" />
       <item itemvalue="Python.collection_rotations" />
       <item itemvalue="Python.file_write_speed" />
-      <item itemvalue="Python.find_user_docs" />
       <item itemvalue="Python.read_last_used_binary" />
       <item itemvalue="Python tests.Python tests in e_graphing.py" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.fwysr_e_1" />
         <item itemvalue="Python.read_last_used_binary" />
         <item itemvalue="Python.funcs" />
         <item itemvalue="Python.collection_rotations" />
         <item itemvalue="Python.file_write_speed" />
-        <item itemvalue="Python.find_user_docs" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-PY-243.22562.220" />
-        <option value="bundled-python-sdk-0fc6c617c4bd-9a18a617cbe4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.22562.220" />
+        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
       </set>
     </attachedChunks>
   </component>
@@ -774,6 +776,36 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiHelpers.py</url>
           <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py</url>
+          <line>213</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py</url>
+          <line>225</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py</url>
+          <line>223</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py</url>
+          <line>156</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py</url>
+          <line>396</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Scripts/settings/fields/FieldMethods.py</url>
+          <line>3</line>
+          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

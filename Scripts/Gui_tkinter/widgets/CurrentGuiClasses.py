@@ -93,9 +93,22 @@ class EntryTable():
 
             return out_merged
     
-    def _updateTempFile(self, field:str, val):
+    def _updateTempFile(self, field, val):
+        def set_nested_value(d, keys, value):
+            """Set a value in a nested dictionary given a list of keys."""
+            for key in keys[:-1]:
+                d = d.setdefault(key, {})  # ensures intermediate dicts exist
+            d[keys[-1]] = value
+
+        # read the dictionary
         d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-        d[field] = val
+
+        # if the function is given a list instead of a string to look up, call the nested function
+        # to edit the nested dictionary.
+        if isinstance(field, list):
+            set_nested_value(d, field, val)
+        else:
+            d[field] = val
         #print(f"RUNNING FROM _updateTempFile from CurrentGuiClasses.py, line 94")
         #print(d)
         write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
@@ -727,7 +740,7 @@ class CurrentEntryTable(EntryTable):
         df.to_csv(os.path.join(self.DIR.path.data, def_name), index=False)
         '''
         self.Create_From_Preset(default_coil, graph=False, path=path)
-        
+
 
     def GraphCoils(self):
         '''
@@ -735,6 +748,7 @@ class CurrentEntryTable(EntryTable):
         2. Creates magpylib circle current objects from this data
         3. Graphs these created coils
         '''
+
         #print(self.instances)
         self.collection = Collection()
         for i in range(len(self.GetEntries())):

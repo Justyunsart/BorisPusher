@@ -15,6 +15,9 @@ from settings.configs.funcs.config_reader import runtime_configs
 from Alg.polarSpace import toCyl, toCart
 import mpmath as mp
 
+from system.temp_file_names import param_keys
+from EFieldFJW.efieldring_4 import fwysr_e
+
 ##############
 # BASE CLASS #
 ##############
@@ -24,8 +27,8 @@ class FieldMethod():
     Contains the actual equation, as well as the ability to extract parameter values from its GUI widgets.
     """
     autoUpdate = True # flag for whether the graph should update whenever it's chosen.
-    def __init__(self, master, widget, root=None):
-        self.widget = widget(master, root)
+    def __init__(self, master, widget, root=None, **kwargs):
+        self.widget = widget(master, root, **kwargs)
     # Called when the GUI wants to display the field with its current values.
     def graph(self, plot, fig, lim, collection=None, *args):
         pass
@@ -108,8 +111,8 @@ class Zero_widget(field_impl):
         self.Z = LabeledEntry(self.frame1, 0, row=1, col=8, title="Z: ", width=5, state="readonly")
         self.widgets = [self.X, self.Y, self.Z]
 
-class Bob_e_widget(field_impl):
-    def __init__(self, frame, main=None):
+class table_e_widget(field_impl):
+    def __init__(self, frame, main=None, name=NAME_BOB_E_CHARGES, **kwargs):
         super().__init__(main)
         self.root = main
         # To make the graph function only work with the provided button, flag it to not update.
@@ -124,16 +127,10 @@ class Bob_e_widget(field_impl):
 
         #self.q = LabeledEntry(self.frame1, .1, row=1, col=0, title="q: ", width=10)
         self.res = LabeledEntry(self.frame1, 100, row=1, col=1, title="res: ", width=10)
-        # Button to call configuration table.
-        #self.buttonFrame = tk.Frame(frame)
-        #self.graphButton = tk.Button(self.frame1, text="Config Circle")
-        #self.graphButton.grid(row=1, col=0)
-        #self.buttonFrame.grid(row=3, column=0)
-        #self.graphButton.pack()
 
         # Coil Config
         self.table = Bob_e_Circle_Config(self.frame2,
-                                         dir=os.path.join(runtime_configs['Paths']['inputs'], NAME_BOB_E_CHARGES))
+                                         dir=os.path.join(runtime_configs['Paths']['inputs'], name), **kwargs)
         self.widgets = [self.table, self.res]
         self.table.grid(row=0)
 
@@ -148,11 +145,12 @@ class Bob_e_widget(field_impl):
         super().HideWidget()
         #self.buttonFrame.grid_remove()
     
-    
 
 ##################
 # IMPLEMENTATION #
 ##################
+e_collection_key = (param_keys.field_methods.name, 'e', param_keys.params.name, 'collection')
+
 """
 Contains the FieldMethod class instances for each field method.
 """
@@ -225,7 +223,7 @@ class Zero_impl(FieldMethod):
 
 class bob_e_impl(FieldMethod):
     autoUpdate = True
-    def __init__(self, master, root, widget=Bob_e_widget):
+    def __init__(self, master, root, widget=table_e_widget):
         super().__init__(master, widget, root)
         # register the graph button to the graphing function
 
@@ -395,3 +393,23 @@ class bob_e_impl(FieldMethod):
 
         #print(f"started with {point}, ended with {rotated_point}")
         return rotated_point
+
+class ai_impl(FieldMethod):
+    autoUpdate = True
+    def __init__(self, master, root, widget=table_e_widget,
+                 collection_key=e_collection_key):
+        super().__init__(master, widget, root, collection_key=collection_key)
+
+    def at (field_coord, coils, num_points=100):
+        """
+        The function implementation
+        """
+        return fwysr_e(field_coord, coils, num_points)
+
+    def GetData(self):
+        return {"Ai_e":
+            {
+                "res": self.widget.res.value.get(),
+                "collection": self.widget.table.get_collection()
+            }
+        }

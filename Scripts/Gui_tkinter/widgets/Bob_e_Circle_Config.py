@@ -19,9 +19,13 @@ class Bob_e_Circle_Config(tk.Frame):
     """
     (param: ) root: the base tk.Tk object for the tkinter app.
     """
-    def __init__(self, root:tk.Tk, dir, **kwargs):
+    def __init__(self, root:tk.Tk, dir, path_key=param_keys.bob_e_file.name, name_key=param_keys.bob_e_name.name,
+                 collection_key = param_keys.bob_e_coil.name, **kwargs):
         self.root = root
         super().__init__(root, **kwargs)
+        self.path_key = path_key
+        self.name_key = name_key
+        self.collection_key = collection_key
 
         # Main frame container for the toplevel's new window
         self.main_frame = tk.Frame(self)
@@ -34,9 +38,9 @@ class Bob_e_Circle_Config(tk.Frame):
                                             dataclass=Bob_e_Config_Dataclass,
                                             graphFrame=self.graph_frame,
                                             DIR=self.dir,
-                                            collection_key=param_keys.bob_e_coil.name, 
-                                            path_key=param_keys.bob_e_file.name, 
-                                            name_key=param_keys.bob_e_name.name,)
+                                            collection_key=[param_keys.field_methods.name, 'e', param_keys.params.name, 'collection'],
+                                            path_key=self.path_key,
+                                            name_key=self.name_key,)
 
         # packing step
         self.main_frame.pack(fill='both', expand=1)
