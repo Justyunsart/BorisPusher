@@ -30,7 +30,8 @@ def cel_x(k2, q2):
 
     return 1.5707963267948966 * (ss + cc * em) / (em * (em + p))
 
-def cel(kc, p=1.0, a=1.0, b=1.0):
+
+def cel(kc, p=1.0, a=1.0, b=1.0, debug=False):
     """
     Computes the complete elliptic integral using Bulirsch's CEL algorithm.
 
@@ -41,24 +42,25 @@ def cel(kc, p=1.0, a=1.0, b=1.0):
     p: float
     a: float
     b: float
+    debug: bool - if True, print internal values at each iteration
 
     Returns:
     float - value of the elliptic integral
     """
-
     if kc == 0.0:
         raise ValueError("kc cannot be zero.")
+    if not np.isfinite(kc) or not np.isfinite(a) or not np.isfinite(b):
+        raise ValueError(f"Non-finite input: kc={kc}, a={a}, b={b}")
 
     errtol = 1e-8
     k = abs(kc)
     pp = p
     aa = a
     bb = b
-    em = 1.0
 
     if p > 0.0:
         pp = np.sqrt(p)
-        b = b / pp
+        bb = bb / pp
     else:
         f = k * k
         q = 1.0 - f
@@ -66,24 +68,49 @@ def cel(kc, p=1.0, a=1.0, b=1.0):
         f = f - pp
         q = (b - a * pp) * q / (g * g) + a * f / g
         pp = np.sqrt(f / g)
-        a = (a - b) / g + a
-        b = q
+        aa = (a - b) / g + a
+        bb = q
 
     f = aa
-    aa = a
-    cc = a
-    dd = b
+    cc = aa
+    dd = bb
     ee = pp
 
+    iter_count = 0
     while True:
+        iter_count += 1
         f = cc
         cc = (aa + bb) / 2.0
-        g = ee / (bb + aa)
-        bb = np.sqrt(bb * aa)
+        denom = bb + aa
+        if denom == 0 or not np.isfinite(denom):
+            raise ValueError("Unstable iteration: denominator (bb + aa) is zero or NaN.")
+        g = ee / denom
+
+        product = bb * aa
+        if product < 0 or not np.isfinite(product):
+            raise ValueError(
+                f"Numerical instability at iteration {iter_count}: "
+                f"bb * aa = {product} (bb={bb}, aa={aa})"
+            )
+
+        bb = np.sqrt(product)
         ee = g * ee
         aa = cc
-        if abs(f - cc) <= errtol * f:
+
+        if debug:
+            print(f"Iteration {iter_count}:")
+            print(f"  aa = {aa}")
+            print(f"  bb = {bb}")
+            print(f"  cc = {cc}")
+            print(f"  ee = {ee}")
+            print(f"  g = {g}")
+            print(f"  product = {product}")
+            print()
+
+        if abs(f - cc) <= errtol * abs(f):
             break
 
     result = (np.pi / 2.0) * (aa * dd + bb * ee) / (aa * (aa + pp))
+    if not np.isfinite(result):
+        raise ValueError(f"Final result is not finite: {result}")
     return result

@@ -2,8 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Alg.polarSpace import toCyl, toCart
 import matplotlib as mpl
-
-
+from magpylib import Collection
+from magpylib.current import Circle
+c1 = Circle(position=np.array([0, 0, 0]), diameter=2, current=1e-11)
+c1.rotate_from_angax(90, "x")
 def at(coord, q=1, radius=1, resolution=100):
     """
     implementation of the function.
@@ -27,9 +29,9 @@ def at(coord, q=1, radius=1, resolution=100):
     mag = (rho ** 2 + zeta ** 2 + 1)
     mag_3_2 = mag ** (3 / 2)
     ## Fzeta
-    Fzeta_c = (zeta) / (mag_3_2 * (radius ** 2))
+    Fzeta_c = (zeta) / (mag_3_2)
     ## Frho
-    Frho_c = (rho) / (mag_3_2 * (radius ** 2))
+    Frho_c = (rho) / (mag_3_2 )
 
     # Integration
     # Circle is broken into {resolution} slices; with each result being appended to the lists below.
@@ -94,39 +96,53 @@ def test_rho_range_contour():
     # construct grid for cross-section
     x = np.linspace(-lim, lim, 100)
     y = np.linspace(-lim, lim, 100)
-    z = np.ones(1) * 0.01
+    z = np.ones(1) * 0.1
 
-    grid = np.array(np.meshgrid(x, y, z, indexing='ij')).T  # shape = (3, 100, 100, 1)
-    grid = np.moveaxis(grid, 0, 0)[0]
+    X, Y, Z = np.array(np.meshgrid(x, y, z, indexing='xy'))  # shape = (3, 100, 100, 1)
     #print(grid.shape)
-    X, Y, Z = np.moveaxis(grid, 2, 0)  # 3 arrays of shape (100, 100)
-    grid = grid.reshape(100 ** 2, 3)
+    #X, Y, Z = np.moveaxis(grid, 2, 0)  # 3 arrays of shape (100, 100)
+    grid = np.stack([X, Y, Z], axis=-1)  # Shape: (Nx, Ny, Nz, 3)
+    grid = grid.reshape(-1, 3)  # Flatten to shape (Nx * Ny * Nz, 3)
 
     mags = []
     Ex = []
     Ey = []
+    Erho = []
+    Ezeta = []
     for coord in grid:
-        c = toCyl(coord)
+        _coord = c1.orientation.apply(np.array(coord - c1.position), inverse=True)
+        c = toCyl(_coord)
         #print(c)
-        zeta, rho = at(c, resolution=200, q=(1e-11))
-        #print(zeta, rho)
-        mags.append(np.sqrt(rho ** 2 + zeta ** 2))
-        cart = toCart(rho, c[1], z)
-        print(cart)
+
+        zeta, rho = at(c, resolution=200, q=(1e-11/(2 * np.pi)))
+        #print(rho, zeta)
+
+        cart = toCart(rho, c[1], zeta)
+        cart = c1.orientation.apply(cart, inverse=False)
+
         Ex.append(cart[0])
         Ey.append(cart[1])
+        Erho.append(rho)
+        Ezeta.append(zeta)
+        mags.append(np.linalg.norm(cart))
+
     mags = np.log(np.array(mags).reshape(100, 100))
+    Erho = np.log(np.abs(np.array(Erho))).reshape(100, 100)
+    Ezeta = np.log(np.abs(np.array(Ezeta))).reshape(100, 100)
+
     #print(mags)
     cmap = plt.get_cmap('turbo')
-    norm = mpl.colors.Normalize(vmin=-8, vmax=8)
-    cbarticks = np.arange(-8.0, 8.0, 0.5)
-    contour=ax.contourf(X, Y, mags, levels=cbarticks, cmap=cmap, norm=norm, vmin=-8, vmax=8)
-    ax.streamplot(X,Y, np.array(Ex).reshape(100,100), np.array(Ey).reshape(100,100), color='black')
+    norm = mpl.colors.Normalize()
+    contour=ax.contourf(X[:,:,0], Y[:,:,0], mags, levels=100, cmap=cmap, norm=norm)
+    ax.streamplot(X[:,:,0],Y[:,:,0], np.array(Ex).reshape(100,100), np.array(Ey).reshape(100,100), color='black')
     ax.set_title('Bob_e horizontal ring')
-    fig.colorbar(contour, ax=ax, ticks=cbarticks)
+    fig.colorbar(contour, ax=ax)
 
     # lineout at i=50 (when x is a small value approaching 0)
-    lines = ax1.plot(y, mags[50][:])
+    lines = ax1.plot(y, mags[50][:], label='Magnitude')
+    ax1.plot(y, np.array(Erho)[50][:], label='Rho')
+    ax1.plot(y, np.array(Ezeta)[50][:], label='Zeta')
+    ax1.legend()
 
 def test_grid_creation():
     fig, ax = plt.subplots()

@@ -17,6 +17,7 @@ import mpmath as mp
 
 from system.temp_file_names import param_keys
 from EFieldFJW.efieldring_4 import fwysr_e
+from EFieldFJW.streamlines3Dring import compute_field
 
 ##############
 # BASE CLASS #
@@ -394,20 +395,20 @@ class bob_e_impl(FieldMethod):
         #print(f"started with {point}, ended with {rotated_point}")
         return rotated_point
 
-class ai_impl(FieldMethod):
+class Fwyr_e(FieldMethod):
     autoUpdate = True
     def __init__(self, master, root, widget=table_e_widget,
                  collection_key=e_collection_key):
         super().__init__(master, widget, root, collection_key=collection_key)
 
-    def at (field_coord, coils, num_points=100):
+    def at (field_coord, coils, num_points=500):
         """
         The function implementation
         """
-        return fwysr_e(field_coord, coils, num_points)
+        return compute_field(field_coord, coils, num_points)
 
     def GetData(self):
-        return {"Ai_e":
+        return {"Fwyr_e":
             {
                 "res": self.widget.res.value.get(),
                 "collection": self.widget.table.get_collection()
