@@ -16,6 +16,7 @@ The dropdown graphs use the function 'Param_v_Step_callable', in which:
     > If the selected dropdown is the b field, it just plots the b field magnitudes in a line graph
     > If the v or e options are selected, it plots:
         1. The magnitudes at each step
+        
         2. The magnitude of the cross product with b
         3. The dot products with b
 
