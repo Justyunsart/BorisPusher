@@ -40,6 +40,7 @@ from settings.configs.funcs.config_reader import runtime_configs
 from calcs.magpy4c1_manager_queue_datatype import Manager_Data
 
 from EFieldFJW.efieldring_4 import fwysr_e
+from EFieldFJW.streamlines3Dring import compute_field
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
@@ -133,7 +134,7 @@ def Bob_e(coord, args, collection):
 
     return np.sum(es, axis=0) # sum the E field components column-wise
 
-def EfieldX(p:np.ndarray, E_Method, fromTemp):
+def EfieldX(p:np.ndarray, E_Method, fromTemp, executor):
     """
     Controller for what E method is used.
 
@@ -150,9 +151,9 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp):
             E = Bob_e(p, fromTemp["field_methods"]['e']['params'], fromTemp["field_methods"]['e']['params']['collection'])
             np.empty(0).sum()  # force numpy thread finish
             print(f"Bob_e says E is: {E}")
-        case "Ai_e":
+        case "Fwyr_e":
             # call the appropriate function to get the value
-            E = fwysr_e(p, fromTemp["field_methods"]['e']['params']['collection'])
+            E = compute_field(p, fromTemp["field_methods"]['e']['params']['collection'], int(fromTemp["field_methods"]['e']['params']['res']), executor)
             np.empty(0).sum()  # force numpy thread finish
             
     return np.array(E)
@@ -276,7 +277,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         ##########################################################################
         # COLLECT FIELDS
             # submit the field calculations to the threadpool
-        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp)
+        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp, executor)
         _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'])
             # collect the results
         Ef = _Ef.result()
