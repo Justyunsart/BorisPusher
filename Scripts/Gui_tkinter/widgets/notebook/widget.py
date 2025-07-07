@@ -22,17 +22,24 @@ class Field_Notebook(ttk.Notebook):
             """
             Function that is just a container for all the assert statement for this class
             """
-            assert len(self.tab_names) == len(self.tab_widgets), f"{len(self.tab_names)} != {len(self.tab_widgets)}"
+            assert len(tab_names) == len(tab_widgets), f"{len(tab_names)} != {len(tab_widgets)}"
 
         # PRE-CREATION
         # init the super
         super().__init__(master, **kwargs)
+        # check the legality of inputs
+        _check_notebook_inputs()
         # define instance attributes
         self.tab_names = tab_names
         self.tab_widgets = tab_widgets
-        # check the legality of inputs
-        _check_notebook_inputs()
+        self.e_collection_key = (param_keys.field_methods.name, 'e', param_keys.params.name, 'collection')
 
         # CONFIGURE STRUCTURE
         def _add_notebook_tabs() -> None:
-            pass
+            for i in range(len(self.tab_names)):
+                self.add(self.tab_widgets[i](self, collection_key=self.e_collection_key), text=self.tab_names[i])
+
+        _add_notebook_tabs()
+
+        # pack self
+        self.grid(row=0, column=0, sticky='nsew')
