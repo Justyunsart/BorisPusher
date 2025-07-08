@@ -4,19 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="e field now looks at the updated collection">
-      <change afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/fwysr_2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2/fwysr_2_graphs.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2/graph_2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/BorisPusher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BorisPusher.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook">
+      <change afterPath="$PROJECT_DIR$/Scripts/system/imgs/zero_field.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/celxx.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/celxx.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/streamlines3Dring.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/streamlines3Dring.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/e_graphing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/e_graphing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/Bob_e_Circle_Config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/Bob_e_Circle_Config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/tab_content.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/tab_content.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/widget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/progress_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/progress_window.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/events/funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/funcs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/files/create.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/files/create.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/system/temp_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/system/temp_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,6 +71,8 @@
     "Python tests.Python tests in e_test.py.executor": "Run",
     "Python tests.Python tests in e_things.py.executor": "Run",
     "Python tests.Python tests in graphs.py.executor": "Run",
+    "Python.3DDisk.executor": "Run",
+    "Python.3DRing.executor": "Run",
     "Python.Bob_e_Circle_Config.executor": "Run",
     "Python.BorisGui.executor": "Run",
     "Python.Efield3DRing_Version2.executor": "Run",
@@ -89,6 +92,7 @@
     "Python.funcs.executor": "Run",
     "Python.fwysr_2.executor": "Run",
     "Python.fwysr_2_graphs.executor": "Run",
+    "Python.fwysr_e_1.executor": "Run",
     "Python.get_documents_path_win.executor": "Run",
     "Python.graph_2.executor": "Run",
     "Python.graphs.executor": "Run",
@@ -100,8 +104,11 @@
     "Python.multiprocessing_gui_freezing.executor": "Run",
     "Python.output_file_structure.executor": "Run",
     "Python.polarSpace.executor": "Run",
+    "Python.precision_error.executor": "Run",
     "Python.read_last_used_binary.executor": "Run",
+    "Python.rotation_viewer.executor": "Run",
     "Python.streamlines3Dring.executor": "Run",
+    "Python.widget.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
@@ -120,11 +127,11 @@
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\system\imgs" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields\Bob_e\debug" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields\Bob_e" />
-      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\output_write_read" />
     </key>
   </component>
   <component name="RunManager">
@@ -167,29 +174,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields\Bob_e\e_graphing.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="file_write_speed" type="PythonConfigurationType" factoryName="Python" activateToolWindowBeforeRun="false" temporary="true" nameIsGenerated="true">
-      <module name="BorisPusher" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/Tests/file_write_speed.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -267,6 +251,29 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="rotation_viewer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests/magpylib" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/Tests/magpylib/rotation_viewer.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests in e_graphing.py" type="tests" factoryName="Autodetect" activateToolWindowBeforeRun="false" nameIsGenerated="true">
       <module name="BorisPusher" />
       <option name="ENV_FILES" value="" />
@@ -285,20 +292,20 @@
     </configuration>
     <list>
       <item itemvalue="Python.e_things" />
+      <item itemvalue="Python.rotation_viewer" />
       <item itemvalue="Python.fwysr_2" />
       <item itemvalue="Python.funcs" />
       <item itemvalue="Python.collection_rotations" />
-      <item itemvalue="Python.file_write_speed" />
       <item itemvalue="Python.read_last_used_binary" />
       <item itemvalue="Python tests.Python tests in e_graphing.py" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.rotation_viewer" />
         <item itemvalue="Python.fwysr_2" />
         <item itemvalue="Python.read_last_used_binary" />
         <item itemvalue="Python.funcs" />
         <item itemvalue="Python.collection_rotations" />
-        <item itemvalue="Python.file_write_speed" />
       </list>
     </recent_temporary>
   </component>
@@ -339,31 +346,10 @@
       <workItem from="1750721980238" duration="1312000" />
       <workItem from="1750723323816" duration="7284000" />
       <workItem from="1750884458711" duration="13274000" />
-      <workItem from="1751402007258" duration="23407000" />
-    </task>
-    <task id="LOCAL-00001" summary="inputs create emergency default files when their parent dir is empty">
-      <option name="closed" value="true" />
-      <created>1747258235967</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1747258235967</updated>
-    </task>
-    <task id="LOCAL-00002" summary="gui does not freeze during calculation. Rudimentary popup now shows what step the first particle is at.">
-      <option name="closed" value="true" />
-      <created>1747278777621</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1747278777621</updated>
-    </task>
-    <task id="LOCAL-00003" summary="handling added for documents folders that exist externally. Also creates a new default config everytime on startup. &#10;&#10;Need to find a way to explicitly set the python path for this project to include /Scripts, as right now it depends on ide specific worlplace settings. This introduces an extra headache layer for working with paths and import statements, as it has to be manually set up every time you clone this repo.&#10;&#10;This is very annoying because VSCode's environment PYTHONPATH variable refuses to work with multiple paths sometimes. I want to add both the project root and Scripts/, but it has a hard time running with those in mind. The IDE totally finds it though. Very annoying.">
-      <option name="closed" value="true" />
-      <created>1747896048446</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1747896048446</updated>
+      <workItem from="1751402007258" duration="23590000" />
+      <workItem from="1751944702667" duration="10590000" />
+      <workItem from="1752001876580" duration="3130000" />
+      <workItem from="1752005025300" duration="5629000" />
     </task>
     <task id="LOCAL-00004" summary="deleted a few user generated files so I can add them to .gitingore">
       <option name="closed" value="true" />
@@ -725,7 +711,39 @@
       <option name="project" value="LOCAL" />
       <updated>1750885570361</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="added new e-field method that is a straightforward implementation of the standard form">
+      <option name="closed" value="true" />
+      <created>1751500351208</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1751500351208</updated>
+    </task>
+    <task id="LOCAL-00050" summary="added a rotation viewer in the testing folder">
+      <option name="closed" value="true" />
+      <created>1751952741068</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1751952741068</updated>
+    </task>
+    <task id="LOCAL-00051" summary="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook">
+      <option name="closed" value="true" />
+      <created>1751932432952</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1751932432952</updated>
+    </task>
+    <task id="LOCAL-00052" summary="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook">
+      <option name="closed" value="true" />
+      <created>1751932917567</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1751932917567</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -743,9 +761,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="dt widget now shows more information about the timestep scaling parameters. &#10;&#10;You can now configure the reference particle location and the dynamic range used in the bob_dt calculation" />
-    <MESSAGE value="updated the global adjustments widget in the coils tab" />
-    <MESSAGE value="updated nothing about magpy4c1_01.py but now the e field doesnt shoot out so thats neat" />
     <MESSAGE value="reimplemented the rotations window autoclosing when clicking away from it. Now doesn't flag false positives when clicking within the window" />
     <MESSAGE value="added more failsafes to file reading; if the name of the file doesn't exist, doesn't try to read it" />
     <MESSAGE value="the progress window now closes automatically after a simulation finishes running and writing" />
@@ -768,7 +783,10 @@
     <MESSAGE value="lineout changes to the ring field version 2" />
     <MESSAGE value="parity" />
     <MESSAGE value="e field now looks at the updated collection" />
-    <option name="LAST_COMMIT_MESSAGE" value="e field now looks at the updated collection" />
+    <MESSAGE value="added new e-field method that is a straightforward implementation of the standard form" />
+    <MESSAGE value="added a rotation viewer in the testing folder" />
+    <MESSAGE value="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook" />
+    <option name="LAST_COMMIT_MESSAGE" value="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -802,24 +820,28 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Scripts/EFieldFJW/streamlines3Dring.py</url>
-          <line>98</line>
+          <line>76</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/BorisPusher$3DRing.coverage" NAME="3DRing Coverage Results" MODIFIED="1751932238118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$widget.coverage" NAME="widget Coverage Results" MODIFIED="1752008272508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook" />
     <SUITE FILE_PATH="coverage/BorisPusher$find_user_docs.coverage" NAME="find_user_docs Coverage Results" MODIFIED="1749507660617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/output_write_read" />
+    <SUITE FILE_PATH="coverage/BorisPusher$3DDisk.coverage" NAME="3DDisk Coverage Results" MODIFIED="1751932250386" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$get_documents_path_win.coverage" NAME="get_documents_path_win Coverage Results" MODIFIED="1749587148422" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/windows" />
-    <SUITE FILE_PATH="coverage/BorisPusher$multiprocessing_gui_freezing.coverage" NAME="multiprocessing_gui_freezing Coverage Results" MODIFIED="1747273380034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$integrals.coverage" NAME="integrals Coverage Results" MODIFIED="1750890576133" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr" />
+    <SUITE FILE_PATH="coverage/BorisPusher$multiprocessing_gui_freezing.coverage" NAME="multiprocessing_gui_freezing Coverage Results" MODIFIED="1747273380034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$streamlines3Dring.coverage" NAME="streamlines3Dring Coverage Results" MODIFIED="1751490292112" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$precision_error.coverage" NAME="precision_error Coverage Results" MODIFIED="1751930233649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
     <SUITE FILE_PATH="coverage/BorisPusher$bob_e_rounding_test.coverage" NAME="bob_e_rounding_test Coverage Results" MODIFIED="1750711108470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
-    <SUITE FILE_PATH="coverage/BorisPusher$e_things.coverage" NAME="e_things Coverage Results" MODIFIED="1750900987528" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$e_things.coverage" NAME="e_things Coverage Results" MODIFIED="1752002335847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$funcs.coverage" NAME="funcs Coverage Results" MODIFIED="1749681885095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files" />
     <SUITE FILE_PATH="coverage/BorisPusher$magpy4c1_01.coverage" NAME="magpy4c1_01 Coverage Results" MODIFIED="1749509898529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/calcs" />
     <SUITE FILE_PATH="coverage/BorisPusher$graphs.coverage" NAME="graphs Coverage Results" MODIFIED="1751324543195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_1" />
-    <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1747264500256" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
+    <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1752004719466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
     <SUITE FILE_PATH="coverage/BorisPusher$.coverage" NAME=" Coverage Results" MODIFIED="1750900498689" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
     <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version2.coverage" NAME="Efield3DRing_Version2 Coverage Results" MODIFIED="1750722829601" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$fwysr_2_graphs.coverage" NAME="fwysr_2_graphs Coverage Results" MODIFIED="1751493976052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2" />
@@ -828,14 +850,16 @@
     <SUITE FILE_PATH="coverage/BorisPusher$graph_2.coverage" NAME="graph_2 Coverage Results" MODIFIED="1751410682598" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar.coverage" NAME="menu_bar Coverage Results" MODIFIED="1747259073002" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$configs.coverage" NAME="configs Coverage Results" MODIFIED="1747264446248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings" />
+    <SUITE FILE_PATH="coverage/BorisPusher$rotation_viewer.coverage" NAME="rotation_viewer Coverage Results" MODIFIED="1751952643732" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />
+    <SUITE FILE_PATH="coverage/BorisPusher$fwysr_e_1.coverage" NAME="fwysr_e_1 Coverage Results" MODIFIED="1751932280187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
     <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods_Impl.coverage" NAME="FieldMethods_Impl Coverage Results" MODIFIED="1750118600099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
-    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1751500252321" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1752010564028" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
     <SUITE FILE_PATH="coverage/BorisPusher$read_last_used_binary.coverage" NAME="read_last_used_binary Coverage Results" MODIFIED="1750885270926" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$e_graphing.coverage" NAME="e_graphing Coverage Results" MODIFIED="1751495005656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
     <SUITE FILE_PATH="coverage/BorisPusher$PlottingWindow.coverage" NAME="PlottingWindow Coverage Results" MODIFIED="1748898945754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version3.coverage" NAME="Efield3DRing_Version3 Coverage Results" MODIFIED="1750290780658" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EField FJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$fwysr_2.coverage" NAME="fwysr_2 Coverage Results" MODIFIED="1751415270343" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$fwysr_2.coverage" NAME="fwysr_2 Coverage Results" MODIFIED="1751932272564" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$Bob_e_Circle_Config.coverage" NAME="Bob_e_Circle_Config Coverage Results" MODIFIED="1749076833519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$output_file_structure.coverage" NAME="output_file_structure Coverage Results" MODIFIED="1747949379891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/hdf5" />
     <SUITE FILE_PATH="coverage/BorisPusher$collection_rotations.coverage" NAME="collection_rotations Coverage Results" MODIFIED="1749607727545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />

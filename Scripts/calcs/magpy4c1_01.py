@@ -34,7 +34,7 @@ from Scripts.settings.constants import proton
 from calcs.bob_dt import bob_dt_step
 
 from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict
-from system.temp_file_names import m1f1
+from system.temp_file_names import m1f1, param_keys
 
 from settings.configs.funcs.config_reader import runtime_configs
 from calcs.magpy4c1_manager_queue_datatype import Manager_Data
@@ -92,7 +92,10 @@ def _Bob_e(inCoord, c, args):
 
     q = c.current # charge
     #print(f"running with the q:{q}")
-    res = float(args["res"]) # amount of points to be used in the integration
+    try:
+        res = float(args["res"]) # amount of points to be used in the integration
+    except KeyError:
+        res=100
     
     # To make the target point relative to the coil, we call the bob_e.impl's alignment func.
     normCoord = bob_e_impl.OrientPoint(c=c, point=inCoord)
@@ -143,15 +146,15 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp, executor):
     """
     #print(f"E_method is: {E_Method}")
     match E_Method:
-        case "Zero":
+        case "zero":
             E =  np.zeros(3)
-        case "Fw":
+        case "fw":
             E = np.apply_along_axis(Fw, 0, p, fromTemp)
-        case "Bob_e":
+        case "bob_e":
             E = Bob_e(p, fromTemp["field_methods"]['e']['params'], fromTemp["field_methods"]['e']['params']['collection'])
             np.empty(0).sum()  # force numpy thread finish
             print(f"Bob_e says E is: {E}")
-        case "Fwyr_e":
+        case "fw_e":
             # call the appropriate function to get the value
             E = compute_field(p, fromTemp["field_methods"]['e']['params']['collection'], int(fromTemp["field_methods"]['e']['params']['res']), executor)
             np.empty(0).sum()  # force numpy thread finish
@@ -225,7 +228,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
     temp = 100000  # replace later with flush_count param after adding it to the tempfile
 
     ## Collect coil location to know when the particle escapes
-    c = from_temp['mag_coil']
+    c = from_temp[param_keys.field_methods.name]['b']['params']['collection']
     dt = from_temp['dt']
     side = c[0].position
     side = np.absolute(max(side.min(), side.max(), key=abs))
@@ -278,7 +281,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         # COLLECT FIELDS
             # submit the field calculations to the threadpool
         _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp, executor)
-        _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'])
+        _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], c)
             # collect the results
         Ef = _Ef.result()
         #print(Ef)

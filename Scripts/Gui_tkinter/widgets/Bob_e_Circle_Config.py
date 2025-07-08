@@ -19,8 +19,8 @@ class Bob_e_Circle_Config(tk.Frame):
     """
     (param: ) root: the base tk.Tk object for the tkinter app.
     """
-    def __init__(self, root:tk.Tk, dir, path_key=param_keys.bob_e_file.name, name_key=param_keys.bob_e_name.name,
-                 collection_key = param_keys.bob_e_coil.name, **kwargs):
+    def __init__(self, root:tk.Tk, dir, dir_name = 'bob_e', path_key=param_keys.bob_e_file.name, name_key=param_keys.bob_e_name.name,
+                 collection_key = param_keys.bob_e_coil.name, dataclass = Bob_e_Config_Dataclass, **kwargs):
         self.root = root
         super().__init__(root, **kwargs)
         self.path_key = path_key
@@ -32,13 +32,13 @@ class Bob_e_Circle_Config(tk.Frame):
         self.table_frame = tk.Frame(self.main_frame)
         self.graph_frame = tk.Frame(self.main_frame)
 
-        self.dir = Path(dir, "bob_e")
+        self.dir = Path(dir, dir_name)
         # widgets here
         self.entry_table = CurrentEntryTable(master=self.table_frame,
-                                            dataclass=Bob_e_Config_Dataclass,
+                                            dataclass=dataclass,
                                             graphFrame=self.graph_frame,
                                             DIR=self.dir,
-                                            collection_key=[param_keys.field_methods.name, 'e', param_keys.params.name, 'collection'],
+                                            collection_key=list(collection_key),
                                             path_key=self.path_key,
                                             name_key=self.name_key,)
 

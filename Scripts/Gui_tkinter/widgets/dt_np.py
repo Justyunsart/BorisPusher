@@ -238,7 +238,7 @@ class TimeStep_n_NumStep():
     get the location of the ref particle when bob_dt is used.
     """
     def get_ref_position(self, *args):
-        c = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])[param_keys.mag_coil.name][0].position
+        c = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])[param_keys.field_methods.name]['b']['params']['collection'][0].position
         pos = c * self.do_bob_widgets.var_ref_p.get()
         self.ref_p_var.set(str(pos))
         return pos
@@ -270,11 +270,14 @@ class TimeStep_n_NumStep():
         d = {param_keys.dt_bob.name : int(self.do_bob.get())}
         self.update_tempfile(d)
 
+    def update_dt(self, *args):
+        self.update_tempfile({"dt": float(self.dt.entry.get())})
+
     def dt_Callback(self, *args):
         #print(f"dt_callback called")
         try:
             lim = self._Check_Timestep_Size()
-            self.update_tempfile({"dt": float(self.dt.entry.get())})
+            self.update_dt()
             if float(self.dt.value.get()) < lim:
                 self.dt_str.set(self.responses["good"])
             else:
@@ -345,8 +348,13 @@ class TimeStep_n_NumStep():
                 self.do_bob_widgets.var_ref_p.set(value=lu[param_keys.dt_bob_prop.name])
                 self.do_bob_widgets.var_dyn_r.set(value=lu[param_keys.dt_bob_dyn_rng.name])
             except KeyError:
-                pass
+                self._Set('numsteps', 100000)
+                self._Set('timestep', 2.2e-9)
+
+                self.do_bob_widgets.var_ref_p.set(value=0)
+                self.do_bob_widgets.var_dyn_r.set(value=10)
         self.update_do_bob()
         self.update_numsteps()
         self.dt_Callback()
+        self.update_dt()
         self.do_bob_widgets.toggle_editability(self.do_bob)

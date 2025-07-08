@@ -21,7 +21,7 @@ particle (ion class): the particle used in the simulation; defaults to a proton
 def before_simulation_bob_dt(particle=constants.proton):
     #print(TEMPMANAGER_MANAGER.files[m1f1])
     d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-    c = d[param_keys.mag_coil.name]
+    c = d[param_keys.field_methods.name]['b']['params']['collection']
     ref_p = float(d[param_keys.dt_bob_prop.name])
     dyn_rng = float(d[param_keys.dt_bob_dyn_rng.name])
     # GET THE POSITION FOR B0
