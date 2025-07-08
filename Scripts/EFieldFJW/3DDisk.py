@@ -1,3 +1,14 @@
+"""
+This script generates and plots the 2D electric field produced by a charged disk.
+Plots include a streamline, contour, and line-outs for the radial and axial magnitudes.
+It demonstrates how to include a variable in a matplotlib legend using LaTeX-style
+math symbols. The script also shows best practices for documenting and labeling
+plots for clear presentation.
+
+Author: F. Wessel
+Date: July 8, 2025
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.constants import epsilon_0
@@ -8,8 +19,6 @@ Q = 1e-11 # Couloumb
 a = 1.0 # Disk radius (m)
 sigma = Q / (np.pi * a**2) # charge density C/m^2
 prefactor = sigma /(4 * np.pi * epsilon_0)
-
-
 
 # Integration resolution
 Nr = 100
@@ -23,11 +32,9 @@ dtheta = theta_vals[1] - theta_vals[0]
 rho_vals = np.linspace(0.01, 1.5, 200)
 z_vals = np.linspace(0.01, 1, 200)
 
-
 RHO, Z = np.meshgrid(rho_vals, z_vals)
 E_rho = np.zeros_like(RHO)
 E_z = np.zeros_like(Z)
-
 
 @njit(parallel=True)
 def compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta):
@@ -76,8 +83,6 @@ def compute_single_point_fields(rho, z, r_vals, theta_vals, dr, dtheta):
     # coef = (sigma / (4 * np.pi * eps0))
     return prefactor * Erho_sum, prefactor * Ez_sum
 
-
-
 # Plot
 # levels = np.linspace(0, 1.0, 10, endpoint=True)
 fig, axs = plt.subplots(2, 2, figsize=(14, 10))
@@ -122,8 +127,6 @@ axs[1,0].set_xlabel(r'$\rho$ (m)')
 axs[1,0].set_ylabel('Electric field magnitude (V/m)')
 axs[1,0].set_title(fr'Line-Outs for the Radial Field Magnitude, $|E_\rho|$')
 axs[1,0].grid(True)
-
-axs[1, 0].set_xlabel(r'$\rho$ (m)')
 axs[1,1].set_xlabel(r'$\rho$ (m)')
 axs[1,1].set_ylabel('Electric field magnitude (V/m)')
 axs[1,1].set_title(fr'Line-Outs for the Axial Field Magnitude, $|E_z|$')
