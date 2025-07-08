@@ -17,8 +17,8 @@ from numba import njit, prange
 # Constants
 Q = 1e-11 # Couloumb
 a = 1.0 # Disk radius (m)
-sigma = Q / (np.pi * a**2) # charge density C/m^2
-prefactor = sigma /(4 * np.pi * epsilon_0)
+Sigma = Q / (np.pi * a ** 2) # charge density C/m^2
+prefactor = Sigma / (4 * np.pi * epsilon_0)
 
 # Integration resolution
 Nr = 100
@@ -52,11 +52,11 @@ def compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta)
                     dx = rho - r * np.cos(theta)
                     dy = -r * np.sin(theta)
                     dz = z
-                    denom = (dx * dx + dy * dy + dz * dz) ** 1.5 + 1e-20  # prevent zero division
+                    Denom = (dx * dx + dy * dy + dz * dz) ** 1.5 + 1e-20  # prevent zero division
 
                     dA = r * dr * dtheta
-                    Erho_sum += dx / denom * dA
-                    Ez_sum += dz / denom * dA
+                    Erho_sum += dx / Denom * dA
+                    Ez_sum += dz / Denom * dA
 
             E_rho[j, i] = prefactor * Erho_sum
             E_z[j, i] = prefactor * Ez_sum
