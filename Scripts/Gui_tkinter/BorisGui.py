@@ -17,6 +17,9 @@ from system.path import Path
 from system.temp_file_names import param_keys
 from settings.configs.funcs.config_reader import runtime_configs
 
+from Gui_tkinter.widgets.notebook.widget import Field_Notebook
+from Gui_tkinter.widgets.notebook.tab_content import *
+
 
 # events
 #from events.on_start import on_start
@@ -148,6 +151,10 @@ def OpenGUI(manager):
 
     calc_frame3 = tk.Frame(calc_nested_notebook, background="light gray")
     calc_frame3_scroll = ScrollableFrame(calc_frame3)
+
+    calc_debug_frame = tk.Frame(calc_nested_notebook, relief='flat', background="light gray")
+    field_notebook = Field_Notebook(calc_debug_frame, ['zero', 'magpy'], [ZeroTableTab, RingTableTab])
+
 
     # PLOT GUI #
     #=============#
@@ -331,6 +338,7 @@ def OpenGUI(manager):
     calc_nested_notebook.add(calc_frame1, text="Particle")
 
     calc_nested_notebook.add(calc_frame3, text="Coils")
+    calc_nested_notebook.add(calc_debug_frame, text="Debug")
     calc_nested_notebook.pack(expand=True, fill='both', side=LEFT)
     
     """
@@ -358,7 +366,7 @@ def OpenGUI(manager):
     """
     # Refresh tables when switching between param and coil tabs
     # Reminds the program to switch classes when dealing with their class functions.
-    calc_nested_notebook.bind('<<NotebookTabChanged>>', OnNotebookTabChanged)
+    #calc_nested_notebook.bind('<<NotebookTabChanged>>', OnNotebookTabChanged)
     tabControl.bind('<<NotebookTabChanged>>', lambda event, i=trajectoryGraph: on_main_notebook_tab_changed(event, i))
 
     def on_close():
@@ -368,5 +376,5 @@ def OpenGUI(manager):
         manager.shutdown()
     root.protocol("WM_DELETE_WINDOW", on_close)
 
-    calc_nested_notebook.event_generate("<<NotebookTabChanged>>") # really really really make sure that the active tab's elements are refreshed on start.
+    #calc_nested_notebook.event_generate("<<NotebookTabChanged>>") # really really really make sure that the active tab's elements are refreshed on start.
     root.mainloop()
