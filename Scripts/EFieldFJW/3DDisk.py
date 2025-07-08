@@ -9,11 +9,9 @@ a = 1.0 # Disk radius (m)
 sigma = Q / (np.pi * a**2) # charge density C/m^2
 prefactor = sigma /(4 * np.pi * epsilon_0)
 
-# Fixed height 5 mm above the disk
-z_fixed = 0.01
 
-# Radial positions where to evaluate fields
-rho_line = np.linspace(0.001, 2, 200)
+# Radial positions where fields are calculated
+rho_line = np.linspace(0.001, 1.5, 200)
 
 # Preallocate arrays for Erho and Ez on the line z = 5 mm
 E_rho_line = np.zeros_like(rho_line)
@@ -28,15 +26,20 @@ dr = r_vals[1] - r_vals[0]
 dtheta = theta_vals[1] - theta_vals[0]
 
 # Field grid
-rho_vals = np.linspace(0.01, 2, 100)
-z_vals = np.linspace(0.01, 2, 100)
+rho_vals = np.linspace(0.01, 1.5, 200)
+z_vals = np.linspace(0.01, 1, 200)
+
+# Fixed height 5 mm above the disk
+z_fixed = 0.050
+z_lo_vals = np.array([5 * np.min(z_vals), 10 * np.min(z_vals), 50 * np.min(z_vals)])
+
 RHO, Z = np.meshgrid(rho_vals, z_vals)
 E_rho = np.zeros_like(RHO)
 E_z = np.zeros_like(Z)
 
 
 @njit(parallel=True)
-def compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta, sigma, eps0):
+def compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta):
     for i in prange(len(rho_vals)):
         for j in prange(len(z_vals)):
             rho = rho_vals[i]
@@ -60,14 +63,12 @@ def compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta,
             E_rho[j, i] = prefactor * Erho_sum
             E_z[j, i] = prefactor * Ez_sum
 
-# Run the field calculation
-compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta, sigma, epsilon_0)
-
-# Compute total field magnitude
+# Calculate the field and total field magnitude
+compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta)
 E_mag = np.sqrt(E_rho**2 + E_z**2)
 
 @njit()
-def compute_single_point_fields(rho, z, r_vals, theta_vals, dr, dtheta, sigma, eps0):
+def compute_single_point_fields(rho, z, r_vals, theta_vals, dr, dtheta):
     Erho_sum = 0.0
     Ez_sum = 0.0
     for m in range(len(r_vals)):
@@ -84,6 +85,13 @@ def compute_single_point_fields(rho, z, r_vals, theta_vals, dr, dtheta, sigma, e
     # coef = (sigma / (4 * np.pi * eps0))
     return prefactor * Erho_sum, prefactor * Ez_sum
 
+# Calculate Erho and Ez fields along the radial axis at fixed z
+for i in range(len(rho_line)):
+
+    E_rho_line[i], E_z_line[i] = (
+        compute_single_point_fields(rho_line[i], z_fixed, r_vals, theta_vals, dr, dtheta
+    ))
+
 # Plot
 # levels = np.linspace(0, 1.0, 10, endpoint=True)
 fig, axs = plt.subplots(2, 2, figsize=(14, 10))
@@ -95,8 +103,8 @@ fig.colorbar(c2, ax=axs[0,1], label='|E| (V/m)')
 # Draw a solid line on the plots
 x_values = [0, 1]
 y_values = [0, 0]
-axs[0,0].plot(x_values, y_values, color='green', linewidth=6, label="Charged Ring")
-axs[0,1].plot(x_values, y_values, color='green', linewidth=6, label="Charged Ring")
+axs[0,0].plot(x_values, y_values, color='green', linewidth=6, label="Charged Conductor")
+axs[0,1].plot(x_values, y_values, color='green', linewidth=6, label="Charged Conductor")
 axs[0,0].set_xlabel(r'$\rho$ (m)')
 axs[0,0].set_ylabel(r'$z$ (m)')
 axs[0,1].set_xlabel(r'$\rho$ (m)')
@@ -107,31 +115,36 @@ axs[0,1].legend()
 axs[0,1].grid(True)
 axs[0,0].set_title('$\\vec{E}$ Field Streamlines')
 axs[0,1].set_title('$\\vec{E}$ Field Magnitude $|\\vec{E}|$')
-# plt.tight_layout()
-# plt.show()
-#
-# Erho and Ez fields along the radial axis at fixed z
-for i in range(len(rho_line)):
-    E_rho_line[i], E_z_line[i] = compute_single_point_fields(
-        rho_line[i], z_fixed, r_vals, theta_vals, dr, dtheta, sigma, epsilon_0
-    )
 
-# Plot Erho and Ez magnitudes vs rho
-c3 = axs[1,0].plot(rho_line, np.abs(E_rho_line), label=r'Radial, $|E_\rho|$')
-# axs[1,1].plot(rho_line, np.abs(E_z_line), label=r'Axial, $|E_z|$')
+# Plot lineouts for Erho(rho) and Ez(rho) magnitudes
+
+for z_lineout in z_lo_vals:
+    print(f"Lineout value: {z_lineout}")
+    lineout_val = np.argmin(np.abs(z_vals - z_lineout))
+    closest_value = z_vals[lineout_val]
+    print(f"  Closest value: {closest_value}")
+    index = lineout_val  # same as sub_arr is from the beginning
+    print(f"  Index in original array: {index}")
+    # radial_lo = plt.plot(rho_vals, E_rho[:, index],
+    #                      label=fr'$|E_\rho| at z = {z_lineout}$')
+    # axs[1, 0].legend()
+    # plt.legend()
+
+c3 = axs[1,0].plot(rho_vals, np.abs(E_rho_line), label=fr'$|E_\rho|$ at z = {z_fixed*1000} mm')
+c4 = axs[1,1].plot(rho_vals, np.abs(E_z_line), label = fr'$|E_z|$ at z = {z_fixed * 1000} mm')
+
 axs[1,0].set_xlabel(r'$\rho$ (m)')
 axs[1,0].set_ylabel('Electric field magnitude (V/m)')
-axs[1,0].set_title(f'Line-Out for the Radial E Field at z = {z_fixed*1000:.1f} mm')
+axs[1,0].set_title(f'Line-Out for the Radial E Field at variable z')
 axs[1,0].legend()
 axs[1,0].grid(True)
 
-c4 = axs[1,1].plot(rho_line, np.abs(E_z_line), label=r'Axial, $|E_z|$')
+axs[1, 0].set_xlabel(r'$\rho$ (m)')
 axs[1,1].set_xlabel(r'$\rho$ (m)')
 axs[1,1].set_ylabel('Electric field magnitude (V/m)')
-axs[1,1].set_title(f'Line-Out for the Axial E Field  at z = {z_fixed*1000:.1f} mm')
+axs[1,1].set_title(f'Line-Out for the Axial E Field  at variable z')
 axs[1,1].legend()
 axs[1,1].grid(True)
 
-# fig.colorbar(c3, ax=axs[1,0], label='Field Magnitude (V/m)')
-# plt.tight_layout()
+plt.tight_layout()
 plt.show()
