@@ -681,7 +681,7 @@ class CurrentEntryTable(EntryTable):
         self.DIR = DIR
 
         super().__init__(master, dataclass)
-        self.dirWidget = FileDropdown(master=self.frame0, dir=DIR, default=self._Create_Default_File)
+        self.dirWidget = FileDropdown(master=self.frame0, dir=self.DIR, default=self._Create_Default_File)
         self.dirWidget.grid(row=0, column=0)
         self.saveButton.configure(command=partial(self.SaveData, self.dirWidget.dir))
 

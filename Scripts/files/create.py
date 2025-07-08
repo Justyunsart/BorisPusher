@@ -109,7 +109,7 @@ def get_default_output_dir():
         # subdir structure based on parameters
     d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
     preset = get_coil_preset_attr_val(d['particle_file'])
-    current = get_unique_coil_collection_amps(d['mag_coil'])
+    current = get_unique_coil_collection_amps(d['field_methods']['b']['params']['collection'])
     b = d['field_methods']['b']['method']
     e = d['field_methods']['e']['method']
     _p = os.path.join(preset, current, b, e)

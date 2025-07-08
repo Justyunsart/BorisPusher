@@ -4,7 +4,7 @@ import settings.palettes as p
 from functools import partial
 import os
 from events.events import Events # omg why did I name things like this
-import settings.fields.FieldMethods as fm
+from Gui_tkinter.funcs.GuiEntryHelpers import Bob_e_Config_Dataclass, CircleCurrentConfig
 from Gui_tkinter.widgets.dt_np import TimeStep_n_NumStep
 from Gui_tkinter.funcs.GuiHelpers import *
 from Gui_tkinter.widgets.BorisGuiClasses import *
@@ -19,6 +19,7 @@ from settings.configs.funcs.config_reader import runtime_configs
 
 from Gui_tkinter.widgets.notebook.widget import Field_Notebook
 from Gui_tkinter.widgets.notebook.tab_content import *
+
 
 
 # events
@@ -39,9 +40,9 @@ def OpenGUI(manager):
 
     # Application Window
     root = tk.Tk()
-    root.iconify()
     root.title("Configure Sim")
-    root.geometry("1041x1210")
+    #root.geometry("1041x1210")
+    root.iconify()
 
     # palette - currently hard coded
     palette = p.Drapion
@@ -49,7 +50,6 @@ def OpenGUI(manager):
     # main window
     Main = MainWindow(root, background = palette.Background.value)
     Main.pack(expand=True, fill='both')
-
     #======#
     # MENU #
     #======#
@@ -149,12 +149,31 @@ def OpenGUI(manager):
     calc_frame1 = tk.Frame(calc_nested_notebook, relief='flat', background="light gray")
     calc_frame1_scroll = ScrollableFrame(calc_frame1)
 
-    calc_frame3 = tk.Frame(calc_nested_notebook, background="light gray")
-    calc_frame3_scroll = ScrollableFrame(calc_frame3)
+    #calc_frame3 = tk.Frame(calc_nested_notebook, background="light gray")
+    #calc_frame3_scroll = ScrollableFrame(calc_frame3)
 
     calc_debug_frame = tk.Frame(calc_nested_notebook, relief='flat', background="light gray")
-    field_notebook = Field_Notebook(calc_debug_frame, ['zero', 'magpy'], [ZeroTableTab, RingTableTab])
 
+    #   PLACE THE NESTED NOTEBOOKS IN LABEL FRAMES SO THEY ARE NOT CONFUSING AF
+    b_field_labelFrame = ttk.LabelFrame(calc_debug_frame, text="B-Field")
+    e_field_labelFrame = ttk.LabelFrame(calc_debug_frame, text="E-Field")
+
+    field_notebook = Field_Notebook(b_field_labelFrame, ['zero', 'magpy'], [ZeroTableTab, RingTableTab],
+                                    collection_key=(param_keys.field_methods.name, 'b', param_keys.params.name, 'collection'),
+                                    tab_key=(param_keys.field_methods.name, 'b', 'method'),
+                                    dataclass = CircleCurrentConfig,
+                                    dir_name="CoilConfigurations",
+                                    path_key='coil_file')
+    field_notebook.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+
+    e_field_notebook = Field_Notebook(e_field_labelFrame, ['zero', 'bob_e', 'fw_e'], [ZeroTableTab, RingTableTab, RingTableTab],
+                                    collection_key=(param_keys.field_methods.name, 'e', param_keys.params.name, 'collection'),
+                                    tab_key=(param_keys.field_methods.name, 'e', 'method'),
+                                    dataclass= Bob_e_Config_Dataclass)
+    e_field_notebook.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+
+    b_field_labelFrame.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+    e_field_labelFrame.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
 
     # PLOT GUI #
     #=============#
@@ -230,7 +249,7 @@ def OpenGUI(manager):
     CalcTimeStepFrame = tk.LabelFrame(calc_title_LFrame, bg="light gray", text="Time, Step")
     CalcTimeStepFrame.grid(row=0, column=0, sticky="NSEW")
 
-
+    '''
     FieldGraphs = tk.LabelFrame(calc_frame1_scroll.frame, bg="light gray", text="Fields")
 
     Fields = tk.LabelFrame(FieldGraphs, bg="light gray", text="Static Fields")
@@ -249,6 +268,7 @@ def OpenGUI(manager):
 
     EGraphFrame_for_Buttons = tk.Frame(EGraphFrame)
     EGraphFrame_for_Buttons.grid(row=0, column=0)
+    '''
 
     ## Particle condition stuff..
     #Combobox_particle_file = FileDropdown(DropdownFrame,
@@ -258,6 +278,7 @@ def OpenGUI(manager):
     calc_frame1_scroll._add_Subscriber(particlePreview) # I do this so that I can run the table's update function when this tab becomes selected.
     
     ## FIELDS!!!!!!
+    """
     b_field = FieldDropdown(Fields0,
                         fm.B_Methods,
                         "B-Field: ",
@@ -269,10 +290,11 @@ def OpenGUI(manager):
                         "E-Field: ",
                         key=param_keys.e.name)
     e_field.grid(row=1, column=0)
+    """
 
     # Graphing options for the field parameter settings.
-    field_graphs = FieldDropdown(EGraphFrame_for_Buttons, fm.FieldGraph_Methods, "Show me: ")
-    field_graphs.grid(row=0, column=0)
+    #field_graphs = FieldDropdown(EGraphFrame_for_Buttons, fm.FieldGraph_Methods, "Show me: ")
+    #field_graphs.grid(row=0, column=0)
 
     ## Caclulate button
     calc_button = tk.Button(tab_calc,
@@ -287,18 +309,19 @@ def OpenGUI(manager):
     # CURRENT MANIPULATION #
     ########################
 
-    CurrentFrame = tk.LabelFrame(calc_frame3_scroll.frame, text="Configure Current")
-    CurrentFrame.grid(row = 1, column=0, padx=10, pady=10)
-    GraphFrame = tk.LabelFrame(calc_frame3_scroll.frame, text="Graph")
-    GraphFrame.grid(row = 2, column=0, padx=10, pady=10)
-    coil_config = CurrentConfig(CurrentFrame, DIR_Coil, GraphFrame)
-    calc_frame3_scroll._add_Subscriber(coil_config) # Done so table's update function runs when this tab is active.
+    #CurrentFrame = tk.LabelFrame(calc_frame3_scroll.frame, text="Configure Current")
+    #CurrentFrame.grid(row = 1, column=0, padx=10, pady=10)
+    #GraphFrame = tk.LabelFrame(calc_frame3_scroll.frame, text="Graph")
+    #GraphFrame.grid(row = 2, column=0, padx=10, pady=10)
+    #coil_config = CurrentConfig(CurrentFrame, DIR_Coil, GraphFrame)
+    #calc_frame3_scroll._add_Subscriber(coil_config) # Done so table's update function runs when this tab is active.
 
     ### FIELD GRAPHS
     """
     written below currents to ensure they are loaded in 
     """
     #B_field_graph = FieldCoord_n_Graph(b_field, BGraphFrame, coil_config.GraphB)
+    """
     E_field_graph = FieldCoord_n_Graph(table = e_field,
                                        root=Main,
                                        graphOptions=field_graphs, 
@@ -308,6 +331,7 @@ def OpenGUI(manager):
                                     title="E on X-Z Plane",
                                     x_label="X (m)",
                                     y_label="Y (A)")
+    """
 
     ## Timestep stuff..
     time_info = TimeStep_n_NumStep(CalcTimeStepFrame)
@@ -323,22 +347,22 @@ def OpenGUI(manager):
     tabControl.pack(expand=1, fill="both", side=TOP)
 
     calc_frame1.pack(side="top", fill="both", expand=True)
-    calc_frame3.pack(side="top", fill="both", expand=True)
+    #calc_frame3.pack(side="top", fill="both", expand=True)
     calc_frame1_scroll._InternalPack()
-    calc_frame3_scroll._InternalPack()
+    #calc_frame3_scroll._InternalPack()
     Main.scrollables.append(calc_frame1_scroll)
-    Main.scrollables.append(calc_frame3_scroll)
+    #Main.scrollables.append(calc_frame3_scroll)
 
 
     calc_title_LFrame.pack(fill="x", side="top", expand=True)
     Particle.pack(fill="x", side="top", expand=True)
-    FieldGraphs.pack(fill="x", side="top", expand=True)
+    #FieldGraphs.pack(fill="x", side="top", expand=True)
 
 
     calc_nested_notebook.add(calc_frame1, text="Particle")
 
-    calc_nested_notebook.add(calc_frame3, text="Coils")
-    calc_nested_notebook.add(calc_debug_frame, text="Debug")
+    #calc_nested_notebook.add(calc_frame3, text="Coils")
+    calc_nested_notebook.add(calc_debug_frame, text="Fields")
     calc_nested_notebook.pack(expand=True, fill='both', side=LEFT)
     
     """
@@ -346,7 +370,7 @@ def OpenGUI(manager):
     """
     root.update()
     calc_frame1_scroll.RegisterScrollArea()
-    calc_frame3_scroll.RegisterScrollArea()
+    #calc_frame3_scroll.RegisterScrollArea()
 
     """
     LOGIC FOR PASSING PARAMS BACK TO THE PROGRAM.
@@ -354,7 +378,8 @@ def OpenGUI(manager):
     subs = {}
 
     # control what classes to send over to the program by adding it to params
-    subs["params"] = [time_info, particlePreview, coil_config, b_field, e_field, E_field_graph]
+    #subs["params"] = [time_info, particlePreview, coil_config, b_field, e_field, E_field_graph]
+    subs["params"] = [time_info, particlePreview]
     Events.INIT_GUI.value.invoke(widgets=subs['params'])
     root.deiconify()
 
