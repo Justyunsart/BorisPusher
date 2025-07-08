@@ -366,7 +366,7 @@ def OpenGUI(manager):
     """
     # Refresh tables when switching between param and coil tabs
     # Reminds the program to switch classes when dealing with their class functions.
-    calc_nested_notebook.bind('<<NotebookTabChanged>>', OnNotebookTabChanged)
+    #calc_nested_notebook.bind('<<NotebookTabChanged>>', OnNotebookTabChanged)
     tabControl.bind('<<NotebookTabChanged>>', lambda event, i=trajectoryGraph: on_main_notebook_tab_changed(event, i))
 
     def on_close():
@@ -376,5 +376,5 @@ def OpenGUI(manager):
         manager.shutdown()
     root.protocol("WM_DELETE_WINDOW", on_close)
 
-    calc_nested_notebook.event_generate("<<NotebookTabChanged>>") # really really really make sure that the active tab's elements are refreshed on start.
+    #calc_nested_notebook.event_generate("<<NotebookTabChanged>>") # really really really make sure that the active tab's elements are refreshed on start.
     root.mainloop()
