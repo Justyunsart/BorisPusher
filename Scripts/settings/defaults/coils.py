@@ -17,7 +17,7 @@ an intermediary container class that holds numbers only;
 the CircleCurrentConfig class has GUI dependencies
 """
 class circle_params():
-    def __init__(self, px=0, py=0, pz=0, amp=1000, dia=1, rot_ang=[], rot_ax=[]):
+    def __init__(self, px=0, py=0, pz=0, amp=1000, dia=1, rot_ang=[], rot_ax=[], inner=0):
         self.PosX = px
         self.PosY = py
         self.PosZ = pz
@@ -25,6 +25,7 @@ class circle_params():
         self.Dia = dia
         self.Rot_ang = rot_ang
         self.rot_ax = rot_ax
+        self.Inner = inner
 
 class preset_hexahedron():
     # params defined below. Can turn into function args if u want them to be programmable.
@@ -36,12 +37,12 @@ class preset_hexahedron():
 
     _attr_val = b"hexahedron" # custom file metadata value
 
-    config =  [circle_params(px=offset, py=0, pz=0, amp=amp, dia=dia, rot_ang=[90], rot_ax=['y']),
-     circle_params(px=-offset, py=0, pz=0, amp=-amp, dia=dia, rot_ang=[90], rot_ax=['y']),
-     circle_params(px=0, py=offset, pz=0, amp=amp, dia=dia, rot_ang=[-90], rot_ax=['x']),
-     circle_params(px=0, py=-offset, pz=0, amp=-amp, dia=dia, rot_ang=[-90], rot_ax=['x']),
-     circle_params(px=0, py=0, pz=offset, amp=amp, dia=dia, rot_ang=[], rot_ax=[]),
-     circle_params(px=0, py=0, pz=-offset, amp=-amp, dia=dia, rot_ang=[], rot_ax=[])]
+    config =  [circle_params(px=offset, py=0, pz=0, amp=amp, dia=dia, rot_ang=[90], rot_ax=['y'], inner=0),
+     circle_params(px=-offset, py=0, pz=0, amp=-amp, dia=dia, rot_ang=[90], rot_ax=['y'], inner=0),
+     circle_params(px=0, py=offset, pz=0, amp=amp, dia=dia, rot_ang=[-90], rot_ax=['x'], inner=0),
+     circle_params(px=0, py=-offset, pz=0, amp=-amp, dia=dia, rot_ang=[-90], rot_ax=['x'], inner=0),
+     circle_params(px=0, py=0, pz=offset, amp=amp, dia=dia, rot_ang=[], rot_ax=[], inner=0),
+     circle_params(px=0, py=0, pz=-offset, amp=-amp, dia=dia, rot_ang=[], rot_ax=[], inner=0)]
 
 class preset_mirror():
     # params defined below. Can turn into function args if u want them to be programmable.
@@ -73,4 +74,4 @@ class preset_cusp():
     ]
 
     # What gets created whenever the program needs to create a new coils input file due to the coils dir having no other files.
-default_coil = preset_mirror()
+default_coil = preset_=preset_hexahedron

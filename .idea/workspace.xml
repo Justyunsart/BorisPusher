@@ -4,20 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook">
-      <change afterPath="$PROJECT_DIR$/Scripts/system/imgs/zero_field.png" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="changed to the more appealing field GUI.">
+      <change afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/ys_3d_disk.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/Bob_e_Circle_Config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/Bob_e_Circle_Config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/tab_content.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/tab_content.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/widget.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/progress_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/progress_window.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/events/funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/funcs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/files/create.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/files/create.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/settings/defaults/coils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/defaults/coils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/system/temp_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/system/temp_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/definitions.py" beforeDir="false" afterPath="$PROJECT_DIR$/definitions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,63 +62,63 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.Python tests in e_graphing.py.executor": "Run",
-    "Python tests.Python tests in e_test.py.executor": "Run",
-    "Python tests.Python tests in e_things.py.executor": "Run",
-    "Python tests.Python tests in graphs.py.executor": "Run",
-    "Python.3DDisk.executor": "Run",
-    "Python.3DRing.executor": "Run",
-    "Python.Bob_e_Circle_Config.executor": "Run",
-    "Python.BorisGui.executor": "Run",
-    "Python.Efield3DRing_Version2.executor": "Run",
-    "Python.Efield3DRing_Version3.executor": "Run",
-    "Python.FieldMethods.executor": "Run",
-    "Python.FieldMethods_Impl.executor": "Run",
-    "Python.PlottingWindow.executor": "Run",
-    "Python.bob_e_rounding_test.executor": "Run",
-    "Python.collection_rotations.executor": "Run",
-    "Python.configs.executor": "Run",
-    "Python.dt_np.executor": "Run",
-    "Python.e_graphing.executor": "Run",
-    "Python.e_things.executor": "Run",
-    "Python.efieldring_4.executor": "Run",
-    "Python.file_write_speed.executor": "Run",
-    "Python.find_user_docs.executor": "Run",
-    "Python.funcs.executor": "Run",
-    "Python.fwysr_2.executor": "Run",
-    "Python.fwysr_2_graphs.executor": "Run",
-    "Python.fwysr_e_1.executor": "Run",
-    "Python.get_documents_path_win.executor": "Run",
-    "Python.graph_2.executor": "Run",
-    "Python.graphs.executor": "Run",
-    "Python.integrals.executor": "Run",
-    "Python.magpy4c1_01.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.menu_bar (1).executor": "Run",
-    "Python.menu_bar.executor": "Run",
-    "Python.multiprocessing_gui_freezing.executor": "Run",
-    "Python.output_file_structure.executor": "Run",
-    "Python.polarSpace.executor": "Run",
-    "Python.precision_error.executor": "Run",
-    "Python.read_last_used_binary.executor": "Run",
-    "Python.rotation_viewer.executor": "Run",
-    "Python.streamlines3Dring.executor": "Run",
-    "Python.widget.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/fwessel/PycharmProjects/BorisPusher/Scripts/calcs",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.Python tests in e_graphing.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in e_test.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in e_things.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in graphs.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.3DDisk.executor&quot;: &quot;Run&quot;,
+    &quot;Python.3DRing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Bob_e_Circle_Config.executor&quot;: &quot;Run&quot;,
+    &quot;Python.BorisGui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Efield3DRing_Version2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Efield3DRing_Version3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FieldMethods.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FieldMethods_Impl.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PlottingWindow.executor&quot;: &quot;Run&quot;,
+    &quot;Python.bob_e_rounding_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.collection_rotations.executor&quot;: &quot;Run&quot;,
+    &quot;Python.configs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dt_np.executor&quot;: &quot;Run&quot;,
+    &quot;Python.e_graphing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.e_things.executor&quot;: &quot;Run&quot;,
+    &quot;Python.efieldring_4.executor&quot;: &quot;Run&quot;,
+    &quot;Python.file_write_speed.executor&quot;: &quot;Run&quot;,
+    &quot;Python.find_user_docs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.funcs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.fwysr_2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.fwysr_2_graphs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.fwysr_e_1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.get_documents_path_win.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graph_2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graphs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.integrals.executor&quot;: &quot;Run&quot;,
+    &quot;Python.magpy4c1_01.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar.executor&quot;: &quot;Run&quot;,
+    &quot;Python.multiprocessing_gui_freezing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.output_file_structure.executor&quot;: &quot;Run&quot;,
+    &quot;Python.polarSpace.executor&quot;: &quot;Run&quot;,
+    &quot;Python.precision_error.executor&quot;: &quot;Run&quot;,
+    &quot;Python.read_last_used_binary.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rotation_viewer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.streamlines3Dring.executor&quot;: &quot;Run&quot;,
+    &quot;Python.widget.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/fwessel/PycharmProjects/BorisPusher/Scripts/calcs&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
@@ -349,15 +346,7 @@
       <workItem from="1751402007258" duration="23590000" />
       <workItem from="1751944702667" duration="10590000" />
       <workItem from="1752001876580" duration="3130000" />
-      <workItem from="1752005025300" duration="5629000" />
-    </task>
-    <task id="LOCAL-00004" summary="deleted a few user generated files so I can add them to .gitingore">
-      <option name="closed" value="true" />
-      <created>1747897324608</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1747897324608</updated>
+      <workItem from="1752005025300" duration="13990000" />
     </task>
     <task id="LOCAL-00005" summary="updated .gitignore">
       <option name="closed" value="true" />
@@ -743,7 +732,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751932917567</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="changed to the more appealing field GUI.">
+      <option name="closed" value="true" />
+      <created>1752011069248</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1752011069248</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -761,7 +758,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="reimplemented the rotations window autoclosing when clicking away from it. Now doesn't flag false positives when clicking within the window" />
     <MESSAGE value="added more failsafes to file reading; if the name of the file doesn't exist, doesn't try to read it" />
     <MESSAGE value="the progress window now closes automatically after a simulation finishes running and writing" />
     <MESSAGE value="updated graphs" />
@@ -786,7 +782,8 @@
     <MESSAGE value="added new e-field method that is a straightforward implementation of the standard form" />
     <MESSAGE value="added a rotation viewer in the testing folder" />
     <MESSAGE value="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook" />
-    <option name="LAST_COMMIT_MESSAGE" value="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook" />
+    <MESSAGE value="changed to the more appealing field GUI." />
+    <option name="LAST_COMMIT_MESSAGE" value="changed to the more appealing field GUI." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -854,7 +851,7 @@
     <SUITE FILE_PATH="coverage/BorisPusher$fwysr_e_1.coverage" NAME="fwysr_e_1 Coverage Results" MODIFIED="1751932280187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
     <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods_Impl.coverage" NAME="FieldMethods_Impl Coverage Results" MODIFIED="1750118600099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
-    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1752010564028" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1752019442174" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
     <SUITE FILE_PATH="coverage/BorisPusher$read_last_used_binary.coverage" NAME="read_last_used_binary Coverage Results" MODIFIED="1750885270926" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$e_graphing.coverage" NAME="e_graphing Coverage Results" MODIFIED="1751495005656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
     <SUITE FILE_PATH="coverage/BorisPusher$PlottingWindow.coverage" NAME="PlottingWindow Coverage Results" MODIFIED="1748898945754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />

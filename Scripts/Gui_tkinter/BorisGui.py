@@ -10,7 +10,7 @@ from Gui_tkinter.funcs.GuiHelpers import *
 from Gui_tkinter.widgets.BorisGuiClasses import *
 from Gui_tkinter.widgets.ScrollableFrame import ScrollableFrame
 from Gui_tkinter.widgets.PlottingWindow import PlottingWindowObj, on_main_notebook_tab_changed
-from definitions import (DIR_ROOT, DIR_CONFIG, NAME_INPUTS, NAME_COILS, NAME_PARTICLES, NAME_BOB_E_CHARGES, NAME_lastUsed, NAME_OUTPUTS)
+from definitions import (DIR_ROOT, DIR_CONFIG, NAME_INPUTS, NAME_COILS, NAME_PARTICLES, NAME_lastUsed, NAME_OUTPUTS)
 import configparser
 from system.Observer import Data
 from system.path import Path
@@ -74,7 +74,7 @@ def OpenGUI(manager):
     DIR_Coil = Path(os.path.join(DIR_Inputs.data, NAME_COILS), NAME_COILS)
     #DIR_coilDefs = os.path.join(DIR_Inputs, NAME_COILS)
     DIR_lastUsed = Path(os.path.join(DIR_Inputs.data, NAME_lastUsed), NAME_lastUsed)
-    DIR_Bob = Path(os.path.join(DIR_Inputs.data, NAME_BOB_E_CHARGES), NAME_BOB_E_CHARGES)
+    DIR_Bob = Path(os.path.join(DIR_Inputs.data, "bob_e"), "bob_e")
 
     DIR_Output = Path(os.path.join(DIR_ROOT, NAME_OUTPUTS), NAME_OUTPUTS) # output is not a subdir of Inputs so it's spared from the next step
 
@@ -158,18 +158,21 @@ def OpenGUI(manager):
     b_field_labelFrame = ttk.LabelFrame(calc_debug_frame, text="B-Field")
     e_field_labelFrame = ttk.LabelFrame(calc_debug_frame, text="E-Field")
 
-    field_notebook = Field_Notebook(b_field_labelFrame, ['zero', 'magpy'], [ZeroTableTab, RingTableTab],
+    field_notebook = Field_Notebook(b_field_labelFrame, ['zero', 'magpy'],
+                                    [ZeroTableTab, RingTableTab],
                                     collection_key=(param_keys.field_methods.name, 'b', param_keys.params.name, 'collection'),
                                     tab_key=(param_keys.field_methods.name, 'b', 'method'),
-                                    dataclass = CircleCurrentConfig,
-                                    dir_name="CoilConfigurations",
+                                    dataclasses = [None, CircleCurrentConfig],
+                                    dir_names=[None, "CoilConfigurations"],
                                     path_key='coil_file')
     field_notebook.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
 
-    e_field_notebook = Field_Notebook(e_field_labelFrame, ['zero', 'bob_e', 'fw_e'], [ZeroTableTab, RingTableTab, RingTableTab],
+    e_field_notebook = Field_Notebook(e_field_labelFrame, ['zero', 'bob_e', 'fw_e', 'disk_e'],
+                                      [ZeroTableTab, RingTableTab, RingTableTab, DiskTab],
                                     collection_key=(param_keys.field_methods.name, 'e', param_keys.params.name, 'collection'),
                                     tab_key=(param_keys.field_methods.name, 'e', 'method'),
-                                    dataclass= Bob_e_Config_Dataclass)
+                                    dataclasses= [None, Bob_e_Config_Dataclass, Bob_e_Config_Dataclass, Disk_e_Config_Dataclass],
+                                    dir_names=[None, 'bob_e', 'bob_e', 'Disks'])
     e_field_notebook.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
 
     b_field_labelFrame.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
