@@ -1,3 +1,14 @@
+"""
+This script generates and plots the 2D electric field produced by a charged ring.
+Plots include a streamline, contour, and line-outs for the radial and axial magnitudes.
+It demonstrates how to include a variable in a matplotlib legend using LaTeX-style
+math symbols. The script also shows best practices for documenting and labeling
+plots for clear presentation.
+
+Author: F. Wessel
+Date: July 8, 2025
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.constants import epsilon_0
@@ -33,37 +44,27 @@ def compute_field(r, z):
     # E_z = (1 / (4 * np.pi * epsilon_0)) * lambda_ * a * z * int_Ez
     return E_r, E_z
 
-# Grid setup in r-z plane
+# Grid setup in r-z plane, streamplot requires 2D Cartesian grid
 r_vals = np.linspace(0.1, 2.0, 300)
 z_vals = np.linspace(0.01, 2.0, 100)
 R, Z = np.meshgrid(r_vals, z_vals)
 
-# Compute field components
+# Compute field components and magnitude
 E_r = np.zeros_like(R)
 E_z = np.zeros_like(Z)
-
 for i in range(R.shape[0]):
     for j in range(R.shape[1]):
         E_r[i, j], E_z[i, j] = compute_field(R[i, j], Z[i, j])
-# Compute field magnitude
 E_m = np.sqrt(E_r ** 2 + E_z ** 2)
 
 # cm = m.colors.LinearSegmentedColormap('viridis', 1024)
 
-# Streamplot requires 2D Cartesian grid
-X = R
-Y = Z
-U = E_r # radial
-V = E_z # axial
-W = E_m # magnitude
-
-
 # Plot streamlines and contours
 fig, axs = plt.subplots(2, 2, figsize=(14, 10))
 fig.suptitle('Uniformly Charged Ring: X-Y Plane at Z = 0 with $Q_{total} = 10^{-11}$ C') # or plt.suptitle('Main title')
-c1 = axs[0,0].streamplot(X, Y, U, V, color=np.sqrt(U**2 + V**2), cmap='plasma', density=1.2)
+c1 = axs[0,0].streamplot(R, Z, E_r, E_z, color=np.sqrt(E_r**2 + E_z**2), cmap='plasma', density=1.2)
 fig.colorbar(c1.lines, ax=axs[0,0], label='|E| (V/m)')
-c2 = axs[0,1].contourf(X, Y, W, levels=20, cmap='plasma')
+c2 = axs[0,1].contourf(R, Z, E_m, levels=20, cmap='plasma')
 fig.colorbar(c2, ax=axs[0,1], label='|E| (V/m)')
 # axs[0,0].axis('equal')
 # Draw a solid line on the plots
@@ -108,8 +109,7 @@ theta = np.linspace(0, 2 * np.pi, 500)
 dtheta = theta[1] - theta[0]
 cos_phi = np.cos(theta)
 
-# Compute E_rho and E_z for each radial point at fixed height
-
+# Compute line outs for E_rho and E_z at fixed height
 # @njit()
 for rho in r_vals:
     D2 = np.sqrt(rho ** 2 + a ** 2 - 2 * rho * a * cos_phi + z_fixed ** 2)
@@ -122,11 +122,11 @@ for rho in r_vals:
 
     E_rho_vals.append(E_rho)
     E_z_vals.append(E_z)
-
 # Scale both components by the Coulomb constant
 # prefactor = lambda_ * R / (4 * np.pi * epsilon_0)
 E_rho_vals = prefactor * np.array(E_rho_vals)
 E_z_vals = prefactor * np.array(E_z_vals)
+
 rho1 = 100
 rho2 = 180
 c5 = axs[1,0].plot(r_vals[rho1:rho2], E_rho_vals[rho1:rho2], label=r'$|E_r|$', color='blue')
