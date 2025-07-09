@@ -84,42 +84,34 @@ axs[0,1].set_xlabel(r'$\rho$ (m)')
 axs[0,1].set_ylabel(r'$z$ (m)')
 axs[0,1].legend()
 
-# c3 = axs[1,0].contourf(X, Y, U, levels=50, cmap='plasma')
-# c4 = axs[2,0].contourf(X, Y, V, levels=50, cmap='plasma')
-
-# Display a circular ring in r-z plane, centered at z = 0
-# theta_ring = np.linspace(0, 2 * np.pi, 200)
-# ring_x = a * np.cos(theta_ring)
-# ring_y = a * np.sin(theta_ring)
-# ax.plot(ring_x, ring_y, 'r', linewidth=2, label='Ring of Charge')
-
-# Labels and formatting
-# axs[1,0].set_title('$|\\vec{E}|$ Radial Component, $|\\vec{E_r}|$')
-# axs[2,0].set_title('$|\\vec{E}|$ Axial Component, $|\\vec{E_z}|$')
-# axs[2,0].set_xlabel('r (m)')
-# axs[2,0].set_ylabel('z (m)')
-# fig.colorbar(c3, ax=axs[1,0], label='Field Magnitude (a.u.)')
-# fig.colorbar(c4, ax=axs[2,0], label='Field Magnitude (a.u.)')
-
-
+# Compute line outs for E_rho and E_z at fixed height
 z_fixed = 0.01  # 1 mm above the ring
+z_lo_vals = np.array([np.min(z_vals) + 0.005, 5 * np.min(z_vals), 10 * np.min(z_vals), 50 * np.min(z_vals)])
+rho_line = np.linspace(0.001, 1.5, 400)
 E_rho_vals = []
 E_z_vals = []
 theta = np.linspace(0, 2 * np.pi, 500)
 dtheta = theta[1] - theta[0]
 cos_phi = np.cos(theta)
 
-# Compute line outs for E_rho and E_z at fixed height
+# for z_lineout in z_lo_vals:
+#     lineout_val = np.argmin(np.abs(z_vals - z_lineout))
+#     closest_value = z_vals[lineout_val]
+#     index = lineout_val
+#     for i in range(len(rho_line)):
+#         E_rho_line[i], E_z_line[i] = (compute_single_point_fields(rho_line[i], z_lineout, r_vals, theta_vals, dr, dtheta))
+#     c3 = axs[1,0].plot(rho_line, np.abs(E_rho_line), label= fr'z = {z_lineout} mm')
+#     c4 = axs[1,1].plot(rho_line, np.abs(E_z_line), label = fr'z = {z_lineout} mm')
+#     axs[1,0].legend()
+#     axs[1,1].legend()
+#
 # @njit()
 for rho in r_vals:
     D2 = np.sqrt(rho ** 2 + a ** 2 - 2 * rho * a * cos_phi + z_fixed ** 2)
-
     dE_rho = (rho - a * cos_phi) / D2 ** 3
     dE_z = z_fixed / D2 ** 3
-
     E_rho = np.sum(dE_rho) * dtheta
     E_z = np.sum(dE_z) * dtheta
-
     E_rho_vals.append(E_rho)
     E_z_vals.append(E_z)
 # Scale both components by the Coulomb constant
