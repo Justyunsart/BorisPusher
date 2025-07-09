@@ -508,6 +508,14 @@ class Bob_e_Config_Dataclass():
             del out['Rotations']
         return out
 
+@dataclass
+class Disk_e_Config_Dataclass(Bob_e_Config_Dataclass):
+    Inner_r: EntryTableParam = field(init=False)
+
+    def __init__(self, frame, px = 0, py = 0, pz = 0, q=0.00000000001, dia = 1, rotation_angles = [], rotation_axes = [], inner=0.5):
+        super().__init__(frame, px = 0, py = 0, pz = 0, q=0.00000000001, dia = 1, rotation_angles = [], rotation_axes = [],)
+        self.Inner_r = EntryTableParam(inner, master=frame)
+        self.iterables.append(self.Inner_r)
 
 @dataclass
 class RotationConfig():

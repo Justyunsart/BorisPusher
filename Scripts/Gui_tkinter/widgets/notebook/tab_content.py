@@ -2,13 +2,13 @@ from Gui_tkinter.funcs.GuiEntryHelpers import LabeledEntry
 from Gui_tkinter.widgets.Bob_e_Circle_Config import Bob_e_Circle_Config
 from settings.configs.funcs.config_reader import runtime_configs
 from definitions import NAME_BOB_E_CHARGES
-from system.temp_file_names import param_keys
+from system.temp_file_names import param_keys, m1f1
 import tkinter as tk
 import os
 from PIL import ImageTk, Image
 import definitions
 
-
+from system.temp_manager import update_temp, TEMPMANAGER_MANAGER
 """
 There are currently two expected values for the field configuration notebook's individual tab widgets.
 
@@ -77,3 +77,27 @@ class RingTableTab(tk.Frame):
             listener.update(
                 [param_keys.field_methods.name, 'e', param_keys.params.name, 'res'],
                 self.res.value.get())
+
+class DiskTab(RingTableTab):
+    def __init__(self, parent, dir_name, *args, **kwargs):
+        RingTableTab.__init__(self, parent, dir_name, *args, **kwargs)
+
+        # update the instanced version of the entryvalidatecallback to the modified one
+        self._modify_entryvalidate_callback()
+
+    def _modify_entryvalidate_callback(self):
+        print("I am modifying entry validate callback")
+        print("Monkey-patching EntryValidateCallback...")
+        print("Wrapped func:", self.table.entry_table.GraphCoils)
+        original_method = self.table.entry_table.GraphCoils
+
+        def wrapped_func(*args, **kwargs):
+            print(f"HEY HEY HEY")
+            original_method(*args, **kwargs)
+            data = self.table.entry_table.GetData()
+            print("Data fetched:", data)
+            innies = data['Inner_r']
+            update_temp(TEMPMANAGER_MANAGER.files[m1f1], {"field_methods":{'e':{"params":{"Inner_r" : innies}}}})
+
+        self.table.entry_table.GraphCoils = wrapped_func
+        print("EntryValidateCallback at runtime:", self.table.entry_table.GraphCoils)

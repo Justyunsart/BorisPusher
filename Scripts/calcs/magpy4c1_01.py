@@ -137,6 +137,7 @@ def Bob_e(coord, args, collection):
 
     return np.sum(es, axis=0) # sum the E field components column-wise
 
+from EFieldFJW.ys_3d_disk import compute_disk_with_collection
 def EfieldX(p:np.ndarray, E_Method, fromTemp, executor):
     """
     Controller for what E method is used.
@@ -153,11 +154,16 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp, executor):
         case "bob_e":
             E = Bob_e(p, fromTemp["field_methods"]['e']['params'], fromTemp["field_methods"]['e']['params']['collection'])
             np.empty(0).sum()  # force numpy thread finish
-            print(f"Bob_e says E is: {E}")
+            #print(f"Bob_e says E is: {E}")
         case "fw_e":
             # call the appropriate function to get the value
             E = compute_field(p, fromTemp["field_methods"]['e']['params']['collection'], int(fromTemp["field_methods"]['e']['params']['res']), executor)
             np.empty(0).sum()  # force numpy thread finish
+        case 'disk_e':
+            cyl = toCyl(p)
+
+            #E = compute_fields(rho=cyl[0], z=cyl[2], Q=)
+
             
     return np.array(E)
 

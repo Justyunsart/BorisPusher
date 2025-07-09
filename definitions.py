@@ -17,9 +17,9 @@ NAME_USR_CONFIG = "user_configs.ini"
 NAME_INPUTS = "Inputs"
 NAME_COILS = "CoilConfigurations"
 NAME_PARTICLES = "ParticleConditions"
-NAME_BOB_E_CHARGES = "Bobs"
+NAME_DISKS = "Disks"
 NAME_lastUsed = "lastUsed" # a text file holding the last used configs.
-
+NAME_BOB_E_CHARGES = "Bobs"
 NAME_OUTPUTS = "Outputs"
 
 # DIRECTORIES
@@ -33,4 +33,4 @@ _input_preset = "Presets" # name of the presets folder, if present.
 FOLDER_INPUTS = { # subdirs of the inputs folder
     NAME_COILS:[_input_preset], 
     NAME_PARTICLES:[_input_preset], 
-    NAME_BOB_E_CHARGES:[_input_preset]}
+    NAME_DISKS:[_input_preset]}
