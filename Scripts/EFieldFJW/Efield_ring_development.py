@@ -94,28 +94,29 @@ theta = np.linspace(0, 2 * np.pi, 500)
 dtheta = theta[1] - theta[0]
 cos_phi = np.cos(theta)
 
-# for z_lineout in z_lo_vals:
-#     lineout_val = np.argmin(np.abs(z_vals - z_lineout))
-#     closest_value = z_vals[lineout_val]
-#     index = lineout_val
-#     for i in range(len(rho_line)):
-#         E_rho_line[i], E_z_line[i] = (compute_single_point_fields(rho_line[i], z_lineout, r_vals, theta_vals, dr, dtheta))
-#     c3 = axs[1,0].plot(rho_line, np.abs(E_rho_line), label= fr'z = {z_lineout} mm')
-#     c4 = axs[1,1].plot(rho_line, np.abs(E_z_line), label = fr'z = {z_lineout} mm')
-#     axs[1,0].legend()
-#     axs[1,1].legend()
+for z_lineout in z_lo_vals:
+    lineout_val = np.argmin(np.abs(z_vals - z_lineout))
+    closest_value = z_vals[lineout_val]
+    index = lineout_val
+    for rho in r_vals:
+        D2 = np.sqrt(rho ** 2 + a ** 2 - 2 * rho * a * cos_phi + lineout_val ** 2)
+        dE_rho = (rho - a * cos_phi) / D2 ** 3
+        dE_z = lineout_val / D2 ** 3
+        E_rho = np.sum(dE_rho) * dtheta
+        E_z = np.sum(dE_z) * dtheta
+        E_rho_vals.append(E_rho)
+        E_z_vals.append(E_z)
+    # axs[1,0].plot(rho_line, np.abs(E_rho_line), label= fr'z = {z_lineout} mm')
+    # axs[1,1].plot(rho_line, np.abs(E_z_line), label = fr'z = {z_lineout} mm')
+    # axs[1,0].legend()
+    # axs[1,1].legend()
+
+    # for i in range(len(rho_line)):
+    #     E_rho_line[i], E_z_line[i] = (compute_single_point_fields(rho_line[i], z_lineout, r_vals, theta_vals, dr, dtheta))
 #
 # @njit()
-for rho in r_vals:
-    D2 = np.sqrt(rho ** 2 + a ** 2 - 2 * rho * a * cos_phi + z_fixed ** 2)
-    dE_rho = (rho - a * cos_phi) / D2 ** 3
-    dE_z = z_fixed / D2 ** 3
-    E_rho = np.sum(dE_rho) * dtheta
-    E_z = np.sum(dE_z) * dtheta
-    E_rho_vals.append(E_rho)
-    E_z_vals.append(E_z)
+
 # Scale both components by the Coulomb constant
-# prefactor = lambda_ * R / (4 * np.pi * epsilon_0)
 E_rho_vals = prefactor * np.array(E_rho_vals)
 E_z_vals = prefactor * np.array(E_z_vals)
 
