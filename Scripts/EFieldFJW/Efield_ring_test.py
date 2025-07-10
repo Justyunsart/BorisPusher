@@ -13,9 +13,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.constants import epsilon_0
 from numba import njit, prange
-
-from Gaussian.bessel import theta
-
 # import matplotlib as m
 # Computes the electric field due to a uniformly charged ring.
 # Plots data for the radial and axial field components
@@ -49,7 +46,7 @@ def compute_field(r, z):
 
 # Grid setup in r-z plane, streamplot requires 2D Cartesian grid
 r_vals = np.linspace(0.1, 2.0, 300)
-z_vals = np.linspace(0.01, 2.0, 100)
+z_vals = np.linspace(0.01, 2.0, 300)
 R, Z = np.meshgrid(r_vals, z_vals)
 
 # Compute field components and magnitude
@@ -59,8 +56,6 @@ for i in range(R.shape[0]):
     for j in range(R.shape[1]):
         E_r[i, j], E_z[i, j] = compute_field(R[i, j], Z[i, j])
 E_m = np.sqrt(E_r ** 2 + E_z ** 2)
-
-# cm = m.colors.LinearSegmentedColormap('viridis', 1024)
 
 # Plot streamlines and contours
 fig, axs = plt.subplots(2, 2, figsize=(14, 10))
@@ -87,79 +82,10 @@ axs[0,1].set_xlabel(r'$\rho$ (m)')
 axs[0,1].set_ylabel(r'$z$ (m)')
 axs[0,1].legend()
 
-# Compute line outs for E_rho and E_z at fixed height
-z_fixed = 0.01  # 1 mm above the ring
-z_lo_vals = np.array([np.min(z_vals) + 0.005, 5 * np.min(z_vals), 10 * np.min(z_vals), 50 * np.min(z_vals)])
-rho_line = np.linspace(0.001, 1.5, 400)
-E_rho_lo = np.zeros_like(rho_line)
-E_z_lo = np.zeros_like(rho_line)
-theta = np.linspace(0, 2 * np.pi, 500)
-dtheta = theta[1] - theta[0]
-cos_phi = np.cos(theta)
-
-for z_lineout in z_lo_vals:
-    lineout_val = np.argmin(np.abs(z_vals - z_lineout))
-    print(lineout_val)
-    closest_value = z_vals[lineout_val]
-    print(closest_value)
-    index = lineout_val
-    print(index)
-    for m in range(len(r_vals)):
-        rho = r_vals[m]
-        for n in range(len(theta)):
-            dtheta = theta[n]
-            D2 = np.sqrt(rho ** 2 + a ** 2 - 2 * rho * a * cos_phi + lineout_val ** 2)
-            dE_rho = (rho - a * cos_phi) / D2 ** 3
-            dE_z = lineout_val / D2 ** 3
-        E_rho = np.sum(dE_rho) * dtheta
-        E_z = np.sum(dE_z) * dtheta
-        E_rho.append(E_rho)
-        E_z.append(E_z)
-# E_rho_vals = prefactor * np.array(E_rho_vals)
-# E_z_vals = prefactor * np.array(E_z_vals)
-
-    # E_rho_vals = prefactor * np.array(E_rho_vals)
-    # E_z_vals = prefactor * np.array(E_z_vals)
-#     # axs[1,0].plot(rho_line, np.abs(E_rho_line), label= fr'z = {z_lineout} mm')
-#     # axs[1,1].plot(rho_line, np.abs(E_z_line), label = fr'z = {z_lineout} mm')
-#     # axs[1,0].legend()
-#     # axs[1,1].legend()
-#
-#     # for i in range(len(rho_line)):
-#     #     E_rho_line[i], E_z_line[i] = (compute_single_point_fields(rho_line[i], z_lineout, r_vals, theta_vals, dr, dtheta))
-# #
-# @njit()
-# for rho in r_vals:
-#     D2 = np.sqrt(rho ** 2 + a ** 2 - 2 * rho * a * cos_phi + z_fixed ** 2)
-#     dE_rho = (rho - a * cos_phi) / D2 ** 3
-#     dE_z = z_fixed / D2 ** 3
-#     E_rho = np.sum(dE_rho) * dtheta
-#     E_z = np.sum(dE_z) * dtheta
-#     E_rho_vals.append(E_rho)
-#     E_z_vals.append(E_z)
-
-# Scale both components by the Coulomb constant
-# prefactor = lambda_ * R / (4 * np.pi * epsilon_0)
-
 rho1 = 100
 rho2 = 180
-c5 = axs[1,0].plot(r_vals[rho1:rho2], E_rho_lo[rho1:rho2], label=r'$|E_r|$', color='blue')
-c6 = axs[1,1].plot(r_vals[rho1:rho2], E_z_lo[rho1:rho2], label=r'$|E_z|$', color='green')
-axs[1,0].set_title('Line-Out for the Radial E Field  at z =  10 mm')
-axs[1,1].set_title('Line-Out for the Axial E Field  at z =  10 mm')
-axs[1,0].set_xlabel(r'$\rho$ (m)')
-axs[1,1].set_xlabel(r'$\rho$ (m)')
-axs[1,0].set_ylabel('Electric field magnitude (V/m)')
-axs[1,1].set_ylabel('Electric field magnitude (V/m)')
-axs[1,0].grid(True)
-axs[1,1].grid(True)
+axs[1,0].plot(r_vals, E_r[ : , 100 ], label=r'$|E_r|$', color='blue')
+axs[1,1].plot(r_vals, E_z[ : , 100 ], label=r'$|E_r|$', color='blue')
 
 plt.show()
 
-# axs[1,0].set_ylabel('z (m)')
-# axs[2,1].set_xlabel('r (m)')
-# axs[2,1].set_ylabel('Magnitude (V/m)')
-# axs[2,0].legend()
-# axs[2,1].legend()
-
-# plt.tight_layout()

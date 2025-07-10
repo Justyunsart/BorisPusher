@@ -33,8 +33,13 @@ rho_vals = np.linspace(0.01, 1.5, 200)
 z_vals = np.linspace(0.01, 1, 200)
 
 RHO, Z = np.meshgrid(rho_vals, z_vals)
+#print(RHO.shape)
+#_g = np.column_stack((RHO, Z))
+#print(_g.shape)
+
 E_rho = np.zeros_like(RHO)
 E_z = np.zeros_like(Z)
+
 
 @njit(parallel=True)
 def compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta):
@@ -65,7 +70,7 @@ def compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta)
 compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta)
 E_mag = np.sqrt(E_rho**2 + E_z**2)
 
-@njit()
+# @njit()
 def compute_single_point_fields(rho, z, r_vals, theta_vals, dr, dtheta):
     Erho_sum = 0.0
     Ez_sum = 0.0
@@ -85,7 +90,7 @@ def compute_single_point_fields(rho, z, r_vals, theta_vals, dr, dtheta):
 
 # Plot
 # levels = np.linspace(0, 1.0, 10, endpoint=True)
-fig, axs = plt.subplots(2, 2, figsize=(14, 10))
+fig, axs = plt.subplots(3, 2, figsize=(14, 10))
 fig.suptitle('Uniformly Charged Disk: X-Y Plane at Z = 0 with $Q_{total} = 10^{-11}$ C') # or plt.suptitle('Main title')
 c1 = axs[0,0].streamplot(RHO, Z, E_rho, E_z, color=np.sqrt(E_rho**2 + E_z**2), cmap='plasma', density=1.2)
 c2 = axs[0,1].contourf(RHO, Z, E_mag, levels=20, cmap='plasma')
@@ -106,7 +111,7 @@ axs[0,1].legend()
 axs[0,1].grid(True)
 axs[0,0].set_title('$\\vec{E}$ Field Streamlines')
 axs[0,1].set_title('$\\vec{E}$ Field Magnitude $|\\vec{E}|$')
-
+#
 # Calculate line-out fields Erho and Ez along radius, for variable z positions
 z_lo_vals = np.array([np.min(z_vals) + 0.005, 5 * np.min(z_vals), 10 * np.min(z_vals), 50 * np.min(z_vals)])
 rho_line = np.linspace(0.001, 1.5, 400)
@@ -126,10 +131,33 @@ for z_lineout in z_lo_vals:
 axs[1,0].set_xlabel(r'$\rho$ (m)')
 axs[1,0].set_ylabel('Electric field magnitude (V/m)')
 axs[1,0].set_title(fr'Line-Outs for the Radial Field Magnitude, $|E_\rho|$')
-axs[1,0].grid(True)
 axs[1,1].set_xlabel(r'$\rho$ (m)')
 axs[1,1].set_ylabel('Electric field magnitude (V/m)')
 axs[1,1].set_title(fr'Line-Outs for the Axial Field Magnitude, $|E_z|$')
+axs[1,0].grid(True)
 axs[1,1].grid(True)
+
+rho1 = 100
+rho2 = 180
+z_lo_vals = np.array([np.min(z_vals) + 0.005, 5 * np.min(z_vals), 10 * np.min(z_vals), 50 * np.min(z_vals)])
+for z_lineout in z_lo_vals:
+    lineout_val = np.argmin(np.abs(z_vals - z_lineout))
+    # print(lineout_val)
+    closest_value = z_vals[lineout_val]
+    # print(closest_value)
+    index = lineout_val
+    # print(index)
+    axs[2,0].plot(rho_vals, E_rho[lineout_val, :], label= fr'{z_lineout} mm')
+    axs[2,1].plot(rho_vals, E_z[lineout_val, :], label = fr'{z_lineout} mm')
+    axs[2,0].legend()
+    axs[2,1].legend()
+axs[2,0].set_title(fr'Line-Outs for the Radial Field Magnitude, $|E_\rho|$, z = ')
+axs[2,1].set_title(fr'Line-Outs for the Radial Field Magnitude, $|E_z|$, z = ')
+axs[2,0].set_xlabel(r'$\rho$ (m)')
+axs[2,1].set_ylabel('Electric field magnitude (V/m)')
+axs[2,1].set_xlabel(r'$\rho$ (m)')
+axs[2,1].set_ylabel('Electric field magnitude (V/m)')
+axs[2,0].grid(True)
+axs[2,1].grid(True)
 # plt.tight_layout()
 plt.show()
