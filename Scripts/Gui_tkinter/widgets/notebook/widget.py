@@ -69,7 +69,8 @@ class Field_Notebook(ttk.Notebook):
             # get the dir of the input folder to look at
             #dir = os.path.join(runtime_configs['Paths']['inputs'], dir_names[i])
             for i in range(len(self.tab_names)):
-                self.add(self.tab_widgets[i](self, collection_key=self.collection_key, dataclass=dataclasses[i], dir_name=dir_names[i], path_key=path_key), text=self.tab_names[i])
+                self.add(self.tab_widgets[i](self, collection_key=self.collection_key, dataclass=dataclasses[i],
+                                             dir_name=dir_names[i], path_key=path_key), text=self.tab_names[i])
 
         _add_notebook_tabs()
         self.bind('<<NotebookTabChanged>>', self.on_tab_change)
@@ -108,14 +109,20 @@ class Field_Notebook(ttk.Notebook):
                 d = d.setdefault(key, {})  # ensures intermediate dicts exist
             d[keys[-1]] = value
         # get the widget tab name
-        tab_id = self.select()
-        text = self.tab(tab_id, "text")
+        tab_id = self.select() # reference to the active tab
+        text = self.tab(tab_id, "text") # get the name of the tab (what u see on GUI)
 
         # read the dictionary
         d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
 
         # set the nested key to the updated value
-        set_nested_value(d, self.tab_key, text)
+        set_nested_value(d, list(self.tab_key), text)
 
         # write the updated dict to the file
         write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+
+        # also, run logic for the tabs (that they should upon becoming active)
+        try:
+            tab_id.onActive(self.tab_key, self.collection_key, text)
+        except AttributeError:
+            pass

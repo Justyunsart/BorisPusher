@@ -462,7 +462,7 @@ class EntryTable():
         out[keyBase] = pd.DataFrame(self.GetEntries())
         return out
     
-    def Read_Data(self, dir=None, eval_ind=None, **kwargs):
+    def Read_Data(self, dir=None, eval_ind=None, dct=False, **kwargs):
         '''
         look at the dir of the selected input file, then turn it into rows on the entry table
         (param: ) dir: a string path to the input file to read. It defaults to None, so that just calling the function will read the currently selected value from the corresponding dropdown instead. 
@@ -503,7 +503,10 @@ class EntryTable():
             for i in eval_ind:
                 data.iloc[:,i] = data.iloc[:,i].apply(lambda x: [x])
         #print(data)
-        data = data.values.tolist()
+        if dct:
+            data = data.to_dict(orient='records')
+        else:
+            data = data.values.tolist()
         #print(data)
         return data
     
@@ -772,7 +775,7 @@ class CurrentEntryTable(EntryTable):
 
             # Update tempfile entry for the coil collection object.
         self._updateTempFile(self.collection_key, self.collection)
-        print(f"Collection updated: {self.collection_key}")
+        #print(f"Collection updated: {self.collection_key}")
         return True
 
     def EntryValidateCallback(self, entry, check_float=True):
@@ -836,7 +839,7 @@ class CurrentEntryTable(EntryTable):
         """
         #print(self.dirWidget.dir.path.data)
 
-        data = super().Read_Data(dir=dir, eval_ind=self.data.eval_inds)
+        data = super().Read_Data(dir=dir, eval_ind=self.data.eval_inds, dct=True)
 
         # REMINDER: these dataclass specific info. should be contained within the class instances instead.
         coils = []
@@ -844,7 +847,7 @@ class CurrentEntryTable(EntryTable):
         for row in data:
             # unpack each row as a coil arg.
             # each dataclass is constructed like: master, *args
-            coil = self.data(self.frame1, *row)
+            coil = self.data(self.frame1, **row)
             coils.append(coil)
 
         self.Finalize_Reading(coils)
@@ -907,9 +910,10 @@ class CurrentEntryTable(EntryTable):
         parsed = []
         for row in info:
             # MAKE SURE THE PRESETS HAVE THE SAME ORDER OF INSTANCE ATTRIBUTES AS THE DATACLASS CONSTRUCTOR!!
-            row_values = list(row.__dict__.values()) # all the instance attributes as a list.
+            row_values = row.__dict__
+            #print(row_values)
             # the row_values list is passed as positional arguments.
-            parsed.append(self.data(self.frame1, *row_values))
+            parsed.append(self.data(self.frame1, **row_values))
         #print(parsed)
         self.Finalize_Reading(parsed, graph=graph)
 

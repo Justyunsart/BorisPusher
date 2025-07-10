@@ -218,8 +218,8 @@ class TimeStep_n_NumStep():
         self.do_bob_widgets.var_ref_p.trace_add('write', self.get_ref_position)
         for w in self.do_bob_widgets.entries:
             w.bind('<KeyRelease>', partial(self.get_dt_consts, w, True))
-        self.get_ref_position()
-        self.get_dt_consts(None)
+        #self.get_ref_position()
+        #self.get_dt_consts(None)
 
     """
     call the bob dt constants funcs
@@ -238,21 +238,36 @@ class TimeStep_n_NumStep():
     get the location of the ref particle when bob_dt is used.
     """
     def get_ref_position(self, *args):
-        c = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])[param_keys.field_methods.name]['b']['params']['collection'][0].position
-        pos = c * self.do_bob_widgets.var_ref_p.get()
-        self.ref_p_var.set(str(pos))
-        return pos
+        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+
+        if d[param_keys.field_methods.name]['b']['method'] != 'zero':
+            c = d[param_keys.field_methods.name]['b']['params']['collection'][0].position
+            pos = c * self.do_bob_widgets.var_ref_p.get()
+            self.ref_p_var.set(str(pos))
+            return pos
+
+        return np.zeros(3)
 
     """
     Necessary for the observer pattern to work; a function of this name is expected to exist for all event subs
     """
-    def update(self, *args):
+    def update_bob_dt(self, *args):
+        """
+        This specific update is only run when bob_dt's checkmark is toggled
+        """
+        self.get_ref_position()
+        self.get_dt_consts(None)
+
+
+    def update(self, force_update=False, *args):
         """
         when the 'lim' Data in the current table is updated, you have to re-run the Dt size check.
         """
         self.dt_Callback()
-        self.get_ref_position()
-        self.get_dt_consts(None)
+        self.update_dt()
+        # update bob_dt params if needed
+        if self.do_bob.get() != 0 | force_update:
+            self.update_do_bob()
 
     def update_numsteps(self, *args):
         try:
@@ -267,8 +282,12 @@ class TimeStep_n_NumStep():
         write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
     def update_do_bob(self, *args):
-        d = {param_keys.dt_bob.name : int(self.do_bob.get())}
+        v = int(self.do_bob.get())
+        d = {param_keys.dt_bob.name : v}
         self.update_tempfile(d)
+
+        if v != 0:
+            self.update_bob_dt()
 
     def update_dt(self, *args):
         self.update_tempfile({"dt": float(self.dt.entry.get())})
@@ -353,8 +372,9 @@ class TimeStep_n_NumStep():
 
                 self.do_bob_widgets.var_ref_p.set(value=0)
                 self.do_bob_widgets.var_dyn_r.set(value=10)
-        self.update_do_bob()
-        self.update_numsteps()
-        self.dt_Callback()
-        self.update_dt()
+        self.update(force_update=True)
+        #self.update_do_bob()
+        #self.update_numsteps()
+        #self.dt_Callback()
+        #self.update_dt()
         self.do_bob_widgets.toggle_editability(self.do_bob)

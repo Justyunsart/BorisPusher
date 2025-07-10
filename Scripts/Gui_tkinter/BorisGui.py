@@ -295,6 +295,10 @@ def OpenGUI(manager):
     e_field.grid(row=1, column=0)
     """
 
+    ## Timestep stuff..
+    time_info = TimeStep_n_NumStep(CalcTimeStepFrame)
+    calc_frame1_scroll._add_Subscriber(time_info)
+
     # Graphing options for the field parameter settings.
     #field_graphs = FieldDropdown(EGraphFrame_for_Buttons, fm.FieldGraph_Methods, "Show me: ")
     #field_graphs.grid(row=0, column=0)
@@ -335,11 +339,6 @@ def OpenGUI(manager):
                                     x_label="X (m)",
                                     y_label="Y (A)")
     """
-
-    ## Timestep stuff..
-    time_info = TimeStep_n_NumStep(CalcTimeStepFrame)
-    calc_frame1_scroll._add_Subscriber(time_info)
-
     #=======#
     # FINAL #
     #=======#
@@ -374,6 +373,7 @@ def OpenGUI(manager):
     root.update()
     calc_frame1_scroll.RegisterScrollArea()
     #calc_frame3_scroll.RegisterScrollArea()
+
 
     """
     LOGIC FOR PASSING PARAMS BACK TO THE PROGRAM.

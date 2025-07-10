@@ -1,10 +1,12 @@
 import numpy as np
 from scipy.constants import epsilon_0
+from Alg.polarSpace import toCyl, toCart
+from concurrent.futures import as_completed
 
 thetas = np.linspace(0, 2 * np.pi, 200)
 dtheta = thetas[1] - thetas[0]
 
-def compute_fields(rho, z, Q, O_radius, I_radius=0):
+def compute_fields(rho, z, Q, O_radius, I_radius=0, orientation=None, th=0):
     sigma = Q / (np.pi * O_radius ** 2)  # charge density C/m^2
     prefactor = sigma / (4 * np.pi * epsilon_0)
 
@@ -33,22 +35,49 @@ def compute_fields(rho, z, Q, O_radius, I_radius=0):
     E_rho = prefactor * Erho
     E_z   = prefactor * Ez
 
-    return E_rho, E_z
+    # FORMAT OUTPUT
+    # convert result back to cartesian
+    E_raw = toCart(E_rho, th, E_z)
+    # apply forward rotation
+    E = orientation.apply(E_raw, inverse=False)
+
+    return E
 
 from magpylib import Collection
 from concurrent.futures import ThreadPoolExecutor
-from Alg.polarSpace import toCyl
 from functools import partial
-def compute_disk_with_collection(coord, collection:Collection, inners, executor:ThreadPoolExecutor):
-    # convert coordinate to cyl
-    cyl = toCyl(coord)
-    futures = np.empty(len(collection))
-    for i in range(len(collection)):
-        futures[i]=(executor.submit(compute_fields, rho=cyl[0], z=cyl[2], Q=collection[i].current,
-                                       O_radius=collection[i].diameter/2, I_radius=inners[i]))
-    out = np.empty((len(collection), 2))
-    for i in range(len(futures)):
-        out[i]= futures[i].result()
 
-    return np.sum(out, axis=0)
+def _field_step_1(coord, c, inners):
+    # orient point
+    p_oriented = c.orientation.apply(coord - c.position, inverse=True)
+    # convert coordinate to cyl
+    p_cyl = toCyl(p_oriented)
+
+    E = compute_fields(rho = p_cyl[0], z = p_cyl[2],
+                   Q = c.current,
+                   O_radius = c.diameter / 2,
+                   I_radius = inners,
+                   orientation = c.orientation,
+                   th = p_cyl[1])
+
+    return E
+
+def compute_disk_with_collection(coord, collection:Collection, inners, executor:ThreadPoolExecutor):
+    """
+    Needs to take in the point (in cartesian space), the collection, and a list of inner_radius values
+    and output the E-field (also in cartesian space)
+    """
+    # combine inners and collection children to a dict so map can iterate over them at the same time
+
+
+    # GET THE E RHO AND E ZETA
+    futures=[executor.submit(_field_step_1, coord, c, inners)
+             for c, inners in zip(collection.children, np.array(inners, dtype=np.float64))]
+
+    out = []
+    # populate E container with results from each ring (all values are rotated back)
+    for future in as_completed(futures):
+        out.append(future.result())
+
+    return np.sum(np.array(out), axis=0) # total E = sum by column
 
