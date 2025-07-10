@@ -21,11 +21,11 @@ class circle_params():
         self.PosX = px
         self.PosY = py
         self.PosZ = pz
-        self.Amp = amp
-        self.Dia = dia
-        self.Rot_ang = rot_ang
-        self.rot_ax = rot_ax
-        self.Inner = inner
+        self.Q = amp
+        self.Diameter = dia
+        self.RotationAngle = rot_ang
+        self.RotationAxis = rot_ax
+        self.Inner_r = inner
 
 class preset_hexahedron():
     # params defined below. Can turn into function args if u want them to be programmable.
@@ -74,4 +74,4 @@ class preset_cusp():
     ]
 
     # What gets created whenever the program needs to create a new coils input file due to the coils dir having no other files.
-default_coil = preset_=preset_hexahedron
+default_coil = preset_hexahedron

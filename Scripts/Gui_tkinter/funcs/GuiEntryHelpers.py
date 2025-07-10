@@ -456,21 +456,21 @@ class Bob_e_Config_Dataclass():
     eval_inds = (5, 6) # index reference of the rotation_angles and rotation_axes lists
     power_name = "Q"
 
-    def __init__(self, frame, px = 0, py = 0, pz = 0, q=0.00000000001, dia = 1, rotation_angles = [], rotation_axes = []):
-        self.PosX = EntryTableParam(px, master=frame)
-        self.PosY = EntryTableParam(py, master=frame)
-        self.PosZ = EntryTableParam(pz, master=frame)
+    def __init__(self, frame, PosX = 0, PosY = 0, PosZ = 0, Q = 1e5, Diameter = 1, RotationAngle = [], RotationAxis = []):
+        self.PosX = EntryTableParam(PosX, master=frame)
+        self.PosY = EntryTableParam(PosY, master=frame)
+        self.PosZ = EntryTableParam(PosZ, master=frame)
 
-        self.Q = EntryTableParam(q, master=frame)
-        self.Diameter = EntryTableParam(dia, master=frame)
+        self.Q = EntryTableParam(Q, master=frame)
+        self.Diameter = EntryTableParam(Diameter, master=frame)
 
         self.Rotations = EntryTableParam(None, widget=EntryButton, master=frame, text="Rotations")
 
         self.iterables = [self.PosX, self.PosY, self.PosZ, self.Q, self.Diameter, self.Rotations]
 
         # properties that are useful, and are hidden from iteration.
-        self.rotation_angles = rotation_angles
-        self.rotation_axes = rotation_axes
+        self.rotation_angles = RotationAngle
+        self.rotation_axes = RotationAxis
 
 
     @property
@@ -478,6 +478,10 @@ class Bob_e_Config_Dataclass():
         return self._rotation_angles
     @rotation_angles.setter
     def rotation_angles(self, val):
+        try:
+            val = ast.literal_eval(val)
+        except ValueError:
+            pass
         assert type(val) == list
         self._rotation_angles = val
 
@@ -486,6 +490,10 @@ class Bob_e_Config_Dataclass():
         return self._rotation_axes
     @rotation_axes.setter
     def rotation_axes(self, val):
+        try:
+            val = ast.literal_eval(val)
+        except ValueError:
+            pass
         assert type(val) == list
         self._rotation_axes = val
     
@@ -512,9 +520,9 @@ class Bob_e_Config_Dataclass():
 class Disk_e_Config_Dataclass(Bob_e_Config_Dataclass):
     Inner_r: EntryTableParam = field(init=False)
 
-    def __init__(self, frame, px = 0, py = 0, pz = 0, q=0.00000000001, dia = 1, rotation_angles = [], rotation_axes = [], inner=0.5):
-        super().__init__(frame, px = 0, py = 0, pz = 0, q=0.00000000001, dia = 1, rotation_angles = [], rotation_axes = [],)
-        self.Inner_r = EntryTableParam(inner, master=frame)
+    def __init__(self, frame, PosX = 0, PosY = 0, PosZ = 0, Q=0.00000000001, Diameter = 1, RotationAngle = [], RotationAxis = [], Inner_r=0.5):
+        super().__init__(frame=frame, PosX=PosX, PosY=PosY, PosZ=PosZ, Q=Q, Diameter=Diameter, RotationAngle=RotationAngle, RotationAxis=RotationAxis)
+        self.Inner_r = EntryTableParam(Inner_r, master=frame)
         self.iterables.append(self.Inner_r)
 
 @dataclass
@@ -561,27 +569,31 @@ class CircleCurrentConfig():
     eval_inds = (5, 6) # index reference of the rotation_angles and rotation_axes lists
     power_name = "Amp"
 
-    def __init__(self, frame, px = 0, py = 0, pz = 0, amp = 1e5, dia = 1, rotation_angles = [], rotation_axes = []):
-        self.PosX = EntryTableParam(px, master=frame)
-        self.PosY = EntryTableParam(py, master=frame)
-        self.PosZ = EntryTableParam(pz, master=frame)
+    def __init__(self, frame, PosX = 0, PosY = 0, PosZ = 0, Amp = 1e5, Diameter = 1, RotationAngle = [], RotationAxis = []):
+        self.PosX = EntryTableParam(PosX, master=frame)
+        self.PosY = EntryTableParam(PosY, master=frame)
+        self.PosZ = EntryTableParam(PosZ, master=frame)
 
-        self.Amp = EntryTableParam(amp, master=frame)
-        self.Diameter = EntryTableParam(dia, master=frame)
+        self.Amp = EntryTableParam(Amp, master=frame)
+        self.Diameter = EntryTableParam(Diameter, master=frame)
 
         self.Rotations = EntryTableParam(None, widget=EntryButton, master=frame, text="Rotations")
         
         self.iterables = [self.PosX, self.PosY, self.PosZ, self.Amp, self.Diameter, self.Rotations]
 
         # properties that are useful, and are hidden from iteration.
-        self._rotation_angles = rotation_angles
-        self._rotation_axes = rotation_axes
+        self._rotation_angles = RotationAngle
+        self._rotation_axes = RotationAxis
 
     @property
     def rotation_angles(self):
         return self._rotation_angles
     @rotation_angles.setter
     def rotation_angles(self, val):
+        try:
+            val = ast.literal_eval(val)
+        except ValueError:
+            pass
         assert type(val) == list
         self._rotation_angles = val
 
@@ -590,6 +602,10 @@ class CircleCurrentConfig():
         return self._rotation_axes
     @rotation_axes.setter
     def rotation_axes(self, val):
+        try:
+            val = ast.literal_eval(val)
+        except ValueError:
+            pass
         assert type(val) == list
         self._rotation_axes = val
 

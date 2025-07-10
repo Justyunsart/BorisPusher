@@ -8,7 +8,7 @@ import os
 from PIL import ImageTk, Image
 import definitions
 
-from system.temp_manager import update_temp, TEMPMANAGER_MANAGER
+from system.temp_manager import update_temp, TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
 """
 There are currently two expected values for the field configuration notebook's individual tab widgets.
 
@@ -18,8 +18,10 @@ For anything requiring ring configuration (everything else), there's going to be
 
 class ZeroTableTab(tk.Frame):
     img_path = os.path.normpath(os.path.join(definitions.DIR_ROOT, f"Scripts/system/imgs/zero_field.png"))
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, dir_name="", *args, **kwargs):
         tk.Frame.__init__(self, parent)
+        # hold diagnostic
+        self.dir_name = dir_name
 
         # display indicator image
         self.im_label = tk.Label(self)
@@ -29,6 +31,19 @@ class ZeroTableTab(tk.Frame):
         # pack self
         self.im_label.grid(row=0, column=0)
         self.grid(row=0, column=0, sticky=tk.NSEW)
+
+    def onActive(self, tab_key, collection_key, text):
+        def set_nested_value(d, keys, value):
+            """Set a value in a nested dictionary given a list of keys."""
+            for key in keys[:-1]:
+                d = d.setdefault(key, {})  # ensures intermediate dicts exist
+            d[keys[-1]] = value
+        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+
+        # set the collection value to 'None'
+        set_nested_value(d, list(collection_key), "None") # doesn't seem to work but doesnt matter lol
+
+        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
 
 
@@ -67,6 +82,8 @@ class RingTableTab(tk.Frame):
         # pack self
         self.grid(row=0, column=0, sticky=tk.NSEW)
 
+    # BASIC EVENT HANDLING: for the param 'res', which is assumed
+    # to only be used for E field methods.
     # Some observer methods to handle basic event handling
     def add_listener(self, listener):
         if listener not in self.listeners:
@@ -78,7 +95,15 @@ class RingTableTab(tk.Frame):
                 [param_keys.field_methods.name, 'e', param_keys.params.name, 'res'],
                 self.res.value.get())
 
+    def onActive(self, tab_key, collection_key, text):
+        # when the tab becomes active, update the graph (which updates the runtime dict)
+        self.table.entry_table.GraphCoils()
+
 class DiskTab(RingTableTab):
+    """
+    Extension of the RingTableTab class, with the assumption that this will be used with
+    the disk_e method.
+    """
     def __init__(self, parent, dir_name, *args, **kwargs):
         RingTableTab.__init__(self, parent, dir_name, *args, **kwargs)
 
@@ -86,18 +111,44 @@ class DiskTab(RingTableTab):
         self._modify_entryvalidate_callback()
 
     def _modify_entryvalidate_callback(self):
-        print("I am modifying entry validate callback")
-        print("Monkey-patching EntryValidateCallback...")
-        print("Wrapped func:", self.table.entry_table.GraphCoils)
         original_method = self.table.entry_table.GraphCoils
 
         def wrapped_func(*args, **kwargs):
-            print(f"HEY HEY HEY")
+            def set_nested_value(d, keys, value):
+                """Set a value in a nested dictionary given a list of keys."""
+                for key in keys[:-1]:
+                    d = d.setdefault(key, {})  # ensures intermediate dicts exist
+                d[keys[-1]] = value
+
             original_method(*args, **kwargs)
-            data = self.table.entry_table.GetData()
-            print("Data fetched:", data)
-            innies = data['Inner_r']
-            update_temp(TEMPMANAGER_MANAGER.files[m1f1], {"field_methods":{'e':{"params":{"Inner_r" : innies}}}})
+            # sample row for data: {'PosX': '1.1', 'PosY': '0.0', 'PosZ': '0.0', 'Q': '1000.0', 'Diameter': '1.0', 'Rotations': {'Angles': [90], 'Axes': ['y']}, 'Inner_r': '1'}
+            # data is a list of these.
+            data = self.table.entry_table.GetEntries()
+            #print("Data fetched:", data)
+            innies = [x['Inner_r'] for x in data]
+
+            # update the runtime dict
+            d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+            set_nested_value(d, ['field_methods', 'e', 'params', 'Inner_r'], innies)
+            write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
         self.table.entry_table.GraphCoils = wrapped_func
-        print("EntryValidateCallback at runtime:", self.table.entry_table.GraphCoils)
+        # also run the function, so that this wrapped logic is applied after being set
+        self.table.entry_table.GraphCoils()
+
+    def onActive(self, tab_key, collection_key, text):
+        def set_nested_value(d, keys, value):
+            """Set a value in a nested dictionary given a list of keys."""
+            for key in keys[:-1]:
+                d = d.setdefault(key, {})  # ensures intermediate dicts exist
+            d[keys[-1]] = value
+        # when the tab becomes active, update the graph (which updates the runtime dict)
+        self.table.entry_table.GraphCoils()
+
+        # handle method-specific params
+        match str(text):
+            case 'disk_e':
+                # if the selected e method is not 'disk_e', then you can set the key Inner_r's value to None
+                d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+                set_nested_value(d, ['field_methods', 'e', 'params', 'Inner_r'], None)
+                write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)

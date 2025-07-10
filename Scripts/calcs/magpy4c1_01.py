@@ -160,9 +160,8 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp, executor):
             E = compute_field(p, fromTemp["field_methods"]['e']['params']['collection'], int(fromTemp["field_methods"]['e']['params']['res']), executor)
             np.empty(0).sum()  # force numpy thread finish
         case 'disk_e':
-            cyl = toCyl(p)
-
-            #E = compute_fields(rho=cyl[0], z=cyl[2], Q=)
+            inners = fromTemp["field_methods"]['e']['params']['Inner_r']
+            E = compute_disk_with_collection(p, fromTemp["field_methods"]['e']['params']['collection'], inners, executor)
 
             
     return np.array(E)
