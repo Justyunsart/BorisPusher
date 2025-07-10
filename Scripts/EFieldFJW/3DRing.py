@@ -12,22 +12,17 @@ Date: July 8, 2025
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.constants import epsilon_0
-import matplotlib.patches as patches
-from numba import njit, prange
-# import matplotlib as m
-# Computes the electric field due to a uniformly charged ring.
-# Plots data for the radial and axial field components
+from matplotlib.colors import LogNorm
 
 # Physical constants and parameters
-# epsilon_0 = 8.854e-12  # Vacuum permittivity (F/m)
 Q = 1e-11               # Total charge on the ring (Coulombs)
 a = 1.0                # Radius of the ring (meters)
 lambda_ = Q / (2 * np.pi * a)  # Linear charge density
-prefactor = lambda_*a/(4*np.pi*epsilon_0)
+prefactor = lambda_*a/(4*np.pi*epsilon_0) # Vacuum permittivity, epsilon_0 = 8.854e-12 (F/m)
 
 # Grid setup in r-z plane, streamplot requires 2D Cartesian grid
 rho_vals = np.linspace(0.01, 1.5, 200)
-z_vals = np.linspace(0.01, 1, 200)
+z_vals = np.linspace(-0.25, 1.5, 200)
 RHO, Z = np.meshgrid(rho_vals, z_vals)
 theta = np.linspace(0, 2 * np.pi, 100)
 dtheta = theta[1] - theta[0]
@@ -60,18 +55,22 @@ E_m = np.sqrt(E_r ** 2 + E_z ** 2)
 
 # Plot streamlines and contours
 fig, axs = plt.subplots(2, 2, figsize=(14, 10))
-fig.suptitle('Uniformly Charged Disk: Centered X-Y Plane, Z = 0, $Q_{total} = 10^{-11}$ C', fontsize=20)
+fig.suptitle(fr'Uniformly Charged Ring (radius a = {a} m), Centered at (X, Y, 0), $Q = 10^{{-11}}$ C', fontsize=20)
 c1 = axs[0,0].streamplot(RHO, Z, E_r, E_z, color=np.sqrt(E_r**2 + E_z**2), cmap='plasma', density=1.2)
-c2 = axs[0,1].contourf(RHO, Z, E_m, levels=20, cmap='plasma')
 fig.colorbar(c1.lines, ax=axs[0,0], label='$|\\vec{E}|$ Field Magnitude (V/m)')
-fig.colorbar(c2, ax=axs[0,1], label='$|\\vec{E}|$ Field Magnitude (V/m)')
+# Create a pcolormesh with logarithmic normalization
+c2 = axs[0, 1].pcolormesh(RHO, Z, E_m, norm=LogNorm(), cmap='plasma')
+# Add a colorbar
+cbar = fig.colorbar(c2, ax=axs[0, 1])
+cbar.set_label('Log $|\\vec{E}|$ Field Magnitude (V/m)')
+
 # Draw a dashed line and circle on the plots as the ring
 x_values = [0, 1]
 y_values = [0, 0]
 x_values2 = [0.95, 1]
 y_values2 = [0, 0]
 axs[0,0].plot(x_values, y_values, color='red', linewidth=6, linestyle='dotted', label="Charged Ring")
-axs[0,0].plot(x_values2, y_values2, color='green', linewidth=6, linestyle='solid')
+axs[0,0].plot(x_values2, y_values2, color='green', linewidth=4, linestyle='solid')
 axs[0,0].set_title('$\\vec{E}$ Field Streamlines')
 axs[0,0].grid(True)
 axs[0,0].legend()
@@ -86,14 +85,12 @@ axs[0,1].legend()
 
 rho1 = 100
 rho2 = 180
-z_lo_vals = np.array([np.min(z_vals) + 0.005, 5 * np.min(z_vals), 10 * np.min(z_vals), 50 * np.min(z_vals)])
+z_lo_min = 0.01
+z_lo_vals = [z_lo_min,  5 * z_lo_min, 10 * z_lo_min, 50 * z_lo_min]
 for z_lineout in z_lo_vals:
     lineout_val = np.argmin(np.abs(z_vals - z_lineout))
-    # print(lineout_val)
     closest_value = z_vals[lineout_val]
-    # print(closest_value)
     index = lineout_val
-    # print(index)
     axs[1, 0].plot(rho_vals, E_r[lineout_val, :], label=fr'{z_lineout} mm')
     axs[1, 1].plot(rho_vals, E_z[lineout_val, :], label=fr'{z_lineout} mm')
     axs[1, 0].legend()
@@ -108,6 +105,3 @@ axs[1, 1].set_ylabel('Electric Field Magnitude (V/m)')
 axs[1, 1].grid(True)
 plt.tight_layout()
 plt.show()
-# Add a small circle to the first subplot
-# circle = patches.Circle((0.9, 0.0), radius=0.05, color='green', fill=True)
-# axs[0, 0].add_patch(circle)

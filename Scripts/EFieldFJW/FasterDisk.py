@@ -1,14 +1,3 @@
-"""
-This script generates and plots the 2D electric field produced by a charged disk.
-Plots include a streamline, contour, and line-outs for the radial and axial magnitudes.
-It demonstrates how to include a variable in a matplotlib legend using LaTeX-style
-math symbols. The script also shows best practices for documenting and labeling
-plots for clear presentation.
-
-Author: F. Wessel
-Date: July 8, 2025
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.constants import epsilon_0
@@ -16,17 +5,17 @@ from numba import njit, prange
 from matplotlib.colors import LogNorm
 
 # Constants
-Q = 1e-11 # Couloumb
-a = 0.25 # Disk inner radius (m)
-b = 1.0 # Disk outer radius (m)
-Sigma = Q / (np.pi * (b ** 2 - a ** 2)) # charge density C/m^2
+Q = 1e-11  # Coulomb
+a = 0.25  # Disk inner radius (m)
+b = 1.0  # Disk outer radius (m)
+Sigma = Q / (np.pi * (b ** 2 - a ** 2))  # charge density C/m^2
 prefactor = Sigma / (4 * np.pi * epsilon_0)
 
 # Integration resolution
 Nr = 100
 Ntheta = 100
 r_vals = np.linspace(a, b, Nr)
-theta_vals = np.linspace(0, 2*np.pi, Ntheta)
+theta_vals = np.linspace(0, 2 * np.pi, Ntheta)
 dr = r_vals[1] - r_vals[0]
 dtheta = theta_vals[1] - theta_vals[0]
 
@@ -39,25 +28,36 @@ E_z = np.zeros_like(Z)
 
 @njit(parallel=True)
 def compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta):
-    for i in prange(len(rho_vals)):
-        for j in prange(len(z_vals)):
-            rho = rho_vals[i]
+    Nr = len(r_vals)
+    Ntheta = len(theta_vals)
+    Nrho = len(rho_vals)
+    Nz = len(z_vals)
+
+    for i in prange(Nrho):
+        rho = rho_vals[i]
+        for j in range(Nz):
             z = z_vals[j]
             Erho_sum = 0.0
             Ez_sum = 0.0
 
-            for m in range(len(r_vals)):
-                r = r_vals[m]
-                for n in range(len(theta_vals)):
-                    theta = theta_vals[n]
-                    dx = rho - r * np.cos(theta)
-                    dy = -r * np.sin(theta)
-                    dz = z
-                    Denom = (dx * dx + dy * dy + dz * dz) ** 1.5 + 1e-20  # prevent zero division
+            # Precompute cos and sin for all theta values
+            cos_theta = np.cos(theta_vals)
+            sin_theta = np.sin(theta_vals)
 
-                    dA = r * dr * dtheta
-                    Erho_sum += dx / Denom * dA
-                    Ez_sum += dz / Denom * dA
+            # Precompute r * cos(theta) and r * sin(theta)
+            for m in range(Nr):
+                r = r_vals[m]
+                dx = rho - r * cos_theta
+                dy = -r * sin_theta
+                dz = z
+
+                # Calculate denominator
+                Denom = (dx**2 + dy**2 + dz**2) ** 1.5 + 1e-20  # prevent zero division
+                dA = r * dr * dtheta
+
+                # Update sums
+                Erho_sum += np.sum(dx / Denom) * dA
+                Ez_sum += np.sum(dz / Denom) * dA
 
             E_rho[j, i] = prefactor * Erho_sum
             E_z[j, i] = prefactor * Ez_sum
@@ -70,22 +70,22 @@ E_mag = np.sqrt(E_rho**2 + E_z**2)
 fig, axs = plt.subplots(2, 2, figsize=(14, 10))
 fig.suptitle(fr'Uniformly-Charged Washer (radii a, b = {a}, {b} m), Centered at (X, Y, 0), $Q = 10^{{-11}}$ C', fontsize=20)
 
-c1 = axs[0,0].streamplot(RHO, Z, E_rho, E_z, color=np.sqrt(E_rho**2 + E_z**2), cmap='plasma', density=1.2)
-fig.colorbar(c1.lines, ax=axs[0,0], label='$|\\vec{E}|$ Field Magnitude (V/m)')
+# Streamplot
+c1 = axs[0, 0].streamplot(RHO, Z, E_rho, E_z, color=np.sqrt(E_rho**2 + E_z**2), cmap='plasma', density=1.2)
+fig.colorbar(c1.lines, ax=axs[0, 0], label='$|\\vec{E}|$ Field Magnitude (V/m)')
+
 # Create a pcolormesh with logarithmic normalization
-c2 = axs[0,1].pcolormesh(RHO, Z, E_mag, norm=LogNorm(), cmap='plasma')
-# fig.colorbar(np.log(E_mag), ax=axs[0,1], label='$|\\vec{E}|$ Field Magnitude (V/m)')
-# Add a colorbar
-cbar = fig.colorbar(c2, ax=axs[0,1])
+c2 = axs[0, 1].pcolormesh(RHO, Z, E_mag, norm=LogNorm(), cmap='plasma')
+cbar = fig.colorbar(c2, ax=axs[0, 1])
 cbar.set_label('Log $|\\vec{E}|$ Field Magnitude (V/m)')
 
 # Draw a solid line on the plots
 x_values = [a, b]
 y_values = [0, 0]
-axs[0,0].plot(x_values, y_values, color='green', linewidth=6, label="Charged Conductor")
-axs[0,1].plot(x_values, y_values, color='green', linewidth=6, label="Charged Conductor")
-axs[0,0].set_xlabel(r'Radial Distance, $\rho$ (m)')
-axs[0,0].set_ylabel(r'Axial Distance, $z$ (m)')
+axs[0, 0].plot(x_values, y_values, color='green', linewidth=6, label="Charged Conductor")
+axs[0, 1].plot(x_values, y_values, color='green', linewidth=6, label="Charged Conductor")
+axs[0, 0].set_xlabel(r'Radial Distance, $\rho$ (m)')
+axs[0, 0].set_ylabel(r'Axial Distance, $z$ (m)')
 axs[0,1].set_xlabel(r'Radial Distance, $\rho$ (m)')
 axs[0,1].set_ylabel(r'Axial Distance, $z$ (m)')
 axs[0,0].grid(True)
