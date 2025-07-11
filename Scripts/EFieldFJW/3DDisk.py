@@ -54,11 +54,9 @@ def compute_fields(E_rho, E_z, rho_vals, z_vals, r_vals, theta_vals, dr, dtheta)
                     dy = -r * np.sin(theta)
                     dz = z
                     Denom = (dx * dx + dy * dy + dz * dz) ** 1.5 + 1e-20  # prevent zero division
-
                     dA = r * dr * dtheta
-                    Erho_sum += dx / Denom * dA
-                    Ez_sum += dz / Denom * dA
-
+                    Erho_sum += dx * dA / Denom
+                    Ez_sum += dz * dA / Denom
             E_rho[j, i] = prefactor * Erho_sum
             E_z[j, i] = prefactor * Ez_sum
 
