@@ -23,8 +23,8 @@ Sigma = Q / (np.pi * (b ** 2 - a ** 2)) # charge density C/m^2
 prefactor = Sigma / (4 * np.pi * epsilon_0)
 
 # Integration resolution
-Nr = 100
-Ntheta = 100
+Nr = 400
+Ntheta = 400
 r_vals = np.linspace(a, b, Nr)
 theta_vals = np.linspace(0, 2*np.pi, Ntheta)
 dr = r_vals[1] - r_vals[0]
