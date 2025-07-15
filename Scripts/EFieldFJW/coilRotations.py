@@ -1,3 +1,4 @@
+"Rotates the unit vector, once about each of the x, y, z axes."
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -17,6 +18,13 @@ def Ry(theta):
         [-np.sin(theta), 0, np.cos(theta)]
     ])
 
+def Rz(theta):
+    return np.array([
+        [np.cos(theta), -np.sin(theta), 0],
+        [np.sin(theta), np.cos(theta), 0],
+        [0, 0, 1]
+    ])
+
 # Initial unit vector along z-axis
 v0 = np.array([0, 0, 1])
 
@@ -25,24 +33,44 @@ thetaX = np.radians(35)
 thetaXdeg = np.degrees(thetaX)
 thetaY = np.radians(45)
 thetaYdeg = np.degrees(thetaY)
+thetaZ = np.radians(90)
+thetaZdeg = np.degrees(thetaY)
 
 # Apply rotations
 v1 = Rx(thetaX) @ v0              # After rotation about x-axis
 v2 = Ry(thetaY) @ v1              # After subsequent rotation about y-axis
+v3 = Rz(thetaZ) @ v2              # After subsequent rotation about y-axis
+v4 = Rz(thetaZ) @ v3              # After subsequent rotation about y-axis
+v5 = Rz(thetaZ) @ v4              # After subsequent rotation about y-axis
 
 # 3D Visualization
 fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(111, projection='3d')
+origin =[0, 0, 0]
+xaxis = [0.5, 0, 0]
+yaxis = [0, 0.5, 0]
+zaxis = [0, 0, 0.5]
 
 # Axes
-ax.quiver(0, 0, 0, 1, 0, 0, color='b')
-ax.quiver(0, 0, 0, 0, 1, 0, color='b')
-ax.quiver(0, 0, 0, 0, 0, 1, color='b')
+ax.quiver(*origin, *xaxis, linewidth =4, color='k')
+ax.quiver(*origin, *yaxis, linewidth=4, color='k')
+ax.quiver(*origin, *zaxis, linewidth=4, color='k')
+
+# Label the end of the vector with "X"
+endX = np.array(origin) + np.array(xaxis) + [0.2, 0, 0]
+endY = np.array(origin) + np.array(yaxis) + [0, 0.2, 0]
+endZ = np.array(origin) + np.array(zaxis) + [0, 0, 0.2]
+ax.text(*endX, '  X', color='red', fontsize=20, ha='center', va='center')
+ax.text(*endY,'  Y', color='red', fontsize=20, ha='center', va='center')
+ax.text(*endZ, '  Z', color='red', fontsize=20, ha='center', va='center')
 
 # Vectors
-ax.quiver(0, 0, 0, *v0, color='gray', linestyle='dashed', linewidth=2.5, label='Original Vector [0 0 1]')
-ax.quiver(0, 0, 0, *v1, color='orange', linewidth=2.5, label='X rotation')
-ax.quiver(0, 0, 0, *v2, color='magenta', linewidth=2.5, label='X and Y rotations')
+ax.quiver(0, 0, 0, *v0, color='gray', linestyle='dashed', linewidth=2.5, label='[0 0 1] Vector')
+ax.quiver(0, 0, 0, *v1, color='grey', linewidth=2.5, label='X rotation')
+ax.quiver(0, 0, 0, *v2, color='r', linewidth=2.5, label='X, Y rotations')
+ax.quiver(0, 0, 0, *v3, color='orange', linewidth=2.5, label='X, Y, Z rotations')
+ax.quiver(0, 0, 0, *v4, color='g', linewidth=2.5, label='X, Y, Z + 90 rotations')
+ax.quiver(0, 0, 0, *v5, color='b', linewidth=2.5, label='X, Y, Z + 180 rotations')
 
 # Axes settings
 ax.set_xlim([-1, 1])
