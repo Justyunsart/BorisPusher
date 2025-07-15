@@ -38,10 +38,18 @@ thetaZdeg = np.degrees(thetaY)
 
 # Apply rotations
 v1 = Rx(thetaX) @ v0              # After rotation about x-axis
-v2 = Ry(thetaY) @ v1              # After subsequent rotation about y-axis
-v3 = Rz(thetaZ) @ v2              # After subsequent rotation about y-axis
-v4 = Rz(thetaZ) @ v3              # After subsequent rotation about y-axis
-v5 = Rz(thetaZ) @ v4              # After subsequent rotation about y-axis
+v2 = Ry(thetaY) @ v1              # After rotation about y-axis
+v3 = Rz(thetaZ) @ v2              # After another rotation about y-axis
+v4 = Rz(thetaZ) @ v3              # After another rotation about y-axis
+v5 = Rz(thetaZ) @ v4              # After another rotation about y-axis
+
+flipZ = Rx(np.pi)  # 180° about x-axis
+
+v6 = flipZ @ v2
+v7 = flipZ @ v3
+v8 = flipZ @ v4
+v9 = flipZ @ v5
+
 
 # 3D Visualization
 fig = plt.figure(figsize=(8, 8))
@@ -65,12 +73,16 @@ ax.text(*endY,'  Y', color='red', fontsize=20, ha='center', va='center')
 ax.text(*endZ, '  Z', color='red', fontsize=20, ha='center', va='center')
 
 # Vectors
-ax.quiver(0, 0, 0, *v0, color='gray', linestyle='dashed', linewidth=2.5, label='[0 0 1] Vector')
-ax.quiver(0, 0, 0, *v1, color='grey', linewidth=2.5, label='X rotation')
-ax.quiver(0, 0, 0, *v2, color='r', linewidth=2.5, label='X, Y rotations')
-ax.quiver(0, 0, 0, *v3, color='orange', linewidth=2.5, label='X, Y, Z rotations')
-ax.quiver(0, 0, 0, *v4, color='g', linewidth=2.5, label='X, Y, Z + 90 rotations')
-ax.quiver(0, 0, 0, *v5, color='b', linewidth=2.5, label='X, Y, Z + 180 rotations')
+ax.quiver(*origin, *v0, color='gray', linestyle='dashed', linewidth=2.5, label='V0 = [0 0 1]')
+ax.quiver(*origin, *v1, color='grey', linewidth=2.5, label='Rx(35.26) V0')
+ax.quiver(*origin, *v2, color='r', linewidth=2.5, label='Ry(45) Rx(35.26) V0')
+ax.quiver(*origin, *v3, color='orange', linewidth=2.5, label='Rz(90) Ry(45) Rx(35.26) V0')
+ax.quiver(*origin, *v4, color='g', linewidth=2.5, label='Rz(180) Ry(45) Rx(35.26) V0')
+ax.quiver(*origin, *v5, color='b', linewidth=2.5, label='Rz(270) Ry(45) Rx(35.26) V0')
+ax.quiver(*origin, *v6, color='b', linewidth=2.5, label='Flip V2')
+ax.quiver(*origin, *v7, color='b', linewidth=2.5, label='Flip V3')
+ax.quiver(*origin, *v8, color='b', linewidth=2.5, label='Flip V4')
+ax.quiver(*origin, *v9, color='b', linewidth=2.5, label='Flip V5')
 
 # Axes settings
 ax.set_xlim([-1, 1])
@@ -79,7 +91,7 @@ ax.set_zlim([-1, 1])
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
-ax.set_title(fr'Unit Vector [0 0 1] rotated {thetaXdeg}$^\circ$ about the X axis and {thetaYdeg}$^\circ$ about the Y axis')
+ax.set_title(fr'[0 0 1] Unit Vector Rotated in +Z Quadrants to the Cube Corners')
 ax.legend()
 ax.view_init(elev=20, azim=35)
 plt.tight_layout()

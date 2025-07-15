@@ -26,7 +26,7 @@ spindle = coil1 + coil2
 
 # Move the spindle
 #spindle.position = np.linspace((0, 0, 0), (0.05, 0.05, 0.05), 15)
-spindle.rotate_from_angax(45, "y", start=0)
+spindle.rotate_from_angax(54.8, "y", start=0)
 #spindle.rotate_from_angax(45, "x", start=0)
 spindle.rotate_from_angax(45, "z", start=0)
 
