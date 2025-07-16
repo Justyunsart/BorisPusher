@@ -11,6 +11,9 @@ import ast
 import pandas as pd
 from settings.palettes import Drapion
 import math
+import magpylib as mp
+from pathlib import Path
+from magpylib.current import Circle
 
 """
 classes used for <CurrentGuiClasses.EntryTable> and its subclasses.
@@ -369,6 +372,50 @@ class EntryTableParam:
             return float(self.paramWidget.get())
         else:
             return self.paramWidget.get()
+
+"""
+Helper function to read csv data to a magpylib.Collection object
+"""
+def File_to_Collection(path, filename='coils.txt', converters={}, read_file=True):
+    """
+     1. locate the coils file, assuming that path is the dir. to the json.
+     2. return the coils as a magpy collection object.
+    """
+    c = mp.Collection()
+    if read_file:
+        proot = str(Path(path).parents[0])  # boris_<nsteps>_<simtime>_<nparts>
+        # print(f"{path}, {root}")
+        coilpath = os.path.join(proot, filename)  # boris_<nsteps>_<simtime>_<nparts>/coils.txt
+
+        # in case the output folder does not have a coils.txt file.
+        if (not os.path.exists(coilpath)):
+            return c  # return an empty collection
+
+        # store coils and rotations separately, so that we can apply the rotations afterwards
+        df = CSV_to_Df(coilpath, converters=converters,
+                       isNum=False, header=0)
+    else:
+        df = path
+    # print(df)
+    for i, row in df.iterrows():
+        row = row.tolist()
+        position = [float(row[0]), float(row[1]), float(row[2])]
+        # print(tryEval(row[6]))
+        coil = Circle(position, current=float(row[3]), diameter=float(row[4]))
+        # print(coil)
+        match row[5]:
+            case float():
+                coil.rotate_from_angax(row[5], row[6])
+            case int():
+                coil.rotate_from_angax(row[5], row[6])
+            case list():
+                for i in range(len(row[5])):
+                    coil.rotate_from_angax(float(row[5][i]), row[6][i])
+
+        c.add(coil)
+    return c
+
+
 
 def CSV_to_Df(dir, isNum=True, **kwargs):
     '''

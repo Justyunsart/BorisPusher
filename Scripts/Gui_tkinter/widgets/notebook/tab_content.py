@@ -76,6 +76,11 @@ class RingTableTab(tk.Frame):
         self.widgets = [self.table, self.res]
         self.table.grid(row=0)
 
+        # checkbox for gridding
+        self.gridding_var = tk.IntVar()
+        self.gridding = tk.Checkbutton(self.frame2, text="precompute grid", variable=self.gridding_var)
+        self.gridding.grid(row=1, column=0)
+
         # self.q.value.trace_add("write", self.trigger_listener)
         self.res.value.trace_add("write", self.trigger_listener)
 
