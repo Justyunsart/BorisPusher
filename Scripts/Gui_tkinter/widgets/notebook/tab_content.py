@@ -7,6 +7,7 @@ import tkinter as tk
 import os
 from PIL import ImageTk, Image
 import definitions
+from functools import partial
 
 from system.temp_manager import update_temp, TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
 """
@@ -18,7 +19,7 @@ For anything requiring ring configuration (everything else), there's going to be
 
 class ZeroTableTab(tk.Frame):
     img_path = os.path.normpath(os.path.join(definitions.DIR_ROOT, f"Scripts/system/imgs/zero_field.png"))
-    def __init__(self, parent, dir_name="", *args, **kwargs):
+    def __init__(self, parent, dir_name="", field="", *args, **kwargs):
         tk.Frame.__init__(self, parent)
         # hold diagnostic
         self.dir_name = dir_name
@@ -54,7 +55,7 @@ class RingTableTab(tk.Frame):
         - a preview graph
     MUST also communicate with the manager
     """
-    def __init__(self, parent, dir_name, *args, **kwargs):
+    def __init__(self, parent, dir_name, field, *args, **kwargs):
         self.listeners = []
         tk.Frame.__init__(self, parent, *args)
         self.add_listener(parent)
@@ -81,24 +82,31 @@ class RingTableTab(tk.Frame):
         self.gridding = tk.Checkbutton(self.frame2, text="precompute grid", variable=self.gridding_var)
         self.gridding.grid(row=1, column=0)
 
+        gridding_func = partial(self.trigger_listener, [param_keys.field_methods.name, field, param_keys.params.name, 'gridding'],
+                                self.gridding_var)
+        self.gridding_var.trace_add("write", gridding_func)
+
         # self.q.value.trace_add("write", self.trigger_listener)
-        self.res.value.trace_add("write", self.trigger_listener)
+        listener_func = partial(self.trigger_listener, [param_keys.field_methods.name, field, param_keys.params.name, 'res'],
+                                self.res)
+        self.res.value.trace_add("write", listener_func)
 
         # pack self
         self.grid(row=0, column=0, sticky=tk.NSEW)
 
     # BASIC EVENT HANDLING: for the param 'res', which is assumed
+
     # to only be used for E field methods.
     # Some observer methods to handle basic event handling
     def add_listener(self, listener):
         if listener not in self.listeners:
             self.listeners.append(listener)
 
-    def trigger_listener(self, *args):
+    def trigger_listener(self, lst, val, *args):
         for listener in self.listeners:
             listener.update(
-                [param_keys.field_methods.name, 'e', param_keys.params.name, 'res'],
-                self.res.value.get())
+                lst,
+                val.get())
 
     def onActive(self, tab_key, collection_key, text):
         # when the tab becomes active, update the graph (which updates the runtime dict)

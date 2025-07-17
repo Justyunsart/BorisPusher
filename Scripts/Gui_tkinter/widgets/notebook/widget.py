@@ -23,7 +23,7 @@ class Field_Notebook(ttk.Notebook):
         tab_names, tab_widgets: lists that contain the respective notebook tab names, alongside their displayed widgets.
     """
     def __init__(self, master, tab_names:list, tab_widgets:list, collection_key, tab_key, dataclasses,
-                 dir_names=["bob_e"], path_key="", **kwargs):
+                 dir_names=["bob_e"], path_key="", field="", **kwargs):
         def _check_notebook_inputs() -> None:
             """
             Function that is just a container for all the assert statement for this class
@@ -70,7 +70,8 @@ class Field_Notebook(ttk.Notebook):
             #dir = os.path.join(runtime_configs['Paths']['inputs'], dir_names[i])
             for i in range(len(self.tab_names)):
                 self.add(self.tab_widgets[i](self, collection_key=self.collection_key, dataclass=dataclasses[i],
-                                             dir_name=dir_names[i], path_key=path_key), text=self.tab_names[i])
+                                             dir_name=dir_names[i], path_key=path_key, field=field),
+                         text=self.tab_names[i])
 
         _add_notebook_tabs()
         self.bind('<<NotebookTabChanged>>', self.on_tab_change)

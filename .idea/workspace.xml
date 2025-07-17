@@ -4,13 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="parity">
-      <change afterPath="$PROJECT_DIR$/Scripts/Tests/grid/graph_cross.py" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="testing and validating a 3d meshgrid as a lookup table">
+      <change afterPath="$PROJECT_DIR$/Scripts/Tests/grid/grid_interpolation_comparison.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/PlottingWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/PlottingWindow.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/tab_content.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/tab_content.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/grid/3d_mesh.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/grid/3d_mesh.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/widget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Tests/grid/graph_cross.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Tests/grid/graph_cross.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/grid/3d_mesh.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/grid/_3d_mesh.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,6 +98,7 @@
     "Python.graph_2.executor": "Run",
     "Python.graph_cross.executor": "Run",
     "Python.graphs.executor": "Run",
+    "Python.grid_interpolation_comparison.executor": "Run",
     "Python.integrals.executor": "Run",
     "Python.magpy4c1_01.executor": "Run",
     "Python.main.executor": "Run",
@@ -117,7 +121,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "Runtime.Targets.Configurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -134,7 +138,7 @@
     </key>
   </component>
   <component name="RunManager">
-    <configuration name="3d_mesh" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="_3d_mesh" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="BorisPusher" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -148,7 +152,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/grid/3d_mesh.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\grid\_3d_mesh.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -291,7 +295,7 @@
     </configuration>
     <list>
       <item itemvalue="Python.e_things" />
-      <item itemvalue="Python.3d_mesh" />
+      <item itemvalue="Python._3d_mesh" />
       <item itemvalue="Python.rotation_viewer" />
       <item itemvalue="Python.fwysr_2" />
       <item itemvalue="Python.funcs" />
@@ -300,7 +304,7 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.3d_mesh" />
+        <item itemvalue="Python._3d_mesh" />
         <item itemvalue="Python.rotation_viewer" />
         <item itemvalue="Python.fwysr_2" />
         <item itemvalue="Python.read_last_used_binary" />
@@ -353,15 +357,8 @@
       <workItem from="1752126813707" duration="3449000" />
       <workItem from="1752550602846" duration="5260000" />
       <workItem from="1752561003205" duration="1472000" />
-      <workItem from="1752637399083" duration="13156000" />
-    </task>
-    <task id="LOCAL-00009" summary="fixed indexing issue preventing more than one file flush">
-      <option name="closed" value="true" />
-      <created>1748474638524</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1748474638524</updated>
+      <workItem from="1752637399083" duration="13224000" />
+      <workItem from="1752722226606" duration="11062000" />
     </task>
     <task id="LOCAL-00010" summary="parity">
       <option name="closed" value="true" />
@@ -747,7 +744,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752563607181</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="testing and validating a 3d meshgrid as a lookup table">
+      <option name="closed" value="true" />
+      <created>1752650711108</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1752650711109</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -765,7 +770,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="E-field graphs for contour, streamlines implemented by fixing an orientation error. Results from the E field need to be rotated back after calculating w/ the coil's inverse rotation applied." />
     <MESSAGE value="fixed typo in magpy4c1_01.py where I was using toCart instead of toCyl" />
     <MESSAGE value="added log(emag) lineout graph" />
     <MESSAGE value="the program now opens after widget init. to prevent flashing images from widgets loading on startup" />
@@ -790,7 +794,8 @@
     <MESSAGE value="tentative implementation of the disk_e method" />
     <MESSAGE value="added tilt spindle" />
     <MESSAGE value="parity" />
-    <option name="LAST_COMMIT_MESSAGE" value="parity" />
+    <MESSAGE value="testing and validating a 3d meshgrid as a lookup table" />
+    <option name="LAST_COMMIT_MESSAGE" value="testing and validating a 3d meshgrid as a lookup table" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -833,7 +838,7 @@
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Scripts/grid/3d_mesh.py</url>
+          <url>file://$PROJECT_DIR$/Scripts/grid/_3d_mesh.py</url>
           <line>3</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
@@ -842,6 +847,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BorisPusher$3DRing.coverage" NAME="3DRing Coverage Results" MODIFIED="1751932238118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$grid_interpolation_comparison.coverage" NAME="grid_interpolation_comparison Coverage Results" MODIFIED="1752729299747" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
     <SUITE FILE_PATH="coverage/BorisPusher$widget.coverage" NAME="widget Coverage Results" MODIFIED="1752008272508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook" />
     <SUITE FILE_PATH="coverage/BorisPusher$find_user_docs.coverage" NAME="find_user_docs Coverage Results" MODIFIED="1749507660617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/output_write_read" />
     <SUITE FILE_PATH="coverage/BorisPusher$3DDisk.coverage" NAME="3DDisk Coverage Results" MODIFIED="1751932250386" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
@@ -853,7 +859,7 @@
     <SUITE FILE_PATH="coverage/BorisPusher$bob_e_rounding_test.coverage" NAME="bob_e_rounding_test Coverage Results" MODIFIED="1750711108470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
     <SUITE FILE_PATH="coverage/BorisPusher$e_things.coverage" NAME="e_things Coverage Results" MODIFIED="1752002335847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$funcs.coverage" NAME="funcs Coverage Results" MODIFIED="1749681885095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files" />
-    <SUITE FILE_PATH="coverage/BorisPusher$graph_cross.coverage" NAME="graph_cross Coverage Results" MODIFIED="1752650665527" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
+    <SUITE FILE_PATH="coverage/BorisPusher$graph_cross.coverage" NAME="graph_cross Coverage Results" MODIFIED="1752724115786" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
     <SUITE FILE_PATH="coverage/BorisPusher$magpy4c1_01.coverage" NAME="magpy4c1_01 Coverage Results" MODIFIED="1749509898529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/calcs" />
     <SUITE FILE_PATH="coverage/BorisPusher$graphs.coverage" NAME="graphs Coverage Results" MODIFIED="1751324543195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_1" />
     <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1752004719466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
@@ -871,7 +877,7 @@
     <SUITE FILE_PATH="coverage/BorisPusher$fwysr_e_1.coverage" NAME="fwysr_e_1 Coverage Results" MODIFIED="1751932280187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
     <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods_Impl.coverage" NAME="FieldMethods_Impl Coverage Results" MODIFIED="1750118600099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
-    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1752128105048" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1752733156963" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
     <SUITE FILE_PATH="coverage/BorisPusher$read_last_used_binary.coverage" NAME="read_last_used_binary Coverage Results" MODIFIED="1750885270926" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$e_graphing.coverage" NAME="e_graphing Coverage Results" MODIFIED="1751495005656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
     <SUITE FILE_PATH="coverage/BorisPusher$PlottingWindow.coverage" NAME="PlottingWindow Coverage Results" MODIFIED="1748898945754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
@@ -885,6 +891,6 @@
     <SUITE FILE_PATH="coverage/BorisPusher$polarSpace.coverage" NAME="polarSpace Coverage Results" MODIFIED="1749600138185" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Alg" />
     <SUITE FILE_PATH="coverage/BorisPusher$file_write_speed.coverage" NAME="file_write_speed Coverage Results" MODIFIED="1749603520912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods.coverage" NAME="FieldMethods Coverage Results" MODIFIED="1749678464994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
-    <SUITE FILE_PATH="coverage/BorisPusher$3d_mesh.coverage" NAME="3d_mesh Coverage Results" MODIFIED="1752649251713" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/grid" />
+    <SUITE FILE_PATH="coverage/BorisPusher$3d_mesh.coverage" NAME="3d_mesh Coverage Results" MODIFIED="1752722841920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/grid" />
   </component>
 </project>

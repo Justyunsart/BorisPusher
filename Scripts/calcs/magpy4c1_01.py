@@ -41,6 +41,7 @@ from calcs.magpy4c1_manager_queue_datatype import Manager_Data
 
 from EFieldFJW.efieldring_4 import fwysr_e
 from EFieldFJW.streamlines3Dring import compute_field
+from scipy.interpolate import RegularGridInterpolator
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
@@ -54,12 +55,17 @@ pd.set_option('display.max_columns', None)
 #=========#
 
 # unless it is outside of the bounds given by 'side'
-def Bfield(y, method, c):
-    if(method == "Zero"):
-        return np.zeros(3)
+def Bfield(y, method, c, interp):
+    if interp is None:
+        if(method == "Zero"):
+            return np.zeros(3)
 
-    Bf = c.getB(y, squeeze=True)
-    return np.array(Bf)
+        Bf = c.getB(y, squeeze=True)
+        return np.array(Bf)
+    else:
+        # interpolator should be called for this point
+        print(f"USING INTERPOLATOR FOR B")
+        return interp([y]).reshape(3,)
 
 # global variables
 magpy.graphics.style.CurrentStyle(arrow=None)
@@ -221,7 +227,7 @@ def write_to_hdf5(from_temp, out, expand_length, num_points):
 
 # boris push calculation
 # this is used to move the particle in a way that simulates movement from a magnetic field
-def borisPush(executor=None, from_temp=None, manager_queue=None):
+def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None, e_interp = None):
     """
     INTERNAL VARS
     Gyroradius:
@@ -286,7 +292,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
         # COLLECT FIELDS
             # submit the field calculations to the threadpool
         _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp, executor)
-        _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], c)
+        _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], c, b_interp)
             # collect the results
         Ef = _Ef.result()
         #print(Ef)
@@ -366,7 +372,8 @@ def borisPush(executor=None, from_temp=None, manager_queue=None):
             # COLLECT FIELDS
             # submit the field calculations to the threadpool
             _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp)
-            _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'])
+            _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'],
+                                  b_interp)
             # collect the results
             Ef = _Ef.result()
             Bf = _Bf.result()
@@ -441,12 +448,56 @@ def init_process(data, n1, n2, t, t1, Bf, Ef, coils, _fromTemp, queue):
 """
 Will eventually replace runsim(), development grounds for a new structure.    
 """
+from grid._3d_mesh import precalculate_3d_grid
+from pathlib import Path
+
+def create_interpolator(filepath):
+    with h5py.File(filepath, 'r') as f:
+        # get the linspace used in the grid
+        ax_linspace = f['src/coords'][0,:,0,0] # linspace used for x; should be same for all axes
+        mesh_field = f['src/data']
+        mesh_field = np.moveaxis(mesh_field, 0, -1)
+    interpolator = RegularGridInterpolator((ax_linspace, ax_linspace, ax_linspace), mesh_field)
+    return interpolator
+
+def grid_checker(fromTemp):
+    """
+    IF the simulation is called with gridding = 1 for a ring configuration, you need to make sure
+    that a grid lookup file exists.
+    """
+    # check b field
+    b_dict = fromTemp['field_methods']['b']
+    b_interpolator = None
+    e_interpolator = None
+    try:
+        if b_dict['params']['gridding'] == 1 and b_dict['method'] == "magpy":
+            collection = b_dict['params']['collection']
+            method = collection.getB
+            precalculate_3d_grid(method, Path(fromTemp['coil_file']))
+
+            coil_path = Path(fromTemp['coil_file'])
+            # stuff with the interpolator
+            hdf5_name = coil_path.parents[0] / "grid" / f"{coil_path.name}.hdf5"
+            b_interpolator = create_interpolator(hdf5_name)
+    except KeyError:
+        pass
+
+    # check e field
+    e_dict = fromTemp['field_methods']['e']
+    # TODO: extend functionality with e methods <3
+
+    return b_interpolator, e_interpolator
+
 def _runsim(manager_queue):
-        # Access tempfile dict for all threads
+    # Access tempfile dict for all threads
     _fromTemp = create_shared_info()
 
+    # check/ create precomputed grid
+    # value of these will be None if gridding not used.
+    b_inter, e_inter = grid_checker(_fromTemp)
+
     with ThreadPoolExecutor() as executor:
-        borisPush(executor, _fromTemp, manager_queue)
+        borisPush(executor, _fromTemp, manager_queue, b_inter, e_inter)
 
 
 def runsim(fromGui:dict, manager_queue):

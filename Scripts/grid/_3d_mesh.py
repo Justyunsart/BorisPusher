@@ -161,7 +161,7 @@ def precalculate_3d_grid(method, input_file_path):
         # FILL DATA!
         # step 1: assemble the meshgrid
         #   - X, Y, Z lims are the 'offset' value of the diags
-        pad = diags_present['offset'] * 1.1
+        pad = diags_present['offset'] * 1.5
         _ax_linspace = np.linspace(-pad, pad, subdivisions)
 
         grid = np.meshgrid(_ax_linspace, _ax_linspace, _ax_linspace, indexing='ij')
@@ -182,8 +182,8 @@ if __name__ == '__main__':
     import magpylib as mp
     from Gui_tkinter.funcs.GuiEntryHelpers import tryEval
     # Run a hardcoded example to test h5 file creation
-    filepath = 'D:\\FromCDocuments\\Boris_Usr\\Inputs\\CoilConfigurations\\hexahedron_100K_1.7'
-    collection = File_to_Collection(filepath, 'hexahedron_100K_1.7', {"Amp": tryEval, "RotationAngle": tryEval, "RotationAxis": tryEval})
+    filepath = 'D:\\FromCDocuments\\Boris_Usr\\Inputs\\CoilConfigurations\\mirror_10k'
+    collection = File_to_Collection(filepath, 'mirror_10k', {"Amp": tryEval, "RotationAngle": tryEval, "RotationAxis": tryEval})
     method = collection.getB
 
     precalculate_3d_grid(method, Path(filepath))

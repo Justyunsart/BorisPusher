@@ -692,7 +692,7 @@ class PlottingWindowObj(tk.Frame):
         path = self.path.get()
         self._path = str(Path(path).parents[0])
         self._h_path = os.path.join(self._path, 'data.hdf5')
-        self.c = File_to_Collection(path, {"Amp": tryEval, "RotationAngle": tryEval, "RotationAxis": tryEval})  # reconstructs the magpylib collection object that was used.
+        self.c = File_to_Collection(path, converters={"Amp": tryEval, "RotationAngle": tryEval, "RotationAxis": tryEval})  # reconstructs the magpylib collection object that was used.
         self.update_all_graphs()
 
 
