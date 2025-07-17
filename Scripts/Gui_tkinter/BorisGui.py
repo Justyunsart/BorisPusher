@@ -164,7 +164,8 @@ def OpenGUI(manager):
                                     tab_key=(param_keys.field_methods.name, 'b', 'method'),
                                     dataclasses = [None, CircleCurrentConfig],
                                     dir_names=[None, "CoilConfigurations"],
-                                    path_key='coil_file')
+                                    path_key='coil_file',
+                                    field="b")
     field_notebook.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
 
     e_field_notebook = Field_Notebook(e_field_labelFrame, ['zero', 'bob_e', 'fw_e', 'disk_e'],
@@ -172,7 +173,9 @@ def OpenGUI(manager):
                                     collection_key=(param_keys.field_methods.name, 'e', param_keys.params.name, 'collection'),
                                     tab_key=(param_keys.field_methods.name, 'e', 'method'),
                                     dataclasses= [None, Bob_e_Config_Dataclass, Bob_e_Config_Dataclass, Disk_e_Config_Dataclass],
-                                    dir_names=[None, 'bob_e', 'bob_e', 'Disks'])
+                                    dir_names=[None, 'bob_e', 'bob_e', 'Disks'],
+                                      path_key="e_coil_file",
+                                      field="e")
     e_field_notebook.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
 
     b_field_labelFrame.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
