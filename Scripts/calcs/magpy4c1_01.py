@@ -143,7 +143,9 @@ def Bob_e(coord, args, collection):
 
     return np.sum(es, axis=0) # sum the E field components column-wise
 
-from EFieldFJW.ys_3d_disk import compute_disk_with_collection
+from EFieldFJW.ys_3d_disk import compute_disk_with_collection, compute_fields
+
+
 def EfieldX(p:np.ndarray, E_Method, fromTemp, executor):
     """
     Controller for what E method is used.
@@ -449,6 +451,7 @@ def init_process(data, n1, n2, t, t1, Bf, Ef, coils, _fromTemp, queue):
 Will eventually replace runsim(), development grounds for a new structure.    
 """
 from grid._3d_mesh import precalculate_3d_grid
+from EFieldFJW.ys_3d_disk import fields_from_grid
 from pathlib import Path
 
 def create_interpolator(filepath):
@@ -485,6 +488,28 @@ def grid_checker(fromTemp):
     # check e field
     e_dict = fromTemp['field_methods']['e']
     # TODO: extend functionality with e methods <3
+    try:
+        if e_dict['params']['gridding'] == 1 and e_dict['method'] == 'disk_e':
+            print('creating e grid')
+            method = fields_from_grid
+            collection = e_dict['params']['collection']
+            inners = e_dict['params']['Inner_r']
+            args = {
+                'c' : collection,
+                'inners' : inners
+            }
+            coil_path = Path(fromTemp['e_coil_file'])
+            precalculate_3d_grid(method, coil_path, **args)
+
+            hdf5_name = coil_path.parents[0] / "grid" / f"{coil_path.name}.hdf5"
+            e_interpolator = create_interpolator(hdf5_name)
+
+
+
+
+
+    except KeyError:
+        pass
 
     return b_interpolator, e_interpolator
 

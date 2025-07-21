@@ -503,7 +503,7 @@ class Bob_e_Config_Dataclass():
     eval_inds = (5, 6) # index reference of the rotation_angles and rotation_axes lists
     power_name = "Q"
 
-    def __init__(self, frame, PosX = 0, PosY = 0, PosZ = 0, Q = 1e5, Diameter = 1, RotationAngle = [], RotationAxis = []):
+    def __init__(self, frame, PosX = 0, PosY = 0, PosZ = 0, Q = 1e5, Diameter = 1, RotationAngle = [], RotationAxis = [], **kwargs):
         self.PosX = EntryTableParam(PosX, master=frame)
         self.PosY = EntryTableParam(PosY, master=frame)
         self.PosZ = EntryTableParam(PosZ, master=frame)

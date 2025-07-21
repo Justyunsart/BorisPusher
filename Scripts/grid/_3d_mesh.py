@@ -109,7 +109,7 @@ def create_grid_h5(file_name, **kwargs):
         data = f.create_dataset('src/data', (3, 100, 100, 100), chunks=True,
                                 dtype=np.float64)
 
-def precalculate_3d_grid(method, input_file_path):
+def precalculate_3d_grid(method, input_file_path, **kwargs):
     """
     :params:
     method(callable): the actual logic used to populate the field.
@@ -170,7 +170,7 @@ def precalculate_3d_grid(method, input_file_path):
 
         grid = np.moveaxis(grid, 0, -1)
 
-        output = method(grid) # plug in the created meshgrid into the provided method
+        output = method(grid, **kwargs) # plug in the created meshgrid into the provided method
 
         # we expect the output to be (100, 100, 100, 3)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # reshape output to (3, 100, 100, 100)
