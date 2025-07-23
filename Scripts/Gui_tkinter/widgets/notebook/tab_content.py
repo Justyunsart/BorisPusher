@@ -109,6 +109,7 @@ class RingTableTab(tk.Frame):
                 val.get())
 
     def onActive(self, tab_key, collection_key, text):
+        #print(f"RingTableTab.onActive running")
         # when the tab becomes active, update the graph (which updates the runtime dict)
         self.table.entry_table.GraphCoils()
 

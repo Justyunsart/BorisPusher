@@ -464,7 +464,7 @@ def create_interpolator(filepath):
         ax_linspace = f['src/coords'][0,:,0,0] # linspace used for x; should be same for all axes
         mesh_field = f['src/data']
         mesh_field = np.moveaxis(mesh_field, 0, -1)
-    interpolator = RegularGridInterpolator((ax_linspace, ax_linspace, ax_linspace), mesh_field)
+    interpolator = RegularGridInterpolator((ax_linspace, ax_linspace, ax_linspace), mesh_field, method='quintic')
     return interpolator
 
 def grid_checker(fromTemp):
