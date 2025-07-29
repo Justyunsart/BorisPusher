@@ -4,7 +4,7 @@ def GraphB(c, fig, root):
     """
     with a mpl subplot as an input, graph the currently selected magnetic coil's B field's cross section.
     """
-    l = np.max(c.position) + c.diameter/2 + 1
+    l = np.max(c[0].position) + c[0].diameter/2 + 1
 
     # construct grid for the cross section
     x = np.linspace(-l, l, 100)
@@ -19,7 +19,7 @@ def GraphB(c, fig, root):
 
     # calculate B field for the entire grid
     Bs = np.array(c.getB(grid))  # [bx, by, bz]
-    print(Bs.shape)
+    #print(Bs.shape)
     try:
         Bx, _, By = np.moveaxis(Bs, 2, 0)
     except ValueError:

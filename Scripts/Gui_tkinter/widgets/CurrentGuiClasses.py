@@ -775,6 +775,8 @@ class CurrentEntryTable(EntryTable):
 
             # Update tempfile entry for the coil collection object.
         self._updateTempFile(self.collection_key, self.collection)
+        self._updateTempFile(self.path_key, self.dirWidget.PATH.data)
+        self._updateTempFile(self.name_key, str(Path(self.dirWidget.PATH.data).name))
         #print(f"Collection updated: {self.collection_key}")
         return True
 

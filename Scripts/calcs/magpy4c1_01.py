@@ -143,14 +143,19 @@ def Bob_e(coord, args, collection):
 
     return np.sum(es, axis=0) # sum the E field components column-wise
 
-from EFieldFJW.ys_3d_disk import compute_disk_with_collection
-def EfieldX(p:np.ndarray, E_Method, fromTemp, executor):
+from EFieldFJW.ys_3d_disk import compute_disk_with_collection, compute_fields
+
+
+def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator):
     """
     Controller for what E method is used.
 
     Inputs:
     p: the target coordinate.
     """
+    if interpolator is not None:
+        return interpolator([p]).reshape(3, )
+
     #print(f"E_method is: {E_Method}")
     match E_Method:
         case "zero":
@@ -291,7 +296,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
         ##########################################################################
         # COLLECT FIELDS
             # submit the field calculations to the threadpool
-        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp, executor)
+        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp, executor, e_interp)
         _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], c, b_interp)
             # collect the results
         Ef = _Ef.result()
@@ -449,7 +454,9 @@ def init_process(data, n1, n2, t, t1, Bf, Ef, coils, _fromTemp, queue):
 Will eventually replace runsim(), development grounds for a new structure.    
 """
 from grid._3d_mesh import precalculate_3d_grid
+from EFieldFJW.ys_3d_disk import fields_from_grid
 from pathlib import Path
+from RETerry import bob_e
 
 def create_interpolator(filepath):
     with h5py.File(filepath, 'r') as f:
@@ -457,7 +464,7 @@ def create_interpolator(filepath):
         ax_linspace = f['src/coords'][0,:,0,0] # linspace used for x; should be same for all axes
         mesh_field = f['src/data']
         mesh_field = np.moveaxis(mesh_field, 0, -1)
-    interpolator = RegularGridInterpolator((ax_linspace, ax_linspace, ax_linspace), mesh_field)
+    interpolator = RegularGridInterpolator((ax_linspace, ax_linspace, ax_linspace), mesh_field, method='quintic')
     return interpolator
 
 def grid_checker(fromTemp):
@@ -485,6 +492,33 @@ def grid_checker(fromTemp):
     # check e field
     e_dict = fromTemp['field_methods']['e']
     # TODO: extend functionality with e methods <3
+    try:
+        if e_dict['params']['gridding'] == 1 and e_dict['method'] == 'disk_e':
+            print('creating e grid')
+            method = fields_from_grid
+            collection = e_dict['params']['collection']
+            inners = e_dict['params']['Inner_r']
+            args = {
+                'c' : collection,
+                'inners' : inners
+            }
+            coil_path = Path(fromTemp['e_coil_file'])
+            precalculate_3d_grid(method, coil_path, **args)
+
+            hdf5_name = coil_path.parents[0] / "grid" / f"{coil_path.name}.hdf5"
+            e_interpolator = create_interpolator(hdf5_name)
+
+        elif e_dict['params']['gridding'] == 1 and e_dict['method'] == 'bob_e':
+            method = bob_e.bob_e_from_collection
+            collection = e_dict['params']['collection']
+            coil_path = Path(fromTemp['e_coil_file'])
+            precalculate_3d_grid(method, Path(fromTemp['e_coil_file']), collection=collection)
+
+            hdf5_name = coil_path.parents[0] / "grid" / f"{coil_path.name}.hdf5"
+            e_interpolator = create_interpolator(hdf5_name)
+
+    except KeyError:
+        pass
 
     return b_interpolator, e_interpolator
 

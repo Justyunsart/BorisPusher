@@ -124,6 +124,7 @@ class Field_Notebook(ttk.Notebook):
 
         # also, run logic for the tabs (that they should upon becoming active)
         try:
-            tab_id.onActive(self.tab_key, self.collection_key, text)
+            tab_widget = self.nametowidget(tab_id)
+            tab_widget.onActive(self.tab_key, self.collection_key, text)
         except AttributeError:
             pass

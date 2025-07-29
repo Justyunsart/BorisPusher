@@ -8,7 +8,8 @@ Test whether the preconfigured B grid produces the right values
 """
 
 # hard coded location to h5 file
-h5_path = 'D:\\FromCDocuments\\Boris_Usr\\Inputs\\CoilConfigurations\\grid\\hexahedron_100K_1.7.hdf5'
+#h5_path = 'D:\\FromCDocuments\\Boris_Usr\\Inputs\\CoilConfigurations\\grid\\hexahedron_100K_1.7.hdf5'
+h5_path = "D:\\FromCDocuments\\Boris_Usr\\Inputs\\bob_e\\grid\\SDINGLE.hdf5"
 filepath ='D:\\FromCDocuments\\Boris_Usr\\Inputs\\CoilConfigurations\\hexahedron_100K_1.7'
 
 def graph_cross_file():

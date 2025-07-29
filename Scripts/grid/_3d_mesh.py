@@ -88,7 +88,7 @@ def check_grid_dir(path:Path)-> Path:
     os.makedirs(grid_dir, exist_ok=True)
     return grid_dir
 
-def create_grid_h5(file_name, **kwargs):
+def create_grid_h5(file_name, res, **kwargs):
     """
     Creates an empty .h5 file with the given structure.
     Expected to be populated during initial calculations.
@@ -104,12 +104,12 @@ def create_grid_h5(file_name, **kwargs):
 
         grp = f.create_group('/src')
         diags = f.create_dataset('/src/diags', (1,), dtype=dtype_diags)
-        coords = f.create_dataset('/src/coords', (3, 100, 100, 100), chunks=True,
+        coords = f.create_dataset('/src/coords', (3, res, res, res), chunks=True,
                                 dtype=np.float64)
-        data = f.create_dataset('src/data', (3, 100, 100, 100), chunks=True,
+        data = f.create_dataset('src/data', (3, res, res, res), chunks=True,
                                 dtype=np.float64)
 
-def precalculate_3d_grid(method, input_file_path):
+def precalculate_3d_grid(method, input_file_path, res=250, **kwargs):
     """
     :params:
     method(callable): the actual logic used to populate the field.
@@ -124,7 +124,6 @@ def precalculate_3d_grid(method, input_file_path):
         from the grid used in this function is accounted for in the inputted method
         (make sure the method u plug in here expects the grid format this function creates)
     """
-    subdivisions = 100
 
     # MAKE SURE THE PLAYING FIELD IS KOSHER
     grid_dir = check_grid_dir(input_file_path) # does the grid_dir even exist?
@@ -150,7 +149,7 @@ def precalculate_3d_grid(method, input_file_path):
     check_grid_dir(input_file_path)
 
     # NOW WE KNOW WE NEED TO CREATE A NEW H5 FILE WITH THE GIVEN NAME
-    create_grid_h5(file_name=desired_path) # this will replace any existing files with this name
+    create_grid_h5(file_name=desired_path, res=res) # this will replace any existing files with this name
 
     # FILL H5
     with h5py.File(desired_path, 'r+') as f: # we give read and write perms
@@ -162,7 +161,7 @@ def precalculate_3d_grid(method, input_file_path):
         # step 1: assemble the meshgrid
         #   - X, Y, Z lims are the 'offset' value of the diags
         pad = diags_present['offset'] * 1.5
-        _ax_linspace = np.linspace(-pad, pad, subdivisions)
+        _ax_linspace = np.linspace(-pad, pad, res)
 
         grid = np.meshgrid(_ax_linspace, _ax_linspace, _ax_linspace, indexing='ij')
         # fill the coords dataset before moving axis
@@ -170,11 +169,13 @@ def precalculate_3d_grid(method, input_file_path):
 
         grid = np.moveaxis(grid, 0, -1)
 
-        output = method(grid) # plug in the created meshgrid into the provided method
+        output = method(grid, **kwargs) # plug in the created meshgrid into the provided method
 
         # we expect the output to be (100, 100, 100, 3)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # reshape output to (3, 100, 100, 100)
-        output_moved = np.moveaxis(output, -1, 0)
+        output_moved = output
+        if output.shape == (res,res,res, 3):
+            output_moved = np.moveaxis(output, -1, 0)
         f['/src/data'][:] = output_moved
 
 

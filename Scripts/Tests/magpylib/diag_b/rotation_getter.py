@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from Scripts.Tests.fields.graphing_funcs import GraphB
 import plotly.io as pio
 pio.renderers.default = "browser"
-
+from MakeCurrent import Circle as cir
 
 @dataclass
 class rotation_param():
@@ -24,16 +24,19 @@ def do_rotation(circle:Circle, rotations:list, show_animation=True, show_final_B
             degrees = rotation.degrees
         circle.rotate_from_angax(degrees, rotation.axis)
 
+    col = cir(1000, 2, 1.1, 0)
+    col.add(circle)
+
     # show the final B-field
     if show_final_B:
         final_B_fig = plt.figure()
         final_B_ax = final_B_fig.add_subplot(111)
-        GraphB(circle, final_B_ax, final_B_fig)
+
+        GraphB(col, final_B_ax, final_B_fig)
 
     if show_animation:
-        mp.show(circle, animation=True, backend='plotly')
-    plt.show()
-
+        mp.show(col, animation=True, backend='plotly')
+        plt.show()
 
 
 

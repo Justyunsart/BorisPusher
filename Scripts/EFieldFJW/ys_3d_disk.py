@@ -62,6 +62,24 @@ def _field_step_1(coord, c, inners):
 
     return E
 
+def fields_from_grid(grid, c, inners):
+    # grid is expected to be shaped 100, 100, 100, 3
+    x, y, z = np.moveaxis(grid, -1, 0)
+    points = np.column_stack((x.ravel(), y.ravel(), z.ravel()))
+    #print(points)
+
+    out = []
+
+    for point in points:
+        e_val = [_field_step_1(point, cir, inner)
+                 for cir, inner in zip(c.children, np.array(inners, dtype=np.float64))]
+        out.append(np.sum(np.array(e_val), axis=0))
+
+    out = np.array(out)
+    out = np.reshape(out, (100, 100, 100, 3))
+    print(out)
+    return out
+
 def compute_disk_with_collection(coord, collection:Collection, inners, executor:ThreadPoolExecutor):
     """
     Needs to take in the point (in cartesian space), the collection, and a list of inner_radius values
