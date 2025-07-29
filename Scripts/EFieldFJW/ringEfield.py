@@ -55,7 +55,7 @@ E_m = np.sqrt(E_r ** 2 + E_z ** 2)
 
 # Plot streamlines and contours
 fig, axs = plt.subplots(2, 2, figsize=(14, 10))
-fig.suptitle(fr'Uniformly Charged Ring (radius a = {a} m), Centered at (X, Y, 0), $Q = 10^{{-11}}$ C', fontsize=20)
+fig.suptitle(fr'Uniformly Charged Ring, radius a = {a} m, Centered at (X, Y, 0), $Q = 10^{{-11}}$ C', fontsize=20)
 c1 = axs[0,0].streamplot(RHO, Z, E_r, E_z, color=np.sqrt(E_r**2 + E_z**2), cmap='plasma', density=1.2)
 fig.colorbar(c1.lines, ax=axs[0,0], label='$|\\vec{E}|$ Field Magnitude (V/m)')
 # Create a pcolormesh with logarithmic normalization
@@ -85,21 +85,21 @@ axs[0,1].legend()
 
 rho1 = 100
 rho2 = 180
-z_lo_min = 0.01
-z_lo_vals = [z_lo_min,  5 * z_lo_min, 10 * z_lo_min, 50 * z_lo_min]
+z_lo_min = 0.01 # line out distances
+z_lo_vals = [z_lo_min,  5 * z_lo_min, 10 * z_lo_min, 50 * z_lo_min] # line out distances
 for z_lineout in z_lo_vals:
     lineout_val = np.argmin(np.abs(z_vals - z_lineout))
     closest_value = z_vals[lineout_val]
     index = lineout_val
-    axs[1, 0].plot(rho_vals, E_r[lineout_val, :], label=fr'{z_lineout} mm')
-    axs[1, 1].plot(rho_vals, E_z[lineout_val, :], label=fr'{z_lineout} mm')
+    axs[1, 0].plot(rho_vals, E_z[lineout_val, :], label=fr'{z_lineout} m')
     axs[1, 0].legend()
+    axs[1, 1].plot(rho_vals, E_r[lineout_val, :], label=fr'{z_lineout} m')
     axs[1, 1].legend()
-axs[1, 0].set_title('Radial Line-Outs for $\\vec{E}_{\\rho}$ Field  at z = ')
+axs[1, 0].set_title('Radial Line-Outs for $\\vec{E}_z$ Field  at z = ')
 axs[1, 0].set_xlabel(r'Radial Distance, $\rho$ (m)')
 axs[1, 0].grid(True)
 axs[1, 0].set_ylabel('Electric Field  (V/m)')
-axs[1, 1].set_title('Radial Line-Outs for $\\vec{E}_z$ Field  at z = ')
+axs[1, 1].set_title('Radial Line-Outs for $\\vec{E}_{\\rho}$ Field  at z = ')
 axs[1, 1].set_xlabel(r'Radial Distance, $\rho$ (m)')
 axs[1, 1].set_ylabel('Electric Field  (V/m)')
 axs[1, 1].grid(True)

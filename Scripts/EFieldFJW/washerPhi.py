@@ -20,7 +20,8 @@ import textwrap
 Q = 1e-11 # Couloumb
 a = 0.25 # Disk inner radius (m)
 b = 1.0 # Disk outer radius (m)
-sigma = Q / (np.pi * (b ** 2 - a ** 2)) # charge density C/m^2
+sigma_denominator = np.pi*(b**2 - a**2)
+sigma = Q / sigma_denominator
 prefactor = sigma / (4 * np.pi * epsilon_0)
 
 # integration grid
@@ -73,7 +74,7 @@ E_mag = np.sqrt(E_rho**2 + E_z**2)
 
 # Plot potential
 fig, axs = plt.subplots(2, 2, figsize=(14, 10))
-title = fr"Electric Field Calculated from a Scalar Potential for a Uniformly-Charged Washer (radii a, b = {a}, {b} m), Centered at (X, Y, 0), $Q = 10^{{-11}}$ C"
+title = fr"Electric Field Calculated from a Scalar Potential for a Uniformly-Charged Washer, radii a, b = {a}, {b} m, Centered at (X, Y, 0), $Q = 10^{{-11}}$ C"
 wrapped = "\n".join(textwrap.wrap(title, width = 60))
     # fig.suptitle(fr'Electric Field Calculated from a Scalar Potential for a \nUniformly-Charged Washer (radii a, b = {a}, {b} m), Centered at (X, Y, 0), $Q = 10^{{-11}}$ C', fontsize=20))
 fig.suptitle(wrapped, fontsize=20)
@@ -105,21 +106,21 @@ axs[0, 1].set_title('$\\vec{E}$ Field Magnitude')
 #
 rho1 = 100
 rho2 = 180
-z_lo_min = 0.01
-z_lo_vals = [z_lo_min, 5 * z_lo_min, 10 * z_lo_min, 50 * z_lo_min]
+z_lo_min = 0.01 # z axis lineouts
+z_lo_vals = [z_lo_min, 5 * z_lo_min, 10 * z_lo_min, 50 * z_lo_min]  # z axis lineouts
 for z_lineout in z_lo_vals:
     lineout_val = np.argmin(np.abs(z_vals - z_lineout))
     closest_value = z_vals[lineout_val]
     index = lineout_val
-    axs[1, 0].plot(rho_vals, E_rho[lineout_val, :], label=fr'{z_lineout} mm')
-    axs[1, 1].plot(rho_vals, E_z[lineout_val, :], label=fr'{z_lineout} mm')
+    axs[1, 0].plot(rho_vals, E_z[lineout_val, :], label=fr'{z_lineout} m')
+    axs[1, 1].plot(rho_vals, E_rho[lineout_val, :], label=fr'{z_lineout} m')
     axs[1, 0].legend()
     axs[1, 1].legend()
-axs[1, 0].set_title('Radial Line-Outs for $\\vec{E}_{\\rho}$ Field at z = ')
+axs[1, 0].set_title('Radial Line-Outs for $\\vec{E}_z$ Field  at z = ')
 axs[1, 0].set_xlabel(r'radial distance, $\rho$ (m)')
 axs[1, 0].grid(True)
 axs[1, 0].set_ylabel('Electric Field (V/m)')
-axs[1, 1].set_title('Radial Line-Outs for $\\vec{E}_z$ Field  at z = ')
+axs[1, 1].set_title('Radial Line-Outs for $\\vec{E}_{\\rho}$ Field at z = ')
 axs[1, 1].set_xlabel(r'Radial Distance, $\rho$ (m)')
 axs[1, 1].set_ylabel('Electric Field  (V/m)')
 axs[1, 1].grid(True)
