@@ -168,12 +168,12 @@ def OpenGUI(manager):
                                     field="b")
     field_notebook.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
 
-    e_field_notebook = Field_Notebook(e_field_labelFrame, ['zero', 'bob_e', 'fw_e', 'disk_e'],
-                                      [ZeroTableTab, RingTableTab, RingTableTab, DiskTab],
+    e_field_notebook = Field_Notebook(e_field_labelFrame, ['zero', 'bob_e', 'fw_e', 'disk_e', 'washer_potential'],
+                                      [ZeroTableTab, RingTableTab, RingTableTab, DiskTab, DiskTab],
                                     collection_key=(param_keys.field_methods.name, 'e', param_keys.params.name, 'collection'),
                                     tab_key=(param_keys.field_methods.name, 'e', 'method'),
-                                    dataclasses= [None, Bob_e_Config_Dataclass, Bob_e_Config_Dataclass, Disk_e_Config_Dataclass],
-                                    dir_names=[None, 'bob_e', 'bob_e', 'Disks'],
+                                    dataclasses= [None, Bob_e_Config_Dataclass, Bob_e_Config_Dataclass, Disk_e_Config_Dataclass, Disk_e_Config_Dataclass],
+                                    dir_names=[None, 'bob_e', 'bob_e', 'Disks', "Disks"],
                                       path_key="e_coil_file",
                                       field="e")
     e_field_notebook.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
