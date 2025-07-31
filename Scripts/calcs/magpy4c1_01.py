@@ -144,9 +144,9 @@ def Bob_e(coord, args, collection):
     return np.sum(es, axis=0) # sum the E field components column-wise
 
 from EFieldFJW.ys_3d_disk import compute_disk_with_collection, compute_fields
+from EFieldFJW.washerPhiVectorized import compute_field as compute_washerPhi
 
-
-def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator):
+def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator, e_args):
     """
     Controller for what E method is used.
 
@@ -173,7 +173,10 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator):
         case 'disk_e':
             inners = fromTemp["field_methods"]['e']['params']['Inner_r']
             E = compute_disk_with_collection(p, fromTemp["field_methods"]['e']['params']['collection'], inners, executor)
-
+        case 'washer_potential':
+            cyl_coord = toCyl(p)
+            Er, Ez = compute_washerPhi(cyl_coord[0], cyl_coord[2], e_args[0])
+            E = toCart(Er, cyl_coord[1], Ez)
             
     return np.array(E)
 
@@ -243,6 +246,22 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
     #print(df)
     temp = 100000  # replace later with flush_count param after adding it to the tempfile
 
+    # determine constants for field calculations
+    e_args = [] # extra arguments supplied to E calculation
+    def calc_e_consts():
+        method = from_temp['field_methods']['e']['method']
+        match method:
+            case 'washer_potential':
+                # for now, assuming ALL washers are the same
+                e_c = from_temp["field_methods"]['e']['params']['collection']
+                b = e_c[0].diameter / 2
+                a = float(from_temp["field_methods"]['e']['params']['Inner_r'][0])
+                Q = e_c[0].current
+                sigma_denominator = np.pi * (b ** 2 - a ** 2)
+                sigma = Q / sigma_denominator  # C/m^2
+                e_args.append(sigma)
+    calc_e_consts()
+
     ## Collect coil location to know when the particle escapes
     c = from_temp[param_keys.field_methods.name]['b']['params']['collection']
     dt = from_temp['dt']
@@ -289,14 +308,16 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
 
     # Step 2: do the actual boris logic
     num_points = int(from_temp['numsteps'])
+    print(f"setup complete, beginning steps")
     i = 1
     for time in range(1, num_points + 1): # time: step number
+        print(f"step {i}")
         x = np.array([out[i - 1].px, out[i - 1].py, out[i - 1].pz])
         v = np.array([out[i - 1].vx, out[i - 1].vy, out[i - 1].vz])
         ##########################################################################
         # COLLECT FIELDS
             # submit the field calculations to the threadpool
-        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp, executor, e_interp)
+        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp, executor, e_interp, e_args)
         _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], c, b_interp)
             # collect the results
         Ef = _Ef.result()
@@ -464,7 +485,7 @@ def create_interpolator(filepath):
         ax_linspace = f['src/coords'][0,:,0,0] # linspace used for x; should be same for all axes
         mesh_field = f['src/data']
         mesh_field = np.moveaxis(mesh_field, 0, -1)
-    interpolator = RegularGridInterpolator((ax_linspace, ax_linspace, ax_linspace), mesh_field, method='quintic')
+    interpolator = RegularGridInterpolator((ax_linspace, ax_linspace, ax_linspace), mesh_field, method='linear')
     return interpolator
 
 def grid_checker(fromTemp):
@@ -520,6 +541,7 @@ def grid_checker(fromTemp):
     except KeyError:
         pass
 
+    print(f"finished making interpolators")
     return b_interpolator, e_interpolator
 
 def _runsim(manager_queue):

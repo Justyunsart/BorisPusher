@@ -60,6 +60,9 @@ def check_if_overwrite(desired_file, input_file_path, diags_present)->bool:
 
         # if the past and present dicts are the same, then you don't need to update the file.
         # however, if they are not the same, then you do want to overwrite.
+
+        #print(f"check_if overwrite: past: {diags_past} present: {diags_present}")
+        #print(f"returning {diags_past == diags_present}")
         return False if diags_past == diags_present else True
 
 # numpy dtypes, so the h5 file can have named columns
@@ -141,13 +144,15 @@ def precalculate_3d_grid(method, input_file_path, res=250, **kwargs):
 
     # this function tells us if we either need to create a new file or overwrite an existing one.
     should_overwrite = check_if_overwrite(desired_path, input_file_path, diags_present)
-
+    #print(should_overwrite)
+    # debug line to prevent grid creation
+    #return None
     # if the existing diags dataset is the same as the proposed diags, then you are good.
     if not should_overwrite:
+        print(f"3d_mesh returning None")
         return None
 
     check_grid_dir(input_file_path)
-
     # NOW WE KNOW WE NEED TO CREATE A NEW H5 FILE WITH THE GIVEN NAME
     create_grid_h5(file_name=desired_path, res=res) # this will replace any existing files with this name
 
