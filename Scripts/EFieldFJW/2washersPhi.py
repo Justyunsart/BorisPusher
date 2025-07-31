@@ -9,7 +9,7 @@ Q = 1e-11  # charge per disk [C]
 a = 0.25   # inner radius [m]
 b = 1.0    # outer radius [m]
 sigma = Q / (np.pi * (b**2 - a**2))  # surface charge density [C/m^2]
-disk_separation = 1.0
+disk_separation = 2.0
 z_centers = [-disk_separation/2, disk_separation/2]
 
 # Radial integration grid
@@ -32,8 +32,8 @@ def phi_single_disk(rho, z, z0):
 def total_phi_grid(rho, z):
     """Compute total scalar potential on a 2D grid (rho, z)."""
     phi = np.zeros_like(rho)
-    phi -= phi_single_disk(rho, z, z_centers[0])      # lower disk, +z normal
-    phi -= phi_single_disk(rho, z, z_centers[1])      # upper disk, -z normal
+    phi += phi_single_disk(rho, z, z_centers[0])      # lower disk, +z normal
+    phi += phi_single_disk(rho, z, z_centers[1])      # upper disk, -z normal
     return phi
 
 def compute_field_grid(rho_vals, z_vals):
@@ -51,7 +51,7 @@ def compute_field_grid(rho_vals, z_vals):
 
 # Grid for streamline plot
 rho_vals = np.linspace(0.01, 1.5, 200)
-z_vals = np.linspace(-1.2, 1.2, 300)
+z_vals = np.linspace(-1.2, 1.2, 200)
 RHO, Z, Erho, Ez = compute_field_grid(rho_vals, z_vals)
 
 # Convert cylindrical (rho,z) components to cartesian (x,z) for streamplot
@@ -64,13 +64,11 @@ V = Ez    # vertical component
 plt.figure(figsize=(8, 10))
 strm = plt.streamplot(X, Y, U, V, color=np.log(np.sqrt(U**2 + V**2)), linewidth=1.2, cmap='plasma', density=1.5)
 
-# Draw the annular disks
-for z0 in z_centers:
-    theta = np.linspace(0, 2*np.pi, 300)
-    for r_edge in [a, b]:
-        x = r_edge * np.cos(theta)
-        z = np.full_like(theta, z0)
-        plt.plot(np.abs(x), z, 'k', lw=2)
+# Draw a solid line on the plots
+x_values = [a, b]
+y_values = [z_centers, z_centers]
+plt.plot(x_values, y_values, color='green', linewidth=6, label="Charged Conductor")
+plt.plot(x_values, np.multiply(y_values, -1), color='green', linewidth=6, label="Charged Conductor")
 
 
 plt.xlabel(r'Radial distance, $\rho$ (m)')
