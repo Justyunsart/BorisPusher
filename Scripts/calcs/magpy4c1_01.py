@@ -43,6 +43,8 @@ from EFieldFJW.efieldring_4 import fwysr_e
 from EFieldFJW.streamlines3Dring import compute_field
 from scipy.interpolate import RegularGridInterpolator
 
+import tempfile
+
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
 
@@ -144,7 +146,8 @@ def Bob_e(coord, args, collection):
     return np.sum(es, axis=0) # sum the E field components column-wise
 
 from EFieldFJW.ys_3d_disk import compute_disk_with_collection, compute_fields
-from EFieldFJW.washerPhiVectorized import compute_field as compute_washerPhi
+#from EFieldFJW.washerPhiVectorized import compute_field as compute_washerPhi
+from EFieldFJW.washersPhi import washer_phi_from_collection
 
 def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator, e_args):
     """
@@ -174,9 +177,7 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator, e_args):
             inners = fromTemp["field_methods"]['e']['params']['Inner_r']
             E = compute_disk_with_collection(p, fromTemp["field_methods"]['e']['params']['collection'], inners, executor)
         case 'washer_potential':
-            cyl_coord = toCyl(p)
-            Er, Ez = compute_washerPhi(cyl_coord[0], cyl_coord[2], e_args[0])
-            E = toCart(Er, cyl_coord[1], Ez)
+            pass
             
     return np.array(E)
 
@@ -247,19 +248,32 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
     temp = 100000  # replace later with flush_count param after adding it to the tempfile
 
     # determine constants for field calculations
-    e_args = [] # extra arguments supplied to E calculation
+    e_args = {} # extra arguments supplied to E calculation
     def calc_e_consts():
         method = from_temp['field_methods']['e']['method']
         match method:
             case 'washer_potential':
-                # for now, assuming ALL washers are the same
+                e_c:magpy.Collection
                 e_c = from_temp["field_methods"]['e']['params']['collection']
-                b = e_c[0].diameter / 2
-                a = float(from_temp["field_methods"]['e']['params']['Inner_r'][0])
-                Q = e_c[0].current
-                sigma_denominator = np.pi * (b ** 2 - a ** 2)
-                sigma = Q / sigma_denominator  # C/m^2
-                e_args.append(sigma)
+                # assemble extra function arguments for the solution
+                #   Generally will be in lists with the same indexing order as the collection
+
+                normals = [] # input n_coils amount of (3,) arrays
+                sigmas = [] # input n_coils amount of empty lists
+                for ring in e_c.children_all:
+                    # we can get the coil's normal by rotating [0, 0, 1] by the coil's orientation.
+                    default_z = np.array([0,0,1])
+                    normals.append(ring.orientation.apply(default_z))
+
+                    # append empty list per coil into sigmas
+                    sigmas.append([])
+
+                # put all argument extras inside the e_args dict
+                e_args['normals'] = normals
+                e_args['sigmas'] = sigmas
+
+        return e_args
+
     calc_e_consts()
 
     ## Collect coil location to know when the particle escapes
@@ -488,7 +502,7 @@ def create_interpolator(filepath):
     interpolator = RegularGridInterpolator((ax_linspace, ax_linspace, ax_linspace), mesh_field, method='linear')
     return interpolator
 
-def grid_checker(fromTemp):
+def grid_checker(fromTemp, filepath):
     """
     IF the simulation is called with gridding = 1 for a ring configuration, you need to make sure
     that a grid lookup file exists.
@@ -538,6 +552,38 @@ def grid_checker(fromTemp):
             hdf5_name = coil_path.parents[0] / "grid" / f"{coil_path.name}.hdf5"
             e_interpolator = create_interpolator(hdf5_name)
 
+        elif e_dict['method'] == 'disk_potential':
+            # calculate, then save the scalar potential meshgrid to a tempfile
+            collection = e_dict['params']['collection']
+            res = fromTemp["field_methods"]['e']['params']
+            with tempfile.NamedTemporaryFile(suffix='.hdf5', delete=False) as f:
+                # we need to get the grid to calculate the potentials for.
+                # x, y, z bounds = bounding cube that fits all coils
+                # linspace defined by the 'res' property
+                lim = np.max(abs(collection[0].position)) + 0.005
+                _ax_lin = np.linspace(-lim, lim, res)
+                _dax = _ax_lin[1] - _ax_lin[0] # dx, dy, dz = _dax
+
+                # collect coil information
+                normals = []  # input n_coils amount of (3,) arrays
+                sigmas = []  # input n_coils amount of empty lists
+                for ring in collection.children_all:
+                    # we can get the coil's normal by rotating [0, 0, 1] by the coil's orientation.
+                    default_z = np.array([0, 0, 1])
+                    normals.append(ring.orientation.apply(default_z))
+
+                    # append empty list per coil into sigmas
+                    sigmas.append([])
+
+                # construct grid
+                _x, _y, _z = np.meshgrid(_ax_lin, _ax_lin, _dax, indexing='ij')
+
+                potential = washer_phi_from_collection(point=p, collection=fromTemp["field_methods"]['e']['params'][
+                    'collection'],)
+
+
+
+
     except KeyError:
         pass
 
@@ -545,15 +591,31 @@ def grid_checker(fromTemp):
     return b_interpolator, e_interpolator
 
 def _runsim(manager_queue):
-    # Access tempfile dict for all threads
-    _fromTemp = create_shared_info()
+    filepath = ""
+    """
+    This try/ except block exists to ensure that the tempfile created in some methods
+    are properly erased when the program exits.
+    """
+    try:
+        # Access tempfile dict for all threads
+        _fromTemp = create_shared_info()
 
-    # check/ create precomputed grid
-    # value of these will be None if gridding not used.
-    b_inter, e_inter = grid_checker(_fromTemp)
+        # check/ create precomputed grid
+        # value of these will be None if gridding not used.
+        b_inter, e_inter = grid_checker(_fromTemp, filepath)
 
-    with ThreadPoolExecutor() as executor:
-        borisPush(executor, _fromTemp, manager_queue, b_inter, e_inter)
+        with ThreadPoolExecutor() as executor:
+            borisPush(executor, _fromTemp, manager_queue, b_inter, e_inter)
+    except Exception as e:
+        """
+        any error happens
+        """
+        print(f"Exception occured: {e}")
+
+    finally:
+        if os.path.exists(filepath):
+            print(f"Deleting temporary file at {filepath}")
+            os.remove(filepath)
 
 
 def runsim(fromGui:dict, manager_queue):
