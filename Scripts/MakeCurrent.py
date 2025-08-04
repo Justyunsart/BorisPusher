@@ -5,7 +5,7 @@ Script that handles the creation of the current coils used in the simulation.
 from magpylib.current import Circle as C
 from magpylib import Collection
 
-#==============#
+#==============#4
 # CONSTRUCTION #
 #==============#
 # creates a square box of Loop coils

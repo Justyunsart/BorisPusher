@@ -33,7 +33,7 @@ def rotation_matrix_from_vectors(vec1, vec2):
         [_v[2], 0, -_v[0]],
         [-_v[1], _v[0], 0]
     ])
-    return np.eye(3) + kmat + kmat @ kmat * ((1 - c) / s**2)
+    return np.eye(3) + kmat + kmat @ kmat * ((1 - _c) / s**2)
 
 def phi_disk_at_point(r_global, center, normal, Q, a, b, _sigma:list=[], r_res:int=150):
     """
@@ -87,17 +87,27 @@ def total_phi(r_point):
     """Sum scalar potentials from all 6 disks at point r."""
     return sum(phi_disk_at_point(r_point, d["center"], d["normal"]) for d in disks)
 
-def washer_phi_from_collection(point, collection, normals, sigmas, r_res=150):
+def washer_phi_from_collection(points, inners, collection, normals, sigmas, r_res=150):
     """
     interfaces with magpy4c1.py's inputs
     """
     _sum = 0
-    for i in range(len(collection)):
-        ring = collection[i]
-        position = ring.position
-        _sum += phi_disk_at_point(point, position, normals[i], ring.current,
-                                    inners[i], ring.diameter/2, sigmas[i], r_res)
-    return sum
+    lim = int(np.array(points).shape[-1])
+    out = np.empty((lim, lim, lim))
+
+    # god forgive me
+    for a in range(lim):
+        for b in range(lim):
+            for c in range(lim):
+                point = points[:, a, b, c]
+                for i in range(len(collection)):
+
+                    ring = collection[i]
+                    position = ring.position
+                    _sum += phi_disk_at_point(point, position, normals[i], ring.current,
+                                                float(inners[i]), ring.diameter/2, sigmas[i], r_res)
+                out[a, b, c] = _sum
+    return out
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt

@@ -38,7 +38,7 @@ def rotation_matrix_from_axis_angle(axis, angle):
     ])
 
 
-def phi_disk_at_points(r_points, center, normal, Q, a, b, r_res=150):
+def phi_disk_at_points(r_points, center, normal, sigma, Q, a, b, r_res=200):
     """
     Vectorized scalar potential from a single charged disk at many points.
 
@@ -53,11 +53,15 @@ def phi_disk_at_points(r_points, center, normal, Q, a, b, r_res=150):
     Returns:
     - phi_vals: (N,) array of potential values
     """
+    if not sigma:
+        sigma.append(Q / (np.pi * (b ** 2 - a ** 2)))
+    sigma = sigma[0] # update internal sigma variable with the stored value.
+
     r_points = np.atleast_2d(r_points)  # shape (N, 3)
     N = r_points.shape[0]
 
     # Charge density
-    sigma = Q / (np.pi * (b ** 2 - a ** 2))
+    #sigma = Q / (np.pi * (b ** 2 - a ** 2))
 
     # Rotation matrix to align normal to z-axis
     Rmat = rotation_matrix_from_vectors(normal, np.array([0, 0, 1]))
@@ -67,6 +71,9 @@ def phi_disk_at_points(r_points, center, normal, Q, a, b, r_res=150):
     r_local = (Rmat @ rel_points.T).T  # shape (N, 3)
 
     rho = np.linalg.norm(r_local[:, :2], axis=1)  # shape (N,)
+
+    #print(rho.shape)
+
     z = r_local[:, 2]  # shape (N,)
 
     # Avoid division by zero at the disk center
@@ -74,20 +81,28 @@ def phi_disk_at_points(r_points, center, normal, Q, a, b, r_res=150):
     rho[mask] = 1e-12
     z[mask] = 1e-12
 
+    #print(rho.shape)
+
     # Prepare integration
     R_vals = np.linspace(a, b, r_res)  # shape (r_res,)
+    #print(R_vals)
     R_grid, rho_grid = np.meshgrid(R_vals, rho, indexing='ij')  # shape (r_res, N)
     z_grid = z[None, :]  # shape (1, N)
 
+    #print(R_grid.shape)
+
     k2 = 4 * R_grid * rho_grid / ((R_grid + rho_grid) ** 2 + z_grid ** 2)
     k2 = np.clip(k2, 0, 1 - 1e-12)
+
+    #print(k2.shape)
     K = ellipk(k2)
 
     denom = np.sqrt((R_grid + rho_grid) ** 2 + z_grid ** 2)
-    integrand = R_grid * K / denom  # shape (r_res, N)
+    integrand = R_grid * K / denom
+    #print(integrand.shape)
 
     # Simpson integration over R_vals (axis=0)
-    result = simpson(integrand, R_vals, axis=0)  # shape (N,)
+    result = simpson(integrand, x=R_vals, axis=0)  # shape (N,)
     phi_vals = sigma / (2 * epsilon_0) * result
 
     # Set potential to 0 where rho==0 and z==0 (if any)
@@ -95,85 +110,77 @@ def phi_disk_at_points(r_points, center, normal, Q, a, b, r_res=150):
 
     return phi_vals
 
-def washer_phi_from_collection(point, collection, inners, normals, sigmas, r_res=150):
+def washer_phi_from_collection(points, collection, inners, normals, sigmas, r_res=200, nump=10):
     """
     interfaces with magpy4c1.py's inputs
     """
-    _sum = 0
+    _sum = np.empty((points.shape[0],))
     for i in range(len(collection)):
+        print(f"starting work on ring: {i}")
         ring = collection[i]
         position = ring.position
-        _sum += phi_disk_at_points(point, position, normals[i], ring.current,
-                                    inners[i], ring.diameter/2, sigmas[i], r_res)
-    return sum
+        _sum += phi_disk_at_points(points, position, normals[i],
+                                    sigmas[i], ring.current, inners[i], ring.diameter/2, r_res)
+    return _sum
 
 if __name__ == "__main__":
+    # visualize cross section of E field
+
     import matplotlib.pyplot as plt
+    from MakeCurrent import Helmholtz
+    import numpy as np
 
-    # Washer parameters
-    Q = 1e-11
-    a, b = 0.25, 0.75
-    sigma = Q / (np.pi * (b ** 2 - a ** 2))
-    disk_separation = 2.0
-    offset = disk_separation / 2
-    c = offset
-    # Integration grid for radius
-    R = np.linspace(a, b, 150)
+    # create washer containers
+    b = 1
+    a = 0.25
+    d = 1
 
-    # Define six disks: center and normal
-    disks = [
-        {"center": np.array([offset, 0, 0]), "normal": np.array([-1, 0, 0])},  # +x
-        {"center": np.array([-offset, 0, 0]), "normal": np.array([1, 0, 0])},  # -x
-        {"center": np.array([0, offset, 0]), "normal": np.array([0, -1, 0])},  # +y
-        {"center": np.array([0, -offset, 0]), "normal": np.array([0, 1, 0])},  # -y
-        {"center": np.array([0, 0, offset]), "normal": np.array([0, 0, -1])},  # +z
-        {"center": np.array([0, 0, -offset]), "normal": np.array([0, 0, 1])},  # -z
-    ]
+    collection = Helmholtz(1e-11, b, d)  # collection = container for all the washers
+    inners = [a, a]  # corresponding inner washer rho
+    # collect coil information
+    normals = []  # input n_coils amount of (3,) arrays
+    sigmas = []  # input n_coils amount of empty lists
+    for ring in collection.children_all:
+        # we can get the coil's normal by rotating [0, 0, 1] by the coil's orientation.
+        default_z = np.array([0, 0, 1])
+        normals.append(ring.orientation.apply(default_z))
 
+        # append empty list per coil into sigmas
+        sigmas.append([])
 
-    # Grid (xz-plane slice at y = 0)
-    x = np.linspace(-1.5, 1.5, 100)
-    z = np.linspace(-1.5, 1.5, 100)
-    X, Z = np.meshgrid(x, z)
-    Y = np.zeros_like(X)  # slice at y = 0
+    # create (n, 3) array of points
+    lim = 2
+    res = 50
+    _lin = np.linspace(-lim, lim, res)
+    _x, _y, _z = np.meshgrid(_lin, _lin, _lin, indexing='ij')
+    points = np.stack([_x.ravel(), _y.ravel(), _z.ravel()], axis=-1)
 
-    # Compute potential field
-    phi_grid = np.zeros_like(X)
-    for i in range(X.shape[0]):
-        for j in range(X.shape[1]):
-            r = np.array([X[i, j], Y[i, j], Z[i, j]])
-            phi_grid[i, j] = total_phi(r)
+    # compute results
+    potentials = np.array(washer_phi_from_collection(points, collection, inners, normals, sigmas))
+    potentials = np.reshape(potentials, (res, res, res))
+    #print(potentials.shape)
+
+    # graph cross section (streamline)
+    fig, ax = plt.subplots()
 
     # Compute electric field: E = -∇Φ
-    dx = x[1] - x[0]
-    dz = z[1] - z[0]
+    dax = _lin[1] - _lin[0]
     # Ex, Ez = -np.gradient(phi_grid, dx, dz)
-    dphi_dz, dphi_dx = np.gradient(phi_grid, dz, dx)
+    dphi_dx, dphi_dy, dphi_dz = np.gradient(potentials, dax, dax, dax)
     Ex = -dphi_dx
     Ez = -dphi_dz
 
-    # Streamplot
-    plt.figure(figsize=(10, 8))
-    strm = plt.streamplot(X, Z, Ex, Ez, color=np.log(np.sqrt(Ex**2 + Ez**2)), cmap='plasma', density=1.4)
-    plt.colorbar(strm.lines, label=r'$\log|\vec{E}|$')
-    plt.title("Electric Field Streamlines from 6 Inward-Facing Annular Disks (xz-plane)")
-    plt.xlabel('x (m)')
-    plt.ylabel('z (m)')
-    plt.axis('equal')
-    plt.grid(True)
+    #print(Ex.shape)
+    ind = res // 2
+    stream = ax.streamplot(_lin, _lin, Ex[:, ind, :].T, Ez[:, ind, :].T)
 
-    # Disk cross-section thickness for visual representation
-    width = [a, b]
-    height = [c, c]
-    plt.plot([a, b], [c, c], color='green', linewidth=6, label="Charged Conductor")
-    plt.plot([a, b], [-c, -c], color='green', linewidth=6, label="Charged Conductor")
-    plt.plot([-a,-b], [-c, -c], color='green', linewidth=6, label="Charged Conductor")
-    plt.plot([-a,-b], [c, c], color='green', linewidth=6, label="Charged Conductor")
+    #colorbar = fig.colorbar(stream.lines, ax=stream)
+    plt.grid(True)
+    #plt.axis('equal')
 
     # Z-oriented disks: centers at z = ±offset, x = 0
-    plt.plot([c, c], [ a,  b], color='green', linewidth=6, label="Disk +z")  # at z = +0.5
-    plt.plot([c, c], [ -a,  -b], color='green', linewidth=6, label="Disk +z")  # at z = +0.5
-    plt.plot([-c, -c], [a, b], color='green', linewidth=6, label="Disk -z")  # at z = -0.5
-    plt.plot([-c, -c], [-a, -b], color='green', linewidth=6, label="Disk -z")  # at z = -0.5
-
+    plt.plot([d, d], [a, b], color='green', linewidth=6, label="Disk +z")  # at z = +0.5
+    plt.plot([d, d], [-a, -b], color='green', linewidth=6, label="Disk +z")  # at z = +0.5
+    plt.plot([-d, -d], [a, b], color='green', linewidth=6, label="Disk -z")  # at z = -0.5
+    plt.plot([-d, -d], [-a, -b], color='green', linewidth=6, label="Disk -z")  # at z = -0.5
     plt.show()
