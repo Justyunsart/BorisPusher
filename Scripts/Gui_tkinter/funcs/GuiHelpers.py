@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
-from BorisPlots import graph_trajectory
+#from BorisPlots import graph_trajectory
 from Gui_tkinter.funcs.GuiEntryHelpers import Dict_to_CSV
 
 import pandas as pd
@@ -52,9 +52,9 @@ def PlotFileCallback(name:StringVar, dir):
     Events.PRE_PLOT.value.invoke() # run extra event logic (creating the tempfile for plotting)
     browseFiles(name, dir)
 
-def PlotConfirmCallback(name:ttk.Label, root:Tk):
-    graph_trajectory(lim = 500, data = name.cget("text"))
-    #root.quit()
+#def PlotConfirmCallback(name:ttk.Label, root:Tk):
+#    graph_trajectory(lim = 500, data = name.cget("text"))
+#    #root.quit()
 
 
 # HELPERS

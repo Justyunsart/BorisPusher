@@ -91,6 +91,10 @@ class RingTableTab(tk.Frame):
                                 self.res)
         self.res.value.trace_add("write", listener_func)
 
+        # init. values on start
+        gridding_func()
+        listener_func()
+
         # pack self
         self.grid(row=0, column=0, sticky=tk.NSEW)
 

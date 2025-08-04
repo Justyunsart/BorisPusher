@@ -112,7 +112,7 @@ def create_grid_h5(file_name, res, **kwargs):
         data = f.create_dataset('src/data', (3, res, res, res), chunks=True,
                                 dtype=np.float64)
 
-def precalculate_3d_grid(method, input_file_path, res=250, **kwargs):
+def precalculate_3d_grid(method, input_file_path, res=100, **kwargs):
     """
     :params:
     method(callable): the actual logic used to populate the field.

@@ -48,7 +48,6 @@ import tempfile
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
 
-
 ####################
 # PHYSICS SETTINGS #
 ####################
@@ -147,7 +146,7 @@ def Bob_e(coord, args, collection):
 
 from EFieldFJW.ys_3d_disk import compute_disk_with_collection, compute_fields
 #from EFieldFJW.washerPhiVectorized import compute_field as compute_washerPhi
-from EFieldFJW.washersPhi import washer_phi_from_collection
+from EFieldFJW.washersPhi_vectorized import washer_phi_from_collection
 
 def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator, e_args):
     """
@@ -158,8 +157,6 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator, e_args):
     """
     global dax
     if interpolator is not None:
-        if E_Method == "washer_potential":
-            return (interpolator([p]).reshape(3, )) / dax
         return interpolator([p]).reshape(3, )
 
     #print(f"E_method is: {E_Method}")
@@ -179,6 +176,7 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator, e_args):
         case 'disk_e':
             inners = fromTemp["field_methods"]['e']['params']['Inner_r']
             E = compute_disk_with_collection(p, fromTemp["field_methods"]['e']['params']['collection'], inners, executor)
+
             
     return np.array(E)
 
@@ -554,24 +552,24 @@ def grid_checker(fromTemp, filepath):
             e_interpolator = create_interpolator(hdf5_name)
 
         if e_dict['method'] == 'washer_potential':
-            print(f"should be calculating potential")
-            global dax
-            # calculate, then save the scalar potential meshgrid to a tempfile
-            collection = e_dict['params']['collection']
-            #res = fromTemp["field_methods"]['e']['params']
-            res = 100
-            # we need to get the grid to calculate the potentials for.
-            # x, y, z bounds = bounding cube that fits all coils
-            # linspace defined by the 'res' property
-            lim = np.max(abs(collection[0].position)) + 0.005
-            _ax_lin = np.linspace(-lim, lim, res)
-            _dax = _ax_lin[1] - _ax_lin[0] # dx, dy, dz = _dax
-            dax = _dax # update global var.
+            # precompute the grid potential
+            print(f"creating washer potential")
+            e_c = fromTemp["field_methods"]['e']['params']['collection']
+            #b = e_c[0].diameter / 2
+            a = float(fromTemp["field_methods"]['e']['params']['Inner_r'][0])
+            #Q = e_c[0].current
+            res = 101 # hardcoded for now
+
+            sim_lim = np.max(abs(e_c[0].position)) + 0.005
+            _lin = np.linspace(-sim_lim, sim_lim, res)
+            dax = _lin[1] - _lin[0]
+            _x, _y, _z = np.meshgrid(_lin, _lin, _lin, indexing='ij')
+            points = np.stack([_x.ravel(), _y.ravel(), _z.ravel()], axis=-1)
 
             # collect coil information
             normals = []  # input n_coils amount of (3,) arrays
             sigmas = []  # input n_coils amount of empty lists
-            for ring in collection.children_all:
+            for ring in e_c.children_all:
                 # we can get the coil's normal by rotating [0, 0, 1] by the coil's orientation.
                 default_z = np.array([0, 0, 1])
                 normals.append(ring.orientation.apply(default_z))
@@ -579,17 +577,18 @@ def grid_checker(fromTemp, filepath):
                 # append empty list per coil into sigmas
                 sigmas.append([])
 
-            # construct grid
-            grid = np.array(np.meshgrid(_ax_lin, _ax_lin, _ax_lin, indexing='ij'))
-            #print(grid.shape)
-            inners = e_dict['params']['Inner_r']
+            potential = washer_phi_from_collection(points, e_c, a, normals, sigmas)
+            potential = potential.reshape((res, res, res))
 
-            _potential = washer_phi_from_collection(points=grid, collection=fromTemp["field_methods"]['e']['params'][
-                'collection'], inners=inners, normals=normals, sigmas=sigmas)
+            # save the gradient to the global var.
+            dphi_dx, dphi_dy, dphi_dz = np.gradient(potential, dax, dax, dax)
+            Ex = -dphi_dx
+            Ey = -dphi_dy
+            Ez = -dphi_dz
 
-            #print(_potential)
-
-            e_interpolator = RegularGridInterpolator((_ax_lin, _ax_lin, _ax_lin), _potential)
+            E_grid = np.stack([Ex, Ey, Ez], axis=-1)
+            e_interpolator = RegularGridInterpolator((_lin, _lin, _lin), E_grid, method='linear')
+            print(f"Finished creating interpolator for washer potential derived E")
 
     except KeyError:
         pass

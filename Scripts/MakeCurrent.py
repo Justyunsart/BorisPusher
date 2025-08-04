@@ -29,34 +29,3 @@ def Helmholtz(a, dia, d):
 
     c = Collection (s7, s8)
     return c
-
-##############
-# PARAMETERS #
-##############
-a = (2.0215 * 10e7) # current in terms of A
-dia = 2 # coil diameter
-d = 1.5 # coil placement
-gap = 0.
-
-#A = -1e10
-#A= -1e5
-#A= -1e8
-#A=-1
-A = -10000000
-#B = 1.37
-Bx = .5
-#B = .25
-#B = .125
-
-###########
-# CURRENT #
-###########
-'''
-current: var that references a magpylib current/ collection object. This is passed to many different files that utilizes it.
-
-Note:
-    - This is mainly used to test graphs and anything alongside it purely within the backend.
-    - Do not change the name of the var current; only change the function it calls. This is because the var is referenced by name.
-'''
-current = Circle(a, dia, d, gap)
-#current = Helmholtz(a, dia, d) # mirror, since distance is far enough to not make helmholtz

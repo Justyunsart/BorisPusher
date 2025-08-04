@@ -120,7 +120,7 @@ def washer_phi_from_collection(points, collection, inners, normals, sigmas, r_re
         ring = collection[i]
         position = ring.position
         _sum += phi_disk_at_points(points, position, normals[i],
-                                    sigmas[i], ring.current, inners[i], ring.diameter/2, r_res)
+                                    sigmas[i], abs(ring.current), inners, ring.diameter/2, r_res)
     return _sum
 
 if __name__ == "__main__":
@@ -128,15 +128,18 @@ if __name__ == "__main__":
 
     import matplotlib.pyplot as plt
     from MakeCurrent import Helmholtz
+    from MakeCurrent import Circle as Hex
     import numpy as np
 
     # create washer containers
-    b = 1
+    b = 0.75
     a = 0.25
     d = 1
 
-    collection = Helmholtz(1e-11, b, d)  # collection = container for all the washers
-    inners = [a, a]  # corresponding inner washer rho
+    #collection = Helmholtz(1e-11, b, d)
+    #collection.rotate_from_angax(90, 'x')
+    collection = Hex(1e-11, b, d, gap=0)  # collection = container for all the washers
+    #inners = [a, a]  # corresponding inner washer rho
     # collect coil information
     normals = []  # input n_coils amount of (3,) arrays
     sigmas = []  # input n_coils amount of empty lists
@@ -150,13 +153,13 @@ if __name__ == "__main__":
 
     # create (n, 3) array of points
     lim = 2
-    res = 50
+    res = 101
     _lin = np.linspace(-lim, lim, res)
     _x, _y, _z = np.meshgrid(_lin, _lin, _lin, indexing='ij')
     points = np.stack([_x.ravel(), _y.ravel(), _z.ravel()], axis=-1)
 
     # compute results
-    potentials = np.array(washer_phi_from_collection(points, collection, inners, normals, sigmas))
+    potentials = np.array(washer_phi_from_collection(points, collection, a, normals, sigmas))
     potentials = np.reshape(potentials, (res, res, res))
     #print(potentials.shape)
 
@@ -169,14 +172,20 @@ if __name__ == "__main__":
     dphi_dx, dphi_dy, dphi_dz = np.gradient(potentials, dax, dax, dax)
     Ex = -dphi_dx
     Ez = -dphi_dz
+    Ey = -dphi_dy
 
     #print(Ex.shape)
     ind = res // 2
-    stream = ax.streamplot(_lin, _lin, Ex[:, ind, :].T, Ez[:, ind, :].T)
+    stream = ax.streamplot(_lin, _lin, Ex[:, :, ind].T, Ey[:, : , ind].T)
 
     #colorbar = fig.colorbar(stream.lines, ax=stream)
     plt.grid(True)
     #plt.axis('equal')
+
+    plt.plot([a, b], [d, d], color='green', linewidth=6, label="Charged Conductor")
+    plt.plot([a, b], [-d, -d], color='green', linewidth=6, label="Charged Conductor")
+    plt.plot([-a, -b], [-d, -d], color='green', linewidth=6, label="Charged Conductor")
+    plt.plot([-a, -b], [d, d], color='green', linewidth=6, label="Charged Conductor")
 
     # Z-oriented disks: centers at z = ±offset, x = 0
     plt.plot([d, d], [a, b], color='green', linewidth=6, label="Disk +z")  # at z = +0.5

@@ -267,7 +267,13 @@ class LabeledEntry():
                               textvariable=self.value,
                               **kwargs)
         self.entry.grid(row=row, column=col + col_span, columnspan=col_span, sticky="E")
-    
+
+    def get(self):
+        """
+        returns the value it is hoarding
+        """
+        return self.value.get()
+
     def toggle(self, state:str):
         """
         state: 'on' or 'off'
