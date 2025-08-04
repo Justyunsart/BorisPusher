@@ -4,21 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="testing and validating a 3d meshgrid as a lookup table">
-      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/washer_potential/washer_pkl_read.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/washer_potential/washer_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/BorisPusher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BorisPusher.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/washersPhi_vectorized.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/washersPhi_vectorized.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiHelpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiHelpers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/tab_content.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/tab_content.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/MakeCurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/MakeCurrent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/grid/_3d_mesh.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/grid/_3d_mesh.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/main.py" afterDir="false" />
-    </list>
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="fixed local e not accessed in magpy4c1_01.py" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -373,14 +359,6 @@
       <workItem from="1753309654002" duration="1540000" />
       <workItem from="1753735741721" duration="2223000" />
       <workItem from="1753829511233" duration="3837000" />
-    </task>
-    <task id="LOCAL-00014" summary="clamped the limits of the b-field streamplot on the calculation tab to be 1m + maximum coil offset.&#10;&#10;The plotting tab now graphs the absolute value of the parallel component (dot product) to better match the nature of the perpendicular component (which already ignores signs because it's graphing the magnitude)">
-      <option name="closed" value="true" />
-      <created>1748904179549</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1748904179549</updated>
     </task>
     <task id="LOCAL-00015" summary="programmable output file directory">
       <option name="closed" value="true" />
@@ -766,7 +744,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754008063334</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="fixed local e not accessed in magpy4c1_01.py">
+      <option name="closed" value="true" />
+      <created>1754350628177</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1754350628177</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -784,7 +770,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="removed the threading for the calculation step's  bob_e implementation to test whether it is the source of e-value inconsistency between runs" />
     <MESSAGE value="e contour plot is now on the log of the magnitude" />
     <MESSAGE value="made the field_methods_impl's theta have the np.float64 dtype just in case" />
     <MESSAGE value="added 'np.empty(0).sum()' in EfieldX inside magpy4c1_01.py to test whether numpy's backend multithreading could cause e_field differences on the same system.&#10;&#10;e_field differences on different systems are currently theorized to be because of floating point rounding and is separate from this." />
@@ -809,7 +794,8 @@
     <MESSAGE value="partly implementing gridding for e" />
     <MESSAGE value="implemented gridding for bob_e&#10;need to check the should_overwrite detection for false positives" />
     <MESSAGE value="testing and validating a 3d meshgrid as a lookup table" />
-    <option name="LAST_COMMIT_MESSAGE" value="testing and validating a 3d meshgrid as a lookup table" />
+    <MESSAGE value="fixed local e not accessed in magpy4c1_01.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed local e not accessed in magpy4c1_01.py" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

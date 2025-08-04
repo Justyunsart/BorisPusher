@@ -88,6 +88,7 @@ def Fw(coord:float, fromTemp):
     #print(f"coord: {coord}, A: {A}, B: {Bx}")
     return np.multiply(A * np.exp(-(coord / Bx)** 4), (coord/Bx)**15)
 
+
 def _Bob_e(inCoord, c, args):
     """
     The internal function passed to each thread in Bob_e().
