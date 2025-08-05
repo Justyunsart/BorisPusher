@@ -411,9 +411,9 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
             ##########################################################################
             # COLLECT FIELDS
             # submit the field calculations to the threadpool
-            _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp)
-            _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], from_temp['mag_coil'],
-                                  b_interp)
+            _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp, executor, e_interp,
+                                  e_args)
+            _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], c, b_interp)
             # collect the results
             Ef = _Ef.result()
             Bf = _Bf.result()
@@ -439,7 +439,8 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
         "Computation Time" : comp_time,
         "Simulation Time" : ft
     }
-    write_to_hdf5(from_temp, out, expand_length, num_points)
+    if(i != 1):
+        write_to_hdf5(from_temp, out, expand_length, num_points)
     #print(f"finished writing to file")
     manager_queue.put(Manager_Data(step=num_points, do_stop=True))
 
