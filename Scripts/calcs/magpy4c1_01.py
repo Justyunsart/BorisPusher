@@ -325,7 +325,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
     print(f"setup complete, beginning steps")
     i = 1
     for time in range(1, num_points + 1): # time: step number
-        print(f"step {i}")
+        #print(f"step {i}")
         x = np.array([out[i - 1].px, out[i - 1].py, out[i - 1].pz])
         v = np.array([out[i - 1].vx, out[i - 1].vy, out[i - 1].vz])
         ##########################################################################
@@ -426,7 +426,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
             #out[1:] = None
             i = 0  # reset the internal AoS index
             out = _out
-            print(out)
+            #print(out)
 
         if np.absolute(max(x.min(), x.max(), key=abs)) > side:
                 out = out[out != np.array(None)]
