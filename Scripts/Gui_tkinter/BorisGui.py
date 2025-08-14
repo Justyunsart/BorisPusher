@@ -37,6 +37,7 @@ def OpenGUI(manager):
     # Initialization checks. Run them.
     Events.ON_START.value.invoke()
     Events.PRE_INIT_GUI.value.invoke()
+    Events.INIT_GUI.value.invoke()
 
     # Application Window
     root = tk.Tk()
@@ -386,7 +387,6 @@ def OpenGUI(manager):
     # control what classes to send over to the program by adding it to params
     #subs["params"] = [time_info, particlePreview, coil_config, b_field, e_field, E_field_graph]
     subs["params"] = [time_info, particlePreview]
-    Events.INIT_GUI.value.invoke(widgets=subs['params'])
     root.deiconify()
 
     calc_button.configure(command=partial(open_output_config, subs["params"], DIR_lastUsed.path.data, root, manager)) # update calculate button's command after setting up params

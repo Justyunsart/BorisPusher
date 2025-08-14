@@ -97,12 +97,20 @@ class TimeStep_n_NumStep():
     simTime:float
     simVar:tk.StringVar
 
+    default_dt = 2e-9
+    default_steps = 50000
+
     responses = {
         "good" : "everything looks good!",
         "bad" : "dt is too big."
     }
 
     def __init__(self, master):
+        self.inital_dt = self.default_dt
+        self.initial_steps = self.default_steps
+
+        self.check_last()
+
         self.master = master
 
         self.frame = tk.Frame(self.master, borderwidth=2, relief=tk.SUNKEN)
@@ -148,12 +156,12 @@ class TimeStep_n_NumStep():
                                  textvariable=self.dt_str)
         self.dt_label.grid(row=4, column=2)
 
-        self.dt = LabeledEntry(self.frame2, val=0.0000001, row=1, col=0, col_span=1, title="Timestep (sec): ", width = 20, justify='center')
+        self.dt = LabeledEntry(self.frame2, val=self.inital_dt, row=1, col=0, col_span=1, title="Timestep (sec): ", width = 20, justify='center')
         self.dt.value.trace_add("write", self._Total_Sim_Time)
         self.dt.value.trace_add("write", self.dt_Callback)
         self.do_bob.trace_add("write", self.update_do_bob)
         
-        self.numsteps = LabeledEntry(self.frame2, val=50000, row=0, col=0, col_span=1, title="Num Steps: ", width = 20, justify='center')
+        self.numsteps = LabeledEntry(self.frame2, val=self.initial_steps, row=0, col=0, col_span=1, title="Num Steps: ", width = 20, justify='center')
         self.numsteps.value.trace_add("write", self._Total_Sim_Time)
         self.numsteps.value.trace_add("write", self.update_numsteps)
 
@@ -220,6 +228,14 @@ class TimeStep_n_NumStep():
             w.bind('<KeyRelease>', partial(self.get_dt_consts, w, True))
         #self.get_ref_position()
         #self.get_dt_consts(None)
+
+    def check_last(self):
+        last = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        try:
+            self.initial_steps = last['numsteps']
+            self.inital_dt = last['dt']
+        except KeyError:
+            pass
 
     """
     call the bob dt constants funcs
@@ -356,6 +372,7 @@ class TimeStep_n_NumStep():
         return dt_lim
     
     """
+    (deprecated)
     Called during the Init_GUI event.
     """
     def init_temp(self, lu):

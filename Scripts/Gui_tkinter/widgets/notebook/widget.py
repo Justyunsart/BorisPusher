@@ -13,7 +13,7 @@ from system.temp_file_names import param_keys, m1f1
 import settings.palettes as p
 from settings.configs.funcs.config_reader import runtime_configs
 import os
-
+from Gui_tkinter.funcs import data_helpers
 
 
 class Field_Notebook(ttk.Notebook):
@@ -75,6 +75,7 @@ class Field_Notebook(ttk.Notebook):
 
         _add_notebook_tabs()
         self.bind('<<NotebookTabChanged>>', self.on_tab_change)
+        self.select_last_used_tab()
 
     def update(self, keys, value):
         """
@@ -99,6 +100,22 @@ class Field_Notebook(ttk.Notebook):
 
         # write the updated dict to the file
         write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+
+    def select_tab_by_name(self, tab_name):
+        """Selects a tab in a ttk.Notebook by its displayed text name."""
+        for tab_id in self.tabs():
+            if self.tab(tab_id, 'text') == tab_name:
+                self.select(tab_id)
+                return True  # Tab found and selected
+        return False  # Tab not found
+
+    def select_last_used_tab(self):
+        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        try:
+            tab_name = data_helpers.get_nested_value(d, self.tab_key)
+            self.select_tab_by_name(tab_name)
+        except KeyError:
+            pass
 
     def on_tab_change(self, event, *args):
         """

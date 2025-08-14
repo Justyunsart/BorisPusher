@@ -86,6 +86,7 @@ class ParticlePreview(EntryTable):
     def __init__(self, master, dataclass=file_particle, dir_observed = None):
         super().__init__(master, dataclass)
         self.fileWidget = FileDropdown(self.frame0, dir=dir_observed, default=self.create_default_input_file)
+        self.read_initial_value() # set filewidget's value based on read val.
         self.fileWidget.grid(row=0, column=0, sticky="nsew")
         # add this class as a listener to the data changes.
         self.fileWidget.PATH.attach(self)
@@ -189,7 +190,14 @@ class ParticlePreview(EntryTable):
             self.fileWidget.combo_box.current(ind)
         except ValueError:
             self.fileWidget.combo_box.current(0)
-    
+
+    def read_initial_value(self):
+        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        if d[param_keys.particle_name.name] in os.listdir(os.path.join(runtime_configs['Paths']['inputs'], NAME_PARTICLES)):
+            self.fileWidget.combo_box.set(d[param_keys.particle_name.name])
+    """
+    deprecated
+    """
     def init_temp(self, lu):
         if lu is not None and lu[param_keys.particle_name.name] in os.listdir(os.path.join(runtime_configs['Paths']['inputs'], NAME_PARTICLES)):
             try:

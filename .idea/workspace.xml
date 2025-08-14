@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="fixed local e not accessed in magpy4c1_01.py" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="clean up terminal outputs">
+      <change afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/data_helpers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/BorisPusher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BorisPusher.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/BorisGuiClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/BorisGuiClasses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/widget.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/events/funcs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/events/funcs.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -359,14 +370,6 @@
       <workItem from="1753309654002" duration="1540000" />
       <workItem from="1753735741721" duration="2223000" />
       <workItem from="1753829511233" duration="3837000" />
-    </task>
-    <task id="LOCAL-00015" summary="programmable output file directory">
-      <option name="closed" value="true" />
-      <created>1748911330840</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1748911330840</updated>
     </task>
     <task id="LOCAL-00016" summary="added a b magnitude lineout option that graphs the b field's magnitude from the origin to a corner (defined by the limit of the coil center + 1 meter)">
       <option name="closed" value="true" />
@@ -752,7 +755,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754350628177</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="clean up terminal outputs">
+      <option name="closed" value="true" />
+      <created>1755062702116</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1755062702117</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -770,7 +781,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="e contour plot is now on the log of the magnitude" />
     <MESSAGE value="made the field_methods_impl's theta have the np.float64 dtype just in case" />
     <MESSAGE value="added 'np.empty(0).sum()' in EfieldX inside magpy4c1_01.py to test whether numpy's backend multithreading could cause e_field differences on the same system.&#10;&#10;e_field differences on different systems are currently theorized to be because of floating point rounding and is separate from this." />
     <MESSAGE value="added a bob_e debug logger test to compare values across systems" />
@@ -795,7 +805,8 @@
     <MESSAGE value="implemented gridding for bob_e&#10;need to check the should_overwrite detection for false positives" />
     <MESSAGE value="testing and validating a 3d meshgrid as a lookup table" />
     <MESSAGE value="fixed local e not accessed in magpy4c1_01.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed local e not accessed in magpy4c1_01.py" />
+    <MESSAGE value="clean up terminal outputs" />
+    <option name="LAST_COMMIT_MESSAGE" value="clean up terminal outputs" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -833,14 +844,14 @@
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/dt_np.py</url>
-          <line>101</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Scripts/grid/_3d_mesh.py</url>
           <line>3</line>
           <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Scripts/EFieldFJW/washersPhi.py</url>
+          <line>172</line>
+          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

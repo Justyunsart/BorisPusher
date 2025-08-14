@@ -100,12 +100,15 @@ then update the current runtime tempfile dictionary with it.
 
 Updates the tempfile with default values at the hint of a failure (implemented at each widget definition)
 """
-def initialize_tempfile_dict(widgets:list):
+def initialize_tempfile_dict():
         # first step: read the last_used file dictionary, which is placed in the project root
     if not os.path.exists(os.path.join(DIR_ROOT, 'last_used')):
         lu = None
     else:
         lu = read_temp_file_dict(os.path.join(DIR_ROOT, 'last_used'))
+        # set the values of the current runtime dict EQUAL to last_used
+        update_temp(TEMPMANAGER_MANAGER.files[m1f1], lu)
+
         #print(lu)
-    for widget in widgets:
-        widget.init_temp(lu)
+    #for widget in widgets:
+        #widget.init_temp(lu)

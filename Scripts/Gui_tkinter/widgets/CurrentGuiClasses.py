@@ -722,6 +722,14 @@ class CurrentEntryTable(EntryTable):
         # draw canvas for the first time
         self.update()
 
+    def read_last_used(self):
+        d = TEMPMANAGER_MANAGER.files[m1f1]
+        try:
+            self.dirWidget.combo_box.set(d[self.name_key])
+        except:
+            pass
+
+
     def _Create_Default_File(self, path):
         """
         run whenever the DIR for input files is empty.
