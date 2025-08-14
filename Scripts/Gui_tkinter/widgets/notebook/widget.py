@@ -114,6 +114,10 @@ class Field_Notebook(ttk.Notebook):
         try:
             tab_name = data_helpers.get_nested_value(d, self.tab_key)
             self.select_tab_by_name(tab_name)
+            tab_id = self.select()  # reference to the active tab
+            tab_widget = self.nametowidget(tab_id)
+            text = self.tab(tab_id, "text")  # get the name of the tab (what u see on GUI)
+            tab_widget.onActive(self.tab_key, self.collection_key, text, is_init=True)
         except KeyError:
             pass
 

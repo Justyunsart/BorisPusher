@@ -28,6 +28,8 @@ from definitions import PLATFORM, NAME_COILS
 
 from system.temp_file_names import param_keys
 
+from pathlib import Path
+
 if PLATFORM != "win32":
     from xattr import setxattr
 else:
@@ -670,7 +672,7 @@ class CurrentEntryTable(EntryTable):
     (param: ) DIR: the path to the dir containing all the saved config files of the desired dataclass.
     '''
 
-    def __init__(self, master, dataclass, graphFrame, DIR, graph_toolbar = False, collection_key=None, path_key=None, name_key=None):
+    def __init__(self, master, dataclass, graphFrame, DIR, graph_toolbar = False, collection_key=None, path_key=None, name_key=None, dir_name=""):
         self.collection = Collection() # magpy object for visualization
         self.rotations = [] # container to store coil rotation info.
         # self.lim: the max. offset of the coil in the entry table.
@@ -682,6 +684,7 @@ class CurrentEntryTable(EntryTable):
         #self.instances = [] # references to the instantiated dataclasses (rows).
         self.defaultFileName = "Coil"
         self.DIR = DIR
+        self.input_file_dir = dir_name
 
         super().__init__(master, dataclass)
         self.dirWidget = FileDropdown(master=self.frame0, dir=self.DIR, default=self._Create_Default_File)
@@ -720,13 +723,20 @@ class CurrentEntryTable(EntryTable):
         self.addButton.config(command=self._new_Button_Callback)
         
         # draw canvas for the first time
-        self.update()
+        #self.update()
 
     def read_last_used(self):
-        d = TEMPMANAGER_MANAGER.files[m1f1]
+        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
         try:
-            self.dirWidget.combo_box.set(d[self.name_key])
-        except:
+            #print(self.input_file_dir)
+            #print(d[self.name_key])
+            #print(os.listdir(
+            #        os.path.join(runtime_configs['Paths']['inputs'], self.input_file_dir)))
+            if d[self.name_key] in os.listdir(
+                    os.path.join(runtime_configs['Paths']['inputs'], self.input_file_dir)):
+                #print("yes")
+                self.dirWidget.combo_box.set(d[self.name_key])
+        except FileNotFoundError:
             pass
 
 

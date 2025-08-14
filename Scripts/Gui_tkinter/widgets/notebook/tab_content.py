@@ -33,7 +33,7 @@ class ZeroTableTab(tk.Frame):
         self.im_label.grid(row=0, column=0)
         self.grid(row=0, column=0, sticky=tk.NSEW)
 
-    def onActive(self, tab_key, collection_key, text):
+    def onActive(self, tab_key, collection_key, text, is_init=False):
         def set_nested_value(d, keys, value):
             """Set a value in a nested dictionary given a list of keys."""
             for key in keys[:-1]:
@@ -73,7 +73,7 @@ class RingTableTab(tk.Frame):
 
         # Coil Config
         self.table = Bob_e_Circle_Config(self.frame2,
-                                         dir=os.path.join(runtime_configs['Paths']['inputs'], dir_name), **kwargs)
+                                         dir=os.path.join(runtime_configs['Paths']['inputs'], dir_name), dir_name=dir_name, **kwargs)
         self.widgets = [self.table, self.res]
         self.table.grid(row=0)
 
@@ -112,8 +112,12 @@ class RingTableTab(tk.Frame):
                 lst,
                 val.get())
 
-    def onActive(self, tab_key, collection_key, text):
+    def onActive(self, tab_key, collection_key, text, is_init=False):
         #print(f"RingTableTab.onActive running")
+        if is_init:
+            self.table.entry_table.read_last_used()
+            return
+
         # when the tab becomes active, update the graph (which updates the runtime dict)
         self.table.entry_table.GraphCoils()
 
@@ -154,14 +158,19 @@ class DiskTab(RingTableTab):
         # also run the function, so that this wrapped logic is applied after being set
         self.table.entry_table.GraphCoils()
 
-    def onActive(self, tab_key, collection_key, text):
+    def onActive(self, tab_key, collection_key, text, is_init=False):
+        if is_init:
+            self.table.entry_table.read_last_used()
+            return
         def set_nested_value(d, keys, value):
             """Set a value in a nested dictionary given a list of keys."""
             for key in keys[:-1]:
                 d = d.setdefault(key, {})  # ensures intermediate dicts exist
             d[keys[-1]] = value
+
         # when the tab becomes active, update the graph (which updates the runtime dict)
         self.table.entry_table.GraphCoils()
+
 
         # handle method-specific params
         match str(text):

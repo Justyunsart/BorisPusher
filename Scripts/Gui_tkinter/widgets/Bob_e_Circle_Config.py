@@ -40,7 +40,8 @@ class Bob_e_Circle_Config(tk.Frame):
                                             DIR=self.dir,
                                             collection_key=list(collection_key),
                                             path_key=self.path_key,
-                                            name_key=self.name_key,)
+                                            name_key=self.name_key,
+                                            dir_name = dir_name)
 
         # packing step
         self.main_frame.pack(fill='both', expand=1)
