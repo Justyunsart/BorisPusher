@@ -12,7 +12,7 @@ a pop-up window created right after the 'calculate' button is pressed.
 keeps track of simulation progress.
 """
 class calculate_progress_window(tk.Toplevel):
-    def __init__(self, parent: tk.Tk, queue):
+    def __init__(self, parent: tk.Tk, queue, params):
         tk.Toplevel.__init__(self, parent)
             # multiprocessing manager
         self.result_queue = queue
@@ -24,7 +24,7 @@ class calculate_progress_window(tk.Toplevel):
             # window internals
         self.live = live_info(self, self.step_var)
         self.separator = ttk.Separator(self, orient='vertical')
-        self.summary = param_summary(self)
+        self.summary = param_summary(self, params)
 
             # packing
         self.live.pack(side=tk.LEFT, expand=True, fill="y")
@@ -55,10 +55,10 @@ class calculate_progress_window(tk.Toplevel):
 the rightside section of the progress window, holds a summary of the parameters in use.
 """
 class param_summary(tk.Frame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, params, **kwargs):
             # Initialize pre-GUI info
         super().__init__(master, **kwargs)
-        self.params = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        self.params = params
         self.fonts = GUI_Fonts(self)
 
             # GUI stuff
@@ -78,9 +78,14 @@ class param_summary(tk.Frame):
         _coil_amp = tk.Label(coil_info_frame, text="Amp (T):")
         _coil_position = tk.Label(coil_info_frame, text="Offset (M)")
                 # actual info
-        coil_name = tk.Label(coil_info_frame, text=self.params["coil_file"])
-        coil_amp = tk.Label(coil_info_frame, text=get_unique_coil_collection_amps(self.params['field_methods']['b']['params']['collection']))
-        coil_position = tk.Label(coil_info_frame, text=str(abs(self.params['field_methods']['b']['params']['collection'].children[0].position[0])))
+        coil_name = tk.Label(coil_info_frame, text=self.params.path.b)
+        coil_amp = tk.Label(coil_info_frame, text=get_unique_coil_collection_amps(self.params.b.collection))
+
+        if self.params.b.method == "zero":
+            text = "n/a"
+        else:
+            text = str(abs(self.params.b.collection.children[0].position[0]))
+        coil_position = tk.Label(coil_info_frame, text=text)
 
             # PACKING
         title.grid(row=0, column=0)
@@ -100,9 +105,9 @@ class param_summary(tk.Frame):
         _particle_position = tk.Label(particle_info_frame, text="Position: ")
         _particle_velocity = tk.Label(particle_info_frame, text="Velocity: ")
             # actual info
-        particle_name = tk.Label(particle_info_frame, text=self.params['particle_file'])
-        particle_position = tk.Label(particle_info_frame, text=self.params['Particle_Df'][['px', 'py', 'pz']].to_numpy())
-        particle_velocity = tk.Label(particle_info_frame, text=self.params['Particle_Df'][['vx', 'vy', 'vz']].to_numpy())
+        particle_name = tk.Label(particle_info_frame, text=self.params.path.particle)
+        particle_position = tk.Label(particle_info_frame, text=self.params.particle.dataframe[['px', 'py', 'pz']].to_numpy())
+        particle_velocity = tk.Label(particle_info_frame, text=self.params.particle.dataframe[['vx', 'vy', 'vz']].to_numpy())
             # PACKING
         particle_info_frame.grid(row=2, column=0)
         _particle_name.grid(row=0, column=0)

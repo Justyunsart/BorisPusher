@@ -33,8 +33,8 @@ from Scripts.settings.constants import proton
 
 from calcs.bob_dt import bob_dt_step
 
-from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict
-from system.temp_file_names import m1f1, param_keys
+#from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict
+#from system.temp_file_names import m1f1, param_keys
 
 from settings.configs.funcs.config_reader import runtime_configs
 from calcs.magpy4c1_manager_queue_datatype import Manager_Data
@@ -43,7 +43,7 @@ from EFieldFJW.efieldring_4 import fwysr_e
 from EFieldFJW.streamlines3Dring import compute_field
 from scipy.interpolate import RegularGridInterpolator
 
-import tempfile
+from system.state_dict_main import AppConfig
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
@@ -58,7 +58,7 @@ pd.set_option('display.max_columns', None)
 # unless it is outside of the bounds given by 'side'
 def Bfield(y, method, c, interp):
     if interp is None:
-        if(method == "Zero"):
+        if(method == "zero"):
             return np.zeros(3)
 
         Bf = c.getB(y, squeeze=True)
@@ -89,7 +89,7 @@ def Fw(coord:float, fromTemp):
     return np.multiply(A * np.exp(-(coord / Bx)** 4), (coord/Bx)**15)
 
 
-def _Bob_e(inCoord, c, args):
+def _Bob_e(inCoord, c, res):
     """
     The internal function passed to each thread in Bob_e().
 
@@ -100,10 +100,6 @@ def _Bob_e(inCoord, c, args):
 
     q = c.current # charge
     #print(f"running with the q:{q}")
-    try:
-        res = float(args["res"]) # amount of points to be used in the integration
-    except KeyError:
-        res=100
     
     # To make the target point relative to the coil, we call the bob_e.impl's alignment func.
     normCoord = bob_e_impl.OrientPoint(c=c, point=inCoord)
@@ -133,14 +129,14 @@ def __Bob_e(coord, args):
             es.append(result)
     return np.sum(es, axis=0) # sum the E field components column-wise
 
-def Bob_e(coord, args, collection):
+def Bob_e(coord, res, collection):
     """
     This function will utlize multithreading, with each coil
     calculating its own e-field on a new thread.
     """
     es = [] # collection of cartesian E field components for each coil
     for coil in collection:
-        cart = _Bob_e(coord, coil, args)
+        cart = _Bob_e(coord, coil, res)
         es.append(cart)
 
     return np.sum(es, axis=0) # sum the E field components column-wise
@@ -149,7 +145,7 @@ from EFieldFJW.ys_3d_disk import compute_disk_with_collection, compute_fields
 #from EFieldFJW.washerPhiVectorized import compute_field as compute_washerPhi
 from EFieldFJW.washersPhi_vectorized import washer_phi_from_collection
 
-def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator, e_args):
+def EfieldX(p:np.ndarray, fromTemp, executor, interpolator, e_args):
     """
     Controller for what E method is used.
 
@@ -160,6 +156,7 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator, e_args):
     if interpolator is not None:
         return interpolator([p]).reshape(3, )
 
+    E_Method = fromTemp.e.method
     #print(f"E_method is: {E_Method}")
     match E_Method:
         case "zero":
@@ -167,16 +164,16 @@ def EfieldX(p:np.ndarray, E_Method, fromTemp, executor, interpolator, e_args):
         case "fw":
             E = np.apply_along_axis(Fw, 0, p, fromTemp)
         case "bob_e":
-            E = Bob_e(p, fromTemp["field_methods"]['e']['params'], fromTemp["field_methods"]['e']['params']['collection'])
+            E = Bob_e(p, fromTemp.e.res, fromTemp.e.collection)
             np.empty(0).sum()  # force numpy thread finish
             #print(f"Bob_e says E is: {E}")
         case "fw_e":
             # call the appropriate function to get the value
-            E = compute_field(p, fromTemp["field_methods"]['e']['params']['collection'], int(fromTemp["field_methods"]['e']['params']['res']), executor)
+            E = compute_field(p, fromTemp.e.collection, int(fromTemp.e.res), executor)
             np.empty(0).sum()  # force numpy thread finish
         case 'disk_e':
-            inners = fromTemp["field_methods"]['e']['params']['Inner_r']
-            E = compute_disk_with_collection(p, fromTemp["field_methods"]['e']['params']['collection'], inners, executor)
+            inners = fromTemp.e.inner_r
+            E = compute_disk_with_collection(p, fromTemp.e.collection, inners, executor)
 
             
     return np.array(E)
@@ -194,7 +191,7 @@ def write_to_hdf5(from_temp, out, expand_length, num_points):
     #print(_out)
     df = pd.DataFrame([p.__dict__ for p in _out])
     #print(df)
-    path = os.path.join(str(runtime_configs['Paths']['outputs']), from_temp['hdf5_path'])
+    path = os.path.join(str(runtime_configs['Paths']['outputs']), from_temp.path.hdf5)
     #print(path)
 
     # append to position dataset
@@ -250,11 +247,11 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
     # determine constants for field calculations
     e_args = {} # extra arguments supplied to E calculation
     def calc_e_consts():
-        method = from_temp['field_methods']['e']['method']
+        method = from_temp.e.method
         match method:
             case 'washer_potential':
                 e_c:magpy.Collection
-                e_c = from_temp["field_methods"]['e']['params']['collection']
+                e_c = from_temp.e.collection
                 # assemble extra function arguments for the solution
                 #   Generally will be in lists with the same indexing order as the collection
 
@@ -277,10 +274,13 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
     calc_e_consts()
 
     ## Collect coil location to know when the particle escapes
-    c = from_temp[param_keys.field_methods.name]['b']['params']['collection']
-    dt = from_temp['dt']
-    side = c[0].position
-    side = np.absolute(max(side.min(), side.max(), key=abs))
+    mag_c = from_temp.b.collection
+    dt = from_temp.step.dt
+    if from_temp.b.method == 'zero':
+        side = 5
+    else:
+        _side = mag_c[0].position
+        side = np.absolute(max(_side.min(), _side.max(), key=abs))
 
     ## Mass and Charge are hard coded to be protons right now
     mass = proton.mass # kg
@@ -294,12 +294,13 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
 
     # Step 1: Create the AoS the process will work with
     #     > These conditions are read from inp file, currently stored in df.
-    expand_length = (temp * len(from_temp['Particle_Df']))
-    out = np.empty(((temp * len(from_temp['Particle_Df'])) + 1), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
+    expand_length = (temp * from_temp.particle.count)
+    out = np.empty(((temp * from_temp.particle.count) + 1), dtype=particle) # Empty np.ndarray with enough room for all the simulation data, and initial conditions.
 
     #temp = df["starting_pos"].to_numpy()[id] # Populate it with the initial conditions at index 0.
     #temp1 = df["starting_vel"].to_numpy()[id] * 6
-    df = from_temp['Particle_Df']
+    #df = from_temp['Particle_Df']
+    df = pd.read_csv(from_temp.path.particle, dtype=np.float64)
     row = df.iloc[0]
     starting_pos = [row["px"], row["py"], row["pz"]]
     starting_pos = [float(item) for item in starting_pos]
@@ -321,7 +322,7 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
                             step = 0)
 
     # Step 2: do the actual boris logic
-    num_points = int(from_temp['numsteps'])
+    num_points = int(from_temp.step.numsteps)
     print(f"setup complete, beginning steps")
     i = 1
     for time in range(1, num_points + 1): # time: step number
@@ -331,8 +332,8 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
         ##########################################################################
         # COLLECT FIELDS
             # submit the field calculations to the threadpool
-        _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp, executor, e_interp, e_args)
-        _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], c, b_interp)
+        _Ef = executor.submit(EfieldX, x, from_temp, executor, e_interp, e_args)
+        _Bf = executor.submit(Bfield, x, from_temp.b.method, mag_c, b_interp)
             # collect the results
         Ef = _Ef.result()
         #print(Ef)
@@ -393,9 +394,13 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
         #curr_time = 2 * np.pi / curr_gyrofreq
     
         #dt = curr_time/100
-        if from_temp['dt_bob'] == 1:
+        if from_temp.step.dynamic.on:
             _dt = dt
-            dt = bob_dt_step(Bp=Bf, B0_mag=from_temp['bob_dt_B0']['B_mag'], dt0=from_temp['bob_dt_dt0'], min=from_temp['bob_dt_min'], max=from_temp["bob_dt_max"])
+            dt = bob_dt_step(Bp=Bf,
+                             B0_mag=from_temp.step.dynamic.consts.B0.b_norm,
+                             dt0=from_temp.step.dynamic.consts.dt0,
+                             min=from_temp.step.dynamic.consts.dt_min,
+                             max=from_temp.step.dynamic.consts.dt_max)
             print(f"dt changed to: {dt} from: {_dt}")
 
         if time % 1000 == 0:
@@ -411,9 +416,9 @@ def borisPush(executor=None, from_temp=None, manager_queue=None, b_interp = None
             ##########################################################################
             # COLLECT FIELDS
             # submit the field calculations to the threadpool
-            _Ef = executor.submit(EfieldX, x, from_temp['field_methods']['e']['method'], from_temp, executor, e_interp,
+            _Ef = executor.submit(EfieldX, x, from_temp, executor, e_interp,
                                   e_args)
-            _Bf = executor.submit(Bfield, x, from_temp['field_methods']['b']['method'], c, b_interp)
+            _Bf = executor.submit(Bfield, x, from_temp.b.method, mag_c, b_interp)
             # collect the results
             Ef = _Ef.result()
             Bf = _Bf.result()
@@ -449,10 +454,13 @@ from multiprocessing import Manager
 fromTemp = None
 
 def create_shared_info():
+    """
+    deprecated, as the shared info comes directly from the app by reference.
+    """
     manager = Manager()
     shared = manager.dict()
 
-    shared.update(read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1]))
+    #shared.update(read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1]))
     return shared
 
 def init_process(data, n1, n2, t, t1, Bf, Ef, coils, _fromTemp, queue):
@@ -509,16 +517,15 @@ def grid_checker(fromTemp, filepath):
     that a grid lookup file exists.
     """
     # check b field
-    b_dict = fromTemp['field_methods']['b']
     b_interpolator = None
     e_interpolator = None
     try:
-        if b_dict['params']['gridding'] == 1 and b_dict['method'] == "magpy":
-            collection = b_dict['params']['collection']
+        if fromTemp.b.gridding == 1 and fromTemp.b.method == "magpy":
+            collection = fromTemp.b.collection
             method = collection.getB
-            precalculate_3d_grid(method, Path(fromTemp['coil_file']))
+            precalculate_3d_grid(method, Path(fromTemp.path.b))
 
-            coil_path = Path(fromTemp['coil_file'])
+            coil_path = Path(fromTemp.path.b)
             # stuff with the interpolator
             hdf5_name = coil_path.parents[0] / "grid" / f"{coil_path.name}.hdf5"
             b_interpolator = create_interpolator(hdf5_name)
@@ -526,39 +533,38 @@ def grid_checker(fromTemp, filepath):
         pass
 
     # check e field
-    e_dict = fromTemp['field_methods']['e']
     # TODO: extend functionality with e methods <3
     try:
-        if e_dict['params']['gridding'] == 1 and e_dict['method'] == 'disk_e':
+        if fromTemp.e.gridding == 1 and fromTemp.e.method == 'disk_e':
             print('creating e grid')
             method = fields_from_grid
-            collection = e_dict['params']['collection']
-            inners = e_dict['params']['Inner_r']
+            collection = fromTemp.e.collection
+            inners = fromTemp.e.inner_r
             args = {
                 'c' : collection,
                 'inners' : inners
             }
-            coil_path = Path(fromTemp['e_coil_file'])
+            coil_path = Path(fromTemp.path.e)
             precalculate_3d_grid(method, coil_path, **args)
 
             hdf5_name = coil_path.parents[0] / "grid" / f"{coil_path.name}.hdf5"
             e_interpolator = create_interpolator(hdf5_name)
 
-        if e_dict['params']['gridding'] == 1 and e_dict['method'] == 'bob_e':
+        if fromTemp.e.gridding == 1 and fromTemp.e.method == 'bob_e':
             method = bob_e.bob_e_from_collection
-            collection = e_dict['params']['collection']
-            coil_path = Path(fromTemp['e_coil_file'])
-            precalculate_3d_grid(method, Path(fromTemp['e_coil_file']), collection=collection)
+            collection = fromTemp.e.collection
+            coil_path = Path(fromTemp.path.e)
+            precalculate_3d_grid(method, Path(fromTemp.path.e), collection=collection)
 
             hdf5_name = coil_path.parents[0] / "grid" / f"{coil_path.name}.hdf5"
             e_interpolator = create_interpolator(hdf5_name)
 
-        if e_dict['method'] == 'washer_potential':
+        if fromTemp.e.method == 'washer_potential':
             # precompute the grid potential
             print(f"creating washer potential")
-            e_c = fromTemp["field_methods"]['e']['params']['collection']
+            e_c = fromTemp.e.collection
             #b = e_c[0].diameter / 2
-            a = float(fromTemp["field_methods"]['e']['params']['Inner_r'][0])
+            a = float(fromTemp.e.inner_r[0])
             #Q = e_c[0].current
             res = 101 # hardcoded for now
 
@@ -594,18 +600,18 @@ def grid_checker(fromTemp, filepath):
 
     except KeyError:
         pass
-    print(e_dict['method'])
+    #print(e_dict['method'])
     print(f"finished making interpolators")
     return b_interpolator, e_interpolator
 
-def _runsim(manager_queue):
+def _runsim(manager_queue, params:AppConfig):
     filepath = ""
     """
     This try/ except block exists to ensure that the tempfile created in some methods
     are properly erased when the program exits.
     """
     # Access tempfile dict for all threads
-    _fromTemp = create_shared_info()
+    _fromTemp = params
 
     # check/ create precomputed grid
     # value of these will be None if gridding not used.

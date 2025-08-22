@@ -4,22 +4,27 @@ Group of widgets that control certain behaviors for output files.
 """
 import tkinter as tk
 from files.create import default_output_file_name, default_output_file_dir, get_output_name, get_default_output_dir
-from system.temp_file_names import param_keys, m1f1
-from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file_dict
+#from system.temp_file_names import param_keys, m1f1
+#from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file_dict
+from system.state_dict_main import AppConfig
+import os
+import numpy as np
+from pandas import read_csv
 
 """
 You click the calculate button, and this pops up.
 """
 class output_popup(tk.Toplevel):
-    def __init__(self, master, close_callable:callable=None, *args, **kwargs):
+    def __init__(self, master, close_callable:callable=None, params:AppConfig=None,  *args, **kwargs):
         super().__init__(master, **kwargs)
+        self.params = params
         self.attributes("-topmost", True)
         self.close_callable = close_callable
             # instance attributes (these are saved to the tempfile at its end)
         self.out_name = tk.StringVar()
-        self.output_path:str = get_default_output_dir()
+        self.output_path:str = get_default_output_dir(params)
             # as this widget is created after some events, this global var should be populated.
-        self.out_name.set(get_output_name(self.output_path)) # initialize the tk stringvar with the value.
+        self.out_name.set(get_output_name(self.output_path, self.params)) # initialize the tk stringvar with the value.
 
             # FRAMES - for aligning content
         self.header_frame = tk.Frame(self)
@@ -70,7 +75,7 @@ class output_popup(tk.Toplevel):
         if _output_path:
             self.output_path = _output_path
             self._text3.config(text=self.output_path)
-            self.out_name.set(get_output_name(self.output_path))
+            self.out_name.set(get_output_name(self.output_path, self.params))
 
 
     """
@@ -81,9 +86,10 @@ class output_popup(tk.Toplevel):
     def _close(self, event=None, *args):
             # update the tempfile with the path and name information
         d = {}
-        d[param_keys.output_location.name] = self.output_path
-        d[param_keys.output_name.name] = self.out_name.get()
-        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+        self.params.path.output_absolute = self.output_path
+        self.params.path.output_name = self.out_name.get()
+        self.params.path.output = os.path.join(self.output_path, self.out_name.get())
+        self.params.particle.dataframe = read_csv(self.params.path.particle, dtype=np.float64)
             # call the closing callable (provided on initialization)
         if self.close_callable is not None:
                 self.close_callable()

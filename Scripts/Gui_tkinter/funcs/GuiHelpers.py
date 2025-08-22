@@ -129,20 +129,20 @@ def FieldCallback(event, value:ttk.Combobox, xcontainer:Entry, ycontainer:Entry,
 # after the popup closes, invoke the calculate callback function.
 from Gui_tkinter.widgets.output_file.output_config import output_popup
 from functools import partial
-def open_output_config(params:list, DIR_last:str, root, manager):
+def open_output_config(root, manager, params):
     #get_output_name()
-    popup = output_popup(master=root, close_callable=partial(CalculateCallback,params, DIR_last, root, manager))
+    popup = output_popup(master=root, close_callable=partial(CalculateCallback,root, manager, params), params=params)
     return popup
 
 
 # Run the simulation if you press calculate
 
-def CalculateCallback(params:list, DIR_last:str, root, manager):
+def CalculateCallback(root, manager, params):
     '''
     When the calculate button is pressed, the GUI passes key information to
     the backend and starts the simulation.
     '''
-    data = GatherParams(params)
+    #data = GatherParams(params)
     """    
         toProgram = {
         'numsteps': data['numsteps'],
@@ -166,17 +166,17 @@ def CalculateCallback(params:list, DIR_last:str, root, manager):
     # Dict_to_CSV(DIR_last, toFile, newline="")
 
     # add some last minute info to the tempfile
-    updateTempFile({"Particle_Df": data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"]})
+    #updateTempFile({"Particle_Df": data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"]})
     #updateTempFile({"Particle_Df": data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"]})
 
-    Events.PRE_CALC.value.invoke()
+    Events.PRE_CALC.value.invoke(params=params)
 
     #####################################################################################
     # STUFF FOR THE PROGRESS WINDOW (WHICH NEEDS RUNTIME DATA)
         # a multiprocessing manager wraps the thread that creates the processpool.
     queue = manager.Queue()
-    progress = calculate_progress_window(root, queue)
-    process_thread = threading.Thread(target=_runsim, args=(queue,), daemon=True)
+    progress = calculate_progress_window(root, queue, params)
+    process_thread = threading.Thread(target=_runsim, args=(queue, params), daemon=True)
     process_thread.start()
     progress.poll_queue()
 

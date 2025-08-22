@@ -8,7 +8,7 @@ PARAMETERS:
 path: the full path the class is referencing
 name: used for when the path gets updated, the name of the DIR at the end of the path
 """
-class Path():
+class Path:
     def __init__(self, path, name):
         self.name = name
         self.path = Data(name)

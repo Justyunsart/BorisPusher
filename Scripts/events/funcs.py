@@ -4,6 +4,8 @@ from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file
 from system.temp_file_names import m1f1, param_keys
 from definitions import DIR_ROOT
 import pickle
+
+from system.state_dict_main import AppConfig
 """
 Extra logic to run before a simulation for Bob's variable timestep.
 Defines constants that need to be calculated.
@@ -18,12 +20,17 @@ PARAMETERS:
 c (magpylib.Collection): the coil configuration
 particle (ion class): the particle used in the simulation; defaults to a proton
 """
-def before_simulation_bob_dt(particle=constants.proton):
+def before_simulation_bob_dt(particle=constants, params:AppConfig=None):
+    if params.b.method == 'zero' or params.step.dynamic.on == False:
+        return
+
     #print(TEMPMANAGER_MANAGER.files[m1f1])
-    d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-    c = d[param_keys.field_methods.name]['b']['params']['collection']
-    ref_p = float(d[param_keys.dt_bob_prop.name])
-    dyn_rng = float(d[param_keys.dt_bob_dyn_rng.name])
+    #d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+    #c = d[param_keys.field_methods.name]['b']['params']['collection']
+    c = params.b.collection
+
+    ref_p = params.step.dynamic.proportion
+    dyn_rng = params.step.dynamic.dynamic_range
     # GET THE POSITION FOR B0
     # since we are assuming that the first coil is displaced only on one axis and that the configuration is 
     # symmetric, I index the first child and find its maximum to know how much the coils are displaced.
@@ -39,7 +46,7 @@ def before_simulation_bob_dt(particle=constants.proton):
     #print(f"funcs.before_simulation_bob_dt; B0_B_norm: {B0_B_norm}")
 
     # GET f0
-    f0 = 1.52e7 * particle.anum * B0_B_norm
+    f0 = 1.52e7 * 1 * B0_B_norm
     #print(f0)
 
     # GET dt0
@@ -55,43 +62,52 @@ def before_simulation_bob_dt(particle=constants.proton):
         "bob_dt_max" : dt0 * dyn_rng
                   }
 
-    update_temp(TEMPMANAGER_MANAGER.files[m1f1], 
-                d)
+    params.step.dynamic.consts.B0.position = B0_pos
+    params.step.dynamic.consts.B0.b = B0_B
+    params.step.dynamic.consts.B0.b_norm = B0_B_norm
+    params.step.dynamic.consts.f0 = f0
+    params.step.dynamic.consts.dt0 = dt0
+    params.step.dynamic.consts.dt_min = dt0 / dyn_rng
+    params.step.dynamic.consts.dt_max = dt0 * dyn_rng
+
     return d
+
 import shutil
 import os
 from settings.configs.funcs.config_reader import runtime_configs
-def copy_diags_to_output_subdir():
-    d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+
+def copy_diags_to_output_subdir(params:AppConfig):
+    #d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
     #out_path = os.path.join(str(runtime_configs['Paths']['outputs']), d["output_path"])
-    out_path = d[param_keys.output_path.name]
-    coil_path = d['coil_file']
-    particle_path = d['particle_file']
+    out_path_absolute = params.path.output
+    params.path.output_absolute = out_path_absolute
+    coil_path_b = params.path.b
+    coil_path_e = params.path.e
+    particle_path = params.path.particle
+
+
 
         # update the tempfile with the used path names.
-    d[param_keys.hdf5_path.name] = os.path.join(out_path, 'data.hdf5')
-    d[param_keys.output_path.name] = out_path
-    update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+    h5_path = os.path.join(out_path_absolute, 'data.hdf5')
 
-    # TODO: ADD BOB_E FILE IF USED
         # check whether the current tempfile has the bob_e rings configured to be used.
-    if d[param_keys.field_methods.name]['e']['method'] == "Bob_e":
+    if params.e.method != "zero":
         # if the method is used, then copy the configured coil file and binary to the input folder
             # create an empty file for the csv
-            with open(os.path.join(out_path, 'e_rings.txt'), 'w') as f:
+            with open(os.path.join(out_path_absolute, 'e_coils.txt'), 'w') as f:
                 pass
             # copy the configured bob_e coil f
-            shutil.copyfile(src=d['bob_e_file'], dst=os.path.join(out_path, 'e_rings.txt'))
+            shutil.copyfile(src=coil_path_e, dst=os.path.join(out_path_absolute, 'e_coils.txt'))
 
+    if params.b.method != "zero":
+            # copy the used coil file to the output
+        with open(os.path.join(out_path_absolute, "coils.txt"), 'w') as f:
+            pass
+        shutil.copyfile(coil_path_b, os.path.join(out_path_absolute, "b_coils.txt"))
 
-        # copy the used coil file to the output
-    with open(os.path.join(out_path, "coils.txt"), 'w') as f:
+    with open(os.path.join(out_path_absolute, "particles.txt"), 'w') as f:
         pass
-    with open(os.path.join(out_path, "particles.txt"), 'w') as f:
-        pass
-
-    shutil.copyfile(coil_path, os.path.join(out_path, "coils.txt"))
-    shutil.copyfile(particle_path, os.path.join(out_path, "particles.txt"))
+    shutil.copyfile(particle_path, os.path.join(out_path_absolute, "particles.txt"))
 
 
 """

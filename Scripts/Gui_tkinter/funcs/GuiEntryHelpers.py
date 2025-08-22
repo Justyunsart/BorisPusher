@@ -382,7 +382,7 @@ class EntryTableParam:
 """
 Helper function to read csv data to a magpylib.Collection object
 """
-def File_to_Collection(path, filename='coils.txt', converters={}, read_file=True):
+def File_to_Collection(path, filename='b_coils.txt', converters={}, read_file=True):
     """
      1. locate the coils file, assuming that path is the dir. to the json.
      2. return the coils as a magpy collection object.

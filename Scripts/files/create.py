@@ -7,12 +7,13 @@ if PLATFORM != 'win32':
     from xattr import getxattr
 from settings.defaults.coils import coil_cust_attr_name
 
-from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp, update_temp
-from system.temp_file_names import manager_1, m1f1, param_keys
+#from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp, update_temp
+#from system.temp_file_names import manager_1, m1f1, param_keys
 
 from files.hdf5.output_file_structure import create_h5_output_file
 
 from settings.configs.funcs.config_reader import runtime_configs
+from system.state_dict_main import AppConfig
 
 default_output_file_name = ""
 default_output_file_dir = ""
@@ -91,27 +92,27 @@ def get_unique_coil_collection_amps(c:Collection):
 returns a string formatted with 
 numsteps_dt. This is considered the default name for the file.
 """
-def get_output_name(path):
+def get_output_name(path, params:AppConfig):
     global default_output_file_name
-    d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-    default_output_file_name =  f"ns-{d['numsteps']}_dt-{d['dt']}"
+    ns = params.step.numsteps
+    dt = params.step.dt
+    default_output_file_name =  f"ns-{ns}_dt-{dt}"
     i = 1
     while os.path.exists(os.path.join(path, default_output_file_name)):
-        default_output_file_name = f"ns-{d['numsteps']}_dt-{d['dt']}_{i}"
+        default_output_file_name = f"ns-{ns}_dt-{dt}_{i}"
         i += 1
     return default_output_file_name
 
 """
 populates global var with the default location of the output subdir, based on the runtimeconfigs.
 """
-def get_default_output_dir():
+def get_default_output_dir(params:AppConfig):
     global default_output_file_dir
         # subdir structure based on parameters
-    d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-    preset = get_coil_preset_attr_val(d['particle_file'])
-    current = get_unique_coil_collection_amps(d['field_methods']['b']['params']['collection'])
-    b = d['field_methods']['b']['method']
-    e = d['field_methods']['e']['method']
+    preset = get_coil_preset_attr_val(params.path.particle)
+    current = get_unique_coil_collection_amps(params.b.collection)
+    b = params.b.method
+    e = params.e.method
     _p = os.path.join(preset, current, b, e)
 
         # also need to get the runtimeconfig for the default output location
@@ -128,15 +129,13 @@ in the order of:
 
 preset/current/b/e
 """
-def get_output_subdir():
-    d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+def get_output_subdir(params:AppConfig):
     # out_path = os.path.join(str(runtime_configs['Paths']['outputs']), d["output_path"])
-    out_path = os.path.normpath(os.path.join(d[param_keys.output_location.name], d[param_keys.output_name.name]))
+    out_path = params.path.output
 
     # update the tempfile with the used path names.
-    d[param_keys.hdf5_path.name] = os.path.join(out_path, 'data.hdf5')
-    d[param_keys.output_path.name] = out_path
-    update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+    params.path.hdf5 = os.path.join(out_path, 'data.hdf5')
+    #update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
     '''    
     preset = get_coil_preset_attr_val(d['particle_file'])
@@ -148,9 +147,9 @@ def get_output_subdir():
     #d["output_path"] = os.path.join(preset, current, b, e, name)
     #write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
-    os.makedirs(os.path.join(str(runtime_configs['Paths']['outputs']), out_path), exist_ok=True)
+    #os.makedirs(os.path.join(str(runtime_configs['Paths']['outputs']), out_path), exist_ok=True)
+    os.makedirs(out_path, exist_ok=True)
 
-def create_output_file():
-    d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-    length = (d['numsteps'] * len(d["Particle_Df"])) + 1
-    create_h5_output_file(os.path.join(str(runtime_configs['Paths']['outputs']), d["hdf5_path"]), length)
+def create_output_file(params:AppConfig):
+    length = (params.step.numsteps * params.particle.count) + 1
+    create_h5_output_file(os.path.join(str(runtime_configs['Paths']['outputs']), params.path.hdf5), length)

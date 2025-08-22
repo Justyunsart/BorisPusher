@@ -21,14 +21,13 @@ from Gui_tkinter.funcs.GuiEntryHelpers import *
 from ast import literal_eval
 
 from settings.configs.funcs.config_reader import runtime_configs
-from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
-from system.temp_file_names import manager_1, m1f1
+#from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
+#from system.temp_file_names import manager_1, m1f1
 from settings.defaults.coils import default_coil, coil_cust_attr_name
 from definitions import PLATFORM, NAME_COILS
 
-from system.temp_file_names import param_keys
-
-from pathlib import Path
+from system.state_dict_main import AppConfig
+from Gui_tkinter.widgets.base import ParamWidget
 
 if PLATFORM != "win32":
     from xattr import setxattr
@@ -37,7 +36,7 @@ else:
 
 from pathlib import Path
 
-class EntryTable():
+class EntryTable(ParamWidget):
     '''
     A generic class for tables that allow user generated and deleted entries.
     Basically a fun csv editor.
@@ -94,26 +93,7 @@ class EntryTable():
                     out_merged[key].extend(value)
 
             return out_merged
-    
-    def _updateTempFile(self, field, val):
-        def set_nested_value(d, keys, value):
-            """Set a value in a nested dictionary given a list of keys."""
-            for key in keys[:-1]:
-                d = d.setdefault(key, {})  # ensures intermediate dicts exist
-            d[keys[-1]] = value
 
-        # read the dictionary
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-
-        # if the function is given a list instead of a string to look up, call the nested function
-        # to edit the nested dictionary.
-        if isinstance(field, list):
-            set_nested_value(d, field, val)
-        else:
-            d[field] = val
-        #print(f"RUNNING FROM _updateTempFile from CurrentGuiClasses.py, line 94")
-        #print(d)
-        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
     #===============#
     # INITIALIZAION #
     #===============#
@@ -672,8 +652,10 @@ class CurrentEntryTable(EntryTable):
     (param: ) DIR: the path to the dir containing all the saved config files of the desired dataclass.
     '''
 
-    def __init__(self, master, dataclass, graphFrame, DIR, graph_toolbar = False, collection_key=None, path_key=None, name_key=None, dir_name=""):
+    def __init__(self, master, dataclass, graphFrame, DIR, graph_toolbar = False, collection_key=None, path_key=None,
+                 name_key=None, dir_name="", params=None):
         self.collection = Collection() # magpy object for visualization
+        self.params = params
         self.rotations = [] # container to store coil rotation info.
         # self.lim: the max. offset of the coil in the entry table.
         self.lim:Data = Data() # when updated, outside subscribers will run their respective update functions.
@@ -726,16 +708,16 @@ class CurrentEntryTable(EntryTable):
         #self.update()
 
     def read_last_used(self):
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
         try:
             #print(self.input_file_dir)
             #print(d[self.name_key])
             #print(os.listdir(
             #        os.path.join(runtime_configs['Paths']['inputs'], self.input_file_dir)))
-            if d[self.name_key] in os.listdir(
+            file = self.get_nested_field(self.params, self.name_key)
+            if file in os.listdir(
                     os.path.join(runtime_configs['Paths']['inputs'], self.input_file_dir)):
                 #print("yes")
-                self.dirWidget.combo_box.set(d[self.name_key])
+                self.dirWidget.combo_box.set(file)
         except FileNotFoundError:
             pass
 
@@ -762,6 +744,11 @@ class CurrentEntryTable(EntryTable):
         '''
         self.Create_From_Preset(default_coil, graph=False, path=path)
 
+
+    def update_params(self):
+        self.set_nested_field(self.params, self.collection_key, self.collection)
+        self.set_nested_field(self.params, self.path_key, self.dirWidget.PATH.data)
+        self.set_nested_field(self.params, self.name_key, str(Path(self.dirWidget.PATH.data).name))
 
     def GraphCoils(self):
         '''
@@ -792,9 +779,7 @@ class CurrentEntryTable(EntryTable):
         self.canvas.draw()
 
             # Update tempfile entry for the coil collection object.
-        self._updateTempFile(self.collection_key, self.collection)
-        self._updateTempFile(self.path_key, self.dirWidget.PATH.data)
-        self._updateTempFile(self.name_key, str(Path(self.dirWidget.PATH.data).name))
+        self.update_params()
         #print(f"Collection updated: {self.collection_key}")
         return True
 
@@ -873,8 +858,8 @@ class CurrentEntryTable(EntryTable):
         self.Finalize_Reading(coils)
 
             # update tempfile for the coil file path
-        self._updateTempFile(self.path_key, self.dirWidget.PATH.data)
-        self._updateTempFile(self.name_key, str(Path(self.dirWidget.PATH.data).name))
+        self.set_nested_field(self.params, self.path_key, self.dirWidget.PATH.data)
+        self.set_nested_field(self.params, self.name_key, str(Path(self.dirWidget.PATH.data).name))
         return True
     
     def GetData(self):
@@ -1119,13 +1104,7 @@ class CurrentEntryTable(EntryTable):
         x-axis.
         """
         return self.lim.data
-    
-    def init_temp(self, lu):
-        if lu is not None and lu[self.name_key] in os.listdir(os.path.join(runtime_configs["Paths"]['Inputs'], NAME_COILS)):
-            try:
-                self.dirWidget.combo_box.set(lu[self.name_key])
-            except KeyError:
-                pass
+
 
 if __name__ == "__main__":
     from pathlib import Path

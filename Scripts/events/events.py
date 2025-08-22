@@ -27,9 +27,9 @@ class Event():
     """
     runs all the callables that the object is responsible for.
     """
-    def invoke(self, **kwargs):
+    def invoke(self, *args, **kwargs):
         for c in self.callables:
-            c(**kwargs)
+            c(*args, **kwargs)
 
 def _whatis_file():
     print(f"events._whatis_file()")
@@ -60,13 +60,13 @@ class Events(Enum):
     
     # set up everything needed before widgets can be messed with
     PRE_INIT_GUI = Event([partial(TEMPMANAGER_MANAGER.add_temp_manager, names.manager_1),
-                          partial(TEMPMANAGER_MANAGER.create_temp_file, names.manager_1, names.m1f1),
+                          #partial(TEMPMANAGER_MANAGER.create_temp_file, names.manager_1, names.m1f1),
                           partial(TEMPMANAGER_MANAGER.create_temp_file, names.manager_1, names.m1f2), # holds png of trajectory
                           ])
 
     # after creating the tempfile(s), you can then fill widgets with the last used values.
     # this also functions to fill the tempfile with all of the expected fields (as every widget gets to update the tempfile)
-    INIT_GUI = Event([initialize_tempfile_dict])
+    #INIT_GUI = Event([initialize_tempfile_dict])
 
     # when calculate button is pressed but before the calcs start.
     PRE_CALC = Event([before_simulation_bob_dt, # set up constants if using bob's dt scaling solution

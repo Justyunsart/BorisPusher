@@ -10,6 +10,7 @@ from Gui_tkinter.funcs.GuiEntryHelpers import Bob_e_Config_Dataclass
 import tkinter as tk
 from system.path import Path
 from system.temp_file_names import param_keys
+from system.state_dict_main import AppConfig
 
 # NOTE: For this class to work, the class will need a reference to the tk root.
 # Because the GUI mainloop is encapsulated in a function, it cannot be done as an import.
@@ -20,7 +21,8 @@ class Bob_e_Circle_Config(tk.Frame):
     (param: ) root: the base tk.Tk object for the tkinter app.
     """
     def __init__(self, root:tk.Tk, dir, dir_name = 'bob_e', path_key=param_keys.bob_e_file.name, name_key=param_keys.bob_e_name.name,
-                 collection_key = param_keys.bob_e_coil.name, dataclass = Bob_e_Config_Dataclass, **kwargs):
+                 collection_key = param_keys.bob_e_coil.name, dataclass = Bob_e_Config_Dataclass,
+                 params:AppConfig=None, **kwargs):
         self.root = root
         super().__init__(root, **kwargs)
         self.path_key = path_key
@@ -35,13 +37,14 @@ class Bob_e_Circle_Config(tk.Frame):
         self.dir = Path(dir, dir_name)
         # widgets here
         self.entry_table = CurrentEntryTable(master=self.table_frame,
-                                            dataclass=dataclass,
-                                            graphFrame=self.graph_frame,
-                                            DIR=self.dir,
-                                            collection_key=list(collection_key),
-                                            path_key=self.path_key,
-                                            name_key=self.name_key,
-                                            dir_name = dir_name)
+                                             dataclass=dataclass,
+                                             graphFrame=self.graph_frame,
+                                             DIR=self.dir,
+                                             collection_key=collection_key,
+                                             path_key=self.path_key,
+                                             name_key=self.name_key,
+                                             dir_name = dir_name,
+                                             params=params)
 
         # packing step
         self.main_frame.pack(fill='both', expand=1)

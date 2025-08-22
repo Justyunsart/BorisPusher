@@ -9,7 +9,9 @@ from PIL import ImageTk, Image
 import definitions
 from functools import partial
 
-from system.temp_manager import update_temp, TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
+#from system.temp_manager import update_temp, TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
+from system.state_dict_main import AppConfig
+from Gui_tkinter.widgets.base import ParamWidget
 """
 There are currently two expected values for the field configuration notebook's individual tab widgets.
 
@@ -17,9 +19,9 @@ For the Zero field, the widget is going to be blank basically
 For anything requiring ring configuration (everything else), there's going to be input tables and graphs and stuff.
 """
 
-class ZeroTableTab(tk.Frame):
+class ZeroTableTab(tk.Frame, ParamWidget):
     img_path = os.path.normpath(os.path.join(definitions.DIR_ROOT, f"Scripts/system/imgs/zero_field.png"))
-    def __init__(self, parent, dir_name="", field="", *args, **kwargs):
+    def __init__(self, parent, dir_name="", field="", params=None, *args, **kwargs):
         tk.Frame.__init__(self, parent)
         # hold diagnostic
         self.dir_name = dir_name
@@ -33,33 +35,40 @@ class ZeroTableTab(tk.Frame):
         self.im_label.grid(row=0, column=0)
         self.grid(row=0, column=0, sticky=tk.NSEW)
 
-    def onActive(self, tab_key, collection_key, text, is_init=False):
-        def set_nested_value(d, keys, value):
-            """Set a value in a nested dictionary given a list of keys."""
-            for key in keys[:-1]:
-                d = d.setdefault(key, {})  # ensures intermediate dicts exist
-            d[keys[-1]] = value
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        self.field = field
+        self.params = params
 
-        # set the collection value to 'None'
-        set_nested_value(d, list(collection_key), "None") # doesn't seem to work but doesnt matter lol
+    def set_table_dropdown(self):
+        """
+        only put here so that it can work with RingTableTab's dynamic function use.
+        """
+        pass
 
-        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+    def onActive(self, tab_key, collection_key, text=None, is_init=False):
+        # update the method attribute of the FieldConfig dataclass
+        if not is_init:
+            #print(f"Zero's active function is runnng")
+            method_path = f"{self.field}.method"
+            self.set_nested_field(self.params, method_path, text)
+            self.set_nested_field(self.params, f"path.{self.field}", None)
 
 
 
-class RingTableTab(tk.Frame):
+class RingTableTab(tk.Frame, ParamWidget):
     """
     A frame containing:
         - a current table
         - a preview graph
     MUST also communicate with the manager
     """
-    def __init__(self, parent, dir_name, field, *args, **kwargs):
+    def __init__(self, parent, dir_name, field, params, param_class, *args, **kwargs):
         self.listeners = []
         tk.Frame.__init__(self, parent, *args)
+        self.params = params
+        self.param_class = param_class
         self.add_listener(parent)
         self.root = parent
+        self.field = field
 
         self.frame1 = tk.Frame(self)
         self.frame1.grid(row=2, column=0)
@@ -73,7 +82,8 @@ class RingTableTab(tk.Frame):
 
         # Coil Config
         self.table = Bob_e_Circle_Config(self.frame2,
-                                         dir=os.path.join(runtime_configs['Paths']['inputs'], dir_name), dir_name=dir_name, **kwargs)
+                                         dir=os.path.join(runtime_configs['Paths']['inputs'], dir_name), dir_name=dir_name,
+                                         params=params, **kwargs)
         self.widgets = [self.table, self.res]
         self.table.grid(row=0)
 
@@ -82,12 +92,12 @@ class RingTableTab(tk.Frame):
         self.gridding = tk.Checkbutton(self.frame2, text="precompute grid", variable=self.gridding_var)
         self.gridding.grid(row=1, column=0)
 
-        gridding_func = partial(self.trigger_listener, [param_keys.field_methods.name, field, param_keys.params.name, 'gridding'],
+        gridding_func = partial(self.trigger_listener, f'{field}.gridding',
                                 self.gridding_var)
         self.gridding_var.trace_add("write", gridding_func)
 
         # self.q.value.trace_add("write", self.trigger_listener)
-        listener_func = partial(self.trigger_listener, [param_keys.field_methods.name, field, param_keys.params.name, 'res'],
+        listener_func = partial(self.trigger_listener, f"{self.field}.res",
                                 self.res)
         self.res.value.trace_add("write", listener_func)
 
@@ -97,6 +107,15 @@ class RingTableTab(tk.Frame):
 
         # pack self
         self.grid(row=0, column=0, sticky=tk.NSEW)
+
+    def set_table_dropdown(self):
+        """
+        Expected to run when selecting the last used tab on system initialization.
+        If there is a last-used filename stored, and that file exists still,
+        have the entry table load that file.
+        """
+        self.table.entry_table.read_last_used()
+
 
     # BASIC EVENT HANDLING: for the param 'res', which is assumed
 
@@ -112,11 +131,18 @@ class RingTableTab(tk.Frame):
                 lst,
                 val.get())
 
-    def onActive(self, tab_key, collection_key, text, is_init=False):
+    def onActive(self, tab_key, collection_key, text=None, is_init=False):
         #print(f"RingTableTab.onActive running")
         if is_init:
-            self.table.entry_table.read_last_used()
+            #self.table.entry_table.read_last_used()
             return
+
+        # update the configs dataclass with the associated FieldConfig dataclass or subclass
+        setattr(self.params, self.field, self.param_class())
+
+        # update the method attribute of the FieldConfig dataclass
+        method_path = f"{self.field}.method"
+        self.set_nested_field(self.params, method_path, text)
 
         # when the tab becomes active, update the graph (which updates the runtime dict)
         self.table.entry_table.GraphCoils()
@@ -136,11 +162,6 @@ class DiskTab(RingTableTab):
         original_method = self.table.entry_table.GraphCoils
 
         def wrapped_func(*args, **kwargs):
-            def set_nested_value(d, keys, value):
-                """Set a value in a nested dictionary given a list of keys."""
-                for key in keys[:-1]:
-                    d = d.setdefault(key, {})  # ensures intermediate dicts exist
-                d[keys[-1]] = value
 
             original_method(*args, **kwargs)
             # sample row for data: {'PosX': '1.1', 'PosY': '0.0', 'PosZ': '0.0', 'Q': '1000.0', 'Diameter': '1.0', 'Rotations': {'Angles': [90], 'Axes': ['y']}, 'Inner_r': '1'}
@@ -150,32 +171,8 @@ class DiskTab(RingTableTab):
             innies = [x['Inner_r'] for x in data]
 
             # update the runtime dict
-            d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-            set_nested_value(d, ['field_methods', 'e', 'params', 'Inner_r'], innies)
-            write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+            self.set_nested_field(self.params, f"{self.field}.inner_r", innies)
 
         self.table.entry_table.GraphCoils = wrapped_func
         # also run the function, so that this wrapped logic is applied after being set
         self.table.entry_table.GraphCoils()
-
-    def onActive(self, tab_key, collection_key, text, is_init=False):
-        if is_init:
-            self.table.entry_table.read_last_used()
-            return
-        def set_nested_value(d, keys, value):
-            """Set a value in a nested dictionary given a list of keys."""
-            for key in keys[:-1]:
-                d = d.setdefault(key, {})  # ensures intermediate dicts exist
-            d[keys[-1]] = value
-
-        # when the tab becomes active, update the graph (which updates the runtime dict)
-        self.table.entry_table.GraphCoils()
-
-
-        # handle method-specific params
-        match str(text):
-            case 'disk_e':
-                # if the selected e method is not 'disk_e', then you can set the key Inner_r's value to None
-                d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-                set_nested_value(d, ['field_methods', 'e', 'params', 'Inner_r'], None)
-                write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)

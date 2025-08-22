@@ -19,11 +19,10 @@ import numpy as np
 # presets
 from settings.defaults.coils import (preset_hexahedron, preset_mirror, preset_cusp)
 from settings.configs.funcs.config_reader import runtime_configs
-from system.temp_file_names import param_keys, m1f1
-from system.temp_manager import TEMPMANAGER_MANAGER, update_temp, read_temp_file_dict
 from functools import reduce
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
                                                NavigationToolbar2Tk)
+from system.state_dict_main import AppConfig
 
 class MainWindow(tk.Frame):
     '''
@@ -83,8 +82,9 @@ class ParticlePreview(EntryTable):
     '''
     An entrytable for viewing and editing particle initial condition csvs.
     '''
-    def __init__(self, master, dataclass=file_particle, dir_observed = None):
+    def __init__(self, master, dataclass=file_particle, dir_observed = None, params:AppConfig=None):
         super().__init__(master, dataclass)
+        self.params = params
         self.fileWidget = FileDropdown(self.frame0, dir=dir_observed, default=self.create_default_input_file)
         self.read_initial_value() # set filewidget's value based on read val.
         self.fileWidget.grid(row=0, column=0, sticky="nsew")
@@ -127,6 +127,7 @@ class ParticlePreview(EntryTable):
             #print("Creating new entry", defaults, *args)
             #print(id(self._instances))
             super().NewEntry(*args, defaults = defaults)
+            self.params.particle.count += 1
             #print(id(self._instances))
         else:
             #print("suppressing New Entry")
@@ -141,6 +142,7 @@ class ParticlePreview(EntryTable):
         #print("reading data")
         data = CSV_to_Df(self.fileWidget.PATH.data).values.tolist() # ideally, each sublist will be a row of params for file_particle
         #print(data)
+        self.params.particle.count = len(data)
 
         particles = []
         for row in data:
@@ -163,8 +165,8 @@ class ParticlePreview(EntryTable):
         '''
         self.Read_Data()
         self._SetSaveEntry(self.fileWidget.fileName.get())
-        self._updateTempFile(param_keys.particle_file.name, self.fileWidget.PATH.data)
-        self._updateTempFile(param_keys.particle_name.name, self.fileWidget.combo_box.get())
+        self.set_nested_field(self.params, "path.particle", self.fileWidget.PATH.data)
+        self.set_nested_field(self.params, "particle.name", self.fileWidget.combo_box.get())
     
     def SaveData(self, dir:str, container=None, customContainer=False):
         super().SaveData(dir, container, customContainer)
@@ -192,20 +194,13 @@ class ParticlePreview(EntryTable):
             self.fileWidget.combo_box.current(0)
 
     def read_initial_value(self):
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-        if d[param_keys.particle_name.name] in os.listdir(os.path.join(runtime_configs['Paths']['inputs'], NAME_PARTICLES)):
-            self.fileWidget.combo_box.set(d[param_keys.particle_name.name])
-    """
-    deprecated
-    """
-    def init_temp(self, lu):
-        if lu is not None and lu[param_keys.particle_name.name] in os.listdir(os.path.join(runtime_configs['Paths']['inputs'], NAME_PARTICLES)):
-            try:
-                self.fileWidget.combo_box.set(lu[param_keys.particle_name.name])
-            except KeyError:
-                pass
-        self.update()
-        
+        d = self.params.particle.name
+        if (d in os.listdir(os.path.join(runtime_configs['Paths']['inputs'], NAME_PARTICLES))):
+            self.fileWidget.combo_box.set(d)
+
+    def DelEntry(self, button):
+        super().DelEntry(button)
+        self.params.particle.count -= 1
 
 class ParticlePreviewSettings():
     '''
@@ -456,22 +451,17 @@ class CurrentConfig:
         self.table.init_temp(lu)
 
 
-class FieldDropdown(Dropdown):
+class FieldDropdown(Dropdown, ParamWidget):
     options:Enum
-    def __init__(self, master, options:Enum, label, key=None, **kwargs):
+    def __init__(self, master, options:Enum, label, key=None, params:AppConfig=None, **kwargs):
         self.options = options
         self.key = key # the field name for the temp file
+        self.params = params
         names = options._member_names_
         super().__init__(master, names, label=label, **kwargs)
         if self.key is not None:
-            self.chosenVal.trace_add('write', self.update_tempfile)
-
-    """
-    updates the tempfile with the associated field method used (magpy, zero, etc.)
-    """
-    def update_tempfile(self, event, *args):
-        d = {param_keys.method.name: self.chosenVal.get()}
-        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d, nested=True, key=[param_keys.field_methods.name, self.key])
+            self.chosenVal.trace_add('write', partial(self.set_nested_field,
+                                                      self.params, self.key, self.chosenVal.get()))
 
     def GetData(self):
         return {str(self.options.__name__):self.chosenVal.get()}
@@ -486,14 +476,6 @@ class FieldDropdown(Dropdown):
         #print(f"setting dropdown to: {ind}")
         self.dropdown.current(ind)
         return True
-    
-    def init_temp(self, lu):
-        if lu is not None:
-            try:
-                self.dropdown.set(lu['field_methods'][self.key]['method'])
-            except KeyError:
-                pass
-        self.update_tempfile(None)
 
 
 class FieldCoord_n_Graph():
@@ -505,8 +487,8 @@ class FieldCoord_n_Graph():
     canvas = None
     instances:dict
     
-    def __init__(self, root, table:FieldDropdown, graphOptions:FieldDropdown, graphFrame:tk.LabelFrame, canvasFrame:tk.Frame, currentTable:CurrentEntryTable,
-                 title="title", x_label="x", y_label="y"):
+    def __init__(self, root, graphOptions:FieldDropdown, graphFrame:tk.LabelFrame, canvasFrame:tk.Frame,
+                 params:AppConfig):
         """the b-field parameters inside the field_methods dictionary
         expects an instance of a coordinate table, and a frame where the graph will be made.
         """
@@ -514,52 +496,10 @@ class FieldCoord_n_Graph():
         self.instances = {} # holds instances of the FieldMethods_Impl class.
         self.frame = graphFrame # frame that holds the graphical button controls
         self.canvasFrame = canvasFrame # frame that holds the canvas for the actual figure
-        self.currentTable = currentTable # we need a reference to the table containing the coil info so we can do B-field calcs.
-        self.table = table # this table is the dropdpown menu for the fields.
-        self.options = graphOptions # this is the dropdown where people choose the graph to display on the canvasFrame
-        
-        # properties for the graph
-        self.title = title
-        self.x_lab = x_label
-        self.y_lab = y_label
-
+        #self.currentTable = currentTable # we need a reference to the table containing the coil info so we can do B-field calcs.        self.options = graphOptions # this is the dropdown where people choose the graph to display on the canvasFrame
+        self.options = graphOptions
         self.ConstructGraph()
-        self.prevVal = table.chosenVal.get()
 
-        table.chosenVal.trace_add("write", self.WidgetVisibility)
-        #table.chosenVal.trace_add("write", self.UpdateGraph) # add another trace to the given table.
-        
-        # instantiate intialized val's widget
-        self._checkInstance(self.prevVal).ShowWidget()
-
-    def WidgetVisibility(self, *args):
-        """
-        check if you should toggle widget visibility on or off or not
-        """
-        # If you chose the same value as before, don't do anything.
-        # Should theoretically never trigger if the 'write' trace doesn't trigger
-        # when the same option is selected again on a ttk.Combobox
-        if (self.prevVal == self.table.chosenVal):
-            return True
-        
-        # set the previous widget to 'off'
-        prev = self.prevVal
-        self._checkInstance(prev).HideWidget()
-
-        # set the current widget to 'on'
-        curr = self.table.chosenVal.get()
-        self._checkInstance(curr).ShowWidget()
-
-        # then, update the tempfile (field_methods/E/params)
-        d = {param_keys.params.name:
-             self._checkInstance(self.table.chosenVal.get()).GetData()[self.table.chosenVal.get()]}
-        update_temp(TEMPMANAGER_MANAGER.files[m1f1], d, nested=True, key=[param_keys.field_methods.name, param_keys.e.name])
-
-        # lastly, update the prevVal property
-        self.prevVal = curr
-
-        return True
-        
 
     def ConstructGraph(self):
         """
@@ -605,11 +545,9 @@ class FieldCoord_n_Graph():
         Assumes that the function takes a mpl subplot as an input.
         """
         # INITIAL CHECKERS
-        # Check if the graph should be edited by looking at the widget's flags.
-        curr = self.table.chosenVal.get()
-        doUpdate = self._checkInstance(curr).autoUpdate
         # Also check the currently selected graph value in the options dropdown.
         graphOption = self.options.chosenVal.get()
+        self.currentTable = self.params.b.collection
         #print(graphOption)
 
         # clear plot
@@ -627,20 +565,14 @@ class FieldCoord_n_Graph():
                 eg. Fw only gets its limits from the currentTable reference's getLim function, so it doesn't need the collection.
                 Bob_e_impl needs each coil center and rotation, so it's easier to get a reference.
                 """
-                if doUpdate == True:
-                    # gather data
-                    self.SetLabels(self.plot)
-                    lims = self.currentTable.getLim()
+                # gather data
+                #self.SetLabels(self.plot)
+                lims = self.currentTable.getLim()
 
-                    # plot
-                    self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims, cax=self.cax)
-                    self.canvas.draw()
-                else:
-
-                    # run the graph function
-                    #print(f"collection is: {c.children_all[0].position}")
-                    self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = None, cax=self.cax)
-                    self.canvas.draw()
+                # plot
+                self._checkInstance(self.table.chosenVal.get()).graph(plot = self.plot, fig = self.fig, lim = lims,
+                                                                      cax=self.cax)
+                self.canvas.draw()
             case "B":
                 """
                 Plots a streamplot of the B field; a 2D cross section at a plane crossing the origin.
@@ -820,11 +752,6 @@ class FieldCoord_n_Graph():
     def update(self):
         # expected function to run when coordtable's trigger_listener is invoked.
         self.UpdateGraph() # draw the graph
-
-    def SetLabels(self, ax):
-        ax.set_title(self.title)
-        ax.set_xlabel(self.x_lab)
-        ax.set_ylabel(self.y_lab)
     
     def _checkInstance(self, name:str):
         """

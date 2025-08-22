@@ -26,7 +26,6 @@ NAME_OUTPUTS = "Outputs"
 DIR_ROOT = os.path.dirname(os.path.abspath(__file__)) # project root (BorisPusher/)
 DIR_CONFIG = os.path.normpath(os.path.join(DIR_ROOT, "Scripts/settings/configs/"))
 
-
 # FOLDER STRUCTS
 ## key = subdir, value = list of subsubdir(s)
 _input_preset = "Presets" # name of the presets folder, if present.
@@ -34,3 +33,7 @@ FOLDER_INPUTS = { # subdirs of the inputs folder
     NAME_COILS:[_input_preset], 
     NAME_PARTICLES:[_input_preset], 
     NAME_DISKS:[_input_preset]}
+
+# App Metadata
+app_name = "BorisPusher"
+roaming = True

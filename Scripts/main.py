@@ -22,7 +22,7 @@ The dropdown graphs use the function 'Param_v_Step_callable', in which:
         3. The dot products with b
 
 """
-from Gui_tkinter.BorisGui import OpenGUI
+from Gui_tkinter.BorisGui import App
 from multiprocessing import Manager
 
 if __name__ == "__main__":
@@ -32,7 +32,10 @@ if __name__ == "__main__":
     # If I call root.mainloop() here, it gets called when a process
     # spawns, even when inside the main block.
     manager = Manager()
-    OpenGUI(manager)
+    #OpenGUI(manager)
+    app = App(manager)
+    app.mainloop()
+
     
     
 """

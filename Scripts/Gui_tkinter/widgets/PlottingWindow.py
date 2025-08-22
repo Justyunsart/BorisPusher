@@ -215,7 +215,6 @@ def Trajectory_callable(fig, plot, v1, v2, v3, path, c:mp.Collection, **kwargs):
     """
     for graphing the 3d trajectory of a single particle.
     """
-    d = TEMPMANAGER_MANAGER.files[names.m1f1]
     palettes = ["copper", "gist_heat"] # supported palettes for multiple particles.
 
     with h5py.File(path, 'r') as f:
@@ -254,16 +253,18 @@ def Trajectory_callable(fig, plot, v1, v2, v3, path, c:mp.Collection, **kwargs):
         mp.show(c, canvas=canvas)
 
     # if an e-coil file exists, then construct the magpylib collections object from it and graph
-    if os.path.exists(os.path.join(str(Path(path).parents[0]), 'e_rings.txt')):
-        ec = File_to_Collection(path, 'e_rings.txt', {"Amp": tryEval, "RotationAngle": tryEval, "RotationAxis": tryEval})
+    if os.path.exists(os.path.join(str(Path(path).parents[0]), 'e_coils.txt')):
+        ec = File_to_Collection(path, 'e_coils.txt', {"Amp": tryEval, "RotationAngle": tryEval, "RotationAxis": tryEval})
         for canvas in canvases:
             mp.show(ec, canvas=canvas, style_color='red')
 
-
-    plot.get_legend().remove()
-    v1.get_legend().remove()
-    v2.get_legend().remove()
-    v3.get_legend().remove()
+    try:
+        plot.get_legend().remove()
+        v1.get_legend().remove()
+        v2.get_legend().remove()
+        v3.get_legend().remove()
+    except AttributeError:
+        pass
 
     v1.set_zlabel("")
     v2.set_xlabel("")
@@ -524,8 +525,11 @@ class DropdownFigure(tk.Frame):
     A FRAME THAT WILL CONTAIN A COMBOBOX.
     THIS COMBOBOX WILL HAVE VARIOUS GRAPHING OPTIONS TO CHOOSE FROM,
     WHICH WILL AUTOMATICALLY UPDATE THE INCLUDED GRAPH.
+
+    NOTE THAT ANY OTHER IMPLEMENTATION ELSEWHERE IS EXPECTED
+    TO REPLACE THE updateGraph FUNCTION TO THEIR OWN CASE.
     """
-    def __init__(self, master, root, **kwargs):
+    def __init__(self, master, root, graph_options=graph_options, **kwargs):
         self.master = master
         super().__init__(master, **kwargs)
         # store references to children

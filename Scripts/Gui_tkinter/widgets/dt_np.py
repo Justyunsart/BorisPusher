@@ -6,21 +6,23 @@ from bokeh.layouts import column
 from Gui_tkinter.funcs.GuiEntryHelpers import LabeledEntry
 from Gui_tkinter.widgets.BorisGuiClasses import _Try_Float
 
-from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp, update_temp
-from system.temp_file_names import manager_1, m1f1, param_keys
+#from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp, update_temp
+#from system.temp_file_names import manager_1, m1f1, param_keys
 from functools import partial
+
+from Gui_tkinter.widgets.base import ParamWidget
 from events.funcs import before_simulation_bob_dt
+
+from system.state_dict_main import AppConfig
+from system.state_dict import DynDtConfig
 
 """
 Associated params for the bob timestep scaling.
     > reference proportion (0: origin, 1: circle's center): Scale from 0 to 1. Determines where on the line to place the ref. particle
     > dynamic range (float): factor for how low/high to look for dtp
 """
-class bob_dt_widget(tk.Frame):
-    def __init__(self, master, borderwidth=2, relief=tk.SUNKEN):
-            # system default values to init with.
-        self.defs = {'prop' : "0.5",
-                     'dyn_rng' : "10"}
+class bob_dt_widget(tk.Frame, ParamWidget):
+    def __init__(self, master, params, borderwidth=2, relief=tk.SUNKEN):
 
         super().__init__(master)
             # information-holding widgets
@@ -29,12 +31,14 @@ class bob_dt_widget(tk.Frame):
         self._dyn_r = tk.Label(self, text="Dynamic Range: ", justify='left')
                 
                 # entries (var, widget, and event binding)
-        self.var_ref_p = tk.DoubleVar(value=self.defs['prop'])
-        self.var_dyn_r = tk.DoubleVar(value=self.defs['dyn_rng'])
+        self.var_ref_p = tk.DoubleVar(value=params.step.dynamic.proportion)
+        self.var_dyn_r = tk.DoubleVar(value=params.step.dynamic.dynamic_range)
         self.ref_p = tk.Entry(self, textvariable=self.var_ref_p, justify='center')
         self.dyn_r = tk.Entry(self, textvariable=self.var_dyn_r, justify='center')
-        self.ref_p.bind("<KeyRelease>", partial(self.widget_update_tempfile, self.ref_p))
-        self.dyn_r.bind("<KeyRelease>", partial(self.widget_update_tempfile, self.dyn_r))
+        self.ref_p.bind("<KeyRelease>", partial(self.set_nested_field, params,
+                                                "step.dyamic.proportion", self.ref_p))
+        self.dyn_r.bind("<KeyRelease>", partial(self.set_nested_field, params,
+                                                "step.dynamic.dynamic_range", self.dyn_r))
 
                 # PACKING
         self._ref_p.grid(row=0, column=0, sticky='w')
@@ -46,11 +50,8 @@ class bob_dt_widget(tk.Frame):
                 # container for state handling (toggle editability)
         self.entries = [self.ref_p, self.dyn_r]
                 # mapping to be used in update function
-        self.temp_key_map = {self.ref_p : param_keys.dt_bob_prop.name,
-                             self.dyn_r : param_keys.dt_bob_dyn_rng.name}
-
-        self.widget_update_tempfile(self.ref_p)
-        self.widget_update_tempfile(self.dyn_r)
+        #self.temp_key_map = {self.ref_p : param_keys.dt_bob_prop.name,
+        #                     self.dyn_r : param_keys.dt_bob_dyn_rng.name}
     
     """
     Expected that check_state contains the value of the parent checkbox widget.
@@ -68,22 +69,7 @@ class bob_dt_widget(tk.Frame):
                 _set_entry_editability('disabled')
             case 1:
                 _set_entry_editability('normal')
-    
-    """
-    Update function for the tempfile.
-    self.temp_key_map tells program which keyname to use for which widget.
-    """
-    def widget_update_tempfile(self, widget):
-        key = self.temp_key_map[widget]
-        d = {}
-        d[key] = widget.get()
-        # only update the tempfile with these values if it is not empty, and is a valid float.
-        if d[key] != "":
-            try:
-                float(d[key])
-                update_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
-            except ValueError:
-                pass
+
     
 
 """
@@ -97,19 +83,15 @@ class TimeStep_n_NumStep():
     simTime:float
     simVar:tk.StringVar
 
-    default_dt = 2e-9
-    default_steps = 50000
-
     responses = {
         "good" : "everything looks good!",
         "bad" : "dt is too big."
     }
 
-    def __init__(self, master):
-        self.inital_dt = self.default_dt
-        self.initial_steps = self.default_steps
+    def __init__(self, master, params:AppConfig):
+        self.params = params
 
-        self.check_last()
+        #self.check_last()
 
         self.master = master
 
@@ -147,7 +129,7 @@ class TimeStep_n_NumStep():
         tk.Label(self.frame0, text="").grid(row=1, column=0, rowspan=1, sticky="ew")
         self.dt_do_bob.grid(row=2, column=0, sticky="s", rowspan=1)
 
-        self.do_bob_widgets = bob_dt_widget(self.frame1)
+        self.do_bob_widgets = bob_dt_widget(self.frame1, params)
         self.do_bob_widgets.grid(row=0, column=0, sticky='w')
         self.do_bob.trace_add('write', partial(self.do_bob_widgets.toggle_editability, self.do_bob))
 
@@ -156,12 +138,12 @@ class TimeStep_n_NumStep():
                                  textvariable=self.dt_str)
         self.dt_label.grid(row=4, column=2)
 
-        self.dt = LabeledEntry(self.frame2, val=self.inital_dt, row=1, col=0, col_span=1, title="Timestep (sec): ", width = 20, justify='center')
+        self.dt = LabeledEntry(self.frame2, val=self.params.step.dt, row=1, col=0, col_span=1, title="Timestep (sec): ", width = 20, justify='center')
         self.dt.value.trace_add("write", self._Total_Sim_Time)
         self.dt.value.trace_add("write", self.dt_Callback)
         self.do_bob.trace_add("write", self.update_do_bob)
         
-        self.numsteps = LabeledEntry(self.frame2, val=self.initial_steps, row=0, col=0, col_span=1, title="Num Steps: ", width = 20, justify='center')
+        self.numsteps = LabeledEntry(self.frame2, val=self.params.step.numsteps, row=0, col=0, col_span=1, title="Num Steps: ", width = 20, justify='center')
         self.numsteps.value.trace_add("write", self._Total_Sim_Time)
         self.numsteps.value.trace_add("write", self.update_numsteps)
 
@@ -229,35 +211,25 @@ class TimeStep_n_NumStep():
         #self.get_ref_position()
         #self.get_dt_consts(None)
 
-    def check_last(self):
-        last = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-        try:
-            self.initial_steps = last['numsteps']
-            self.inital_dt = last['dt']
-        except KeyError:
-            pass
-
     """
     call the bob dt constants funcs
     """
     def get_dt_consts(self, widget, update=False, *args):
-        #print(f"what")
-        if update:
-            self.do_bob_widgets.widget_update_tempfile(widget)
-        consts = before_simulation_bob_dt()
+        #if update:
+            #self.do_bob_widgets.widget_update_tempfile(widget)
+        consts = before_simulation_bob_dt(params=self.params)
 
         self.ref_dt_min_var.set(consts['bob_dt_min'])
         self.ref_dt_max_var.set(consts['bob_dt_max'])
 
 
-    """
-    get the location of the ref particle when bob_dt is used.
-    """
     def get_ref_position(self, *args):
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        """
+        get the location of the ref particle when bob_dt is used.
+        """
 
-        if d[param_keys.field_methods.name]['b']['method'] != 'zero':
-            c = d[param_keys.field_methods.name]['b']['params']['collection'][0].position
+        if self.params.b.method != 'zero':
+            c = self.params.b.collection[0].position
             pos = c * self.do_bob_widgets.var_ref_p.get()
             self.ref_p_var.set(str(pos))
             return pos
@@ -271,8 +243,9 @@ class TimeStep_n_NumStep():
         """
         This specific update is only run when bob_dt's checkmark is toggled
         """
-        self.get_ref_position()
-        self.get_dt_consts(None)
+        if self.params.b.method != 'zero':
+            self.get_ref_position()
+            self.get_dt_consts(None)
 
 
     def update(self, force_update=False, *args):
@@ -286,24 +259,20 @@ class TimeStep_n_NumStep():
             self.update_do_bob()
 
     def update_numsteps(self, *args):
-        try:
-            d = {param_keys.numsteps.name : int(self.numsteps.entry.get())}
-            self.update_tempfile(d)
-        except:
-            pass
+        self.params.step.numsteps = int(self.numsteps.entry.get())
 
-    def update_tempfile(self, updates):
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1]) | (updates)
-        #print(d)
-        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
 
     def update_do_bob(self, *args):
-        v = int(self.do_bob.get())
-        d = {param_keys.dt_bob.name : v}
-        self.update_tempfile(d)
+        """
+        toggle the do_bob option on or off.
+        """
+        v = int(self.do_bob.get()) #0 or 1; the value of the checkbox after getting toggled.
 
-        if v != 0:
+        if v == 1:
+            self.params.step.dynamic.on = True
             self.update_bob_dt()
+        else:
+            self.params.step.dynamic.on = False
 
     def update_dt(self, *args):
         self.update_tempfile({"dt": float(self.dt.entry.get())})
@@ -354,9 +323,9 @@ class TimeStep_n_NumStep():
 
     def _first_coil_max(self):
         # extract the thing.
-        coils = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
+        coils = self.params.b.collection
         #print(coils)
-        return np.max(abs(coils[param_keys.mag_coil.name][0].position))
+        return np.max(abs(coils[0].position))
     
     def _Check_Timestep_Size(self):
         """
@@ -370,28 +339,3 @@ class TimeStep_n_NumStep():
         dt_lim = distance/(desired_steps * desired_rate)
         
         return dt_lim
-    
-    """
-    (deprecated)
-    Called during the Init_GUI event.
-    """
-    def init_temp(self, lu):
-        if lu is not None:
-            try:
-                self._Set('numsteps', lu[param_keys.numsteps.name])
-                self._Set('timestep', lu[param_keys.dt.name])
-                
-                self.do_bob_widgets.var_ref_p.set(value=lu[param_keys.dt_bob_prop.name])
-                self.do_bob_widgets.var_dyn_r.set(value=lu[param_keys.dt_bob_dyn_rng.name])
-            except KeyError:
-                self._Set('numsteps', 100000)
-                self._Set('timestep', 2.2e-9)
-
-                self.do_bob_widgets.var_ref_p.set(value=0)
-                self.do_bob_widgets.var_dyn_r.set(value=10)
-        self.update(force_update=True)
-        #self.update_do_bob()
-        #self.update_numsteps()
-        #self.dt_Callback()
-        #self.update_dt()
-        self.do_bob_widgets.toggle_editability(self.do_bob)

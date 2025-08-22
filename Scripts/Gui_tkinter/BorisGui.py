@@ -13,25 +13,218 @@ from Gui_tkinter.widgets.PlottingWindow import PlottingWindowObj, on_main_notebo
 from definitions import (DIR_ROOT, DIR_CONFIG, NAME_INPUTS, NAME_COILS, NAME_PARTICLES, NAME_lastUsed, NAME_OUTPUTS)
 import configparser
 from system.Observer import Data
-from system.path import Path
+from system.path import Path as Ob_Path
 from system.temp_file_names import param_keys
 from settings.configs.funcs.config_reader import runtime_configs
 
 from Gui_tkinter.widgets.notebook.widget import Field_Notebook
 from Gui_tkinter.widgets.notebook.tab_content import *
-
+import settings.fields.FieldMethods as fm
+from system.state_file_handling import get_config_dir
 
 
 # events
-#from events.on_start import on_start
+from Gui_tkinter.styles import load_styles
+from Gui_tkinter.widgets.constructs import *
+
+# state dict
+from system.state_dict_main import AppConfig, AppConfigMeta
+
+import pickle
 
 """
-This script is directly called when running main.py - the function OpenGUI() defined below assembles the tkinter GUI and runs its mainloop.
+This script is directly called when running main.py - the function OpenGUI() defined below assembles the tkinter GUI and 
+runs its mainloop.
+"""
+
+class App(tk.Tk):
+    """
+    Where the entirety of the GUI app is defined.
+    """
+    palette = p.Drapion # the color palette
+    paths = {} # directories that correspond to the expected usage {key (usage) : value (Path data object)}
+
+    def __init__(self, manager):
+        # before doing anything, ensure that you are the only instance.
+        if "_initialized" in self.__dict__:
+            return
+        super().__init__()
+        self._initialized = True
+        self.params = None
+        self.params_meta = None
+        self.scrollable_frames = None
+        # set root unloaded state
+        self.title("Configure Sim")
+        self.geometry('1300x768')
+        self.iconify() # don't show window when everything is loading
+
+        ######################################
+        # LOAD INFO. BEFORE CREATING WIDGETS #
+        ######################################
+        #   > run helper func. init logic as well
+        self.initial_checks() # run os/ background checks
+        self.set_paths() # load default directory values
+        load_styles(background=self.palette.Background.value,
+                    text=self.palette.Text.value,
+                    text_bright=self.palette.Text_Bright.value)
+        self.load_params()
+
+        #####################
+        # CONSTRUCT WIDGETS #
+        #####################
+        # big widget definition; everything goes in main_frame
+        self.main_frame = tk.Frame(self, background=self.palette.Background.value)
+        self.main_frame.pack(expand=True, fill='both') # have the window be as big as it can be
+        self.construct_widgets() # everything else
+
+        # Post widget init registering
+        self.event_registration(manager) # any widgets that need special event triggers
+        self.scroll_registration() # any scrollable frames need to do this before being scrollable
+
+        def print_params(event):
+            print(self.params)
+        self.bind("<m>", print_params)
+
+        self.deiconify() # show urself once loaded
+
+
+    """
+    These functions are for labelling + writing functionality without clogging up the __init__ function.
+    """
+    def load_params(self)->None:
+        """
+        Sees if there are any AppConfig binary files, and reads it if it does.
+        """
+        # Create default/load last-used parameters
+        self.params = AppConfig()
+        self.params_meta = AppConfigMeta()
+        self.paths['DIR_Config'] = get_config_dir() #depends on os
+        # If there is a file there already, then assign that as the runtime AppConfig instance.
+        _pickle_path = os.path.join(self.paths['DIR_Config'], self.params_meta.filename)
+        if os.path.exists(_pickle_path):
+            with open(_pickle_path, 'rb') as f:
+                self.params = pickle.load(f)
+        # If not, continue with the default instance (do nothing)
+
+    def dump_params(self)->None:
+        """
+        Saves the current state of the AppConfig instance to the path where config files are expected to be.
+        """
+        _pickle_path = os.path.join(self.paths['DIR_Config'], self.params_meta.filename)
+        # Ensure dir exists
+        os.makedirs(os.path.dirname(_pickle_path), exist_ok=True)
+        with open(_pickle_path, 'wb') as f:
+            pickle.dump(self.params, f)
+
+
+    def initial_checks(self)->None:
+        # run os/ background checks
+        Events.ON_START.value.invoke()
+        Events.PRE_INIT_GUI.value.invoke()
+        #Events.INIT_GUI.value.invoke()
+
+    def set_paths(self)->None:
+        """
+        DIRECTORY VARIABLES
+
+        Generally, the structure of this involves an observer class storing the main DIR's value.
+        Subdirs are system.path.Path instances that contain an update() function to appropriately re-initialize
+        its path attribute when the main DIR is updated.
+
+        Make sure that widgets pass references to these variables.
+        """
+
+        # Selected dirs for sims
+        DIR_Inputs = Data('DIR_INPUTS')
+        DIR_Inputs.data = runtime_configs['Paths']["Inputs"]
+
+        # Initial setters
+        DIR_Particle = Ob_Path(os.path.join(DIR_Inputs.data, NAME_PARTICLES), NAME_PARTICLES)
+        DIR_Coil = Ob_Path(os.path.join(DIR_Inputs.data, NAME_COILS), NAME_COILS)
+        # DIR_coilDefs = os.path.join(DIR_Inputs, NAME_COILS)
+        DIR_lastUsed = Ob_Path(os.path.join(DIR_Inputs.data, NAME_lastUsed), NAME_lastUsed)
+        DIR_Bob = Ob_Path(os.path.join(DIR_Inputs.data, "bob_e"), "bob_e")
+
+        DIR_Output = Ob_Path(os.path.join(DIR_ROOT, NAME_OUTPUTS),
+                          NAME_OUTPUTS)  # output is not a subdir of Inputs so it's spared from the next step
+
+        self.paths = { # update self.paths dict
+            k: v for k, v in locals().items()
+            if k.startswith("DIR_") and k != "self"
+        }
+
+    def construct_widgets(self)->None:
+        """
+        Place to dump all the widget definitions.
+        """
+        ###########
+        # PLACING #
+        ###########
+        # Lowest-level notebook
+        main_notebook, tab_calc, tab_plot, self.calculate_button = build_main_notebook(self.main_frame)
+
+        # Calculation tab panes
+        calc_notebook, tab_params, tab_field, tab_vis, field_frame_s = build_calc_notebook(tab_calc)
+        b_field_frame, e_field_frame = build_field_tab(field_frame_s, self.params)
+        dt_np, particle_preview = build_params_tab(tab_params, self.paths["DIR_Particle"], self.params)
+        field_vis_widget = build_field_vis_tab(tab_vis, self.params)
+
+        # Plot tab pane
+        build_plot_tab(tab_plot, self.main_frame, self.params.path.output, self.params)
+
+        ###########
+        # PACKING #
+        ###########
+        tab_calc.pack(fill='both', expand=True)
+        tab_plot.pack(fill='both', expand=True)
+
+        main_notebook.add(tab_calc, text="Calculate", padding=(5, 5))
+        main_notebook.add(tab_plot, text="Plot", padding=(5, 5))
+        main_notebook.pack(expand=1, fill="both", side=TOP)
+
+        tab_params.pack(side="top", fill="both", expand=True)
+
+        calc_notebook.add(tab_params, text="Particle")
+        calc_notebook.add(tab_field, text="Fields")
+        calc_notebook.add(tab_vis, text="Diag Plots")
+        calc_notebook.pack(expand=True, fill='both', side=LEFT)
+
+        # Also, keep track of which frames are scrollable (to properly register scroll area later)
+        self.scrollable_frames = [field_frame_s]
+
+    def event_registration(self, manager)->None:
+        """
+        Widgets that need configured events get them assigned here
+        """
+        self.calculate_button.configure(command=partial(open_output_config, self,
+                                              manager, self.params))  # update calculate button's command after setting up params
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def scroll_registration(self)->None:
+        """
+        For every ScrollableFrame widget that exists, register its scroll area
+        """
+        for scrollable in self.scrollable_frames:
+            scrollable.InternalPack()
+            self.update()
+            scrollable.RegisterScrollArea()
+
+    def on_close(self)->None:
+        """
+        event function to be run when the root window closes (program terminates)
+        """
+        self.dump_params()
+        self.destroy()
+
+
+"""
+Function below is deprecated;
+Its functionality has been chopped up and rendered more comprehensible with the class defined above.
 """
 def OpenGUI(manager):
     '''
     Testing the code by changing parameters and numsteps and everything became too cumbersone, so I decided to
-    bite the bullet and create some GUI for it. 
+    bite the bullet and create some GUI for it.
     This is the main hub for the GUI, with many helper files providing classes and functions.
     '''
     # Initialization checks. Run them.
@@ -71,13 +264,13 @@ def OpenGUI(manager):
     #print(DIR_Inputs.data)
 
         # Initial setters
-    DIR_Particle = Path(os.path.join(DIR_Inputs.data, NAME_PARTICLES), NAME_PARTICLES)
-    DIR_Coil = Path(os.path.join(DIR_Inputs.data, NAME_COILS), NAME_COILS)
+    DIR_Particle = Ob_Path(os.path.join(DIR_Inputs.data, NAME_PARTICLES), NAME_PARTICLES)
+    DIR_Coil = Ob_Path(os.path.join(DIR_Inputs.data, NAME_COILS), NAME_COILS)
     #DIR_coilDefs = os.path.join(DIR_Inputs, NAME_COILS)
-    DIR_lastUsed = Path(os.path.join(DIR_Inputs.data, NAME_lastUsed), NAME_lastUsed)
-    DIR_Bob = Path(os.path.join(DIR_Inputs.data, "bob_e"), "bob_e")
+    DIR_lastUsed = Ob_Path(os.path.join(DIR_Inputs.data, NAME_lastUsed), NAME_lastUsed)
+    DIR_Bob = Ob_Path(os.path.join(DIR_Inputs.data, "bob_e"), "bob_e")
 
-    DIR_Output = Path(os.path.join(DIR_ROOT, NAME_OUTPUTS), NAME_OUTPUTS) # output is not a subdir of Inputs so it's spared from the next step
+    DIR_Output = Ob_Path(os.path.join(DIR_ROOT, NAME_OUTPUTS), NAME_OUTPUTS) # output is not a subdir of Inputs so it's spared from the next step
 
         # Add to observer class so they update when DIR_Inputs is updated
     subdirs = [DIR_Particle, DIR_Coil, DIR_lastUsed, DIR_Bob]
@@ -91,16 +284,16 @@ def OpenGUI(manager):
     """
     style1 = ttk.Style()
     style1.theme_use('default')
-    style1.configure('Two.TNotebook.Tab', 
+    style1.configure('Two.TNotebook.Tab',
                     font=('Arial', 18),
                     padding=8,
                     borderwidth=0,
                     foreground='black',
                     background = palette.Text.value)
 
-    style1.configure('Two.TNotebook', 
+    style1.configure('Two.TNotebook',
                     tabposition="n",
-                    borderwidth=0, 
+                    borderwidth=0,
                     background='white')
 
     style1.map(
@@ -124,17 +317,17 @@ def OpenGUI(manager):
 
     style = ttk.Style()
     style.theme_use('default')
-    style.configure('One.TNotebook.Tab', 
-                    font=('Arial', 12), 
-                    padding=(15, 10), 
-                    justify="center", 
+    style.configure('One.TNotebook.Tab',
+                    font=('Arial', 12),
+                    padding=(15, 10),
+                    justify="center",
                     width=8,
                     borderwidth=0,
                     foreground='light gray',
                     background=palette.Background.value)
 
-    style.configure('One.TNotebook', 
-                    tabposition='wn', 
+    style.configure('One.TNotebook',
+                    tabposition='wn',
                     tabmargins=0,
                     borderwidth=0,
                     background = palette.Background.value)
@@ -154,6 +347,7 @@ def OpenGUI(manager):
     #calc_frame3_scroll = ScrollableFrame(calc_frame3)
 
     calc_debug_frame = tk.Frame(calc_nested_notebook, relief='flat', background="light gray")
+    field_vis_frame = tk.Frame(calc_nested_notebook, relief='flat', background="light gray")
 
     #   PLACE THE NESTED NOTEBOOKS IN LABEL FRAMES SO THEY ARE NOT CONFUSING AF
     b_field_labelFrame = ttk.LabelFrame(calc_debug_frame, text="B-Field")
@@ -181,6 +375,21 @@ def OpenGUI(manager):
 
     b_field_labelFrame.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
     e_field_labelFrame.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
+
+    # field visualization tab
+    EGraphFrame_for_Canvas = tk.Frame(
+        field_vis_frame)  # contains the canvas for the graph. done so that the elements above are placed independently.
+    EGraphFrame_for_Canvas.grid(row=1, column=0)
+
+    EGraphFrame_for_Buttons = tk.Frame(field_vis_frame)
+    EGraphFrame_for_Buttons.grid(row=0, column=0)
+    field_graphs = FieldDropdown(EGraphFrame_for_Buttons, fm.FieldGraph_Methods, "Show me: ")
+    E_field_graph = FieldCoord_n_Graph(
+                                       root=Main,
+                                       graphOptions=field_graphs,
+                                       graphFrame=EGraphFrame_for_Buttons,
+                                       canvasFrame=EGraphFrame_for_Canvas)
+
 
     # PLOT GUI #
     #=============#
@@ -283,7 +492,7 @@ def OpenGUI(manager):
     #Combobox_particle_file.grid(row=0, column=0)
     particlePreview = ParticlePreview(ParticlePreviewFrame, dir_observed=DIR_Particle)
     calc_frame1_scroll._add_Subscriber(particlePreview) # I do this so that I can run the table's update function when this tab becomes selected.
-    
+
     ## FIELDS!!!!!!
     """
     b_field = FieldDropdown(Fields0,
@@ -369,8 +578,9 @@ def OpenGUI(manager):
 
     #calc_nested_notebook.add(calc_frame3, text="Coils")
     calc_nested_notebook.add(calc_debug_frame, text="Fields")
+    calc_nested_notebook.add(field_vis_frame, text="Diag Plots")
     calc_nested_notebook.pack(expand=True, fill='both', side=LEFT)
-    
+
     """
     REGISTER SCROLLING FRAME AREAS
     """

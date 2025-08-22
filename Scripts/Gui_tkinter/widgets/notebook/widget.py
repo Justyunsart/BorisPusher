@@ -8,27 +8,31 @@ Save automatically to the state dictionary
 """
 import tkinter as tk
 from tkinter import ttk
-from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
-from system.temp_file_names import param_keys, m1f1
+#from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
+#from system.temp_file_names import param_keys, m1f1
 import settings.palettes as p
 from settings.configs.funcs.config_reader import runtime_configs
 import os
 from Gui_tkinter.funcs import data_helpers
+from system.state_dict_main import AppConfig
+from Gui_tkinter.widgets.base import ParamWidget
 
 
-class Field_Notebook(ttk.Notebook):
+class Field_Notebook(ttk.Notebook, ParamWidget):
     """
     Parameters:
         master: the parent widget that owns this notebook
         tab_names, tab_widgets: lists that contain the respective notebook tab names, alongside their displayed widgets.
     """
-    def __init__(self, master, tab_names:list, tab_widgets:list, collection_key, tab_key, dataclasses,
-                 dir_names=["bob_e"], path_key="", field="", **kwargs):
+    def __init__(self, master, tab_names:list, tab_widgets:list, collection_key, tab_key, dataclasses, param_classes,
+                 dir_names, path_key="", name_key="", field="", params:AppConfig=None, **kwargs):
         def _check_notebook_inputs() -> None:
             """
             Function that is just a container for all the assert statement for this class
             """
             assert len(tab_names) == len(tab_widgets), f"{len(tab_names)} != {len(tab_widgets)}"
+
+        self.params = params
 
         # define style for tabs
         style1 = ttk.Style()
@@ -69,13 +73,15 @@ class Field_Notebook(ttk.Notebook):
             # get the dir of the input folder to look at
             #dir = os.path.join(runtime_configs['Paths']['inputs'], dir_names[i])
             for i in range(len(self.tab_names)):
-                self.add(self.tab_widgets[i](self, collection_key=self.collection_key, dataclass=dataclasses[i],
-                                             dir_name=dir_names[i], path_key=path_key, field=field),
-                         text=self.tab_names[i])
+                page = self.tab_widgets[i](self, collection_key=self.collection_key, dataclass=dataclasses[i],
+                                             dir_name=dir_names[i], path_key=path_key, name_key=name_key,
+                                             field=field, params=self.params, param_class=param_classes[i])
+                self.add(page, text=self.tab_names[i])
+                page.onActive(self.tab_key, self.collection_key, is_init=True)
 
         _add_notebook_tabs()
-        self.bind('<<NotebookTabChanged>>', self.on_tab_change)
         self.select_last_used_tab()
+        self.bind('<<NotebookTabChanged>>', self.on_tab_change)
 
     def update(self, keys, value):
         """
@@ -86,20 +92,7 @@ class Field_Notebook(ttk.Notebook):
         keys: a list of keys mapping the nested structure (if any) of the value to be changed
         value: the updated value itself
         """
-        def set_nested_value(d, keys, value):
-            """Set a value in a nested dictionary given a list of keys."""
-            for key in keys[:-1]:
-                d = d.setdefault(key, {})  # ensures intermediate dicts exist
-            d[keys[-1]] = value
-
-        # read the dictionary
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-
-        # set the nested key to the updated value
-        set_nested_value(d, keys, value)
-
-        # write the updated dict to the file
-        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+        self.set_nested_field(self.params, keys, value)
 
     def select_tab_by_name(self, tab_name):
         """Selects a tab in a ttk.Notebook by its displayed text name."""
@@ -110,38 +103,25 @@ class Field_Notebook(ttk.Notebook):
         return False  # Tab not found
 
     def select_last_used_tab(self):
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-        try:
-            tab_name = data_helpers.get_nested_value(d, self.tab_key)
-            self.select_tab_by_name(tab_name)
-            tab_id = self.select()  # reference to the active tab
-            tab_widget = self.nametowidget(tab_id)
-            text = self.tab(tab_id, "text")  # get the name of the tab (what u see on GUI)
-            tab_widget.onActive(self.tab_key, self.collection_key, text, is_init=True)
-        except KeyError:
-            pass
+        #tab_name = data_helpers.get_nested_value(d, self.tab_key)
+        tab_name = self.get_nested_field(self.params, self.tab_key)
+        self.select_tab_by_name(tab_name)
+        tab_id = self.select()  # reference to the active tab
+        tab_widget = self.nametowidget(tab_id)
+        text = self.tab(tab_id, "text")  # get the name of the tab (what u see on GUI)
+        tab_widget.set_table_dropdown()
+        tab_widget.onActive(self.tab_key, self.collection_key, text, is_init=False)
+
 
     def on_tab_change(self, event, *args):
         """
         When these tabs are changed, you have to update that the respective method names have changed
         """
-        def set_nested_value(d, keys, value):
-            """Set a value in a nested dictionary given a list of keys."""
-            for key in keys[:-1]:
-                d = d.setdefault(key, {})  # ensures intermediate dicts exist
-            d[keys[-1]] = value
         # get the widget tab name
         tab_id = self.select() # reference to the active tab
         text = self.tab(tab_id, "text") # get the name of the tab (what u see on GUI)
 
-        # read the dictionary
-        d = read_temp_file_dict(TEMPMANAGER_MANAGER.files[m1f1])
-
-        # set the nested key to the updated value
-        set_nested_value(d, list(self.tab_key), text)
-
-        # write the updated dict to the file
-        write_dict_to_temp(TEMPMANAGER_MANAGER.files[m1f1], d)
+        #self.set_nested_field(self.params, self.tab_key, text)
 
         # also, run logic for the tabs (that they should upon becoming active)
         try:

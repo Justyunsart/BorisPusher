@@ -98,4 +98,3 @@ def compute_disk_with_collection(coord, collection:Collection, inners, executor:
         out.append(future.result())
 
     return np.sum(np.array(out), axis=0) # total E = sum by column
-
