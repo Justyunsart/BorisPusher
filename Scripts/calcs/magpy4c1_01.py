@@ -44,6 +44,7 @@ from EFieldFJW.streamlines3Dring import compute_field
 from scipy.interpolate import RegularGridInterpolator
 
 from system.state_dict_main import AppConfig
+from EFieldFJW.e_solvers import *
 
 # please dont truncate anything
 pd.set_option('display.max_columns', None)

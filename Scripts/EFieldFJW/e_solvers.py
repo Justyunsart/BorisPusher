@@ -227,7 +227,10 @@ class Bob_e_Solver(Solver, RotationAndCylindricalSolver):
 
 class Disk_e_Solver(Solver):
     def solve(self, params : dict):
+        # Collect params
         def compute_fields(rho, z, Q, O_radius, I_radius=0, orientation=None, th=0):
+            thetas = np.linspace(0, 2 * np.pi, 200)
+            dtheta = thetas[1] - thetas[0]
             sigma = Q / (np.pi * O_radius ** 2)  # charge density C/m^2
             prefactor = sigma / (4 * np.pi * epsilon_0)
 
@@ -278,6 +281,8 @@ class Disk_e_Solver(Solver):
                                th=p_cyl[1])
 
             return E
+
+
 
 class Washer_Potential_e_Solver(Solver):
     def solve(self, params : dict):

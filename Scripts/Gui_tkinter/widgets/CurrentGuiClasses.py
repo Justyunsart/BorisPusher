@@ -774,12 +774,15 @@ class CurrentEntryTable(EntryTable):
         
         self.plot.cla()
         show(self.collection, canvas=self.plot, canvas_update = False, backend="matplotlib")
-        self.plot.get_legend().remove()
+        try:
+            self.plot.get_legend().remove()
+        except:
+            pass
         self.fig.tight_layout()
         self.canvas.draw()
 
             # Update tempfile entry for the coil collection object.
-        self.update_params()
+        #self.update_params()
         #print(f"Collection updated: {self.collection_key}")
         return True
 

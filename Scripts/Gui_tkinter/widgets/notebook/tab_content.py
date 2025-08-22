@@ -137,6 +137,7 @@ class RingTableTab(tk.Frame, ParamWidget):
             #self.table.entry_table.read_last_used()
             return
 
+        self.table.entry_table.Read_Data()
         # update the configs dataclass with the associated FieldConfig dataclass or subclass
         setattr(self.params, self.field, self.param_class())
 
@@ -146,6 +147,7 @@ class RingTableTab(tk.Frame, ParamWidget):
 
         # when the tab becomes active, update the graph (which updates the runtime dict)
         self.table.entry_table.GraphCoils()
+        self.table.entry_table.update_params()
 
 class DiskTab(RingTableTab):
     """

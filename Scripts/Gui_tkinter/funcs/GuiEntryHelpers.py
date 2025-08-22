@@ -409,14 +409,14 @@ def File_to_Collection(path, filename='b_coils.txt', converters={}, read_file=Tr
         # print(tryEval(row[6]))
         coil = Circle(position, current=float(row[3]), diameter=float(row[4]))
         # print(coil)
-        match row[5]:
+        match row[-2]:
             case float():
-                coil.rotate_from_angax(row[5], row[6])
+                coil.rotate_from_angax(row[-2], row[-1])
             case int():
-                coil.rotate_from_angax(row[5], row[6])
+                coil.rotate_from_angax(row[-2], row[-1])
             case list():
-                for i in range(len(row[5])):
-                    coil.rotate_from_angax(float(row[5][i]), row[6][i])
+                for i in range(len(row[-2])):
+                    coil.rotate_from_angax(float(row[-2][i]), row[-1][i])
 
         c.add(coil)
     return c
