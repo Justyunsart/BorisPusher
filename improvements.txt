@@ -1,34 +1,36 @@
-USER OPERATION
-add a kill button on top level to stop program execution
-release Tkinter window during run
-using configuration-save buttons (in calculate mode),
-     when clicked provide an indication, e.g., change button color briefly for save duration
-in the user home directory maybe use ~/user/PythonData/ for I/O data repository
-The "Inputs" directory in Git should contain run-guaranteed settings
-Another ~user/"Inputs" directory would take custom run settings
+document the code, esp. all the sub-scripts, try using AI first
 
+USER INTERFACE/OPERATION
+when the output directory is created, the number of steps indicated in the filename is not the same
+    and sometimes seems to be 10x, or 100x, less than shown in the TK window
 
-include a square-shaped coil option, perhaps with angled (isosceles; 45,45,90), or rounded, corners
 add in the new window (indicator) something to display the path and filenames used in the calculation
+include a square-shaped coil option, perhaps with angled (isosceles; 45,45,90), or rounded, corners
 
 CALCULATE WINDOW
-changing the coil currents, change them all w/ same value (except +- signs),
-    if a single one needs to change, reset it by deleting/or re-adding it
-adding a new row (in calculate), use the same values as in the previous line
-saving the 3D trajectory (plot), capture the 3 V's, and coil current
+The Diag Plots do not work
+When changing the coil parameters, change them all w/ same value (except +- signs),
+    if a single coil parameter needs to change, reset it by deleting/or re-adding it
+when adding a new row (in calculate), use the identical values as in the immediately preceding line
 
 PLOTTING
-generally seems too slow for active user interaction
-use bigger font size on windows (plot)
+The Diag Plots do not work
+In the outputs directory there is a new file called "coils".
+    What is it for? Should have one for E-field/Potential params.
+
 single particle, or multi-particles, multithreaded parallelized w/ ipython?
     does importing multiprocessing or threading help? try it?
         https://www.geeksforgeeks.org/parallel-processing-in-python/
-doesn't seem to plot second particle on 3D graph
-on the 3-D trajectory plot, provide default isometric angle perspectives
-    this is to improve response
-diagnostic for a plot of delta_t during run, if selected as option in calculate panel
-is there a way to better indicate the particle exit point in 3D?
-with multiple particles, is it possible to use different color maps, maybe green to red?
+on the 3-D trajectory plot, nice to provide several isometric angle perspectives
+is there a way to better indicate where the particle exits in 3D, maybe provide coordinates?
+haven't implemented multiple particles yet, but are different color maps possible, maybe green to red?
 
 ACCURACY/ERRORS
+
 what happened to the plot diagnostics for total energy, or velocity magnitude?
+add a kill button on top level to stop program execution
+release Tkinter window during run
+in the user home directory maybe use ~/user/PythonData/ for I/O data repository
+The "Inputs" directory in Git should contain run-guaranteed settings
+Another ~user/"Inputs" directory would take custom run settings
+diagnostic for a plot of delta_t during run, if selected as option in calculate panel
