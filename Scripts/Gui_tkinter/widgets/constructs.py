@@ -187,9 +187,13 @@ def build_field_vis_tab(parent, params:AppConfig):
         # 3: Get the appropriate field's method name from
         current_method = ParamWidget.get_nested_field(params, f"{cur_field}.method") #'{e/b}.
         # 4: Get the current GraphFactory instance
-        current_factory = graph_registry_e.get(current_method)
+        current_factory = graph_registry.get(current_method)
         # 5: Tell that factory instance to make its Grapher instance
-        grapher = current_factory.make(**make_args_e.get(current_method, None))
+        kwargs = make_args.get(current_method)
+        if kwargs is not None:
+            grapher = current_factory.make(**kwargs)
+        else:
+            grapher = current_factory.make()
         # 6: Tell that grapher to run the unbounded function.
         widget.reset_graph() #clear graph first
         bound_func = unbound_func.__get__(grapher, grapher.__class__)
@@ -209,14 +213,15 @@ def build_field_vis_tab(parent, params:AppConfig):
 
     # Solver and Grapher pairings for each field solver method.
     # TODO: ADD THE REST OF THE E OPTIONS
-    graph_registry_e = {
+    graph_registry = {
         "bob_e": GraphFactory(Bob_e_Solver, Bob_e_Grapher, field='e', params=params),
         "washer_potential" : GraphFactory(Washer_Potential_e_Solver, Washer_Potential_e_Grapher, field='e', params=params),
         "disk_e" : GraphFactory(Disk_e_Solver, Disk_e_Grapher, field='e', params=params),
+        'magpy' : GraphFactory(MagpySolver, MagpyGrapher, field='b', params=params)
         # "disk_e": GraphFactory(Bob_e_Solver, Bob_e_Grapher, **graph_args, collection=params.e.collection),
     }
     # extra keyword arguments to call when creating the grapher instance.
-    make_args_e = {
+    make_args = {
         "washer_potential" : {'inners' : 'e.inner_r'},
         "disk_e": {'inners': 'e.inner_r'}
     }

@@ -428,3 +428,9 @@ class Washer_Potential_e_Solver(Solver):
             return _sum
 
         return washer_phi_from_collection(**params)
+
+class MagpySolver(Solver):
+    def solve(self, params : dict):
+        coords = params.get("coords")
+        collection = params.get("collection")
+        return collection.getB(coords)

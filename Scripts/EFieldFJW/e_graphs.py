@@ -267,3 +267,22 @@ class Washer_Potential_e_Grapher(Grapher):
         Ez = -dphi_dz
 
         return np.stack([Ex, Ey, Ez], axis=-1) #y-axis=0, since we cannot calculate potential for it (as cross-section)
+
+class MagpyGrapher(Grapher):
+    def gather_params(self) ->dict:
+        self.coords = SolverUtils.generate_xz_coords(resolution=self.linspace_res, lim=self.lim) #shape: (n,n,3)
+        _x, _y, _z = np.moveaxis(self.coords, -1, 0)
+        points = np.stack([_x.ravel(), _y.ravel(), _z.ravel()], axis=-1)
+
+        return{
+            'coords' : points,
+            'collection' : self.collection
+        }
+    def gather_data(self):
+        data = self.solver.solve(self.gather_params())
+        # results are (m, 3). need to reshape back to expected shape
+        _x = data[:, 0].reshape(self.linspace_res, self.linspace_res)
+        _y = data[:, 1].reshape(self.linspace_res, self.linspace_res)
+        _z = data[:, 2].reshape(self.linspace_res, self.linspace_res)
+
+        return np.stack([_x, _y, _z], axis=-1)
