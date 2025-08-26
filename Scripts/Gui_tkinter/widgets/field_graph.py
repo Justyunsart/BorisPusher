@@ -27,10 +27,16 @@ class GraphFactory(ParamWidget):
 
         self.collection_key = f"{field}.collection"
 
-    def make(self):
+    def make(self, **kwargs):
+        # Build dict of keyword arguments for grapher
+        extra_args = {
+            key: self.get_nested_field(self.params, val)
+            for key, val in kwargs.items()
+        }
         return self.grapher(
             self.solver(),
-            self.get_nested_field(self.params, self.collection_key)
+            self.get_nested_field(self.params, self.collection_key),
+            **extra_args
         )
 
 

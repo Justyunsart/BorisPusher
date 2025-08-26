@@ -189,7 +189,7 @@ def build_field_vis_tab(parent, params:AppConfig):
         # 4: Get the current GraphFactory instance
         current_factory = graph_registry_e.get(current_method)
         # 5: Tell that factory instance to make its Grapher instance
-        grapher = current_factory.make()
+        grapher = current_factory.make(**make_args_e.get(current_method, None))
         # 6: Tell that grapher to run the unbounded function.
         widget.reset_graph() #clear graph first
         bound_func = unbound_func.__get__(grapher, grapher.__class__)
@@ -211,8 +211,16 @@ def build_field_vis_tab(parent, params:AppConfig):
     # TODO: ADD THE REST OF THE E OPTIONS
     graph_registry_e = {
         "bob_e": GraphFactory(Bob_e_Solver, Bob_e_Grapher, field='e', params=params),
+        "washer_potential" : GraphFactory(Washer_Potential_e_Solver, Washer_Potential_e_Grapher, field='e', params=params),
+        "disk_e" : GraphFactory(Disk_e_Solver, Disk_e_Grapher, field='e', params=params),
         # "disk_e": GraphFactory(Bob_e_Solver, Bob_e_Grapher, **graph_args, collection=params.e.collection),
     }
+    # extra keyword arguments to call when creating the grapher instance.
+    make_args_e = {
+        "washer_potential" : {'inners' : 'e.inner_r'},
+        "disk_e": {'inners': 'e.inner_r'}
+    }
+
 
     # CREATE WIDGET #
     #################

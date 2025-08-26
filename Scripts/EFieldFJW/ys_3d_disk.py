@@ -26,8 +26,10 @@ def compute_fields(rho, z, Q, O_radius, I_radius=0, orientation=None, th=0):
     dz = z
 
     denom = (dx**2 + dy**2 + dz**2)**1.5 + 1e-20  # Avoid division by zero
+    #print(denom)
 
     dA = R * dr * dtheta  # area element
+    #print(dA)
 
     Erho = np.sum(dx / denom * dA)
     Ez   = np.sum(dz / denom * dA)

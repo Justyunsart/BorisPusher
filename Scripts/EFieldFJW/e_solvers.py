@@ -2,6 +2,7 @@ import numpy as np
 from scipy.constants import epsilon_0
 from scipy.spatial.transform import Rotation
 from Alg.polarSpace import toCyl, toCart
+import psutil
 
 """
 Second attempt at polymorphism for field solvers with classes.
@@ -232,7 +233,9 @@ class Disk_e_Solver(Solver):
             thetas = np.linspace(0, 2 * np.pi, 200)
             dtheta = thetas[1] - thetas[0]
             sigma = Q / (np.pi * O_radius ** 2)  # charge density C/m^2
+            #print(sigma)
             prefactor = sigma / (4 * np.pi * epsilon_0)
+            #print(prefactor)
 
             r_vals = np.linspace(I_radius, O_radius, 200)
             dr = r_vals[1] - r_vals[0]
@@ -252,6 +255,8 @@ class Disk_e_Solver(Solver):
             denom = (dx ** 2 + dy ** 2 + dz ** 2) ** 1.5 + 1e-20  # Avoid division by zero
 
             dA = R * dr * dtheta  # area element
+
+            #print(denom * dA)
 
             Erho = np.sum(dx / denom * dA)
             Ez = np.sum(dz / denom * dA)
@@ -282,45 +287,144 @@ class Disk_e_Solver(Solver):
 
             return E
 
+        coords = params['coords']
+        collection = params['collection']
+        inners = params['inners']
+
+        E = []
+        for coord in coords:
+            _e = np.zeros((3,), dtype=np.float64)
+            for i in range(len(collection)):
+                c = collection[i]
+                inner = float(inners[i])
+                _e += _field_step_1(coord, c, inner)
+            E.append(_e)
+
+        return np.array(E)
+
+
 
 
 class Washer_Potential_e_Solver(Solver):
     def solve(self, params : dict):
-        def compute_washer_potential(rho_vals, z_vals, Q, inner_r, outer_r, res=400):
+        from scipy.special import ellipk
+        from scipy.integrate import simpson
+
+        def rotation_matrix_from_vectors(vec1, vec2):
+            """Find rotation matrix that aligns vec1 to vec2."""
+            a = vec1 / np.linalg.norm(vec1)
+            b = vec2 / np.linalg.norm(vec2)
+            v = np.cross(a, b)
+            c = np.dot(a, b)
+            if np.allclose(c, 1):
+                return np.eye(3)
+            if np.allclose(c, -1):
+                axis = np.array([1, 0, 0]) if not np.allclose(a, [1, 0, 0]) else np.array([0, 1, 0])
+                return rotation_matrix_from_axis_angle(axis, np.pi)
+            s = np.linalg.norm(v)
+            kmat = np.array([
+                [0, -v[2], v[1]],
+                [v[2], 0, -v[0]],
+                [-v[1], v[0], 0]
+            ])
+            return np.eye(3) + kmat + kmat @ kmat * ((1 - c) / s ** 2)
+
+        def rotation_matrix_from_axis_angle(axis, angle):
+            """Rodrigues' rotation formula."""
+            axis = axis / np.linalg.norm(axis)
+            x, y, z = axis
+            c = np.cos(angle)
+            s = np.sin(angle)
+            C = 1 - c
+            return np.array([
+                [c + x * x * C, x * y * C - z * s, x * z * C + y * s],
+                [y * x * C + z * s, c + y * y * C, y * z * C - x * s],
+                [z * x * C - y * s, z * y * C + x * s, c + z * z * C]
+            ])
+
+        def phi_disk_at_points(r_points, center, normal, sigma, Q, a, b, r_res=200):
             """
-            grid: array, (2,n): either one point or a meshgrid, representing (rho, phi, zeta) to calc at.
+            Vectorized scalar potential from a single charged disk at many points.
+
+            Parameters:
+            - r_points: (N, 3) array of N field points
+            - center: (3,) center of the disk
+            - normal: (3,) normal vector of the disk plane
+            - Q: total charge
+            - a, b: inner and outer radii
+            - r_res: resolution of radial integration
+
+            Returns:
+            - phi_vals: (N,) array of potential values
             """
-            sigma = Q / (np.pi * (outer_r ** 2 - inner_r ** 2))  # charge density C/m^2
-            prefactor = sigma / (4 * np.pi * epsilon_0)
+            if not sigma:
+                sigma.append(Q / (np.pi * (b ** 2 - a ** 2)))
+            sigma = sigma[0]  # update internal sigma variable with the stored value.
 
-            # Create a meshgrid for r and theta (used in integration)
-            r_vals = np.linspace(inner_r, outer_r, res)
-            theta_vals = np.linspace(0, 2 * np.pi, res)
-            dr = r_vals[1] - r_vals[0]
-            dtheta = theta_vals[1] - theta_vals[0]
+            r_points = np.atleast_2d(r_points)  # shape (N, 3)
+            N = r_points.shape[0]
 
-            r, theta = np.meshgrid(r_vals, theta_vals, indexing='ij')  # shape: (Nr, Ntheta)
+            # Charge density
+            # sigma = Q / (np.pi * (b ** 2 - a ** 2))
 
-            # Precompute differential area element dA
-            dA = r * dr * dtheta  # shape: (Nr, Ntheta)
+            # Rotation matrix to align normal to z-axis
+            Rmat = rotation_matrix_from_vectors(normal, np.array([0, 0, 1]))
 
-            # Precompute x and y coordinates of source points in the integration plane
-            x_src = r * np.cos(theta)  # shape: (Nr, Ntheta)
-            y_src = r * np.sin(theta)
+            # Transform field points into local disk coordinates
+            rel_points = r_points - center
+            r_local = (Rmat @ rel_points.T).T  # shape (N, 3)
 
-            Phi = np.empty(rho_vals)
-            for i in range(len(rho_vals)):
-                for j in range(len(z_vals)):
-                    rho = rho_vals[i]
-                    z = z_vals[j]
+            rho = np.linalg.norm(r_local[:, :2], axis=1)  # shape (N,)
 
-                    # Distance from (rho, 0, z) to each source point (x_src, y_src, 0)
-                    dx = rho - x_src
-                    dy = -y_src
-                    dz = z
+            # print(rho.shape)
 
-                    Denom = np.sqrt(dx ** 2 + dy ** 2 + dz ** 2) + 1e-20  # avoid division by zero
+            z = r_local[:, 2]  # shape (N,)
 
-                    integrand = dA / Denom  # shape: (Nr, Ntheta)
+            # Avoid division by zero at the disk center
+            mask = (rho == 0) & (z == 0)
+            rho[mask] = 1e-12
+            z[mask] = 1e-12
 
-                    Phi[j, i] = prefactor * np.sum(integrand)
+            # print(rho.shape)
+
+            # Prepare integration
+            R_vals = np.linspace(a, b, r_res)  # shape (r_res,)
+            # print(R_vals)
+            R_grid, rho_grid = np.meshgrid(R_vals, rho, indexing='ij')  # shape (r_res, N)
+            z_grid = z[None, :]  # shape (1, N)
+
+            # print(R_grid.shape)
+
+            k2 = 4 * R_grid * rho_grid / ((R_grid + rho_grid) ** 2 + z_grid ** 2)
+            k2 = np.clip(k2, 0, 1 - 1e-12)
+
+            # print(k2.shape)
+            K = ellipk(k2)
+
+            denom = np.sqrt((R_grid + rho_grid) ** 2 + z_grid ** 2)
+            integrand = R_grid * K / denom
+            # print(integrand.shape)
+
+            # Simpson integration over R_vals (axis=0)
+            result = simpson(integrand, x=R_vals, axis=0)  # shape (N,)
+            phi_vals = sigma / (2 * epsilon_0) * result
+
+            # Set potential to 0 where rho==0 and z==0 (if any)
+            phi_vals[mask] = 0
+
+            return phi_vals
+
+        def washer_phi_from_collection(points, collection, inners, normals, sigmas, r_res=200, nump=10):
+            """
+            interfaces with magpy4c1.py's inputs
+            """
+            _sum = np.empty((points.shape[0],))
+            for i in range(len(collection)):
+                print(f"starting work on ring: {i}")
+                ring = collection[i]
+                position = ring.position
+                _sum += phi_disk_at_points(points, position, normals[i],
+                                           sigmas[i], abs(ring.current), float(inners[i]), ring.diameter / 2, r_res)
+            return _sum
+
+        return washer_phi_from_collection(**params)

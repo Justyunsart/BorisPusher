@@ -20,7 +20,7 @@ class SolverUtils:
 
         y = 0 = r * sin * Phi -> Phi is either 0 or pi depending on x's sign.
 
-        output shape: (n, n, n, 3)
+        output shape: (n, n, 3)
         """
 
         x = np.linspace(-lim, lim, resolution)
@@ -49,6 +49,8 @@ class Grapher(ABC):
         self.collection = collection
         self.lim = np.max(np.abs(self.collection[0].position)) + 0.5 #extend half a meter from the edges
         self.__dict__.update(kwargs) #add any unique params needed to instance attributes
+        self.coords = None #populated when the grapher is gathering its own params.
+        self.linspace_res = 100 #directly used in generating the coordinates
 
         # LABEL ATTRIBUTES
         # since these will always graph the XZ axis, the X and Y labels for the 2D plot are known quantities.
@@ -63,10 +65,16 @@ class Grapher(ABC):
         """
         pass
 
+    def gather_data(self):
+        """
+        This method should return the field data.
+        """
+        return self.solver.solve(self.gather_params())
+
     @staticmethod
     def _unpack_data_and_coords(data, coords):
         """
-        Assumes that both 'data' and 'coords' are shaped (n,n,n,3), and correspond to each other.
+        Assumes that both 'data' and 'coords' are shaped (n,n,3), and correspond to each other.
         """
 
         X, Y, Z = np.moveaxis(coords, -1, 0)  # unpack coordinates
@@ -98,14 +106,14 @@ class Grapher(ABC):
         'coords' : a numpy array with the shape (n,n,n,3), represents the cartesian coordinates that correspond to
         the field values in 'data'
         """
-        data, coords = self.gather_params()
-        X, Y, Z, Fx, Fy, Fz, F_norm = self._unpack_data_and_coords(data, coords)
+        data = self.gather_data()
+        X, Y, Z, Fx, Fy, Fz, F_norm = self._unpack_data_and_coords(data, self.coords)
         plot = instance.plot
         fig = instance.fig
 
         stream = instance.plot.streamplot(np.array(X)[:,0], np.array(Z)[0,:],
                                    np.array(Fx).T, np.array(Fz).T,
-                                   color=np.log(F_norm), #assume data.shape = (n,n,3)
+                                   color=np.log(F_norm + 1e-20), #assume data.shape = (n,n,3)
                                    density=1,
                                    cmap=cmap)
 
@@ -132,13 +140,13 @@ class Grapher(ABC):
         'coords' : a numpy array with the shape (n,n,n,3), represents the cartesian coordinates that correspond to
         the field values in 'data'
         """
-        data, coords = self.gather_params()
-        X, Y, Z, Fx, Fy, Fz, F_norm = self._unpack_data_and_coords(data, coords)
+        data = self.gather_data()
+        X, Y, Z, Fx, Fy, Fz, F_norm = self._unpack_data_and_coords(data, self.coords)
         plot = instance.plot
         fig = instance.fig
 
         contour = instance.plot.contourf(
-            X, Z, np.log(F_norm),
+            X, Z, np.log(F_norm + 1e-20),
             levels=levels,
             cmap=cmap
         )
@@ -181,8 +189,81 @@ class Bob_e_Grapher(Grapher):
         }
         """
         # Gather the cart. cross-section coordinates.
-        cart_grid = SolverUtils.generate_xz_coords(resolution=100, lim=self.lim)
-        return (self.solver.solve({'coord': cart_grid, 'collection':self.collection}),
-                cart_grid)
+        self.coords = SolverUtils.generate_xz_coords(resolution=self.linspace_res, lim=self.lim)
+        return {'coord': self.coords, 'collection':self.collection}
+
+class Disk_e_Grapher(Grapher):
+    def gather_params(self):
+        self.coords = SolverUtils.generate_xz_coords(resolution=self.linspace_res, lim=self.lim) #shape: (n,n,3)
+        _x, _y, _z = np.moveaxis(self.coords, -1, 0)
+        points = np.stack([_x.ravel(), _y.ravel(), _z.ravel()], axis=-1)
 
 
+        return{
+            'coords' : points,
+            'collection' : self.collection,
+            'inners' : self.inners
+        }
+    def gather_data(self):
+        Es = self.solver.solve(self.gather_params())
+        # the results are [m, 3], and we need them back into the original order
+
+        _x = Es[:, 0].reshape(self.linspace_res, self.linspace_res)
+        _y = Es[:, 1].reshape(self.linspace_res, self.linspace_res)
+        _z = Es[:, 2].reshape(self.linspace_res, self.linspace_res)
+
+        return np.stack([_x, _y, _z], axis=-1)
+class Washer_Potential_e_Grapher(Grapher):
+    def gather_params(self):
+        """
+        Outputs whatever you need to get the field data of the assumed initial conditions of the xz plane.
+
+        Notes:
+            Inputs for the washer solver:
+                - rho_vals, z_vals : the field coordinates to calculate for
+                - Q : charge of the ring
+                - inner_r : washer's inner radius
+                - outer-r : washer's total radius
+                - res : the number of points to use in the internal linspace.
+        """
+        self.coords = SolverUtils.generate_xz_coords(resolution=self.linspace_res, lim=self.lim) #shape: (n,n,3)
+
+        _x, _y, _z = np.moveaxis(self.coords, -1, 0)
+        points = np.stack([_x.ravel(), _y.ravel(), _z.ravel()], axis=-1)
+
+        # collect coil information
+        normals = []  # input n_coils amount of (3,) arrays
+        sigmas = []  # input n_coils amount of empty lists
+        for ring in self.collection.children_all:
+            # we can get the coil's normal by rotating [0, 0, 1] by the coil's orientation.
+            default_z = np.array([0, 0, 1])
+            normals.append(ring.orientation.apply(default_z))
+
+            # append empty list per coil into sigmas
+            sigmas.append([])
+
+        return {
+            "points" : points,
+            "collection" : self.collection,
+            "inners" : self.inners,
+            "normals" : normals,
+            "sigmas" : sigmas,
+        }
+
+    def gather_data(self):
+        """
+        because the potential solver's solve method only gives the potential,
+        we need to do some extra work before getting usable field values.
+        """
+        # Gather the potential
+        potential = self.solver.solve(self.gather_params()).reshape(self.linspace_res, self.linspace_res)
+
+        # Also gather the slope of axis
+        dax = self.coords[1,0,0] - self.coords[0,0,0] #slope of x axis = slope of z axis (assumed)
+
+        dphi_dx, dphi_dz = np.gradient(potential, dax, dax)
+        Ex = -dphi_dx
+        Ey = np.zeros_like(Ex)
+        Ez = -dphi_dz
+
+        return np.stack([Ex, Ey, Ez], axis=-1) #y-axis=0, since we cannot calculate potential for it (as cross-section)
