@@ -92,12 +92,12 @@ class RingTableTab(tk.Frame, ParamWidget):
         self.table.grid(row=0)
 
         # checkbox for gridding
-        self.gridding_var = tk.IntVar(value=self.params_field.gridding)
+        self.gridding_var = tk.IntVar()
         self.gridding = tk.Checkbutton(self.frame2, text="precompute grid", variable=self.gridding_var)
         self.gridding.grid(row=1, column=0)
 
         # checkbox for logging
-        self.logging_var = tk.IntVar(value=self.params_field.logging)
+        self.logging_var = tk.IntVar()
         self.logging = tk.Checkbutton(self.frame2, text="log?", variable=self.logging_var)
         self.logging.grid(row=1, column=1)
 

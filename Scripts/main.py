@@ -32,7 +32,7 @@ if __name__ == "__main__":
     # If I call root.mainloop() here, it gets called when a process
     # spawns, even when inside the main block.
     manager = Manager()
-    #OpenGUI(manager)
+    #OpenGUI(manager)2
     app = App(manager)
     app.mainloop()
 

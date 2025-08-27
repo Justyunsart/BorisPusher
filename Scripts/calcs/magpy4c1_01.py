@@ -46,6 +46,9 @@ from scipy.interpolate import RegularGridInterpolator
 from system.state_dict_main import AppConfig
 from EFieldFJW.e_solvers import *
 
+import logging
+from logs.setup import setup_logger
+
 # please dont truncate anything
 pd.set_option('display.max_columns', None)
 
@@ -585,6 +588,16 @@ def grid_checker(fromTemp, filepath):
 
                 # append empty list per coil into sigmas
                 sigmas.append([])
+
+            # LOG STUFF IF CALLED TO DO SO.
+            print(fromTemp.e.logging)
+            if fromTemp.e.logging == 1:
+                print(f"logging file should be made")
+                setup_logger("e.log")
+
+                logging.info(f"Field_Method: Washer_Potential")
+                logging.info(f"Collection has {e_c.children_all} coils")
+                logging.info(f"Working with q: {e_c[0].current}, a: {a}")
 
             potential = washer_phi_from_collection(points, e_c, a, normals, sigmas)
             potential = potential.reshape((res, res, res))
