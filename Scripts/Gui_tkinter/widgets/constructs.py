@@ -238,3 +238,23 @@ def build_field_vis_tab(parent, params:AppConfig):
 
     return widget
 
+from Gui_tkinter.widgets.menu.menubar.open import open_dir
+from system.state_file_handling import get_log_dir, get_config_dir
+def build_menubar(root):
+    """
+    For now, ALL menubar creation will happen in this function.
+    This stuff is the line of commands/menus at the top of the window usually (File, Edit, Help, etc.)
+    """
+    # Create base menubar
+    menubar = tk.Menu(root)
+    root.config(menu=menubar) #set menubar to root window
+
+    # Add options to menubar
+    file_menu = tk.Menu(menubar, tearoff=False)
+    # starting with stuff going under "File"
+    menubar.add_cascade(label="File", menu=file_menu)
+    #    submenu for opening preset stuff
+    file_open_menu = tk.Menu(file_menu, tearoff=False)
+    file_open_menu.add_command(label="Debug Logs", command=lambda: open_dir(get_log_dir()))
+    file_menu.add_cascade(label="Open...", menu=file_open_menu)
+

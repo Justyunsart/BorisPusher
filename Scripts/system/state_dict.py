@@ -91,6 +91,7 @@ class FieldConfig:
     collection : object = Collection()
     gridding : int = 0
     name : Optional[str] = None #name of the particle file chosen
+    logging : int = 0 #whether to dump runtime info in a file
 
 @dataclass
 class ResFieldConfig(FieldConfig):

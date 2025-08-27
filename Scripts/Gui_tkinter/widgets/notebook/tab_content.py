@@ -1,3 +1,6 @@
+from bokeh.layouts import column
+from tables.utilsextension import get_nested_field
+
 from Gui_tkinter.funcs.GuiEntryHelpers import LabeledEntry
 from Gui_tkinter.widgets.Bob_e_Circle_Config import Bob_e_Circle_Config
 from settings.configs.funcs.config_reader import runtime_configs
@@ -65,6 +68,7 @@ class RingTableTab(tk.Frame, ParamWidget):
         self.listeners = []
         tk.Frame.__init__(self, parent, *args)
         self.params = params
+        self.params_field = self.get_nested_field(self.params, f"{field}")
         self.param_class = param_class
         self.add_listener(parent)
         self.root = parent
@@ -88,9 +92,20 @@ class RingTableTab(tk.Frame, ParamWidget):
         self.table.grid(row=0)
 
         # checkbox for gridding
-        self.gridding_var = tk.IntVar()
+        self.gridding_var = tk.IntVar(value=self.params_field.gridding)
         self.gridding = tk.Checkbutton(self.frame2, text="precompute grid", variable=self.gridding_var)
         self.gridding.grid(row=1, column=0)
+
+        # checkbox for logging
+        self.logging_var = tk.IntVar(value=self.params_field.logging)
+        self.logging = tk.Checkbutton(self.frame2, text="log?", variable=self.logging_var)
+        self.logging.grid(row=1, column=1)
+
+        # ADD CALLBACKS TO UPDATE PARAMS WHEN THINGS ARE CHANGED.
+        # trigger_listener is the function call to lock in changes
+        logging_func = partial(self.trigger_listener, f"{field}.logging",
+                               self.logging_var)
+        self.logging_var.trace_add("write", logging_func)
 
         gridding_func = partial(self.trigger_listener, f'{field}.gridding',
                                 self.gridding_var)

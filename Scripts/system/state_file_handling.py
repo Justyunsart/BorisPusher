@@ -24,6 +24,17 @@ def get_config_dir():
                         roaming=roaming)
     return os.path.join(_dir, config_folder_name)
 
+def get_log_dir():
+    """
+    This will be the location where any debug logs are sent to.
+    """
+    log_dir_name = "Log"
+    _dir = user_data_dir(app_name,
+                         appauthor=False,
+                         version=None,
+                         roaming=roaming)
+    return os.path.join(_dir, log_dir_name)
+
 
 
 

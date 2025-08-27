@@ -56,6 +56,9 @@ class App(tk.Tk):
         # set root unloaded state
         self.title("Configure Sim")
         self.geometry('1300x768')
+        # add menubar
+        build_menubar(self)
+
         self.iconify() # don't show window when everything is loading
 
         ######################################
