@@ -152,6 +152,7 @@ def build_plot_tab(parent, main, DIR_Output, params):
 
     trajectoryGraph = PlottingWindowObj(plot_graph_traj, main, name_out_file_var)
     trajectoryGraph.grid(row=0, column=0)
+    return name_out_file_var
 
     '''
     We need to keep watch on the selected data file value, and ensure that this button is active only when

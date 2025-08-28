@@ -129,15 +129,15 @@ def FieldCallback(event, value:ttk.Combobox, xcontainer:Entry, ycontainer:Entry,
 # after the popup closes, invoke the calculate callback function.
 from Gui_tkinter.widgets.output_file.output_config import output_popup
 from functools import partial
-def open_output_config(root, manager, params):
+def open_output_config(root, manager, params, *args):
     #get_output_name()
-    popup = output_popup(master=root, close_callable=partial(CalculateCallback,root, manager, params), params=params)
+    popup = output_popup(master=root, close_callable=partial(CalculateCallback,root, manager, params, *args), params=params)
     return popup
 
 
 # Run the simulation if you press calculate
 
-def CalculateCallback(root, manager, params):
+def CalculateCallback(root, manager, params, file_dir_var):
     '''
     When the calculate button is pressed, the GUI passes key information to
     the backend and starts the simulation.
@@ -163,6 +163,22 @@ def CalculateCallback(root, manager, params):
         'particleFile': data["Particle File"]
     }"""
 
+    def select_tab_by_name(notebook, name: str):
+        for idx in range(notebook.index("end")):  # iterate through all tabs
+            if notebook.tab(idx, "text") == name:
+                notebook.select(idx)  # bring tab to front
+                return
+        raise ValueError(f"No tab found with name '{name}'")
+
+    def graph_just_calculated_file():
+        """
+        edits the value of file_dir_var to the hdf5 filepath
+        """
+        file_dir_var.set(params.path.hdf5)
+
+        # change the active tab to the plotting tab
+        select_tab_by_name(root.main_notebook, "Plot")
+
     # Dict_to_CSV(DIR_last, toFile, newline="")
 
     # add some last minute info to the tempfile
@@ -175,7 +191,7 @@ def CalculateCallback(root, manager, params):
     # STUFF FOR THE PROGRESS WINDOW (WHICH NEEDS RUNTIME DATA)
         # a multiprocessing manager wraps the thread that creates the processpool.
     queue = manager.Queue()
-    progress = calculate_progress_window(root, queue, params)
+    progress = calculate_progress_window(root, queue, params, graph_just_calculated_file)
     process_thread = threading.Thread(target=_runsim, args=(queue, params), daemon=True)
     process_thread.start()
     progress.poll_queue()

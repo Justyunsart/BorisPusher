@@ -12,8 +12,9 @@ a pop-up window created right after the 'calculate' button is pressed.
 keeps track of simulation progress.
 """
 class calculate_progress_window(tk.Toplevel):
-    def __init__(self, parent: tk.Tk, queue, params):
+    def __init__(self, parent: tk.Tk, queue, params, post_stop:callable = None):
         tk.Toplevel.__init__(self, parent)
+        self.post_func = post_stop
             # multiprocessing manager
         self.result_queue = queue
         self.step_var = tk.StringVar()
@@ -31,9 +32,6 @@ class calculate_progress_window(tk.Toplevel):
         self.separator.pack(side=tk.LEFT, expand=True, fill="y")
         self.summary.pack(side=tk.LEFT, expand=True, fill="y")
 
-
-
-
     def poll_queue(self):
         try:
             while not self.result_queue.empty():
@@ -45,6 +43,8 @@ class calculate_progress_window(tk.Toplevel):
                 # close the window if you get the queue flag to do so
                 if result.do_stop:
                     #print(f"should destroy progress window")
+                    if self.post_func is not None:
+                        self.post_func()
                     self.destroy()
         except Exception as e:
             print(f"Error reading from queue: {e}")

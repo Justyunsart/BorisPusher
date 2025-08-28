@@ -53,6 +53,7 @@ class App(tk.Tk):
         self.params = None
         self.params_meta = None
         self.scrollable_frames = None
+        self.plotting_file_dir_var = None
         # set root unloaded state
         self.title("Configure Sim")
         self.geometry('1300x768')
@@ -164,7 +165,10 @@ class App(tk.Tk):
         # PLACING #
         ###########
         # Lowest-level notebook
-        main_notebook, tab_calc, tab_plot, self.calculate_button = build_main_notebook(self.main_frame)
+        self.main_notebook, tab_calc, tab_plot, self.calculate_button = build_main_notebook(self.main_frame)
+
+        # Plot tab pane
+        self.plotting_file_dir_var = build_plot_tab(tab_plot, self.main_frame, self.params.path.output, self.params)
 
         # Calculation tab panes
         calc_notebook, tab_params, tab_field, tab_vis, field_frame_s = build_calc_notebook(tab_calc)
@@ -172,18 +176,15 @@ class App(tk.Tk):
         dt_np, particle_preview = build_params_tab(tab_params, self.paths["DIR_Particle"], self.params)
         field_vis_widget = build_field_vis_tab(tab_vis, self.params)
 
-        # Plot tab pane
-        build_plot_tab(tab_plot, self.main_frame, self.params.path.output, self.params)
-
         ###########
         # PACKING #
         ###########
         tab_calc.pack(fill='both', expand=True)
         tab_plot.pack(fill='both', expand=True)
 
-        main_notebook.add(tab_calc, text="Calculate", padding=(5, 5))
-        main_notebook.add(tab_plot, text="Plot", padding=(5, 5))
-        main_notebook.pack(expand=1, fill="both", side=TOP)
+        self.main_notebook.add(tab_calc, text="Calculate", padding=(5, 5))
+        self.main_notebook.add(tab_plot, text="Plot", padding=(5, 5))
+        self.main_notebook.pack(expand=1, fill="both", side=TOP)
 
         tab_params.pack(side="top", fill="both", expand=True)
 
@@ -200,7 +201,7 @@ class App(tk.Tk):
         Widgets that need configured events get them assigned here
         """
         self.calculate_button.configure(command=partial(open_output_config, self,
-                                              manager, self.params))  # update calculate button's command after setting up params
+                                              manager, self.params, self.plotting_file_dir_var))  # update calculate button's command after setting up params
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def scroll_registration(self)->None:
