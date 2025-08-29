@@ -22,7 +22,7 @@ from Gui_tkinter.widgets.notebook.tab_content import *
 import settings.fields.FieldMethods as fm
 from system.state_file_handling import get_config_dir
 
-
+from Gui_tkinter.widgets.plotly_trajectory import graph_trajectory_plotly_abstraction_layer
 # events
 from Gui_tkinter.styles import load_styles
 from Gui_tkinter.widgets.constructs import *
@@ -168,7 +168,7 @@ class App(tk.Tk):
         self.main_notebook, tab_calc, tab_plot, self.calculate_button = build_main_notebook(self.main_frame)
 
         # Plot tab pane
-        self.plotting_file_dir_var = build_plot_tab(tab_plot, self.main_frame, self.params.path.output, self.params)
+        self.plotting_file_dir_var, self.plotly_button = build_plot_tab(tab_plot, self.main_frame, self.params.path.output, self.params)
 
         # Calculation tab panes
         calc_notebook, tab_params, tab_field, tab_vis, field_frame_s = build_calc_notebook(tab_calc)
@@ -203,6 +203,9 @@ class App(tk.Tk):
         self.calculate_button.configure(command=partial(open_output_config, self,
                                               manager, self.params, self.plotting_file_dir_var))  # update calculate button's command after setting up params
         self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+        self.plotly_button.configure(command=partial(graph_trajectory_plotly_abstraction_layer,
+                                                     self.plotting_file_dir_var))
 
     def scroll_registration(self)->None:
         """

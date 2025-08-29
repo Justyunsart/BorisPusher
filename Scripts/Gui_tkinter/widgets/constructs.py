@@ -146,19 +146,24 @@ def build_plot_tab(parent, main, DIR_Output, params):
                               textvariable=name_out_file_var)
     name_out_file.grid(row=0, column=2, pady=10)
 
+    button_plotly = tk.Button(plot_out_file,
+                              text="View Plotly Trajectory")
+    button_plotly.grid(row=1, column=0)
+
     #################
     # GRAPH WINDOWS #
     #################
 
     trajectoryGraph = PlottingWindowObj(plot_graph_traj, main, name_out_file_var)
     trajectoryGraph.grid(row=0, column=0)
-    return name_out_file_var
 
     '''
     We need to keep watch on the selected data file value, and ensure that this button is active only when
     there is a valid data file selected.
     '''
     button_out_file.config(command=partial(PlotFileCallback, name_out_file_var, DIR_Output))
+
+    return name_out_file_var, button_plotly
 
 from Gui_tkinter.widgets.field_graph import GraphFactory, FieldDropdownFigure
 from Gui_tkinter.widgets.base import ParamWidget
