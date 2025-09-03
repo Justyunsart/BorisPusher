@@ -158,7 +158,7 @@ def EfieldX(p:np.ndarray, fromTemp, executor, interpolator, e_args):
     """
     global dax, is_logging_e
     if interpolator is not None:
-        if fromTemp.e.debug == 1 and is_logging_e:
+        if fromTemp.e.logging == 1 and is_logging_e:
             # check if interpolator is made
             logging.debug(f"Interpolated value: {interpolator([p])}")
         return interpolator([p]).squeeze()
