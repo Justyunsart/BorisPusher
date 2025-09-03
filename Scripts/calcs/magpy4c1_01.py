@@ -58,7 +58,7 @@ pd.set_option('display.max_columns', None)
 #=========#
 # B FIELD #
 #=========#
-
+is_logging_e = False
 # unless it is outside of the bounds given by 'side'
 def Bfield(y, method, c, interp):
     if interp is None:
@@ -70,7 +70,7 @@ def Bfield(y, method, c, interp):
     else:
         # interpolator should be called for this point
         print(f"USING INTERPOLATOR FOR B")
-        return interp([y]).reshape(3,)
+        return interp([y]).squeeze()
 
 # global variables
 magpy.graphics.style.CurrentStyle(arrow=None)
@@ -156,9 +156,12 @@ def EfieldX(p:np.ndarray, fromTemp, executor, interpolator, e_args):
     Inputs:
     p: the target coordinate.
     """
-    global dax
+    global dax, is_logging_e
     if interpolator is not None:
-        return interpolator([p]).reshape(3, )
+        if fromTemp.e.debug == 1 and is_logging_e:
+            # check if interpolator is made
+            logging.debug(f"Interpolated value: {interpolator([p])}")
+        return interpolator([p]).squeeze()
 
     E_Method = fromTemp.e.method
     #print(f"E_method is: {E_Method}")
@@ -520,6 +523,7 @@ def grid_checker(fromTemp, filepath):
     IF the simulation is called with gridding = 1 for a ring configuration, you need to make sure
     that a grid lookup file exists.
     """
+    global is_logging_e
     # check b field
     b_interpolator = None
     e_interpolator = None
@@ -590,14 +594,16 @@ def grid_checker(fromTemp, filepath):
                 sigmas.append([])
 
             # LOG STUFF IF CALLED TO DO SO.
-            print(fromTemp.e.logging)
+            #print(fromTemp.e.logging)
             if fromTemp.e.logging == 1:
+                is_logging_e = True
                 print(f"logging file should be made")
                 setup_logger("e.log")
 
                 logging.info(f"Field_Method: Washer_Potential")
                 logging.info(f"Collection has {e_c.children_all} coils")
                 logging.info(f"Working with q: {e_c[0].current}, a: {a}")
+                logging.info(f"sim_lim is: {sim_lim}")
 
             potential = washer_phi_from_collection(points, e_c, a, normals, sigmas)
             potential = potential.reshape((res, res, res))

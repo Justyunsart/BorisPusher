@@ -146,7 +146,7 @@ class Grapher(ABC):
         fig = instance.fig
 
         contour = instance.plot.contourf(
-            X, Z, np.log(F_norm + 1e-20),
+            X, Z, F_norm,
             levels=levels,
             cmap=cmap
         )
