@@ -746,6 +746,7 @@ class CurrentEntryTable(EntryTable):
 
 
     def update_params(self):
+        #print("update_params running")
         self.set_nested_field(self.params, self.collection_key, self.collection)
         self.set_nested_field(self.params, self.path_key, self.dirWidget.PATH.data)
         self.set_nested_field(self.params, self.name_key, str(Path(self.dirWidget.PATH.data).name))
@@ -762,6 +763,7 @@ class CurrentEntryTable(EntryTable):
         for i in range(len(self.GetEntries())):
             row = self.GetEntries()[i]
             #print(row)
+            #print(float(eval(row[self.data.power_name])))
             pos = [float(row["PosX"]), float(row["PosY"]), float(row["PosZ"])]
             c = Circle(current=float(eval(row[self.data.power_name])),
                                    position=pos,
@@ -880,6 +882,8 @@ class CurrentEntryTable(EntryTable):
         filename = self.saveEntryVal.get()
         df = pd.DataFrame.from_dict(container)
         df.to_csv(os.path.join(self.DIR.path.data, filename), index=False)
+
+        self.update_params()
 
         if not isFirst: #isFirst = initial reading before everything is initialized.
             # In addition to the super, also update the selected file's value in the field dropdown
