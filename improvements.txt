@@ -1,22 +1,30 @@
 document the code, esp. all the sub-scripts, try using AI first
 
 USER INTERFACE/OPERATION
-when the output directory is created, the number of steps indicated in the filename is not the same
-    and sometimes seems to be 10x, or 100x, less than shown in the TK window
+put the log file in the boris push outputs directory, where the hdf5 file is, not hidden in ~user
+
+often want to do a short run, followed by a longer one. Can the potentials from the preceding run
+    be reused/recycled for the longer run?
+
+the number of steps indicated in the when the output directory filename is not the same
+    as input and sometimes seems off by 10x, or 100x, usually less than shown in the TK window
 
 add in the new window (indicator) something to display the path and filenames used in the calculation
-include a square-shaped coil option, perhaps with angled (isosceles; 45,45,90), or rounded, corners
+
+include a square-shaped coil option? perhaps with angled (isosceles; 45,45,90), or rounded, corners
 
 CALCULATE WINDOW
-The Diag Plots do not work
-When changing the coil parameters, change them all w/ same value (except +- signs),
+When changing the coil parameters, change all of them w/ the same value (except +- signs),
     if a single coil parameter needs to change, reset it by deleting/or re-adding it
-when adding a new row (in calculate), use the identical values as in the immediately preceding line
+
+when adding a new row (in calculate), prefill using identical values as in the immediately preceding line
 
 PLOTTING
-The Diag Plots do not work
-In the outputs directory there is a new file called "coils".
-    What is it for? Should have one for E-field/Potential params.
+label the Plotly output with title parameters?
+what does the second plot show on Plotly?
+
+The outputs directory has a file called "coils". What is it for?
+    Should have one for E-field/Potential params.
 
 single particle, or multi-particles, multithreaded parallelized w/ ipython?
     does importing multiprocessing or threading help? try it?
@@ -27,6 +35,8 @@ haven't implemented multiple particles yet, but are different color maps possibl
 
 ACCURACY/ERRORS
 
+
+FINISHED?
 what happened to the plot diagnostics for total energy, or velocity magnitude?
 add a kill button on top level to stop program execution
 release Tkinter window during run
@@ -34,3 +44,4 @@ in the user home directory maybe use ~/user/PythonData/ for I/O data repository
 The "Inputs" directory in Git should contain run-guaranteed settings
 Another ~user/"Inputs" directory would take custom run settings
 diagnostic for a plot of delta_t during run, if selected as option in calculate panel
+The Diag Plots do not work
