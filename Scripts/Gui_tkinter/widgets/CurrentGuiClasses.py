@@ -839,6 +839,8 @@ class CurrentEntryTable(EntryTable):
         # after everything is done, you can graph coils.
         if graph:
             self.GraphCoils()
+
+        self.update_params()
         return True
         
 
