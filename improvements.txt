@@ -8,20 +8,20 @@ add in the new window (indicator) something to display the path and filenames us
 include a square-shaped coil option, perhaps with angled (isosceles; 45,45,90), or rounded, corners
 
 CALCULATE WINDOW
-The Diag Plots do not work
+[x] The Diag Plots do not work
 When changing the coil parameters, change them all w/ same value (except +- signs),
     if a single coil parameter needs to change, reset it by deleting/or re-adding it
 when adding a new row (in calculate), use the identical values as in the immediately preceding line
 
 PLOTTING
-The Diag Plots do not work
+[x] The Diag Plots do not work
 In the outputs directory there is a new file called "coils".
     What is it for? Should have one for E-field/Potential params.
 
 single particle, or multi-particles, multithreaded parallelized w/ ipython?
     does importing multiprocessing or threading help? try it?
         https://www.geeksforgeeks.org/parallel-processing-in-python/
-on the 3-D trajectory plot, nice to provide several isometric angle perspectives
+[x] on the 3-D trajectory plot, nice to provide several isometric angle perspectives
 is there a way to better indicate where the particle exits in 3D, maybe provide coordinates?
 haven't implemented multiple particles yet, but are different color maps possible, maybe green to red?
 
