@@ -6,7 +6,7 @@ Even though they are not going to be used for field calculations and stuff, I'm 
 magpylib's circle object for this because graphing and rotation is easy.
 """
 from Gui_tkinter.widgets.CurrentGuiClasses import CurrentEntryTable
-from Gui_tkinter.funcs.GuiEntryHelpers import Bob_e_Config_Dataclass
+from Gui_tkinter.funcs.GuiEntryHelpers import E_Ring_Dataclass
 import tkinter as tk
 from system.path import Path
 from system.temp_file_names import param_keys
@@ -21,7 +21,7 @@ class Bob_e_Circle_Config(tk.Frame):
     (param: ) root: the base tk.Tk object for the tkinter app.
     """
     def __init__(self, root:tk.Tk, dir, dir_name = 'bob_e', path_key=param_keys.bob_e_file.name, name_key=param_keys.bob_e_name.name,
-                 collection_key = param_keys.bob_e_coil.name, dataclass = Bob_e_Config_Dataclass,
+                 collection_key = param_keys.bob_e_coil.name, dataclass = E_Ring_Dataclass,
                  params:AppConfig=None, **kwargs):
         self.root = root
         super().__init__(root, **kwargs)

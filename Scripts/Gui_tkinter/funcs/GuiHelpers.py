@@ -137,7 +137,7 @@ def open_output_config(root, manager, params, *args):
 
 # Run the simulation if you press calculate
 
-def CalculateCallback(root, manager, params, file_dir_var):
+def CalculateCallback(root, manager, params, file_dir_var, bus):
     '''
     When the calculate button is pressed, the GUI passes key information to
     the backend and starts the simulation.
@@ -186,6 +186,7 @@ def CalculateCallback(root, manager, params, file_dir_var):
     #updateTempFile({"Particle_Df": data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"]})
 
     Events.PRE_CALC.value.invoke(params=params)
+    bus.dispatch("SAVE_ALL_ENTRY_TABLES")
 
     #####################################################################################
     # STUFF FOR THE PROGRESS WINDOW (WHICH NEEDS RUNTIME DATA)

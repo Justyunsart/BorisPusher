@@ -76,66 +76,6 @@ class preset_cusp():
         circle_params(px=offset, py=0, pz=0, amp=amp, dia=dia, rot_ang=[90], rot_ax=['y']),
         circle_params(px=-offset, py=0, pz=0, amp=-amp, dia=dia, rot_ang=[90], rot_ax=['y'])
     ]
-"""
-Classes that hold the constructor of the magpylib.Collection object that corresponds to shape.
-Done so that labelling of used shapes is done via classes and not functions.
-"""
-class CoilShapeConstructor(ABC):
-    @classmethod
-    def create(cls, offset, q, dia):
-        """
-        returns the magpylib collections object that holds data.
-        """
-        pass
-# INSTANTIATION
-class HexConstructor(CoilShapeConstructor):
-    @classmethod
-    def create(cls, offset, q, dia):
-        # current Loop creation, superimpose Loops and their fields
-        s1 = C(current=q, diameter=dia).move([-offset, 0, 0]).rotate_from_angax(90, [0, 1, 0])
-        s2 = C(current=-q, diameter=dia).move([offset, 0, 0]).rotate_from_angax(90, [0, 1, 0])
-        s3 = C(current=-q, diameter=dia).move([0, -offset, 0]).rotate_from_angax(-90, [1, 0, 0])
-        s4 = C(current=q, diameter=dia).move([0, offset, 0]).rotate_from_angax(-90, [1, 0, 0])
-        s5 = C(current=q, diameter=dia).move([0, 0, -offset]).rotate_from_angax(90, [0, 0, 1])
-        s6 = C(current=-q, diameter=dia).move([0, 0, offset]).rotate_from_angax(90, [0, 0, 1])
-
-        c = Collection(s1, s2, s3, s4, s5, s6, style_color='black')
-        return c
-
-class HelmholtzConstructor(CoilShapeConstructor):
-    @classmethod
-    def create(cls, offset, q, dia):
-        s7 = C(current=q, diameter=dia).move([-offset, 0, 0]).rotate_from_angax(90, [0, 1, 0])
-        s8 = C(current=q, diameter=dia).move([offset, 0, 0]).rotate_from_angax(90, [0, 1, 0])
-
-        c = Collection(s7, s8)
-        return c
-
-"""
-Classes for the actual presets.
-The class CoilPreset will hold UNIVERSAL settings
-and subclasses will add unique attributes.
-"""
-class CoilPreset(ABC):
-    """
-    abstract class for presets.
-    contains parameters that exist for every single preset.
-    """
-    def __init__(self, offset, q, dia, shape:CoilShapeConstructor):
-        self.offset = offset
-        self.q = q
-        self.dia = dia
-        self.shape = shape #contains the method to create the collection of given shape
-
-    @abstractmethod
-    def create_preset(self):
-        pass
-
-class WasherPreset(CoilPreset):
-    """
-    Subclass of CoilPreset that also contains the inner radius attribute.
-    Stored as a list of size len(collection), which contains the same order.
-    """
 
 
 

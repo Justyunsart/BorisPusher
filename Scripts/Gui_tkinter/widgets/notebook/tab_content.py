@@ -74,10 +74,15 @@ class RingTableTab(tk.Frame, ParamWidget):
         self.root = parent
         self.field = field
 
+        self.grid_rowconfigure(3, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
         self.frame1 = tk.Frame(self)
-        self.frame1.grid(row=2, column=0)
+        self.frame1.grid(row=2, column=0, sticky=tk.NSEW)
         self.frame2 = tk.Frame(self)
-        self.frame2.grid(row=3, column=0)
+        self.frame2.grid(row=3, column=0, sticky=tk.NSEW)
+        frame3 = tk.Frame(self)
+        frame3.grid(row=4, column=0, sticky=tk.NSEW)
 
         self.widget_frames = [self.frame1, self.frame2]
 
@@ -89,17 +94,17 @@ class RingTableTab(tk.Frame, ParamWidget):
                                          dir=os.path.join(runtime_configs['Paths']['inputs'], dir_name), dir_name=dir_name,
                                          params=params, **kwargs)
         self.widgets = [self.table, self.res]
-        self.table.grid(row=0)
+        self.table.grid(row=0, column=0, sticky=tk.NSEW)
 
         # checkbox for gridding
         self.gridding_var = tk.IntVar()
-        self.gridding = tk.Checkbutton(self.frame2, text="precompute grid", variable=self.gridding_var)
-        self.gridding.grid(row=1, column=0)
+        self.gridding = tk.Checkbutton(frame3, text="precompute grid", variable=self.gridding_var)
+        self.gridding.grid(row=0, column=0, sticky=tk.NSEW)
 
         # checkbox for logging
         self.logging_var = tk.IntVar()
-        self.logging = tk.Checkbutton(self.frame2, text="log?", variable=self.logging_var)
-        self.logging.grid(row=1, column=1)
+        self.logging = tk.Checkbutton(frame3, text="log?", variable=self.logging_var)
+        self.logging.grid(row=0, column=1, sticky=tk.NSEW)
 
         # ADD CALLBACKS TO UPDATE PARAMS WHEN THINGS ARE CHANGED.
         # trigger_listener is the function call to lock in changes
