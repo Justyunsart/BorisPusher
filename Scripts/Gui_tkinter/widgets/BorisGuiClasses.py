@@ -85,6 +85,7 @@ class ParticlePreview(EntryTable):
     def __init__(self, master, dataclass=file_particle, dir_observed = None, params:AppConfig=None):
         super().__init__(master, dataclass)
         self.params = params
+        self.dir = dir_observed
         self.fileWidget = FileDropdown(self.frame0, dir=dir_observed, default=self.create_default_input_file)
         self.read_initial_value() # set filewidget's value based on read val.
         self.fileWidget.grid(row=0, column=0, sticky="nsew")
@@ -168,8 +169,8 @@ class ParticlePreview(EntryTable):
         self.set_nested_field(self.params, "path.particle", self.fileWidget.PATH.data)
         self.set_nested_field(self.params, "particle.name", self.fileWidget.combo_box.get())
     
-    def SaveData(self, dir:str, container=None, customContainer=False):
-        super().SaveData(dir, container, customContainer)
+    def SaveData(self, container=None, customContainer=False):
+        super().SaveData(self.dir.path.data, container, customContainer)
 
         # In addition to the super, also update the selected file's value in the field dropdown
         if self.saveEntryVal.get() not in self.fileWidget.combo_box["values"]:
