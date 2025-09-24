@@ -52,37 +52,46 @@ v8 = -1 * v4
 v9 =  -1 * v5
 
 vectors = [v0, v1, v2, v3, v4, v5, v6, v7, v8, v9]
-labels = ['V0 = [0 0 1]',
-    'V1 = Rx(35.26) * V0',
-    'V2 = Ry(45) * V1',
-    'V3 = Rz(90) * V2',
-    'V4 = Rz(180) * V2',
-    'V5 = Rz(270) * V2',
-    'V6 = [-1 -1 -1] * V2',
-    'V7 = [-1 -1 -1]  * V3',
-    'V8 = [-1 -1 -1]  * V4',
-    'V9 = [-1 -1 -1] * V5'
+labels = [r'$\vec{n}_0$ = [0 0 1]',
+    r'$\vec{V}_0$ = Rx(35.26) * $\vec{n}_0$ ',
+    r'$\vec{V}_1$ = Ry(45) * $\vec{V}_0$ ',
+    r'$\vec{V}_2$ = Rz(90) * $\vec{V}_1$ ',
+    r'$\vec{V}_3$ = Rz(180) * $\vec{V}_1$ ',
+    r'$\vec{V}_4$ = Rz(270) * $\vec{V}_1$ ',
+    r'$\vec{V}_5$ = [-1,-1,-1] * $\vec{V}_1$ ',
+    r'$\vec{V}_6$ = [-1,-1,-1] * $\vec{V}_2$ ',
+    r'$\vec{V}_7$ = [-1,-1,-1] * $\vec{V}_3$ ',
+    r'$\vec{V}_8$ = [-1,-1,-1] * $\vec{V}_4$ ',
+    # 'V2 = Ry(45) * V1',
+    # 'V3 = Rz(90) * V2',
+    # 'V4 = Rz(180) * V2',
+    # 'V5 = Rz(270) * V2',
+    # 'V6 = [-1 -1 -1] * V2',
+    # 'V7 = [-1 -1 -1]  * V3',
+    # 'V8 = [-1 -1 -1]  * V4',
+    # 'V9 = [-1 -1 -1] * V5'
           ]
 rainbow_colors = [
-    '#404040',  # Dark Grey
+    # '#404040',  # Dark Grey
+    '#000000',  # Black
     '#B200FF',  # Violet
     '#FF0000',  # Red
     '#FF7F00',  # Orange
-    '#00FF00',  # Green
+    '#008000',  # Green
     '#0000FF',  # Blue
     '#FF0000',  # Red
     '#FF7F00',  # Orange
-    '#00FF00',  # Green
+    '#008000',  # Green
     '#0000FF'  # Blue
 ]
 
 # 3D Visualization
-fig = plt.figure(figsize=(8, 8))
+fig = plt.figure(figsize=(10, 10))
 ax = fig.add_subplot(111, projection='3d')
 origin =[0, 0, 0]
-xaxis = [0.3, 0, 0]
-yaxis = [0, 0.3, 0]
-zaxis = [0, 0, 0.3]
+xaxis = [0.2, 0, 0]
+yaxis = [0, 0.2, 0]
+zaxis = [0, 0, 0.2]
 
 # Axes
 ax.quiver(*origin, *xaxis, linewidth =4, color='k')
@@ -109,7 +118,7 @@ ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
 # ax.set_title(fr'[0 0 1] Unit Vector Rotated in +Z Quadrants to the Cube Corners')
-ax.legend()
+ax.legend(ncol=2, loc='upper right' )
 ax.view_init(elev=20, azim=35)
 plt.tight_layout()
 plt.show()

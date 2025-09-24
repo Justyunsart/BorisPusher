@@ -1,36 +1,44 @@
-document the code, esp. all the sub-scripts, try using AI first
+DOCUMENTATION
+still need a roadmap that documents the code, esp. all the sub-scripts
+    maybe try using AI as a first step?
 
 USER INTERFACE/OPERATION
-when the output directory is created, the number of steps indicated in the filename is not the same
-    and sometimes seems to be 10x, or 100x, less than shown in the TK window
+display the absolute path for the input files used in the calculation
 
-add in the new window (indicator) something to display the path and filenames used in the calculation
-include a square-shaped coil option, perhaps with angled (isosceles; 45,45,90), or rounded, corners
+sometimes, when creating the directory for the output files, the number of steps indicated in the filename is not the same
+    as shown in the TK window
+
+
+include an option for square-shaped (non-circular) B-coils
 
 CALCULATE WINDOW
-[x] The Diag Plots do not work
-When changing the coil parameters, change them all w/ same value (except +- signs),
-    if a single coil parameter needs to change, reset it by deleting/or re-adding it
-when adding a new row (in calculate), use the identical values as in the immediately preceding line
+The washer potential option - displays "Diameter" and "inner_r"
+    - please use "Outer Dia" and "Inner Dia"
+The field diagnostic plots are no longer available
+adding a new line/or row in fields, use values identical to the preceding line
 
 PLOTTING
-[x] The Diag Plots do not work
-In the outputs directory there is a new file called "coils".
-    What is it for? Should have one for E-field/Potential params.
+file called "coils" in the output data directory, what is it for?
 
-single particle, or multi-particles, multithreaded parallelized w/ ipython?
+haven't implemented multiple particles yet,
+    are different color maps possible, maybe green to red?
     does importing multiprocessing or threading help? try it?
+    single particle, or multi-particles, multithreaded parallelized w/ ipython?
         https://www.geeksforgeeks.org/parallel-processing-in-python/
-[x] on the 3-D trajectory plot, nice to provide several isometric angle perspectives
-is there a way to better indicate where the particle exits in 3D, maybe provide coordinates?
-haven't implemented multiple particles yet, but are different color maps possible, maybe green to red?
 
 ACCURACY/ERRORS
 
-what happened to the plot diagnostics for total energy, or velocity magnitude?
+
+FINISHED ITEMS??
 add a kill button on top level to stop program execution
 release Tkinter window during run
 in the user home directory maybe use ~/user/PythonData/ for I/O data repository
 The "Inputs" directory in Git should contain run-guaranteed settings
 Another ~user/"Inputs" directory would take custom run settings
 diagnostic for a plot of delta_t during run, if selected as option in calculate panel
+The Diag Plots do not work
+When changing the coil parameters, change them all w/ same value (except +- signs),
+    if a single coil parameter needs to change, reset it by deleting/or re-adding it
+on the 3-D trajectory plot, nice to provide several isometric angle perspectives
+is there a way to better indicate where the particle exits in 3D, maybe provide coordinates?
+what happened to the plot diagnostics for total energy, or velocity magnitude?

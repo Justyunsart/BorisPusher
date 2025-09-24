@@ -1,3 +1,8 @@
+"""Calculates the E-field superposition for 3 pairs of charged washers (total 6 washers)
+placed on the surfaces of a hexahedron. The washer charge and ID, OD dimensions are preset allowing easy
+and uniform changes to be implemented. The washer orientations are set by arbitrary rotations
+about the three cartesian axes. The E-field is calculated from the scalar potential, and the grid
+resolution is preset. The output displays a progress bar and plots are displayed as a colored intensity streamline plot."""
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.constants import epsilon_0
