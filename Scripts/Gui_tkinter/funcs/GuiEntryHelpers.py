@@ -1,7 +1,7 @@
 from system.Observer import Data
 import tkinter as tk
 from tkinter import ttk
-from dataclasses import dataclass, field, is_dataclass, MISSING
+from dataclasses import dataclass, field
 import csv
 from ast import literal_eval
 import numpy as np
@@ -347,13 +347,6 @@ class EntryButton(tk.Button):
     def get(self):
         return self
 
-class VariableEntry(tk.Entry):
-    """Simple Subclass of tk.Entry that also has a StringVar attribute"""
-    def __init__(self, master, *args, **kwargs):
-        self.master = master
-        self.var = tk.StringVar(master)
-        super().__init__(master, textvariable=self.var, **kwargs)
-
 
 class EntryTableParam:
     paramDefault: None
@@ -469,21 +462,14 @@ def List_to_CSV(fileName, data, *args, **kwargs):
         writer = csv.writer(mycsv)
         writer.writerows(data)
 
-def flatten_dict(nested_dict):
-    """return a dict with only un-nested data"""
-    out = {}
-    for key, value in nested_dict.items():
-        if isinstance(value, dict):
-            out.update(flatten_dict(value))
-        else:
-            out.update({key: value})
-    return out
-
 def Dict_to_CSV(fileName:str, data:dict, *args, **kwargs):
+    """
+    used to create the last used parameters file.
+    """
     with open(fileName, "w", *args, **kwargs) as mycsv:
-        writer = csv.DictWriter(mycsv, fieldnames=data[0].keys())
+        writer = csv.DictWriter(mycsv, data.keys())
         writer.writeheader()
-        writer.writerows(data)
+        writer.writerow(data)
 
 def JSON_to_Df(path, orient="table", numeric=True):
     """
@@ -495,268 +481,35 @@ def JSON_to_Df(path, orient="table", numeric=True):
         df = df.apply(pd.to_numeric)
     return df
 
-class VariableOptionMenu(tk.OptionMenu):
-    """The same thing as a tk.OptionMenu except the var is built-in"""
-    def __init__(self, master, options, **kwargs):
-        self.var = tk.StringVar()
-        self.var.set(options[0])
-        super().__init__(master, self.var, *options)
-
-
 """
 DATACLASSES USED FOR THE ENTRY TABLES.
 
 The entry table class knows the column number, name, and widget type to populate with these dataclasses.
     > It had to be done like this so some columns can be programmed to spawn buttons instead of a tk.Entry.
 """
-from dataclasses import fields
 
-class SolverConfigs:
-    pass
-# styles (stored as kwargs for constructor)
-entry_styles={"default": {"width":10}}
-
-class DictGetter:
-    def flatten_values(self, d):
-        flat = {}
-        for k, v in d.items():
-            if isinstance(v, dict):
-                flat.update(self.flatten_values(v))  # recurse into nested dict
-            else:
-                flat[k] = v
-        return flat
-
-    @staticmethod
-    def _dataclass_to_dict(obj, include_hidden: bool = False):
-        """Helper to handle nested dataclasses without get_dict"""
-        d = {}
-        for f in fields(obj):
-            if f.metadata.get("hidden", False) and not include_hidden:
-                continue
-            val = getattr(obj, f.name)
-            if is_dataclass(val):
-                d[f.name] = Solver_Ring_Data._dataclass_to_dict(val, include_hidden)
-            else:
-                d[f.name] = val
-        return d
-
-    def get_dict(self, include_hidden: bool = False, flatten=False):
-        result = {}
-        for f in fields(self):
-            # Skip hidden fields unless explicitly included
-            if f.metadata.get("hidden", False) and not include_hidden:
-                continue
-
-            value = getattr(self, f.name)
-
-            # If value is another dataclass, recurse
-            if is_dataclass(value):
-                result[f.name] = value.get_dict(include_hidden=include_hidden) \
-                    if hasattr(value, "get_dict") else self._dataclass_to_dict(value, include_hidden)
-            else:
-                result[f.name] = value
-        if flatten:
-            result = self.flatten_values(result)
-        return result
-
-class SolverWidgets:
-    """Uses the input of a data-only class and automates the creation of GUI widgets to go w/ each field"""
-    def __init__(self, frame, dataclass, exceptions:dict=None):
-        self.frame = frame
-        self.dataclass = dataclass
-        self.exceptions = exceptions #optional config for columns that are not entries.
-        if self.dataclass:
-            self.build_widgets()
-
-    def build_widgets(self):
-        def add_widget(widget):
-            setattr(self, f.name, widget)
-
-        for f in fields(self.dataclass):
-            # Build a widget for each field dynamically
-            meta = f.metadata
-            if meta.__contains__("widget"):
-                widget = meta['widget']
-            else:
-                widget = VariableEntry
-            if meta.__contains__("hidden"):
-                if meta["hidden"]:
-                    continue # don't add widget if the metadata field has a hidden tag, and it's marked True.
-            add_widget(widget)
-
-    def __repr__(self):
-        fields_repr = []
-        for name in self.dataclass.__dataclass_fields__:
-            widget = getattr(self, name, None)
-            if widget is not None:
-                fields_repr.append(f"{name}={widget!r}")
-            else:
-                fields_repr.append(f"{name}=<missing widget>")
-        return f"{self.__class__.__name__}({', '.join(fields_repr)})"
 
 @dataclass
-class RotationData(DictGetter):
-    """Extra class so that multiple pieces of data (angle, axes) can be accessed from a single field"""
-    RotationAngle: list[float] = field(default_factory=list, metadata={"widget": VariableEntry})
-    RotationAxis: list[str] = field(default_factory=list, metadata={"widget": VariableOptionMenu,
-                                                            "kwargs":{"options":('x', 'y', 'z')}
-                                                            })
-@dataclass
-class Solver_Ring_Data(DictGetter):
-    """Holds information about ring configurations. Each instance of this = one ring"""
-    PosX: float = None
-    PosY: float = None
-    PosZ: float = None
-    Amp: float = None
-    Diameter: float = None
-    Rotations: RotationData = field(default_factory=RotationData, metadata={"widget": tk.Button,
-                                                                            'kwargs':{"text": "Rotations"},
-                                                                            'event':"OPEN_ROTATIONS"})
-
-    @classmethod
-    def from_kwargs(cls, **kwargs):
-        # Handle aliases
-        aliases = {"Q": "Amp"}
-        normalized = {aliases.get(k, k): v for k, v in kwargs.items()}
-
-        # Create object with only actual dataclass fields
-        obj = cls(
-            PosX=normalized.get("PosX"),
-            PosY=normalized.get("PosY"),
-            PosZ=normalized.get("PosZ"),
-            Amp=normalized.get("Amp"),
-            Diameter=normalized.get("Diameter"),
-        )
-
-        # Inject rotation data if passed separately
-        if "RotationAxis" in normalized:
-            obj.RotationAxis = normalized["RotationAxis"]
-        if "RotationAngle" in normalized:
-            obj.RotationAngle = normalized["RotationAngle"]
-
-        return obj
-
-    @property
-    def RotationAxis(self) -> list[str]:
-        return self.Rotations.RotationAxis
-
-    @RotationAxis.setter
-    def RotationAxis(self, val: list[str]):
-        try:
-            val = ast.literal_eval(val)
-        except ValueError:
-            pass
-        assert type(val) == list
-        self.Rotations.RotationAxis = val
-
-    @property
-    def RotationAngle(self) -> list[float]:
-        return self.Rotations.RotationAngle
-
-    @RotationAngle.setter
-    def RotationAngle(self, val: list[float]):
-        try:
-            val = ast.literal_eval(val)
-        except ValueError:
-            pass
-        assert type(val) == list
-        val = [float(j) for j in val] # turn angles numeric
-        self.Rotations.RotationAngle = val
-
-
-@dataclass(init=False)
-class Solver_Washer_Data(Solver_Ring_Data):
-    Inner_r: float = None #add inner radius param
-
-@dataclass
-class _Solver_Ring_Dataclass:
-    """Base class for solver-dependent dataclasses (abstraction layer for GUI)"""
-
-    PosX: EntryTableParam = field(init=False)
-    PosY: EntryTableParam = field(init=False)
-    PosZ: EntryTableParam = field(init=False)
-
-    Amp: EntryTableParam = field(init=False)
-    Diameter: EntryTableParam = field(init=False)
-
-    Rotations: EntryTableParam = field(init=False)
-    # we need this index so we know to run ast.literal_eval on these indices.
-    eval_inds = (5, 6)  # index reference of the rotation_angles and rotation_axes lists
-    power_name = "Amp"
-
-    def __init__(self, frame, PosX, PosY, PosZ, Amp, Diameter, RotationAngle, RotationAxis):
-        self.PosX = EntryTableParam(PosX, master=frame)
-        self.PosY = EntryTableParam(PosY, master=frame)
-        self.PosZ = EntryTableParam(PosZ, master=frame)
-
-        self.Amp = EntryTableParam(Amp, master=frame)
-        self.Diameter = EntryTableParam(Diameter, master=frame)
-
-        self.Rotations = EntryTableParam(None, widget=EntryButton, master=frame, text="Rotations")
-
-        self.iterables = [self.PosX, self.PosY, self.PosZ, self.Amp, self.Diameter, self.Rotations]
-
-        # properties that are useful, and are hidden from iteration.
-        self._rotation_angles = RotationAngle
-        self._rotation_axes = RotationAxis
-
-    @property
-    def rotation_angles(self):
-        return self._rotation_angles
-
-    @rotation_angles.setter
-    def rotation_angles(self, val):
-        try:
-            val = ast.literal_eval(val)
-        except ValueError:
-            pass
-        assert type(val) == list
-        self._rotation_angles = val
-
-    @property
-    def rotation_axes(self):
-        return self._rotation_axes
-
-    @rotation_axes.setter
-    def rotation_axes(self, val):
-        try:
-            val = ast.literal_eval(val)
-        except ValueError:
-            pass
-        assert type(val) == list
-        self._rotation_axes = val
-
-    def __iter__(self):
-        for val in self.iterables:
-            yield val
-
-    def get_dict(self, to_csv=False):
-        """
-        returns all attributes from the self.iterables list as a dictionary.
-        The keys are the attribute names, and the values are, their values lol.
-        """
-        if not to_csv:
-            out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
-            out['Rotations'] = {"Angles" : self.rotation_angles, "Axes" : self.rotation_axes}
-        else:
-            out = {key:[value.get()] for key, value in vars(self).items() if value in self.iterables}
-            out['RotationAngle'] = [self.rotation_angles]
-            out['RotationAxis'] = [self.rotation_axes]
-            del out['Rotations']
-        return out
-
-@dataclass
-class E_Ring_Dataclass(_Solver_Ring_Dataclass):
+class Bob_e_Config_Dataclass():
     '''
     For circles in the bob_e method, the relevant params are:
         - position
         - rotation
         - diameter
     '''
+    PosX: EntryTableParam = field(init=False)
+    PosY: EntryTableParam = field(init=False)
+    PosZ: EntryTableParam = field(init=False)
+
+    Q: EntryTableParam = field(init=False)
+    Diameter: EntryTableParam = field(init=False)
+
+    Rotations: EntryTableParam = field(init=False)
+
+    eval_inds = (5, 6) # index reference of the rotation_angles and rotation_axes lists
     power_name = "Q"
 
-    def __init__(self, frame, PosX, PosY, PosZ, Q, Diameter, RotationAngle, RotationAxis, **kwargs):
-        super().__init__(frame, **kwargs)
+    def __init__(self, frame, PosX = 0, PosY = 0, PosZ = 0, Q = 1e5, Diameter = 1, RotationAngle = [], RotationAxis = [], **kwargs):
         self.PosX = EntryTableParam(PosX, master=frame)
         self.PosY = EntryTableParam(PosY, master=frame)
         self.PosZ = EntryTableParam(PosZ, master=frame)
@@ -773,11 +526,54 @@ class E_Ring_Dataclass(_Solver_Ring_Dataclass):
         self.rotation_axes = RotationAxis
 
 
+    @property
+    def rotation_angles(self):
+        return self._rotation_angles
+    @rotation_angles.setter
+    def rotation_angles(self, val):
+        try:
+            val = ast.literal_eval(val)
+        except ValueError:
+            pass
+        assert type(val) == list
+        self._rotation_angles = val
+
+    @property
+    def rotation_axes(self):
+        return self._rotation_axes
+    @rotation_axes.setter
+    def rotation_axes(self, val):
+        try:
+            val = ast.literal_eval(val)
+        except ValueError:
+            pass
+        assert type(val) == list
+        self._rotation_axes = val
+    
+    def __iter__(self):
+        for val in self.iterables:
+            yield val
+    
+    def get_dict(self, to_csv=False):
+        """
+        returns all attributes from the self.iterables list as a dictionary.
+        The keys are the attribute names, and the values are, their values lol.
+        """
+        if(not to_csv):
+            out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
+            out['Rotations'] = {"Angles" : self.rotation_angles, "Axes" : self.rotation_axes}
+        else:
+            out = {key:[value.get()] for key, value in vars(self).items() if value in self.iterables}
+            out['RotationAngle'] = [self.rotation_angles]
+            out['RotationAxis'] = [self.rotation_axes]
+            del out['Rotations']
+        return out
+
 @dataclass
-class Washer_E_Dataclass(E_Ring_Dataclass):
+class Disk_e_Config_Dataclass(Bob_e_Config_Dataclass):
     Inner_r: EntryTableParam = field(init=False)
 
-    def __init__(self, frame, PosX, PosY, PosZ, Q, Diameter, RotationAngle, RotationAxis, Inner_r):
+    def __init__(self, frame, PosX = 0, PosY = 0, PosZ = 0, Q=0.00000000001, Diameter = 1, RotationAngle = [], RotationAxis = [], Inner_r=0.5):
         super().__init__(frame=frame, PosX=PosX, PosY=PosY, PosZ=PosZ, Q=Q, Diameter=Diameter, RotationAngle=RotationAngle, RotationAxis=RotationAxis)
         self.Inner_r = EntryTableParam(Inner_r, master=frame)
         self.iterables.append(self.Inner_r)
@@ -798,61 +594,97 @@ class RotationConfig():
     def __iter__(self):
         for val in self.iterables:
             yield val
-    def get_dict(self, *args, **kwargs):
+    def get_dict(self, csv=False):
         """
         returns all attributes from the self.iterables list as a dictionary.
         The keys are the attribute names, and the values are, their values lol.
         """
         # the csv parameter is abstracted across several dataclasses. It isn't used in this one, so always have it be False for protection.
         # it wouldn't do anthing if it was passed with True in the first place haha.
+        csv = False
         return {key:value.get() for key, value in vars(self).items() if value in self.iterables}
 
 @dataclass
-class file_particle:
-    px : float = None
-    py : float = None
-    pz : float = None
+class CircleCurrentConfig():
+    '''
+    An object created from (I'm assuming) a 'create new current' button.
+    Assume that this is like an entry object for a scrollbar table.
+    '''
+    PosX: EntryTableParam = field(init=False)
+    PosY: EntryTableParam = field(init=False)
+    PosZ: EntryTableParam = field(init=False)
 
-    vx : float = None
-    vy : float = None
-    vz : float = None
+    Amp: EntryTableParam = field(init=False)
+    Diameter: EntryTableParam = field(init=False)
 
-    @staticmethod
-    def _dataclass_to_dict(obj, include_hidden: bool = False):
-        """Helper to handle nested dataclasses without get_dict"""
-        d = {}
-        for f in fields(obj):
-            if f.metadata.get("hidden", False) and not include_hidden:
-                continue
-            val = getattr(obj, f.name)
-            if is_dataclass(val):
-                d[f.name] = Solver_Ring_Data._dataclass_to_dict(val, include_hidden)
-            else:
-                d[f.name] = val
-        return d
+    Rotations: EntryTableParam = field(init=False)
+    # we need this index so we know to run ast.literal_eval on these indices.
+    eval_inds = (5, 6) # index reference of the rotation_angles and rotation_axes lists
+    power_name = "Amp"
 
-    def get_dict(self, include_hidden: bool = False):
-        result = {}
-        for f in fields(self):
-            # Skip hidden fields unless explicitly included
-            if f.metadata.get("hidden", False) and not include_hidden:
-                continue
+    def __init__(self, frame, PosX = 0, PosY = 0, PosZ = 0, Amp = 1e5, Diameter = 1, RotationAngle = [], RotationAxis = []):
+        self.PosX = EntryTableParam(PosX, master=frame)
+        self.PosY = EntryTableParam(PosY, master=frame)
+        self.PosZ = EntryTableParam(PosZ, master=frame)
 
-            value = getattr(self, f.name)
+        self.Amp = EntryTableParam(Amp, master=frame)
+        self.Diameter = EntryTableParam(Diameter, master=frame)
 
-            # If value is another dataclass, recurse
-            if is_dataclass(value):
-                result[f.name] = value.get_dict(include_hidden=include_hidden) \
-                    if hasattr(value, "get_dict") else self._dataclass_to_dict(value, include_hidden)
-            else:
-                result[f.name] = value
-        return result
+        self.Rotations = EntryTableParam(None, widget=EntryButton, master=frame, text="Rotations")
+        
+        self.iterables = [self.PosX, self.PosY, self.PosZ, self.Amp, self.Diameter, self.Rotations]
+
+        # properties that are useful, and are hidden from iteration.
+        self._rotation_angles = RotationAngle
+        self._rotation_axes = RotationAxis
+
+    @property
+    def rotation_angles(self):
+        return self._rotation_angles
+    @rotation_angles.setter
+    def rotation_angles(self, val):
+        try:
+            val = ast.literal_eval(val)
+        except ValueError:
+            pass
+        assert type(val) == list
+        self._rotation_angles = val
+
+    @property
+    def rotation_axes(self):
+        return self._rotation_axes
+    @rotation_axes.setter
+    def rotation_axes(self, val):
+        try:
+            val = ast.literal_eval(val)
+        except ValueError:
+            pass
+        assert type(val) == list
+        self._rotation_axes = val
+
+    def __iter__(self):
+        for val in self.iterables:
+            yield val
+
+    def get_dict(self, to_csv=False):
+        """
+        returns all attributes from the self.iterables list as a dictionary.
+        The keys are the attribute names, and the values are, their values lol.
+        """
+        if(not to_csv):
+            out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
+            out['Rotations'] = {"Angles" : self.rotation_angles, "Axes" : self.rotation_axes}
+        else:
+            out = {key:[value.get()] for key, value in vars(self).items() if value in self.iterables}
+            out['RotationAngle'] = [self.rotation_angles]
+            out['RotationAxis'] = [self.rotation_axes]
+            del out['Rotations']
+        return out
 
 @dataclass
-class _file_particle:
+class file_particle:
     '''
     dataclass for particles, only used for the csv config files.
-    deprecated
     '''
     #position
     px: EntryTableParam = field(init=False)
@@ -891,6 +723,4 @@ class _file_particle:
         else:
             out = {key:value.get() for key, value in vars(self).items() if value in self.iterables}
         return out
-
-def make_ui_class(dataclass):
-    """Automation for setting the tkinter widgets associated w/ each field"""
+    

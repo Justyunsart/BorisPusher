@@ -63,12 +63,7 @@ class ScrollableFrame(tk.Canvas):
         self.window = self.create_window(0,0, window=self.frame, anchor="nw")
         self.pack(fill="both", expand=True, side="top")
         #self.frame.pack(fill="both", expand=True, side="top")
-        self.bind("<Configure>", self.limit_horizontal_size)
-
-    def limit_horizontal_size(self, event):
-        """Done so that the scrolling only happens vertically"""
-        self.itemconfigure(self.window, width = event.width)
-
+    
     ############
     # Observer #
     ############

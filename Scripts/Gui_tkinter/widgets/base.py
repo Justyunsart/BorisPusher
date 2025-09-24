@@ -49,7 +49,6 @@ class FileWidget:
         self.input_dir = None
         self.presets = None
 
-
     # Value initialization is done MANUALLY because it will be easier to work with in some forms
     #   - If a widget has lots of these opt-in modifiers, it might get annoying to handle all the args expected.
     #   - This way, you have time to format inputs outside the __init__ call.
@@ -58,6 +57,7 @@ class FileWidget:
         self.input_dir = input_dir
         self.presets = presets
 
+    # TODO: Move implementation in CurrentEntryTable here
     def save_file(self):
         pass
 
@@ -66,4 +66,3 @@ class FileWidget:
 
     def create_file(self):
         pass
-

@@ -118,7 +118,7 @@ class ParticlePreview(EntryTable):
         #print(f"BorisGuiClasses.ParticlePreview.EntryValidateCallback: self.instances is: {self.instances}")
         return super().EntryValidateCallback(entry)
     
-    def NewEntry(self, *args):
+    def NewEntry(self, *args, defaults=True):
         '''
         Suppress creating a new row on initialization.
         '''
@@ -126,7 +126,7 @@ class ParticlePreview(EntryTable):
         if(self.isInit):
             #print("Creating new entry", defaults, *args)
             #print(id(self._instances))
-            super().NewEntry(*args)
+            super().NewEntry(*args, defaults = defaults)
             self.params.particle.count += 1
             #print(id(self._instances))
         else:
@@ -146,7 +146,13 @@ class ParticlePreview(EntryTable):
 
         particles = []
         for row in data:
-            particle = file_particle(*row)
+            particle = file_particle(self.frame1, 
+                                     px = row[0], 
+                                     py = row[1], 
+                                     pz = row[2], 
+                                     vx = row[3], 
+                                     vy = row[4], 
+                                     vz = row[5])
             #print(particle.py.paramDefault)
             particles.append(particle)
         

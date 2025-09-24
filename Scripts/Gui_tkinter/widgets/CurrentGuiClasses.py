@@ -21,14 +21,13 @@ from Gui_tkinter.funcs.GuiEntryHelpers import *
 from ast import literal_eval
 
 from settings.configs.funcs.config_reader import runtime_configs
+#from system.temp_manager import TEMPMANAGER_MANAGER, read_temp_file_dict, write_dict_to_temp
+#from system.temp_file_names import manager_1, m1f1
 from settings.defaults.coils import default_coil, coil_cust_attr_name
-from definitions import PLATFORM
+from definitions import PLATFORM, NAME_COILS
 
 from system.state_dict_main import AppConfig
 from Gui_tkinter.widgets.base import ParamWidget
-from dataclasses import dataclass
-
-from system.bus import CommandBus
 
 if PLATFORM != "win32":
     from xattr import setxattr
@@ -61,26 +60,55 @@ class EntryTable(ParamWidget):
         """
         out = []
         for entry in self._instances:
-            out.append(entry.get_dict(flatten=csv))
+            out.append(entry.get_dict(csv))
 
-        return out
+        if(not csv): # csv == False
+            """
+            When the function is called with csv == False, the caller is requesting a view of the data that works for graphing.
+                The dict should be organized like: [{dict1}, {dict2}], in which:
+                    Each dict holds both the row and rotation data
+                    Each dict also represents a new row.
+
+            This is accomplished with the above code by running the dataclass's get_dict() callable with csv == False.
+            """
+            return out
+
+        else: # csv == True
+            """
+            When function is called with csv == True, the caller is requesting a view of the data that directly works for converting to a pd.DataFrame object.
+                The dict should be organized like: {'key':[value1, value2,], ...}, in which:
+                    Key - each column variable
+                    Value - a list containing the respective entry for each row.
+
+            This can be accomplished by merging the list of dictionaries created before the if-else block. Because it ran get_dict() with csv == True,
+            each dict is formatted with the rotation attributes without nesting.
+            """
+            # a dictionary that fills missing values with an empty list.
+            out_merged = defaultdict(list)
+
+            # iterate over the out list of dictionaries, extending the empty list with stored values.
+            for d in out:
+                for key, value in d.items():
+                    # value is expected to be a list
+                    out_merged[key].extend(value)
+
+            return out_merged
 
     #===============#
     # INITIALIZAION #
     #===============#
-    def __init__(self, master, dataclass:dataclass, save=True, rowInit=True): # initialization function
+    def __init__(self, master, dataclass:dataclass, name="entry", save=True, rowInit=True, doDirWidget=True): # initialization function
         self.isInit = False # initialization is false at the beginning.
-
         # keep reference to the master 
         self.master = master
         self.entries = []
-        self.widgets = [] # holds refs to the widgets for each row of the table.
-        self._instances = [] # holds Data-specific objects
-        self.bus = CommandBus() # handle command calls (within widget scope)
+        self.widgets = []
+        self._instances = []
 
         # read the fields from the supplied dataclass.
         self.data = dataclass
         self.fields = list(dataclass.__dataclass_fields__.keys())
+        self.fieldDefaults = list(dataclass.__dataclass_fields__.values())
 
         self.numcols = len(self.fields)
 
@@ -91,28 +119,27 @@ class EntryTable(ParamWidget):
         self.frame = tk.LabelFrame(self.master,
                                    text="EntryTable")
         self.frame.grid(row=0, column=0, sticky = "")
-        self.Ui_Dataclass = SolverWidgets(self.frame, dataclass)
 
         # CHILDREN FRAME IN PARENT.
         # optional header frame
         self.frame0 = tk.Frame(self.frame)
-        self.frame0.grid(row=0, column=0, sticky="nsew")
+        self.frame0.grid(row=0, column=0, sticky="")
         
         # frame for table data
         self.frame1 = tk.Frame(self.frame) 
-        self.frame1.grid(row=1, column=0, sticky = "nsew")
-
-        self.frame.grid_rowconfigure(0, weight=1)
+        self.frame1.grid(row=1, column=0, sticky = "")
 
         # frame for features at the bottom of the table.
         self.frame2 = tk.Frame(self.frame)
-        self.frame2.grid(row=2, column=0, sticky="nsew")
+        self.frame2.grid(row=2, column=0, sticky="")
 
         # create top row of the data table (name of vars)
         for i in range(self.numcols): 
             self.titleLabel = tk.Label(self.frame1,
                                        text=str(self.fields[i]))
             self.titleLabel.grid(row=0, column=i)
+        if(rowInit):
+            self.NewEntry() # add one empty row for the start
 
         # Button to add new rows
         self.addButton = tk.Button(self.frame2,
@@ -139,9 +166,6 @@ class EntryTable(ParamWidget):
                 width=20
             )
             self.saveEntry.grid(row=0, column=0, sticky="W")
-
-        # REGISTER COMMAND BUS EVENTS THIS IS RESPONSIBLE FOR #
-        #######################################################
 
         self.isInit = True
     
@@ -174,18 +198,16 @@ class EntryTable(ParamWidget):
         #print(entryValue)
         # Don't update anything if the entryValue is illegal.
         #   If it's blank or cannot be converted into a float.
-        #if check_float:
-        #    try:
-        #        float(entryValue)
-        #        widget.untrigger_warning()  # remove the widget's warned state if it is warned.
-        #    except:
-        #        # if the value is illegal, then trigger the widget's warning state.
-        #        widget.trigger_warning()
-        #        return False
+        if check_float:
+            try:
+                float(entryValue)
+                widget.untrigger_warning()  # remove the widget's warned state if it is warned.
+            except:
+                # if the value is illegal, then trigger the widget's warning state.
+                widget.trigger_warning()
+                return False
         instance = self._instances[rowInd] # the dataclass instance of the correspondng row
-        field = self.fields[colInd]
-        setattr(instance, field, entryValue)
-        #instance.iterables[colInd].paramWidget.var.set(entryValue) # modify the dataclass's corresponding value according the the colInd.
+        instance.iterables[colInd].paramWidget.var.set(entryValue) # modify the dataclass's corresponding value according the the colInd.
         #self.GetEntries()[rowInd][self.fields[colInd]] = entryValue
 
         return True
@@ -216,7 +238,7 @@ class EntryTable(ParamWidget):
         return row
 
     
-    def NewEntry(self, *args):
+    def NewEntry(self, *args, defaults=True):
         '''
         Creates a new row for the entry table
         
@@ -226,66 +248,53 @@ class EntryTable(ParamWidget):
 
         if called at the time of more than one row in the table, then just copies the row at the last index
         '''
-        if not args:
-            # *args = data for row to be created
-            # if there is no provided data, then the value of the row to be created has to be determined by another
-            # logic.
-            #   - It is either a copy of the last indexed dataclass, or protocol to create new file?
-            if len(self._instances) != 0:
-                row = self._instances[-1]
-            else:
-                # TODO: make protocol to call for the need to make a new file.
-                row = self.data()
+        """
+        #print(self.instances)
+        if (defaults == True):
+            row = self.data(self.frame1)
+            #print(row)
+            self._instances.append(row)
+            #print(self.instances)
+        """
+        if len(self._instances) >= 1 and defaults == True:
+            # when defaults are not provided, and there is more than 1 row.
+            #print("HEY!!!!!!!!")
+            #row = self._instances[-1]
+            #print(self._instances[-1])
+            #row = self.data(self._instances[-1])
+            row = self.data(self.frame1)
+            self._instances.append(row)
+        
+        elif len(self._instances) == 0 and defaults == True:
+            row = self.data(self.frame1)
+            #print(row)
+            self._instances.append(row)
+
         else:
             # when defaults is not provided, this function is being fed
             # pre-populated values.
             row = args[0]
-        self._instances.append(row)
+            self._instances.append(row)
         #print("row is: ", row)
-        r = self.frame1.grid_size()[1] # relative row count for placement with grid
+        r = self.frame1.grid_size()[1]
+        dict = {} # data extracted from each row
         rowwidgets = []
         col = 0
-        for i in fields(row):
+        for i in row:
+            #print(i)
+            #print("the field is: ", i.paramDefault)
             # create the respective entry box
-            meta = i.metadata
-            kwargs = {}
-            if meta:
-                if meta.__contains__("kwargs"):
-                    kwargs = meta["kwargs"]
-                if meta.__contains__("hidden"):
-                    if meta["hidden"]:
-                        continue
-            widget = getattr(self.Ui_Dataclass, i.name)(self.frame1, **kwargs)
-            # if there are specific arguments set up in the field's metadata, apply it
-            #if "kwargs" in list(meta.keys()):
-            #    widget.configure(**i.metadata['kwargs'])
-            if type(widget) == VariableEntry:
-                # set the entry's variable's value
-                widget:VariableEntry
-                widget.var.set(getattr(row, i.name))
-
-                # configure to 'default' style
-                style = entry_styles['default']
-                widget.configure(**style)
-            elif type(widget) == tk.Button:
-                widget:tk.Button
-                # if the metadata has an event field, then
-                # assume the value is the command bus event to call.
-                if meta.__contains__('event'):
-                    callback = partial(self.bus.dispatch, meta['event'], widget)
-                    widget.config(command=callback)
-            #dict[self.fields[col]] = self.widget.get()
+            self.widget = i.paramWidget
+            dict[self.fields[col]] = self.widget.get()
             
-            widget.grid(row = r, column = col, sticky="nsew")
-            rowwidgets.append(widget)
-            # Tell frame1 this column should expand
-            self.frame1.grid_columnconfigure(col, weight=1)
+            self.widget.grid(row = r, column = col)
+            rowwidgets.append(self.widget)
 
-            match widget:
-                case VariableEntry():
-                    widget.bind("<KeyRelease>", self.EntryValidateCallback)
+            match self.widget:
+                case OnlyNumEntry():
+                    self.widget.bind("<KeyRelease>", self.EntryValidateCallback)
                 case ttk.Combobox():
-                    widget.bind("<<ComboboxSelected>>", self.EntryValidateCallback)
+                    self.widget.bind("<<ComboboxSelected>>", self.EntryValidateCallback)
 
             col += 1
 
@@ -294,15 +303,12 @@ class EntryTable(ParamWidget):
         rowwidgets.append(self.delButton)
         self.delButton.grid(row=r, column = col)
         self.delButton.config(command=partial(self.DelEntry, self.delButton))
-        self.frame1.grid_columnconfigure(col, weight=1)
 
         # update metadata containers
+        #self.entries.append(dict)
         self.widgets.append(rowwidgets)
-
-        #self.master.grid_columnconfigure(0, weight=1)
-        #self.master.grid_rowconfigure(0, weight=1)
-        self.frame1.update_idletasks()
-        self.master.update_idletasks()
+        #print(self.widgets)
+        #self.instances.append(row)
         return True
 
 
@@ -340,7 +346,7 @@ class EntryTable(ParamWidget):
             """
             for row in list:
                 #print(row)
-                self.NewEntry(row)
+                self.NewEntry(row, defaults=False)
                 #print(self.instances)
         else:
             print(f"SetRows called with NONE for parameter 'list'")
@@ -395,14 +401,15 @@ class EntryTable(ParamWidget):
                 except:
                     print(f"Something went wrong when saving container. Got: {container}" )
             case False:
-                #vals = [self.fields.copy()] #i want to really make sure we're working with a copy of the list
-                #container = self._Constructed_nested_list(dic=self.entries, vals=vals)
-                #container = self._Constructed_nested_list(dic=self.GetEntries(), vals=vals)
-                container = self.GetEntries(csv=True)
+                try:
+                    vals = [self.fields.copy()] #i want to really make sure we're working with a copy of the list
+                    #container = self._Constructed_nested_list(dic=self.entries, vals=vals)
+                    container = self._Constructed_nested_list(dic=self.GetEntries(), vals=vals)
+                except:
+                    print(f"Something went wrong when saving self.entries. Got: {self.entries}" )
 
         #print(PATH)
-        print(container)
-        Dict_to_CSV(PATH, container, newline="")
+        List_to_CSV(PATH, container, newline="")
 
 
     def _Constructed_nested_list(self, dic, vals):
@@ -552,16 +559,14 @@ class RotationConfigEntryTable(EntryTable):
     columnTitles = ['Rotation Angle', 'Rotation Axis']
     isActive = False
     def __init__(self, master, angle_data, ax_data, defaults=True, *args, callable:callable=None, parent, **kwargs):
-        super().__init__(master=master, *args, **kwargs)
-        self.data = RotationData
-        self.Ui_Dataclass = SolverWidgets(self.frame, self.data)
+        self.data = RotationConfig
         
         self.func = callable
         self.master = master
         self.data_to_fill = np.array([angle_data, ax_data]).T
         self.defaults = defaults
         self.parent = parent
-
+        super().__init__(master=master, doDirWidget=False, *args, **kwargs)
 
         self.onRotationEntryOpen(defaults=self.defaults, lst=self.data_to_fill)
     
@@ -578,13 +583,13 @@ class RotationConfigEntryTable(EntryTable):
         #print(lst)
         match defaults:
             case True:
-                self.NewEntry()
+                self.NewEntry(defaults=True)
             
             case False:
                 try:
                     self.SetRows(lst)
                 except:
-                    self.NewEntry()
+                    raise KeyError("'defaults' ran with False, yet no list")
         self.isActive = True
         #print(self.isActive)
     
@@ -597,11 +602,8 @@ class RotationConfigEntryTable(EntryTable):
         when the entry table window is supposed to close,
         it must get its data and return it for the parent window.
         """
-        axes = ['x', 'y', 'z']
         out = self.GetEntries()
         #print(out)
-        for i in range(len(out)):
-            out[i]["RotationAxis"] = axes[(out[i]["RotationAxis"])]
         return out
     
     def SetRows(self, list):
@@ -610,12 +612,13 @@ class RotationConfigEntryTable(EntryTable):
         """
         lst = []
         for data in self.data_to_fill:
-            config = self.data(data[0], self.axisIndices[data[1]])
+            config = RotationConfig(self.frame1,
+                                    data[0],
+                                    self.axisIndices[data[1]])
             lst.append(config)
         #print(self.instances)
         super().SetRows(lst)
 
-    '''
     def EntryValidateCallback(self, entry):
         #print(self.isActive)
         if not isinstance(entry.widget, tkinter.ttk.Combobox):
@@ -625,13 +628,13 @@ class RotationConfigEntryTable(EntryTable):
                 self.parent.EntryValidateCallback(entry, check_float=True)
         if (self.func != None):
             self.func(table=self)
-    
+
     def DelEntry(self, button):
         super().DelEntry(button)
         self.EntryValidateCallback
         if (self.func != None):
             self.func(table=self)
-    '''
+    
 
 # CURRENT ENTRY TABLE
 #################################################################################################################
@@ -700,10 +703,7 @@ class CurrentEntryTable(EntryTable):
         # configure buttons w/ appropriate callbacks
         self.saveButton.config(command = partial(self.SaveData, self.dirWidget.dir))
         self.addButton.config(command=self._new_Button_Callback)
-
-        # REGISTER COMMAND BUS EVENTS
-        self.bus.register("OPEN_ROTATIONS", self.NewWindow)
-
+        
         # draw canvas for the first time
         #self.update()
 
@@ -765,15 +765,13 @@ class CurrentEntryTable(EntryTable):
             #print(row)
             #print(float(eval(row[self.data.power_name])))
             pos = [float(row["PosX"]), float(row["PosY"]), float(row["PosZ"])]
-            c = Circle(current=float(row["Amp"]),
+            c = Circle(current=float(eval(row[self.data.power_name])),
                                    position=pos,
                                    diameter = float(row["Diameter"])
                                    )
-            for j in range(len(row['Rotations']['RotationAngle'])):
+            for j in range(len(row['Rotations']['Angles'])):
                 dict = row['Rotations']
-                #print(dict['RotationAngle'][j])
-                #print(dict['RotationAxis'][j])
-                c.rotate_from_angax(float(dict['RotationAngle'][j]), dict['RotationAxis'][j])
+                c.rotate_from_angax(float(dict['Angles'][j]), dict['Axes'][j])
             self.collection.add(c)
         
         self.plot.cla()
@@ -805,10 +803,10 @@ class CurrentEntryTable(EntryTable):
         #print("new entry run")
         #print(self.instances)
         # run the NewEntry function and append the returned row to the instances list.
-        super().NewEntry(*args)
-        #widget = self._instances[-1].Rotations.paramWidget
+        super().NewEntry(*args, defaults=defaults)
+        widget = self._instances[-1].Rotations.paramWidget
 
-        #self._instances[-1].Rotations.paramWidget.config(command=partial(self.NewWindow, widget))
+        self._instances[-1].Rotations.paramWidget.config(command=partial(self.NewWindow, widget))
         #if(self.isInit):
         #    self.rotations.append([{"RotationAngle": 0, "RotationAxis": 'x'}]) # this line does not scale with changing default values of the class.
 
@@ -834,7 +832,7 @@ class CurrentEntryTable(EntryTable):
         self.SetRows(coils)
 
         # used for graphing alongside an axis.
-        coord = abs(np.array([coils[0].PosX,coils[0].PosY,coils[0].PosZ], dtype=float))
+        coord = abs(np.array([coils[0].PosX.get(),coils[0].PosY.get(),coils[0].PosZ.get()], dtype=float))
         self.axis = GetAxis(coord)
         self.setLim(coord[self.axis])
 
@@ -853,8 +851,7 @@ class CurrentEntryTable(EntryTable):
         """
         #print(self.dirWidget.dir.path.data)
 
-        data = super().Read_Data(dir=dir, dct=True)
-        #print(data)
+        data = super().Read_Data(dir=dir, eval_ind=self.data.eval_inds, dct=True)
 
         # REMINDER: these dataclass specific info. should be contained within the class instances instead.
         coils = []
@@ -862,8 +859,7 @@ class CurrentEntryTable(EntryTable):
         for row in data:
             # unpack each row as a coil arg.
             # each dataclass is constructed like: master, *args
-            coil = self.data.from_kwargs(**row)
-            #print(coil)
+            coil = self.data(self.frame1, **row)
             coils.append(coil)
 
         self.Finalize_Reading(coils)
@@ -956,6 +952,25 @@ class CurrentEntryTable(EntryTable):
 
         #print(self.GetEntries())
         return True
+
+    """
+    def Create_Mirror(self, fileName:str, templateName:str):
+        '''
+        1. create a new file to work with
+        2. in the new file, set up (with default params) a mirror configuration
+            > 2 coils symmetric about the origin, displaced in the x-axis
+            > They also have the same charge
+        '''
+        # 1. Get the name of the file this function will create.
+        name = UniqueFileName(DIR=self.dirWidget.dir, fileName=fileName)
+        DIR_mirror = os.path.join(self.DIR_coilDefs, templateName)
+
+        #print("name is: ", name)
+        #print("I should be made in: ", os.path.join(self.dirWidget.dir, name))
+        
+        # 2. Create and populate the file.
+        self._NewFile(dir=self.dirWidget.dir, name=name, data=DIR_mirror)
+    """
     
     def Refresh(self):
         super().Refresh()
@@ -1003,11 +1018,8 @@ class CurrentEntryTable(EntryTable):
         '''
         #print(self.rotations)
         row = wid.grid_info()["row"] # so we know which particle this window is for
-        angles = self._instances[row-1].Rotations.RotationAngle
-        axes = self._instances[row-1].Rotations.RotationAxis
-
-        #print(angles)
-        #print(axes)
+        angles = self._instances[row-1].rotation_angles
+        axes = self._instances[row-1].rotation_axes
 
         # get info to best place this window on the screen.
         x_pos = wid.winfo_rootx()
@@ -1015,7 +1027,6 @@ class CurrentEntryTable(EntryTable):
 
         # Create the New Window
         newWin = tk.Toplevel(self.master)
-        newWin.withdraw()
         newWin.title(f"Configure Rotation(s) for Coil {row}")
 
         # Spawn the Entry Table element
@@ -1026,7 +1037,7 @@ class CurrentEntryTable(EntryTable):
         defaults = True if len(angles) == 0 else False
         #print(args[0])
 
-        table = RotationConfigEntryTable(defaults=defaults, angle_data = angles, ax_data = axes, master=frame, dataclass=RotationData, save=False, rowInit=False,
+        table = RotationConfigEntryTable(defaults=defaults, angle_data = angles, ax_data = axes, master=frame, dataclass=RotationConfig, save=False, rowInit=False,
                                          callable=partial(self._graph_callback, row, table=None), parent = self)
 
         # Get the size of the window with these elements added in.
@@ -1036,8 +1047,6 @@ class CurrentEntryTable(EntryTable):
 
         # Set the geometry
         newWin.geometry(f'+{x_pos-winX}+{y_pos-(winY//2)}')
-        newWin.deiconify()
-        newWin.lift()
 
         # Set up the data collection function onclose.
         newWin.protocol('WM_DELETE_WINDOW', partial(self._entry_window_close, table, newWin, row))
@@ -1070,16 +1079,15 @@ class CurrentEntryTable(EntryTable):
         #print(f"entry window close protocol run.")
         dict_lst = table.OnRotationEntryClose()
         #print(dict_lst)
-        #print([r["RotationAngle"] for r in dict_lst])
-        self._instances[row-1].Rotations.RotationAngle = [r["RotationAngle"] for r in dict_lst]
-        self._instances[row-1].Rotations.RotationAxis = [r["RotationAxis"] for r in dict_lst]
+        self._instances[row-1].rotation_angles = [r["RotationAngle"] for r in dict_lst]
+        self._instances[row-1].rotation_axes = [r["RotationAxis"] for r in dict_lst]
         #print(self.instances[row-1].rotation_angles)
 
         window.destroy()
     def _graph_callback(self, row, table:RotationConfigEntryTable):
         dict_lst = table.ReturnRotations()
-        self._instances[row-1].Rotations.RotationAngle = [r["RotationAngle"] for r in dict_lst]
-        self._instances[row-1].Rotations.RotationAxis= [r["RotationAxis"] for r in dict_lst]
+        self._instances[row-1].rotation_angles = [r["RotationAngle"] for r in dict_lst]
+        self._instances[row-1].rotation_axes = [r["RotationAxis"] for r in dict_lst]
         
         try:
             self.GraphCoils()

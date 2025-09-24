@@ -4,32 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="explicitly calls update_params() in Finalize_Reading(), inside CurrentEntryTable">
-      <change afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/input_file/new_file.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/input_file/presets.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/output_file/table.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/Zero.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/Tests/modifiers/dataclass_factory.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/system/bus.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Scripts/system/commands.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/BorisPusher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BorisPusher.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="adjustments to widget reading data">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/e_graphs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/e_graphs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/BorisGui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiEntryHelpers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiHelpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs/GuiHelpers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/Bob_e_Circle_Config.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/Bob_e_Circle_Config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/BorisGuiClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/BorisGuiClasses.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/CurrentGuiClasses.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/ScrollableFrame.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/ScrollableFrame.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/e_solvers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/e_solvers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/ys_3d_disk.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/ys_3d_disk.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/constructs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/constructs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/layout.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/layout.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/tab_content.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/tab_content.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/widget.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook/widget.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/settings/defaults/coils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/defaults/coils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/field_graph.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/field_graph.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,11 +36,6 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="layouts" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -71,7 +47,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Justyunsart/BorisPusher.git&quot;,
-    &quot;accountId&quot;: &quot;2d3bc7bb-7b7b-4dfc-b603-c66edb2453b8&quot;
+    &quot;accountId&quot;: &quot;f4d963f1-90ba-4775-84cf-325240e534ab&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -102,14 +78,12 @@
     &quot;Python.PlottingWindow.executor&quot;: &quot;Run&quot;,
     &quot;Python.TiltSpindle.executor&quot;: &quot;Run&quot;,
     &quot;Python.TiltSpindle_stream.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Zero.executor&quot;: &quot;Run&quot;,
     &quot;Python.analyticEfield3.executor&quot;: &quot;Run&quot;,
     &quot;Python.app_window_sizing.executor&quot;: &quot;Run&quot;,
     &quot;Python.bob_e.executor&quot;: &quot;Run&quot;,
     &quot;Python.bob_e_rounding_test.executor&quot;: &quot;Run&quot;,
     &quot;Python.collection_rotations.executor&quot;: &quot;Run&quot;,
     &quot;Python.configs.executor&quot;: &quot;Run&quot;,
-    &quot;Python.dataclass_factory.executor&quot;: &quot;Run&quot;,
     &quot;Python.dt_np.executor&quot;: &quot;Run&quot;,
     &quot;Python.e_graphing.executor&quot;: &quot;Run&quot;,
     &quot;Python.e_things.executor&quot;: &quot;Run&quot;,
@@ -132,7 +106,6 @@
     &quot;Python.menu_bar (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.menu_bar.executor&quot;: &quot;Run&quot;,
     &quot;Python.multiprocessing_gui_freezing.executor&quot;: &quot;Run&quot;,
-    &quot;Python.new_file.executor&quot;: &quot;Run&quot;,
     &quot;Python.output_file_structure.executor&quot;: &quot;Run&quot;,
     &quot;Python.polarSpace.executor&quot;: &quot;Run&quot;,
     &quot;Python.precision_error.executor&quot;: &quot;Run&quot;,
@@ -150,7 +123,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/yoonseongroh/PycharmProjects/BorisPusher/Scripts/Gui_tkinter/widgets&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/fwessel/PycharmProjects/pythonScripts&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -162,19 +135,18 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/input_file" />
       <recent name="C:\Users\yoonr\Documents\BorisPusher\Scripts\Gui_tkinter\widgets" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\system\imgs" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts" />
+      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields\Bob_e\debug" />
     </key>
   </component>
   <component name="RunManager" selected="Python.main">
-    <configuration name="Zero" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="_3d_mesh" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="BorisPusher" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -183,12 +155,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/grid" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e/Zero.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\grid\_3d_mesh.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -197,7 +169,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="dataclass_factory" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="app_window_sizing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="BorisPusher" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -206,12 +178,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests/modifiers" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/Tests/modifiers/dataclass_factory.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/Tests/app_window_sizing.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -256,7 +227,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -266,7 +236,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="new_file" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="read_last_used_binary" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="BorisPusher" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -275,12 +245,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/input_file" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/Tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/input_file/new_file.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/Tests/read_last_used_binary.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -302,7 +272,6 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/system/state_dict_main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -330,28 +299,27 @@
     </configuration>
     <list>
       <item itemvalue="Python.e_things" />
-      <item itemvalue="Python.new_file" />
-      <item itemvalue="Python.Zero" />
-      <item itemvalue="Python.dataclass_factory" />
       <item itemvalue="Python.main" />
       <item itemvalue="Python.state_dict_main" />
+      <item itemvalue="Python.app_window_sizing" />
+      <item itemvalue="Python._3d_mesh" />
+      <item itemvalue="Python.read_last_used_binary" />
       <item itemvalue="Python tests.Python tests in e_graphing.py" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.state_dict_main" />
         <item itemvalue="Python.main" />
-        <item itemvalue="Python.dataclass_factory" />
-        <item itemvalue="Python.Zero" />
-        <item itemvalue="Python.new_file" />
+        <item itemvalue="Python.state_dict_main" />
+        <item itemvalue="Python.read_last_used_binary" />
+        <item itemvalue="Python.app_window_sizing" />
+        <item itemvalue="Python._3d_mesh" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-PY-243.23654.177" />
-        <option value="bundled-python-sdk-91d3a02ef49d-43b77aa2d136-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.23654.177" />
+        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
       </set>
     </attachedChunks>
   </component>
@@ -400,17 +368,22 @@
       <workItem from="1753309654002" duration="1540000" />
       <workItem from="1753735741721" duration="2223000" />
       <workItem from="1753829511233" duration="3837000" />
-      <workItem from="1756943778913" duration="4162000" />
-      <workItem from="1757109791879" duration="2453000" />
-      <workItem from="1757518295632" duration="18108000" />
-      <workItem from="1757701831912" duration="10942000" />
-      <workItem from="1757975268805" duration="11564000" />
-      <workItem from="1758045837508" duration="535000" />
-      <workItem from="1758046389745" duration="6382000" />
-      <workItem from="1758066144332" duration="8000" />
-      <workItem from="1758121008811" duration="27852000" />
-      <workItem from="1758302600695" duration="7493000" />
-      <workItem from="1758668126514" duration="18507000" />
+    </task>
+    <task id="LOCAL-00020" summary="dt widget now shows more information about the timestep scaling parameters. &#10;&#10;You can now configure the reference particle location and the dynamic range used in the bob_dt calculation">
+      <option name="closed" value="true" />
+      <created>1749242182978</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1749242182978</updated>
+    </task>
+    <task id="LOCAL-00021" summary="updated the global adjustments widget in the coils tab">
+      <option name="closed" value="true" />
+      <created>1749504783636</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1749504783636</updated>
     </task>
     <task id="LOCAL-00022" summary="updated nothing about magpy4c1_01.py but now the e field doesnt shoot out so thats neat">
       <option name="closed" value="true" />
@@ -788,23 +761,7 @@
       <option name="project" value="LOCAL" />
       <updated>1755885264339</updated>
     </task>
-    <task id="LOCAL-00069" summary="hotfix">
-      <option name="closed" value="true" />
-      <created>1756945626648</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1756945626648</updated>
-    </task>
-    <task id="LOCAL-00070" summary="explicitly calls update_params() in Finalize_Reading(), inside CurrentEntryTable">
-      <option name="closed" value="true" />
-      <created>1757110527927</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1757110527927</updated>
-    </task>
-    <option name="localTasksCounter" value="71" />
+    <option name="localTasksCounter" value="69" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -822,6 +779,8 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <MESSAGE value="added abs_tol argument to isclose argument" />
+    <MESSAGE value="added abs_tol argument to isclose argument again to 1e-5" />
     <MESSAGE value="added abs_tol argument to isclose argument again to 1e-10" />
     <MESSAGE value="edited the implementation of bob_e used in the program with the math.isclose() logic experimented with in tests.&#10;&#10;The culprit of different values across systems was shown to be due to scipy's rotation functions returning floating point values ~1e-16 instead of 0 on some, while others do return 0. &#10;&#10;While the acutal values of floating point numbers ~1e-16 and 0 are both very small, this large absolute magnitude difference has huge repercussions when plugged into the solution.&#10;&#10;The currently implemented absolute tolerance value of 1e-10 means that any given value greater than 1e-10 will be used as is, while smaller values will always be clamped to 1e-10. This change will ideally cover the entire range of possible variation of values from scipy's rotate, or enough where there is negligible differences between operating systems." />
     <MESSAGE value="another change to the 0 comparison.&#10;Added several numpy array conversions to dtype np.float64 in the orienting point step to ensure that all numbers are using double precision" />
@@ -845,9 +804,7 @@
     <MESSAGE value="amended read_last_used for the CurrentEntryTable class to only run when initializing as the active tab. &#10;&#10;Fixed an issue where the Bob_e_Circle_Config class that holds the table widget was not getting the dir_name parameter supplied, causing it to always use the default value" />
     <MESSAGE value="- split up opengui() into a class w/ several functions split into different files for readability&#10;&#10;- changed information handling from reading tempfiles to dataclasses to allow IDE-side parameter exposure and dynamic parameter swapping.&#10;&#10;- Added scrollbar to the fields selection tab&#10;&#10;- Tentative implementation of diagnostic graph page. &#10;&#10;* right now, only bob_e graphs are implemented in this new system." />
     <MESSAGE value="adjustments to widget reading data" />
-    <MESSAGE value="hotfix" />
-    <MESSAGE value="explicitly calls update_params() in Finalize_Reading(), inside CurrentEntryTable" />
-    <option name="LAST_COMMIT_MESSAGE" value="explicitly calls update_params() in Finalize_Reading(), inside CurrentEntryTable" />
+    <option name="LAST_COMMIT_MESSAGE" value="adjustments to widget reading data" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -897,60 +854,57 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/BorisPusher$read_last_used_binary.coverage" NAME="read_last_used_binary Coverage Results" MODIFIED="1750885270926" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$3DRing.coverage" NAME="3DRing Coverage Results" MODIFIED="1751932238118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$grid_interpolation_comparison.coverage" NAME="grid_interpolation_comparison Coverage Results" MODIFIED="1752729299747" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
+    <SUITE FILE_PATH="coverage/BorisPusher$widget.coverage" NAME="widget Coverage Results" MODIFIED="1752008272508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook" />
+    <SUITE FILE_PATH="coverage/BorisPusher$find_user_docs.coverage" NAME="find_user_docs Coverage Results" MODIFIED="1749507660617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/output_write_read" />
+    <SUITE FILE_PATH="coverage/BorisPusher$get_documents_path_win.coverage" NAME="get_documents_path_win Coverage Results" MODIFIED="1749587148422" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/windows" />
+    <SUITE FILE_PATH="coverage/BorisPusher$multiprocessing_gui_freezing.coverage" NAME="multiprocessing_gui_freezing Coverage Results" MODIFIED="1747273380034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$integrals.coverage" NAME="integrals Coverage Results" MODIFIED="1750890576133" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr" />
+    <SUITE FILE_PATH="coverage/BorisPusher$streamlines3Dring.coverage" NAME="streamlines3Dring Coverage Results" MODIFIED="1751490292112" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$e_things.coverage" NAME="e_things Coverage Results" MODIFIED="1752002335847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$magpy4c1_01.coverage" NAME="magpy4c1_01 Coverage Results" MODIFIED="1749509898529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/calcs" />
+    <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1752004719466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
+    <SUITE FILE_PATH="coverage/BorisPusher$fwysr_2_graphs.coverage" NAME="fwysr_2_graphs Coverage Results" MODIFIED="1751493976052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2" />
+    <SUITE FILE_PATH="coverage/BorisPusher$dt_np.coverage" NAME="dt_np Coverage Results" MODIFIED="1748382025060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
+    <SUITE FILE_PATH="coverage/BorisPusher$efieldring_4.coverage" NAME="efieldring_4 Coverage Results" MODIFIED="1750722954315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$graph_2.coverage" NAME="graph_2 Coverage Results" MODIFIED="1751410682598" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2" />
     <SUITE FILE_PATH="coverage/BorisPusher$washer_potential_method_implementation.coverage" NAME="washer_potential_method_implementation Coverage Results" MODIFIED="1753831623961" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$rotation_viewer.coverage" NAME="rotation_viewer Coverage Results" MODIFIED="1751952643732" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />
-    <SUITE FILE_PATH="coverage/BorisPusher$washerPhiVectorized.coverage" NAME="washerPhiVectorized Coverage Results" MODIFIED="1753831871140" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$graph_cross.coverage" NAME="graph_cross Coverage Results" MODIFIED="1753166529941" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
-    <SUITE FILE_PATH="coverage/BorisPusher$washerPotential.coverage" NAME="washerPotential Coverage Results" MODIFIED="1753829636024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$TiltSpindle_stream.coverage" NAME="TiltSpindle_stream Coverage Results" MODIFIED="1752555469133" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="D:/CDriveDownloads" />
     <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods_Impl.coverage" NAME="FieldMethods_Impl Coverage Results" MODIFIED="1750118600099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
-    <SUITE FILE_PATH="coverage/BorisPusher$precision_error.coverage" NAME="precision_error Coverage Results" MODIFIED="1751930233649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
-    <SUITE FILE_PATH="coverage/BorisPusher$widget.coverage" NAME="widget Coverage Results" MODIFIED="1752008272508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook" />
-    <SUITE FILE_PATH="coverage/BorisPusher$integrals.coverage" NAME="integrals Coverage Results" MODIFIED="1750890576133" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr" />
-    <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
-    <SUITE FILE_PATH="coverage/BorisPusher$graph_2.coverage" NAME="graph_2 Coverage Results" MODIFIED="1751410682598" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2" />
-    <SUITE FILE_PATH="coverage/BorisPusher$GuiEntryHelpers.coverage" NAME="GuiEntryHelpers Coverage Results" MODIFIED="1752119203471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs" />
-    <SUITE FILE_PATH="coverage/BorisPusher$fwysr_2_graphs.coverage" NAME="fwysr_2_graphs Coverage Results" MODIFIED="1751493976052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2" />
-    <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version3.coverage" NAME="Efield3DRing_Version3 Coverage Results" MODIFIED="1750290780658" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EField FJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$dt_np.coverage" NAME="dt_np Coverage Results" MODIFIED="1748382025060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
-    <SUITE FILE_PATH="coverage/BorisPusher$bob_e.coverage" NAME="bob_e Coverage Results" MODIFIED="1753250526625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/RETerry" />
-    <SUITE FILE_PATH="coverage/BorisPusher$funcs.coverage" NAME="funcs Coverage Results" MODIFIED="1749681885095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files" />
-    <SUITE FILE_PATH="coverage/BorisPusher$Zero.coverage" NAME="Zero Coverage Results" MODIFIED="1757544030143" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
-    <SUITE FILE_PATH="coverage/BorisPusher$menu_bar.coverage" NAME="menu_bar Coverage Results" MODIFIED="1747259073002" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
-    <SUITE FILE_PATH="coverage/BorisPusher$fwysr_e_1.coverage" NAME="fwysr_e_1 Coverage Results" MODIFIED="1751932280187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$output_file_structure.coverage" NAME="output_file_structure Coverage Results" MODIFIED="1747949379891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/hdf5" />
-    <SUITE FILE_PATH="coverage/BorisPusher$Bob_e_Circle_Config.coverage" NAME="Bob_e_Circle_Config Coverage Results" MODIFIED="1749076833519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
-    <SUITE FILE_PATH="coverage/BorisPusher$grid_interpolation_comparison.coverage" NAME="grid_interpolation_comparison Coverage Results" MODIFIED="1752729299747" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
-    <SUITE FILE_PATH="coverage/BorisPusher$collection_rotations.coverage" NAME="collection_rotations Coverage Results" MODIFIED="1749607727545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />
-    <SUITE FILE_PATH="coverage/BorisPusher$streamlines3Dring.coverage" NAME="streamlines3Dring Coverage Results" MODIFIED="1751490292112" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$graphs.coverage" NAME="graphs Coverage Results" MODIFIED="1751324543195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_1" />
-    <SUITE FILE_PATH="coverage/BorisPusher$efieldring_4.coverage" NAME="efieldring_4 Coverage Results" MODIFIED="1750722954315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version2.coverage" NAME="Efield3DRing_Version2 Coverage Results" MODIFIED="1750722829601" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$new_file.coverage" NAME="new_file Coverage Results" MODIFIED="1758317971307" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/input_file" />
-    <SUITE FILE_PATH="coverage/BorisPusher$3DDisk.coverage" NAME="3DDisk Coverage Results" MODIFIED="1751932250386" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$CurrentGuiClasses.coverage" NAME="CurrentGuiClasses Coverage Results" MODIFIED="1752118166059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
-    <SUITE FILE_PATH="coverage/BorisPusher$.coverage" NAME=" Coverage Results" MODIFIED="1750900498689" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
-    <SUITE FILE_PATH="coverage/BorisPusher$e_things.coverage" NAME="e_things Coverage Results" MODIFIED="1752002335847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
-    <SUITE FILE_PATH="coverage/BorisPusher$dataclass_factory.coverage" NAME="dataclass_factory Coverage Results" MODIFIED="1757533611774" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/modifiers" />
-    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi_vectorized.coverage" NAME="washersPhi_vectorized Coverage Results" MODIFIED="1754342756901" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$fwysr_2.coverage" NAME="fwysr_2 Coverage Results" MODIFIED="1751932272564" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi.coverage" NAME="washersPhi Coverage Results" MODIFIED="1754340038835" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$file_write_speed.coverage" NAME="file_write_speed Coverage Results" MODIFIED="1749603520912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
-    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1758692884087" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
-    <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1752004719466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
-    <SUITE FILE_PATH="coverage/BorisPusher$multiprocessing_gui_freezing.coverage" NAME="multiprocessing_gui_freezing Coverage Results" MODIFIED="1747273380034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
-    <SUITE FILE_PATH="coverage/BorisPusher$3d_mesh.coverage" NAME="3d_mesh Coverage Results" MODIFIED="1752722841920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/grid" />
-    <SUITE FILE_PATH="coverage/BorisPusher$configs.coverage" NAME="configs Coverage Results" MODIFIED="1747264446248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings" />
-    <SUITE FILE_PATH="coverage/BorisPusher$find_user_docs.coverage" NAME="find_user_docs Coverage Results" MODIFIED="1749507660617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/output_write_read" />
-    <SUITE FILE_PATH="coverage/BorisPusher$polarSpace.coverage" NAME="polarSpace Coverage Results" MODIFIED="1749600138185" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Alg" />
-    <SUITE FILE_PATH="coverage/BorisPusher$get_documents_path_win.coverage" NAME="get_documents_path_win Coverage Results" MODIFIED="1749587148422" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/windows" />
-    <SUITE FILE_PATH="coverage/BorisPusher$3DRing.coverage" NAME="3DRing Coverage Results" MODIFIED="1751932238118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$magpy4c1_01.coverage" NAME="magpy4c1_01 Coverage Results" MODIFIED="1749509898529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/calcs" />
-    <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods.coverage" NAME="FieldMethods Coverage Results" MODIFIED="1749678464994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
+    <SUITE FILE_PATH="coverage/BorisPusher$read_last_used_binary.coverage" NAME="read_last_used_binary Coverage Results" MODIFIED="1750885270926" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$e_graphing.coverage" NAME="e_graphing Coverage Results" MODIFIED="1751495005656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
-    <SUITE FILE_PATH="coverage/BorisPusher$PlottingWindow.coverage" NAME="PlottingWindow Coverage Results" MODIFIED="1752733391801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
-    <SUITE FILE_PATH="coverage/BorisPusher$TiltSpindle.coverage" NAME="TiltSpindle Coverage Results" MODIFIED="1752551555286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="D:/CDriveDownloads" />
+    <SUITE FILE_PATH="coverage/BorisPusher$CurrentGuiClasses.coverage" NAME="CurrentGuiClasses Coverage Results" MODIFIED="1752118166059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
+    <SUITE FILE_PATH="coverage/BorisPusher$fwysr_2.coverage" NAME="fwysr_2 Coverage Results" MODIFIED="1751932272564" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washerPhiVectorized.coverage" NAME="washerPhiVectorized Coverage Results" MODIFIED="1753831871140" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$collection_rotations.coverage" NAME="collection_rotations Coverage Results" MODIFIED="1749607727545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />
+    <SUITE FILE_PATH="coverage/BorisPusher$polarSpace.coverage" NAME="polarSpace Coverage Results" MODIFIED="1749600138185" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Alg" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi.coverage" NAME="washersPhi Coverage Results" MODIFIED="1754340038835" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$3DDisk.coverage" NAME="3DDisk Coverage Results" MODIFIED="1751932250386" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$precision_error.coverage" NAME="precision_error Coverage Results" MODIFIED="1751930233649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
     <SUITE FILE_PATH="coverage/BorisPusher$bob_e_rounding_test.coverage" NAME="bob_e_rounding_test Coverage Results" MODIFIED="1750711108470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
+    <SUITE FILE_PATH="coverage/BorisPusher$funcs.coverage" NAME="funcs Coverage Results" MODIFIED="1749681885095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files" />
+    <SUITE FILE_PATH="coverage/BorisPusher$graph_cross.coverage" NAME="graph_cross Coverage Results" MODIFIED="1753166529941" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
+    <SUITE FILE_PATH="coverage/BorisPusher$graphs.coverage" NAME="graphs Coverage Results" MODIFIED="1751324543195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_1" />
+    <SUITE FILE_PATH="coverage/BorisPusher$TiltSpindle.coverage" NAME="TiltSpindle Coverage Results" MODIFIED="1752551555286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="D:/CDriveDownloads" />
+    <SUITE FILE_PATH="coverage/BorisPusher$.coverage" NAME=" Coverage Results" MODIFIED="1750900498689" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
+    <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version2.coverage" NAME="Efield3DRing_Version2 Coverage Results" MODIFIED="1750722829601" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi_vectorized.coverage" NAME="washersPhi_vectorized Coverage Results" MODIFIED="1754342756901" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$GuiEntryHelpers.coverage" NAME="GuiEntryHelpers Coverage Results" MODIFIED="1752119203471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs" />
+    <SUITE FILE_PATH="coverage/BorisPusher$menu_bar.coverage" NAME="menu_bar Coverage Results" MODIFIED="1747259073002" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
+    <SUITE FILE_PATH="coverage/BorisPusher$configs.coverage" NAME="configs Coverage Results" MODIFIED="1747264446248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings" />
+    <SUITE FILE_PATH="coverage/BorisPusher$fwysr_e_1.coverage" NAME="fwysr_e_1 Coverage Results" MODIFIED="1751932280187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washerPotential.coverage" NAME="washerPotential Coverage Results" MODIFIED="1753829636024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
+    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1754349102627" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$bob_e.coverage" NAME="bob_e Coverage Results" MODIFIED="1753250526625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/RETerry" />
+    <SUITE FILE_PATH="coverage/BorisPusher$PlottingWindow.coverage" NAME="PlottingWindow Coverage Results" MODIFIED="1752733391801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
+    <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version3.coverage" NAME="Efield3DRing_Version3 Coverage Results" MODIFIED="1750290780658" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EField FJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$Bob_e_Circle_Config.coverage" NAME="Bob_e_Circle_Config Coverage Results" MODIFIED="1749076833519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
+    <SUITE FILE_PATH="coverage/BorisPusher$output_file_structure.coverage" NAME="output_file_structure Coverage Results" MODIFIED="1747949379891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/hdf5" />
+    <SUITE FILE_PATH="coverage/BorisPusher$TiltSpindle_stream.coverage" NAME="TiltSpindle_stream Coverage Results" MODIFIED="1752555469133" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="D:/CDriveDownloads" />
+    <SUITE FILE_PATH="coverage/BorisPusher$file_write_speed.coverage" NAME="file_write_speed Coverage Results" MODIFIED="1749603520912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods.coverage" NAME="FieldMethods Coverage Results" MODIFIED="1749678464994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
+    <SUITE FILE_PATH="coverage/BorisPusher$3d_mesh.coverage" NAME="3d_mesh Coverage Results" MODIFIED="1752722841920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/grid" />
   </component>
 </project>

@@ -40,7 +40,7 @@ class Grapher(ABC):
     The matplotlib figure and plot involved in the graphing functions are expected
     to be provided upon instantiation!
     """
-    def __init__(self, solver:Solver, collection, field='E', **kwargs):
+    def __init__(self, solver:Solver, collection, **kwargs):
         """
         solver: an instance of the Solver ABC defined in EFieldFJW.e_solvers.
             - holds the actual implementation to get field vals from.
@@ -56,8 +56,6 @@ class Grapher(ABC):
         # since these will always graph the XZ axis, the X and Y labels for the 2D plot are known quantities.
         self.xlabel = "X-axis"
         self.ylabel = "Z-axis"
-
-        self.field = field
 
     @abstractmethod
     def gather_params(self)->dict:
@@ -98,7 +96,7 @@ class Grapher(ABC):
         fig.tight_layout()
         plot.set_aspect('equal')
 
-    def graph_streamline(self, instance, method, cmap='viridis'):
+    def graph_streamline(self, instance, method, field="E", cmap='viridis'):
         """
         Using solver-produced data, create a streamline plot with a cmap and cbar.
 
@@ -122,11 +120,11 @@ class Grapher(ABC):
         divider = make_axes_locatable(plot)
         cax = divider.append_axes("right", size='5%', pad=0.05)
 
-        instance.cb = fig.colorbar(stream.lines, cax=cax, label=f"{self.field} mag. log norm")
+        instance.cb = fig.colorbar(stream.lines, cax=cax, label=f"{field} mag. log norm")
 
         # FORMATTING #
         ##############
-        title = f"{self.field} Streamline From Solver {method}"
+        title = f"{field} Streamline From Solver {method}"
         plot.set_title(title)
         plot.set_xlabel(self.xlabel)
         plot.set_ylabel(self.ylabel)
@@ -271,7 +269,6 @@ class Washer_Potential_e_Grapher(Grapher):
         return np.stack([Ex, Ey, Ez], axis=-1) #y-axis=0, since we cannot calculate potential for it (as cross-section)
 
 class MagpyGrapher(Grapher):
-    field = 'B'
     def gather_params(self) ->dict:
         self.coords = SolverUtils.generate_xz_coords(resolution=self.linspace_res, lim=self.lim) #shape: (n,n,3)
         _x, _y, _z = np.moveaxis(self.coords, -1, 0)

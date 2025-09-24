@@ -621,7 +621,7 @@ def grid_checker(fromTemp, filepath):
     except KeyError:
         pass
     #print(e_dict['method'])
-    #print(f"finished making interpolators")
+    print(f"finished making interpolators")
     return b_interpolator, e_interpolator
 
 def _runsim(manager_queue, params:AppConfig):

@@ -60,7 +60,7 @@ def build_field_tab(parent, params:AppConfig):
                                     [ZeroTableTab, RingTableTab],
                                     collection_key="b.collection",
                                     tab_key="b.method",
-                                    dataclasses=[None, Solver_Ring_Data],
+                                    dataclasses=[None, CircleCurrentConfig],
                                     param_classes=[None, FieldConfig],
                                     dir_names=[None, "CoilConfigurations"],
                                     path_key="path.b",
@@ -74,8 +74,8 @@ def build_field_tab(parent, params:AppConfig):
                                       [ZeroTableTab, RingTableTab, DiskTab, DiskTab],
                                       collection_key='e.collection',
                                       tab_key='e.method',
-                                      dataclasses=[None, Solver_Ring_Data,
-                                                   Solver_Washer_Data, Solver_Washer_Data],
+                                      dataclasses=[None, Bob_e_Config_Dataclass,
+                                                   Disk_e_Config_Dataclass, Disk_e_Config_Dataclass],
                                       param_classes=[None, ResFieldConfig,
                                                      WasherFieldConfig, WasherFieldConfig],
                                       dir_names=[None, 'bob_e', 'bob_e', 'Disks', "Disks"],
@@ -83,14 +83,14 @@ def build_field_tab(parent, params:AppConfig):
                                       name_key="e.name",
                                       field="e",
                                       params=params)
-    e_field_notebook.pack(fill='both', expand=True)
+    e_field_notebook.pack(fill='x', expand=True)
 
     # order of field notebooks
     b_field_labelFrame.pack(fill='x', expand=True)
     e_field_labelFrame.pack(fill='x', expand=True)
 
 
-    return field_notebook, e_field_notebook
+    return b_field_labelFrame, e_field_labelFrame #only return parent frame b/c it already stores its children
 
 from Gui_tkinter.widgets.dt_np import TimeStep_n_NumStep
 from Gui_tkinter.funcs.GuiHelpers import *
@@ -218,6 +218,7 @@ def build_field_vis_tab(parent, params:AppConfig):
     }
 
     # Solver and Grapher pairings for each field solver method.
+    # TODO: ADD THE REST OF THE E OPTIONS
     graph_registry = {
         "bob_e": GraphFactory(Bob_e_Solver, Bob_e_Grapher, field='e', params=params),
         "washer_potential" : GraphFactory(Washer_Potential_e_Solver, Washer_Potential_e_Grapher, field='e', params=params),
