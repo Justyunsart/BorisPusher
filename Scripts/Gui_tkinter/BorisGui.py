@@ -4,7 +4,7 @@ import settings.palettes as p
 from functools import partial
 import os
 from events.events import Events # omg why did I name things like this
-from Gui_tkinter.funcs.GuiEntryHelpers import Bob_e_Config_Dataclass, CircleCurrentConfig
+#from Gui_tkinter.funcs.GuiEntryHelpers import Bob_e_Config_Dataclass, CircleCurrentConfig
 from Gui_tkinter.widgets.dt_np import TimeStep_n_NumStep
 from Gui_tkinter.funcs.GuiHelpers import *
 from Gui_tkinter.widgets.BorisGuiClasses import *
@@ -31,6 +31,7 @@ from Gui_tkinter.widgets.constructs import *
 from system.state_dict_main import AppConfig, AppConfigMeta
 
 import pickle
+from system.bus import CommandBus
 
 """
 This script is directly called when running main.py - the function OpenGUI() defined below assembles the tkinter GUI and 
@@ -42,18 +43,21 @@ class App(tk.Tk):
     Where the entirety of the GUI app is defined.
     """
     palette = p.Drapion # the color palette
-    paths = {} # directories that correspond to the expected usage {key (usage) : value (Path data object)}
+    paths = {} # directories that correspond to the expected usage {key (usage) : value (Path data object)
+
 
     def __init__(self, manager):
         # before doing anything, ensure that you are the only instance.
         if "_initialized" in self.__dict__:
             return
         super().__init__()
+        self.bus = CommandBus()
         self._initialized = True
         self.params = None
         self.params_meta = None
         self.scrollable_frames = None
         self.plotting_file_dir_var = None
+        self.input_file_widgets = [] # This list will be iterated thru + abstracted save func. run when event called.
         # set root unloaded state
         self.title("Configure Sim")
         self.geometry('1300x768')
@@ -119,7 +123,6 @@ class App(tk.Tk):
         os.makedirs(os.path.dirname(_pickle_path), exist_ok=True)
         with open(_pickle_path, 'wb') as f:
             pickle.dump(self.params, f)
-
 
     def initial_checks(self)->None:
         # run os/ background checks
@@ -193,19 +196,25 @@ class App(tk.Tk):
         calc_notebook.add(tab_vis, text="Diag Plots")
         calc_notebook.pack(expand=True, fill='both', side=LEFT)
 
-        # Also, keep track of which frames are scrollable (to properly register scroll area later)
+        # UPDATE WIDGET TRACKERS
+        #   - essentially lists that hold widget references (like tags)
+        #   - Also, keep track of which frames are scrollable (to properly register scroll area later)
         self.scrollable_frames = [field_frame_s]
+        self.input_file_widgets = [b_field_frame, e_field_frame, particle_preview]
 
     def event_registration(self, manager)->None:
         """
         Widgets that need configured events get them assigned here
         """
         self.calculate_button.configure(command=partial(open_output_config, self,
-                                              manager, self.params, self.plotting_file_dir_var))  # update calculate button's command after setting up params
+                                              manager, self.params, self.plotting_file_dir_var, self.bus))  # update calculate button's command after setting up params
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.plotly_button.configure(command=partial(graph_trajectory_plotly_abstraction_layer,
                                                      self.plotting_file_dir_var))
+
+        # COMMAND BUS EVENT REG
+        self.bus.register("SAVE_ALL_ENTRY_TABLES", self.save_all_entry_table_widgets)
 
     def scroll_registration(self)->None:
         """
@@ -222,6 +231,30 @@ class App(tk.Tk):
         """
         self.dump_params()
         self.destroy()
+
+    # CALLS FOR THE EVENT BUS
+    # Functions to run for specific event/ command bus events.
+    # Usually for big, sweeping events (often with abstracted func. calls to several widgets)
+    def save_all_entry_table_widgets(self):
+        """CALL SAVE ON EVERY ENTRY TABLE WIDGET"""
+        # runs the save function on all input files (make sure value inside the widget boxes are kept
+        # even when the save button isn't manually pressed.
+        # This will trigger before calculations start.
+        for widget in self.input_file_widgets:
+            _ = widget
+            if type(widget) is Field_Notebook:
+                widget: Field_Notebook
+                try:
+                    _ = widget.get_current_tab_widget().table.entry_table
+                except AttributeError:
+                    # Don't save anything/do anything if the currently indexed widget does not contain an entry table
+                    print(f"{widget} does not have a .table attribute")
+                    continue
+
+            # Now, we know that the widgets are a subclass of an entry table.
+            _.SaveData() # call func. so that each widget saves.
+
+
 
 
 """

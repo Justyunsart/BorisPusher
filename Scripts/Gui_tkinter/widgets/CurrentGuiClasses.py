@@ -875,7 +875,7 @@ class CurrentEntryTable(EntryTable):
         out["Coil File"] = self.saveEntryVal.get()
         return out
     
-    def SaveData(self, dir:str, container=None, customContainer=False, isFirst=False):
+    def SaveData(self, dir:str=None, container=None, customContainer=False, isFirst=False):
         # make a copy of self.entries just for this
         #container = self.entries.copy()
         if(container == None):

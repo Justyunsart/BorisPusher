@@ -90,7 +90,7 @@ def build_field_tab(parent, params:AppConfig):
     e_field_labelFrame.pack(fill='x', expand=True)
 
 
-    return b_field_labelFrame, e_field_labelFrame #only return parent frame b/c it already stores its children
+    return field_notebook, e_field_notebook #only return parent frame b/c it already stores its children
 
 from Gui_tkinter.widgets.dt_np import TimeStep_n_NumStep
 from Gui_tkinter.funcs.GuiHelpers import *

@@ -129,15 +129,15 @@ def FieldCallback(event, value:ttk.Combobox, xcontainer:Entry, ycontainer:Entry,
 # after the popup closes, invoke the calculate callback function.
 from Gui_tkinter.widgets.output_file.output_config import output_popup
 from functools import partial
-def open_output_config(root, manager, params, *args):
+def open_output_config(root, manager, params, bus, *args):
     #get_output_name()
-    popup = output_popup(master=root, close_callable=partial(CalculateCallback,root, manager, params, *args), params=params)
+    popup = output_popup(master=root, close_callable=partial(CalculateCallback,root, manager, params, bus, *args), params=params)
     return popup
 
 
 # Run the simulation if you press calculate
 
-def CalculateCallback(root, manager, params, file_dir_var):
+def CalculateCallback(root, manager, params, file_dir_var, bus):
     '''
     When the calculate button is pressed, the GUI passes key information to
     the backend and starts the simulation.
@@ -186,6 +186,7 @@ def CalculateCallback(root, manager, params, file_dir_var):
     #updateTempFile({"Particle_Df": data["<class 'Gui_tkinter.funcs.GuiEntryHelpers.file_particle'>"]})
 
     Events.PRE_CALC.value.invoke(params=params)
+    bus.dispatch("SAVE_ALL_ENTRY_TABLES")
 
     #####################################################################################
     # STUFF FOR THE PROGRESS WINDOW (WHICH NEEDS RUNTIME DATA)

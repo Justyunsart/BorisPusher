@@ -83,6 +83,11 @@ class Field_Notebook(ttk.Notebook, ParamWidget):
         self.select_last_used_tab()
         self.bind('<<NotebookTabChanged>>', self.on_tab_change)
 
+    def get_current_tab_widget(self):
+        # Returns the currently active tab's displayed widget
+        id = self.select()
+        return self.nametowidget(id)
+
     def update(self, keys, value):
         """
         Function call triggered from relevant 'write' events called from tab_content widgets.
