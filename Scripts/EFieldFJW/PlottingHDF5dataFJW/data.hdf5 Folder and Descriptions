@@ -1,0 +1,20 @@
+data.hdf5 RINGS
+    ns-30000_dt-2e-09
+    B-field 100 kA, +-1.1 m offset, 1.7 m dia
+    E-field 1e-11, 1.1, 0.75 rings
+    positions 0, 0, 0
+    velocities 30 km/s, 10 km/s, 0 km/s
+
+data_new.hdf5 WASHERS
+    ns-85000_dt-2e-09_7 Sep 23, 2025 at 2:56 PM
+    B-field 100 kA, +-1.1 m offset, 1.7 m dia
+    E-field 5e-11 C, 0.75 m OD, 0.25 ID
+    positions 0, 0, 0
+    velocities 20 km/s, 10 km/s, 10 km/s
+
+data_new2.hdf5 WASHERS
+    ns-85000_dt-2e-09_7 Sep 16, 2025 at 3:58 PM
+    B-field 100 kA, +-1.1 m offset, 1.7 m dia
+    E-field 5e-9 C, 0.75 m OD, 0.25 ID
+    positions 0, 0, 0
+    velocities 20 km/s, 10 km/s, 10 km/s
