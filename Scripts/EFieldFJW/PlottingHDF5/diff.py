@@ -13,8 +13,8 @@ c = 1.1  # cube half width
 a = 0.25/2  # radius inner  of washer
 b = 0.75/2  # radius outer of washer
 Q1 = 0e-0 # coulombs
-Q2 = 0e-0 # coulombs
-# Q2 = 1e-9 # coulombs
+# Q2 = 0e-0 # coulombs
+Q2 = 1e-9 # coulombs
 
 def load_positions(filepath):
     """Load src/position dataset into a DataFrame with x,y,z columns."""
