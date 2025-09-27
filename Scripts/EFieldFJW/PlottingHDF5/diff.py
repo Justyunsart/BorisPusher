@@ -28,7 +28,7 @@ def load_positions(filepath):
 
 # --- Load both trajectories ---
 df1 = load_positions("data_zero.hdf5")
-df2 = load_positions("data_zero2.hdf5")
+df2 = load_positions("data_1e-9.hdf5")
 
 # --- Ensure equal length ---
 n = min(len(df1), len(df2))
@@ -91,6 +91,14 @@ fig.add_trace(go.Scatter3d(
     mode="lines",
     line=dict(color="blue", width=4),
     name="Trajectory Q1",
+    showlegend=True
+))
+# 1b. Trajectory df2 (green)
+fig.add_trace(go.Scatter3d(
+    x=df2["px"], y=df2["py"], z=df2["pz"],
+    mode="lines",
+    line=dict(color="green", width=3),
+    name="Trajectory Q2",
     showlegend=True
 ))
 # 1. Trajectory
