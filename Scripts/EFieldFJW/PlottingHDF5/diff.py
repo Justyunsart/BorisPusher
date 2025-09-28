@@ -1,8 +1,10 @@
 import h5py
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
+import tkinter as tk
+from tkinter import filedialog
+from diffVector import plot_difference_vectors_lines
 
 ''' This is a script to plot differences in BorisPlots.py particle trajectories, using the HDF5 data as inputs'''
 
@@ -19,25 +21,51 @@ Q2 = 1e-9 # coulombs
 def load_positions(filepath):
     """Load src/position dataset into a DataFrame with x,y,z columns."""
     with h5py.File(filepath, "r") as f:
-        dset = f["src/position"][:]
+        dset = f["src/position"][:20000]
     # Handle structured or plain array
     if dset.dtype.names is not None:
         return pd.DataFrame({name: dset[name] for name in dset.dtype.names})
     else:
         return pd.DataFrame(dset, columns=["px", "py", "pz"])
 
-# --- Load both trajectories ---
-df1 = load_positions("data_zero.hdf5")
-df2 = load_positions("data_1e-9.hdf5")
+# --- File selection with verification ---
+def select_files():
+    while True:
+        root = tk.Tk() # Open root window
+        root.withdraw()  # Hide the root window
 
-# --- Ensure equal length ---
+        print("Select the first HDF5 file:")
+        file_path1 = filedialog.askopenfilename(title="Select first HDF5 file")
+        print("Select the second HDF5 file:")
+        file_path2 = filedialog.askopenfilename(title="Select second HDF5 file")
+        print("\nYou selected:")
+        print(" File 1:", file_path1)
+        print(" File 2:", file_path2)
+        choice = input("\nConfirm files? [y]es / [r]eselect / [e]xit: ").strip().lower()
+
+        if choice == "y":
+            return file_path1, file_path2
+        elif choice == "r":
+            print("\nReselecting files...\n")
+            continue
+        elif choice == "e":
+            print("Exiting program.")
+            exit(0)
+        else:
+            print("Invalid choice, please try again.")
+
+# --- Load the trajectory data files---
+file_path1, file_path2 = select_files()
+df1 = load_positions(file_path1)
+df2 = load_positions(file_path2)
+
+# --- Ensure equal length of the files ---
 n = min(len(df1), len(df2))
 df1 = df1.iloc[:n].reset_index(drop=True)
 df2 = df2.iloc[:n].reset_index(drop=True)
 
 # --- Difference trajectory ---
 df_diff = df1 - df2
-
 
 # --- Circle generation ---
 def make_circle(R, n_points=200):
@@ -75,8 +103,7 @@ def transform_coords(X, Y, Z, orientation, offset):
 
 # --- Plot ---
 fig = go.Figure()
-
-# 0. Original trajectory (from df1)
+# Add a circle for the starting points
 fig.add_trace(go.Scatter3d(
     x=[df1.loc[0, "px"]],
     y=[df1.loc[0, "py"]],
@@ -86,6 +113,7 @@ fig.add_trace(go.Scatter3d(
     name="Start Point",
     showlegend=True
 ))
+# 1a. Plot the Trajectory for df1 (blue)
 fig.add_trace(go.Scatter3d(
     x=df1["px"], y=df1["py"], z=df1["pz"],
     mode="lines",
@@ -93,7 +121,7 @@ fig.add_trace(go.Scatter3d(
     name="Trajectory Q1",
     showlegend=True
 ))
-# 1b. Trajectory df2 (green)
+# 1b. Plot the Trajectory for df2 (green)
 fig.add_trace(go.Scatter3d(
     x=df2["px"], y=df2["py"], z=df2["pz"],
     mode="lines",
@@ -101,7 +129,7 @@ fig.add_trace(go.Scatter3d(
     name="Trajectory Q2",
     showlegend=True
 ))
-# 1. Trajectory
+# 1c. Plot the diff Trajectory (red)
 fig.add_trace(go.Scatter3d(
     x=df_diff["px"], y=df_diff["py"], z=df_diff["pz"],
     mode="lines",
@@ -110,7 +138,7 @@ fig.add_trace(go.Scatter3d(
     showlegend=True
 ))
 
-# 2. Wireframe Cube
+# 2. Add the Wireframe Cube
 cube_range = [-c, c]
 for x in cube_range:
     for y in cube_range:
@@ -128,14 +156,14 @@ for y in cube_range:
                                    mode="lines", showlegend = False,
                                    line=dict(color="black")))
 
-# 3. Washers on cube faces
+# 3. Add Washers on cube faces
 X0, Y0, Z0 = make_washer(a, b)
 for orient in ['x+','x-','y+','y-','z+','z-']:
     X, Y, Z = transform_coords(X0, Y0, Z0, orient, c)
     fig.add_surface(x=X, y=Y, z=Z, colorscale="Viridis", showscale=False, opacity=0.6, showlegend = False)
 
 
-# 5. Circles on cube faces
+# 4. Add Circles on cube faces
 X0, Y0, Z0 = make_circle(R)
 for orient in ['x+','x-','y+','y-','z+','z-']:
     X, Y, Z = transform_coords(X0, Y0, Z0, orient, c)
@@ -155,4 +183,9 @@ fig.update_layout(
     scene=dict(aspectmode="cube")
 )
 
+
+# --- Call it ---
+plot_difference_vectors_lines(df1, df2, step=20, colorscale="Rainbow")
+
 fig.show()
+

@@ -37,7 +37,7 @@ fig.update_layout(
 
 fig.show()
 
-ource_dir = "/Users/fwessel/Documents/Boris_Usr/Outputs/Custom/100000.0/Magpy/washer_potential/comparisons/"
+source_dir = "/Users/fwessel/Documents/Boris_Usr/Outputs/Custom/100000.0/Magpy/washer_potential/comparisons/"
 
 file1 = "ns-85000_dt-2e-09/data.hdf5"
 file1_path = source_dir + file1
