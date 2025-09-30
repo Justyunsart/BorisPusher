@@ -17,11 +17,14 @@ b = 0.75/2  # radius outer of washer
 Q1 = 0e-0 # coulombs
 # Q2 = 0e-0 # coulombs
 Q2 = 1e-9 # coulombs
+Vx = 20000
+Vy = 10000
+Vz = 10000
 
 def load_positions(filepath):
     """Load src/position dataset into a DataFrame with x,y,z columns."""
     with h5py.File(filepath, "r") as f:
-        dset = f["src/position"][:20000]
+        dset = f["src/position"][:]
     # Handle structured or plain array
     if dset.dtype.names is not None:
         return pd.DataFrame({name: dset[name] for name in dset.dtype.names})
@@ -179,9 +182,11 @@ for orient in ['x+','x-','y+','y-','z+','z-']:
 fig.update_layout(
     title=f"Trajectory Comparison: Q1 = {Q1:.1e} C and Q2= {Q2:.1e} C<br>"
           f"Coil Offsets = &plusmn;{c:.1f} m, I = {I:.0f} kA, 2R = {2*R:.2f} m,<br>"
-          f"Washer Offsets = &plusmn;{c:.1f} m, 2a = {2*a:.2f} m, 2b = {2*b:.2f} m",
+          f"Washer Offsets = &plusmn;{c:.1f} m, 2a = {2*a:.2f} m, 2b = {2*b:.2f} m,<br>"
+          f"Velocities = ({Vx}, {Vy}, {Vz}) m/s",
     scene=dict(aspectmode="cube")
 )
+
 
 
 # --- Call it ---
