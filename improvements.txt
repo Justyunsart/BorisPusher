@@ -18,6 +18,7 @@ The field diagnostic plots are no longer available
 adding a new line/or row in fields, use values identical to the preceding line
 
 PLOTTING
+where does the Plotly download as "newplot.png" file get saved?
 file called "coils" in the output data directory, what is it for?
 
 haven't implemented multiple particles yet,
