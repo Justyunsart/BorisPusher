@@ -59,6 +59,9 @@ file_path1, file_path2 = select_files()
 df1 = load_positions(file_path1)
 df2 = load_positions(file_path2)
 
+print(file_path1)
+print(file_path2)
+
 # --- Ensure equal length of the files ---
 n = min(len(df1), len(df2))
 df1 = df1.iloc[:n].reset_index(drop=True)
