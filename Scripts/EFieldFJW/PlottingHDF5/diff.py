@@ -17,12 +17,6 @@ b = 0.75/2  # radius outer of washer
 Q1 = 0e-0 # coulombs
 # Q2 = 0e-0 # coulombs
 Q2 = 1e-9 # coulombs
-# Q2 = 1e-10 # coulombs
-# Q2 = 1e-11 # coulombs
-# Q2 = 1e-12 # coulombs
-Vx = 20000 # Vx velocity
-Vy = 10000 # Vy velocity
-Vz = 10000 # Vz velocity
 
 def load_positions(filepath):
     """Load src/position dataset into a DataFrame with x,y,z columns."""
@@ -191,7 +185,7 @@ fig.update_layout(
 
 
 # --- Call it ---
-# plot_difference_vectors_lines(df1, df2, step=20, colorscale="Rainbow")
-#
+plot_difference_vectors_lines(df1, df2, step=20, colorscale="Rainbow")
+
 fig.show()
 

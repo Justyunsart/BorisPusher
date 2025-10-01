@@ -1,0 +1,48 @@
+# charged_washer_field_plot.py
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Constants for the washer geometry
+a = 0.5
+b = 1.0
+
+# Derived constants
+b2_a2 = b**2 - a**2
+b4_a4 = b**4 - a**4
+
+# Define the rho range
+rho = np.linspace(0.01, 3, 500)
+zeta_list = [0.01, 0.1, 0.5, 1.0, 2.0, 3.0]
+
+# Prepare the figure
+fig, axs = plt.subplots(1, 2, figsize=(14, 6))
+
+# Plot Ez (Axial Field)
+for z in zeta_list:
+    R = np.sqrt(rho**2 + z**2)
+    Ez = (b2_a2 * z) / R**3 + (b4_a4 * (3 * z**2 - R**2)) / (4 * R**5)
+    axs[0].plot(rho, Ez, label=f'zeta = {z}')
+
+axs[0].set_yscale('log')
+axs[0].set_xlabel(r'$\rho$')
+axs[0].set_ylabel(r'$F_\zeta(\zeta, \rho)$')
+axs[0].set_title('Axial Field Profiles in normalized coord.')
+axs[0].legend()
+axs[0].grid(True)
+
+# Plot Erho (Radial Field)
+for z in zeta_list:
+    R = np.sqrt(rho**2 + z**2)
+    Erho = (b2_a2 * rho) / R**3 + (3 * b4_a4 * z * rho) / (4 * R**5)
+    axs[1].plot(rho, Erho, label=f'zeta = {z}')
+
+axs[1].set_xlabel(r'$\rho$')
+axs[1].set_ylabel(r'$F_\rho(\zeta, \rho)$')
+axs[1].set_title('Radial Field Profiles in normalized coord.')
+axs[1].legend()
+axs[1].grid(True)
+
+# Layout and show plot
+plt.tight_layout()
+plt.show()
