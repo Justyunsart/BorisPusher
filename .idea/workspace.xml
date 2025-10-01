@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="minor documentation of the code w/ docutils">
-      <change beforePath="$PROJECT_DIR$/.idea/BorisPusher.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BorisPusher.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="added file1 and file2 selection windows and changed the plotted diff trajectory to represent the magnitude of the difference between trajectories.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5/diff.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5/diff.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/improvements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/improvements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,128 +50,115 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2x6N8QKxVXFU5Mh3ImARUaXAauV" />
-  <component name="ProjectLevelVcsManager">
-    <OptionsSetting value="false" id="Update" />
-  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.Python tests in e_graphing.py.executor": "Run",
-    "Python tests.Python tests in e_test.py.executor": "Run",
-    "Python tests.Python tests in e_things.py.executor": "Run",
-    "Python tests.Python tests in graphs.py.executor": "Run",
-    "Python.3DDisk.executor": "Run",
-    "Python.3DRing.executor": "Run",
-    "Python.3d_mesh.executor": "Run",
-    "Python.6washersPhiFast.executor": "Run",
-    "Python.Bob_e_Circle_Config.executor": "Run",
-    "Python.BorisGui.executor": "Run",
-    "Python.CurrentGuiClasses.executor": "Run",
-    "Python.Efield3DRing_Version2.executor": "Run",
-    "Python.Efield3DRing_Version3.executor": "Run",
-    "Python.FieldMethods.executor": "Run",
-    "Python.FieldMethods_Impl.executor": "Run",
-    "Python.GuiEntryHelpers.executor": "Run",
-    "Python.PlottingWindow.executor": "Run",
-    "Python.TiltSpindle.executor": "Run",
-    "Python.TiltSpindle_stream.executor": "Run",
-    "Python.analyticEfield3.executor": "Run",
-    "Python.app_window_sizing.executor": "Run",
-    "Python.bob_e.executor": "Run",
-    "Python.bob_e_rounding_test.executor": "Run",
-    "Python.collection_rotations.executor": "Run",
-    "Python.configs.executor": "Run",
-    "Python.diff.executor": "Run",
-    "Python.dt_np.executor": "Run",
-    "Python.e_graphing.executor": "Run",
-    "Python.e_things.executor": "Run",
-    "Python.efieldring_4.executor": "Run",
-    "Python.field_graph.executor": "Run",
-    "Python.file_write_speed.executor": "Run",
-    "Python.find_user_docs.executor": "Run",
-    "Python.funcs.executor": "Run",
-    "Python.fwysr_2.executor": "Run",
-    "Python.fwysr_2_graphs.executor": "Run",
-    "Python.fwysr_e_1.executor": "Run",
-    "Python.get_documents_path_win.executor": "Run",
-    "Python.graph_2.executor": "Run",
-    "Python.graph_cross.executor": "Run",
-    "Python.graphs.executor": "Run",
-    "Python.grid_interpolation_comparison.executor": "Run",
-    "Python.integrals.executor": "Run",
-    "Python.magpy4c1_01.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.menu_bar (1).executor": "Run",
-    "Python.menu_bar.executor": "Run",
-    "Python.multiprocessing_gui_freezing.executor": "Run",
-    "Python.output_file_structure.executor": "Run",
-    "Python.polarSpace.executor": "Run",
-    "Python.precision_error.executor": "Run",
-    "Python.read_last_used_binary.executor": "Run",
-    "Python.rotation_viewer.executor": "Run",
-    "Python.state_dict_main.executor": "Run",
-    "Python.state_file_handling.executor": "Run",
-    "Python.streamlines3Dring.executor": "Run",
-    "Python.washerPhiVectorized.executor": "Run",
-    "Python.washerPotential.executor": "Run",
-    "Python.washer_potential_method_implementation.executor": "Run",
-    "Python.washersPhi.executor": "Run",
-    "Python.washersPhi_vectorized.executor": "Run",
-    "Python.widget.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/Users/fwessel/Python/fusion/BorisPusher",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.Mappings",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.Python tests in e_graphing.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in e_test.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in e_things.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in graphs.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.3DDisk.executor&quot;: &quot;Run&quot;,
+    &quot;Python.3DRing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.3d_mesh.executor&quot;: &quot;Run&quot;,
+    &quot;Python.6washersPhiFast.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Bob_e_Circle_Config.executor&quot;: &quot;Run&quot;,
+    &quot;Python.BorisGui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.CurrentGuiClasses.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Efield3DRing_Version2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Efield3DRing_Version3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FieldMethods.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FieldMethods_Impl.executor&quot;: &quot;Run&quot;,
+    &quot;Python.GuiEntryHelpers.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MakeCurrent.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PlottingWindow.executor&quot;: &quot;Run&quot;,
+    &quot;Python.TiltSpindle.executor&quot;: &quot;Run&quot;,
+    &quot;Python.TiltSpindle_stream.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyticEfield3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app_window_sizing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.bob_e.executor&quot;: &quot;Run&quot;,
+    &quot;Python.bob_e_rounding_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.chatGPT.executor&quot;: &quot;Run&quot;,
+    &quot;Python.chatHDF5.executor&quot;: &quot;Run&quot;,
+    &quot;Python.collection_rotations.executor&quot;: &quot;Run&quot;,
+    &quot;Python.configs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.cubeCorners.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dt_np.executor&quot;: &quot;Run&quot;,
+    &quot;Python.e_graphing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.e_things.executor&quot;: &quot;Run&quot;,
+    &quot;Python.efieldring_4.executor&quot;: &quot;Run&quot;,
+    &quot;Python.field_graph.executor&quot;: &quot;Run&quot;,
+    &quot;Python.file_write_speed.executor&quot;: &quot;Run&quot;,
+    &quot;Python.find_user_docs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.funcs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.fwysr_2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.fwysr_2_graphs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.fwysr_e_1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.get_documents_path_win.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graph_2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graph_cross.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graphs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.grid_interpolation_comparison.executor&quot;: &quot;Run&quot;,
+    &quot;Python.integrals.executor&quot;: &quot;Run&quot;,
+    &quot;Python.magpy4c1_01.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar.executor&quot;: &quot;Run&quot;,
+    &quot;Python.multiprocessing_gui_freezing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.output_file_structure.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotFile.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotHDF5.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotHDF5data.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotTrajectory.executor&quot;: &quot;Run&quot;,
+    &quot;Python.polarSpace.executor&quot;: &quot;Run&quot;,
+    &quot;Python.precision_error.executor&quot;: &quot;Run&quot;,
+    &quot;Python.read_last_used_binary.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rotation_viewer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.state_dict_main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.state_file_handling.executor&quot;: &quot;Run&quot;,
+    &quot;Python.streamlines3Dring.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washerPhiVectorized.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washerPotential.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washer_potential_method_implementation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersOnCube.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersOnCube2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersPhi.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersPhi_vectorized.executor&quot;: &quot;Run&quot;,
+    &quot;Python.widget.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/fwessel/Python/fusion/BorisPusher/Scripts/EFieldFJW/PlottingHDF5&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5" />
+      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
+      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/" />
+      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW" />
       <recent name="C:\Users\yoonr\Documents\BorisPusher\Scripts\Gui_tkinter\widgets" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\system\imgs" />
-      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields" />
-      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts" />
-      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\Tests\fields\Bob_e\debug" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration name="_3d_mesh" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="BorisPusher" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/grid" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\grid\_3d_mesh.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.main">
     <configuration name="app_window_sizing" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="BorisPusher" />
       <option name="ENV_FILES" value="" />
@@ -235,6 +220,29 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="plotHDF5data" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW/plotHDF5data.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -306,10 +314,10 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.e_things" />
-      <item itemvalue="Python._3d_mesh" />
       <item itemvalue="Python.app_window_sizing" />
+      <item itemvalue="Python.e_things" />
       <item itemvalue="Python.main" />
+      <item itemvalue="Python.plotHDF5data" />
       <item itemvalue="Python.read_last_used_binary" />
       <item itemvalue="Python.state_dict_main" />
       <item itemvalue="Python tests.Python tests in e_graphing.py" />
@@ -317,17 +325,18 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.plotHDF5data" />
         <item itemvalue="Python.state_dict_main" />
         <item itemvalue="Python.read_last_used_binary" />
         <item itemvalue="Python.app_window_sizing" />
-        <item itemvalue="Python._3d_mesh" />
       </list>
     </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-e0ed3721d81e-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.25410.159" />
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.178" />
+        <option value="bundled-python-sdk-ce6832f46686-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.178" />
       </set>
     </attachedChunks>
   </component>
@@ -379,95 +388,17 @@
       <workItem from="1757008208688" duration="9267000" />
       <workItem from="1757086836373" duration="6558000" />
       <workItem from="1757452093144" duration="3354000" />
-      <workItem from="1757541265635" duration="392000" />
-    </task>
-    <task id="LOCAL-00023" summary="reimplemented the rotations window autoclosing when clicking away from it. Now doesn't flag false positives when clicking within the window">
-      <option name="closed" value="true" />
-      <created>1749584500963</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1749584500963</updated>
-    </task>
-    <task id="LOCAL-00024" summary="added more failsafes to file reading; if the name of the file doesn't exist, doesn't try to read it">
-      <option name="closed" value="true" />
-      <created>1749587816950</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1749587816950</updated>
-    </task>
-    <task id="LOCAL-00025" summary="the progress window now closes automatically after a simulation finishes running and writing">
-      <option name="closed" value="true" />
-      <created>1749589093344</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1749589093344</updated>
-    </task>
-    <task id="LOCAL-00026" summary="updated graphs">
-      <option name="closed" value="true" />
-      <created>1749609640407</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1749609640407</updated>
-    </task>
-    <task id="LOCAL-00027" summary="E-field graphs for contour, streamlines implemented by fixing an orientation error. Results from the E field need to be rotated back after calculating w/ the coil's inverse rotation applied.">
-      <option name="closed" value="true" />
-      <created>1749700771072</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1749700771072</updated>
-    </task>
-    <task id="LOCAL-00028" summary="fixed typo in magpy4c1_01.py where I was using toCart instead of toCyl">
-      <option name="closed" value="true" />
-      <created>1749678112618</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1749678112618</updated>
-    </task>
-    <task id="LOCAL-00029" summary="added log(emag) lineout graph">
-      <option name="closed" value="true" />
-      <created>1749679452584</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1749679452584</updated>
-    </task>
-    <task id="LOCAL-00030" summary="the program now opens after widget init. to prevent flashing images from widgets loading on startup">
-      <option name="closed" value="true" />
-      <created>1749679899422</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1749679899422</updated>
-    </task>
-    <task id="LOCAL-00031" summary="parity">
-      <option name="closed" value="true" />
-      <created>1749684963689</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1749684963689</updated>
-    </task>
-    <task id="LOCAL-00032" summary="removed the threading for the calculation step's  bob_e implementation to test whether it is the source of e-value inconsistency between runs">
-      <option name="closed" value="true" />
-      <created>1750110536046</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1750110536046</updated>
-    </task>
-    <task id="LOCAL-00033" summary="e contour plot is now on the log of the magnitude">
-      <option name="closed" value="true" />
-      <created>1750112581903</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1750112581903</updated>
+      <workItem from="1757541265635" duration="5007000" />
+      <workItem from="1757714562457" duration="1083000" />
+      <workItem from="1757973299999" duration="4342000" />
+      <workItem from="1758058840792" duration="13533000" />
+      <workItem from="1758663921300" duration="8404000" />
+      <workItem from="1758737788821" duration="19063000" />
+      <workItem from="1758904630097" duration="8395000" />
+      <workItem from="1758995911781" duration="12978000" />
+      <workItem from="1759075767880" duration="5774000" />
+      <workItem from="1759083094088" duration="532000" />
+      <workItem from="1759091146877" duration="2167000" />
     </task>
     <task id="LOCAL-00034" summary="made the field_methods_impl's theta have the np.float64 dtype just in case">
       <option name="closed" value="true" />
@@ -773,7 +704,95 @@
       <option name="project" value="LOCAL" />
       <updated>1757541591382</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="minor documentation of the code w/ docutils">
+      <option name="closed" value="true" />
+      <created>1757541676496</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1757541676496</updated>
+    </task>
+    <task id="LOCAL-00073" summary="minor updates to the &quot;IMPROVEMENTS&quot; file">
+      <option name="closed" value="true" />
+      <created>1757976521013</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1757976521013</updated>
+    </task>
+    <task id="LOCAL-00074" summary="minor updates to the &quot;IMPROVEMENTS&quot; file">
+      <option name="closed" value="true" />
+      <created>1757976552585</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1757976552585</updated>
+    </task>
+    <task id="LOCAL-00075" summary="minor updates to improve graphical outputs">
+      <option name="closed" value="true" />
+      <created>1758664553013</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1758664553013</updated>
+    </task>
+    <task id="LOCAL-00076" summary="Plotly scripts for HDF5 trajectories in a Hexahedron">
+      <option name="closed" value="true" />
+      <created>1758844284093</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1758844284093</updated>
+    </task>
+    <task id="LOCAL-00077" summary="Plotly scripts for HDF5 trajectories in a Hexahedron">
+      <option name="closed" value="true" />
+      <created>1758844597028</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1758844597028</updated>
+    </task>
+    <task id="LOCAL-00078" summary="Plotly scripts for HDF5 trajectories in a Hexahedron">
+      <option name="closed" value="true" />
+      <created>1758844723806</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1758844723806</updated>
+    </task>
+    <task id="LOCAL-00079" summary="Trajectory comparison scripts: HDF5 data in a Hexahedron">
+      <option name="closed" value="true" />
+      <created>1759013149271</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1759013149271</updated>
+    </task>
+    <task id="LOCAL-00080" summary="Trajectory comparison scripts: HDF5 data in a Hexahedron">
+      <option name="closed" value="true" />
+      <created>1759014156925</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1759014156925</updated>
+    </task>
+    <task id="LOCAL-00081" summary="Trajectory comparison scripts: HDF5 data in a Hexahedron">
+      <option name="closed" value="true" />
+      <created>1759014490095</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1759014490095</updated>
+    </task>
+    <task id="LOCAL-00082" summary="added file1 and file2 selection windows and changed the plotted diff trajectory to represent the magnitude of the difference between trajectories.">
+      <option name="closed" value="true" />
+      <created>1759093284930</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1759093284930</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -791,11 +810,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added abs_tol argument to isclose argument again to 1e-10" />
-    <MESSAGE value="edited the implementation of bob_e used in the program with the math.isclose() logic experimented with in tests.&#10;&#10;The culprit of different values across systems was shown to be due to scipy's rotation functions returning floating point values ~1e-16 instead of 0 on some, while others do return 0. &#10;&#10;While the acutal values of floating point numbers ~1e-16 and 0 are both very small, this large absolute magnitude difference has huge repercussions when plugged into the solution.&#10;&#10;The currently implemented absolute tolerance value of 1e-10 means that any given value greater than 1e-10 will be used as is, while smaller values will always be clamped to 1e-10. This change will ideally cover the entire range of possible variation of values from scipy's rotate, or enough where there is negligible differences between operating systems." />
-    <MESSAGE value="another change to the 0 comparison.&#10;Added several numpy array conversions to dtype np.float64 in the orienting point step to ensure that all numbers are using double precision" />
-    <MESSAGE value="lineout changes to the ring field version 2" />
-    <MESSAGE value="e field now looks at the updated collection" />
     <MESSAGE value="added new e-field method that is a straightforward implementation of the standard form" />
     <MESSAGE value="added a rotation viewer in the testing folder" />
     <MESSAGE value="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook" />
@@ -816,7 +830,12 @@
     <MESSAGE value="adjustments to widget reading data" />
     <MESSAGE value="updates to the improvements file" />
     <MESSAGE value="minor documentation of the code w/ docutils" />
-    <option name="LAST_COMMIT_MESSAGE" value="minor documentation of the code w/ docutils" />
+    <MESSAGE value="minor updates to the &quot;IMPROVEMENTS&quot; file" />
+    <MESSAGE value="minor updates to improve graphical outputs" />
+    <MESSAGE value="Plotly scripts for HDF5 trajectories in a Hexahedron" />
+    <MESSAGE value="Trajectory comparison scripts: HDF5 data in a Hexahedron" />
+    <MESSAGE value="added file1 and file2 selection windows and changed the plotted diff trajectory to represent the magnitude of the difference between trajectories." />
+    <option name="LAST_COMMIT_MESSAGE" value="added file1 and file2 selection windows and changed the plotted diff trajectory to represent the magnitude of the difference between trajectories." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -868,13 +887,16 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BorisPusher$magpy4c1_01.coverage" NAME="magpy4c1_01 Coverage Results" MODIFIED="1749509898529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/calcs" />
     <SUITE FILE_PATH="coverage/BorisPusher$graphs.coverage" NAME="graphs Coverage Results" MODIFIED="1751324543195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_1" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washersOnCube2.coverage" NAME="washersOnCube2 Coverage Results" MODIFIED="1758839181020" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$PlottingWindow.coverage" NAME="PlottingWindow Coverage Results" MODIFIED="1752733391801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$funcs.coverage" NAME="funcs Coverage Results" MODIFIED="1749681885095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files" />
     <SUITE FILE_PATH="coverage/BorisPusher$3DDisk.coverage" NAME="3DDisk Coverage Results" MODIFIED="1751932250386" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$output_file_structure.coverage" NAME="output_file_structure Coverage Results" MODIFIED="1747949379891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/hdf5" />
     <SUITE FILE_PATH="coverage/BorisPusher$washer_potential_method_implementation.coverage" NAME="washer_potential_method_implementation Coverage Results" MODIFIED="1753831623961" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$.coverage" NAME=" Coverage Results" MODIFIED="1750900498689" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
-    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1757541321450" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$plotHDF5data.coverage" NAME="plotHDF5data Coverage Results" MODIFIED="1758820541798" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1758912257611" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$MakeCurrent.coverage" NAME="MakeCurrent Coverage Results" MODIFIED="1758666131237" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
     <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods.coverage" NAME="FieldMethods Coverage Results" MODIFIED="1749678464994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
     <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1752004719466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
     <SUITE FILE_PATH="coverage/BorisPusher$washersPhi_vectorized.coverage" NAME="washersPhi_vectorized Coverage Results" MODIFIED="1754342756901" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
@@ -895,9 +917,11 @@
     <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods_Impl.coverage" NAME="FieldMethods_Impl Coverage Results" MODIFIED="1750118600099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
     <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version3.coverage" NAME="Efield3DRing_Version3 Coverage Results" MODIFIED="1750290780658" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EField FJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$file_write_speed.coverage" NAME="file_write_speed Coverage Results" MODIFIED="1749603520912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washersOnCube.coverage" NAME="washersOnCube Coverage Results" MODIFIED="1758835453245" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$fwysr_e_1.coverage" NAME="fwysr_e_1 Coverage Results" MODIFIED="1751932280187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$grid_interpolation_comparison.coverage" NAME="grid_interpolation_comparison Coverage Results" MODIFIED="1752729299747" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
     <SUITE FILE_PATH="coverage/BorisPusher$6washersPhiFast.coverage" NAME="6washersPhiFast Coverage Results" MODIFIED="1757461835154" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$cubeCorners.coverage" NAME="cubeCorners Coverage Results" MODIFIED="1758839666790" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$graph_cross.coverage" NAME="graph_cross Coverage Results" MODIFIED="1753166529941" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
     <SUITE FILE_PATH="coverage/BorisPusher$bob_e.coverage" NAME="bob_e Coverage Results" MODIFIED="1753250526625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/RETerry" />
     <SUITE FILE_PATH="coverage/BorisPusher$CurrentGuiClasses.coverage" NAME="CurrentGuiClasses Coverage Results" MODIFIED="1752118166059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
@@ -905,18 +929,23 @@
     <SUITE FILE_PATH="coverage/BorisPusher$find_user_docs.coverage" NAME="find_user_docs Coverage Results" MODIFIED="1749507660617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/output_write_read" />
     <SUITE FILE_PATH="coverage/BorisPusher$streamlines3Dring.coverage" NAME="streamlines3Dring Coverage Results" MODIFIED="1751490292112" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$configs.coverage" NAME="configs Coverage Results" MODIFIED="1747264446248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings" />
+    <SUITE FILE_PATH="coverage/BorisPusher$plotTrajectory.coverage" NAME="plotTrajectory Coverage Results" MODIFIED="1758835282109" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$rotation_viewer.coverage" NAME="rotation_viewer Coverage Results" MODIFIED="1751952643732" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />
     <SUITE FILE_PATH="coverage/BorisPusher$fwysr_2_graphs.coverage" NAME="fwysr_2_graphs Coverage Results" MODIFIED="1751493976052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2" />
     <SUITE FILE_PATH="coverage/BorisPusher$collection_rotations.coverage" NAME="collection_rotations Coverage Results" MODIFIED="1749607727545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />
     <SUITE FILE_PATH="coverage/BorisPusher$GuiEntryHelpers.coverage" NAME="GuiEntryHelpers Coverage Results" MODIFIED="1752119203471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs" />
     <SUITE FILE_PATH="coverage/BorisPusher$washerPotential.coverage" NAME="washerPotential Coverage Results" MODIFIED="1753829636024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$plotFile.coverage" NAME="plotHDF5data Coverage Results" MODIFIED="1758667950674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$chatHDF5.coverage" NAME="chatHDF5 Coverage Results" MODIFIED="1758839201901" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$efieldring_4.coverage" NAME="efieldring_4 Coverage Results" MODIFIED="1750722954315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$e_things.coverage" NAME="e_things Coverage Results" MODIFIED="1752002335847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$3d_mesh.coverage" NAME="3d_mesh Coverage Results" MODIFIED="1752722841920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/grid" />
     <SUITE FILE_PATH="coverage/BorisPusher$multiprocessing_gui_freezing.coverage" NAME="multiprocessing_gui_freezing Coverage Results" MODIFIED="1747273380034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$washerPhiVectorized.coverage" NAME="washerPhiVectorized Coverage Results" MODIFIED="1753831871140" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$3DRing.coverage" NAME="3DRing Coverage Results" MODIFIED="1751932238118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$plotHDF5.coverage" NAME="plotHDF5 Coverage Results" MODIFIED="1758666047967" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
+    <SUITE FILE_PATH="coverage/BorisPusher$chatGPT.coverage" NAME="chatGPT Coverage Results" MODIFIED="1758842248560" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$bob_e_rounding_test.coverage" NAME="bob_e_rounding_test Coverage Results" MODIFIED="1750711108470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar.coverage" NAME="menu_bar Coverage Results" MODIFIED="1747259073002" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
   </component>
