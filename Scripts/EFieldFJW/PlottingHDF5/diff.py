@@ -1,3 +1,10 @@
+'''This script plots the particle trajectory for two Boris Push simulations. It is useful to visualize each
+ trajectory and the magnitude of the difference between each trajectory, point by point. When the script is run
+it opens a shell window, twice, sequentially, prompting the user to identify the HDF5 data files. The output is
+plotted using Plotly, which allows for 3D control of the viewing angle and zoom aspect. The plot header includes
+most of the information used for the simulation variables and soon, all of that data will be automatically grabbed
+from the folder where the HDF5 data file is stored.
+'''
 import h5py
 import pandas as pd
 import plotly.graph_objects as go
