@@ -195,7 +195,7 @@ fig.update_layout(
 
 
 # --- Call it ---
-plot_difference_vectors_lines(df1, df2, step=20, colorscale="Rainbow")
+# plot_difference_vectors_lines(df1, df2, step=20, colorscale="Rainbow")
 
 fig.show()
 
