@@ -1,3 +1,11 @@
+'''This script grabs header data from a preselected text file that was used in
+ one of the  two Boris Push simulations. These data will be printed at the
+ top of the output trajectory plot created by Plotly.
+ For the moment these test files reside in
+ the working directory, but will be modified to use the file names and paths
+ in the companion diff.py script where the HDF5 data file is stored.
+'''
+
 import csv
 
 
