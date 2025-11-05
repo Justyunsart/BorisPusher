@@ -37,16 +37,17 @@ fig.update_layout(
 
 fig.show()
 
-source_dir = "/Users/fwessel/Documents/Boris_Usr/Outputs/Custom/100000.0/Magpy/washer_potential/comparisons/"
+# source_dir = "/Users/fwessel/Documents/Boris_Usr/Outputs/Custom/100000.0/Magpy/washer_potential/comparisons/"
+source_dir = "C:/Users/dylan/OneDrive/Documents/Boris_Usr/Outputs/Custom/100000.0/Magpy/washer_potential/"
 
-file1 = "ns-85000_dt-2e-09/data.hdf5"
+file1 = "ns-90000_dt-2e-09_10/data.hdf5"
 file1_path = source_dir + file1
 print('file1 path =', file1_path)
 print("is this correct? If not, please input new value")
 file1_path = input('Enter your input:')
 print("New Value=", file1_path)
 
-file2 = "ns-85000_dt-2e-09/data.hdf5"
+file2 = "ns-90000_dt-2e-09_11/data.hdf5"
 file2_path = source_dir + file2
 print('file2 path =', file2_path)
 print("is this correct? If not, please input new value")
@@ -84,3 +85,4 @@ with h5py.File(file1_path,file2_path, "r") as f1, f2:
             name="Differential Trajectory"
         ),
         row=1, col=2
+    )

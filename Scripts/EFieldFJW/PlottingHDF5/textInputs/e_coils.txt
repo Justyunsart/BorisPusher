@@ -4,4 +4,4 @@ PosX,PosY,PosZ,Q,Diameter,Inner_r,RotationAngle,RotationAxis
 0.0,1.1,0.0,1e-9,0.75,0.25,[-90],['x']
 0.0,-1.1,0.0,1e-9,0.75,0.25,[-90],['x']
 0.0,0.0,1.1,1e-9,0.75,0.25,[],[]
-0.0,0.0,-1.1,1e-9,0.75,0.25,[],[]
+0.0,0.0,-1.1,1e-9,0.75,0.25,[],[]gtfr4ew2er45eqwsedrtf4e3we4re3e32dswq123wqwer54t

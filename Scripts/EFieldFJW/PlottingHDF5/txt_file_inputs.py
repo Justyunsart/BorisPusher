@@ -1,13 +1,16 @@
 # script.py
 import sys
-import os
+# import os
 
 # from diff import file_path1
 
-path = "/Users/fwessel/Documents/Boris_Usr/Outputs/Custom/100000.0/Magpy/washer_potential/comparisons/ns-85000_dt-2e-09, 1-9,1.1,0.75,0.25/"
-# Remove the file name from the end, if there
+# path = "/Users/fwessel/Documents/Boris_Usr/Outputs/Custom/100000.0/Magpy/washer_potential/comparisons/ns-85000_dt-2e-09, 1-9,1.1,0.75,0.25/data.hdf5"
+path = "C:/Users/dylan/OneDrive/Documents/Boris_Usr/Outputs/Custom/100000.0/Magpy/washer_potential/ns-90000_dt-2e-09_10/data.hdf5"
+Remove the last component (file name)
 pruned_path = os.path.dirname(path)
 print(pruned_path)
+
+
 
 
 #
