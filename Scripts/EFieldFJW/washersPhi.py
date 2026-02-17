@@ -25,7 +25,7 @@ def rotation_matrix_from_vectors(vec1, vec2):
         return np.eye(3)
     if np.allclose(_c, -1):
         # 180 degree rotation
-        axis = np.array([1, 0, 0]) if not np.allclose(a, [1, 0, 0]) else np.array([0, 1, 0])
+        axis = np.array([1, 0, 0]) if not np.allclose(_a, [1, 0, 0]) else np.array([0, 1, 0])
         return rotation_matrix_from_axis_angle(axis, np.pi)
     s = np.linalg.norm(_v)
     kmat = np.array([
@@ -35,57 +35,50 @@ def rotation_matrix_from_vectors(vec1, vec2):
     ])
     return np.eye(3) + kmat + kmat @ kmat * ((1 - _c) / s**2)
 
-def phi_disk_at_point(r_global, center, normal, Q, a, b, _sigma:list=[], r_res:int=150):
-    """
-    Scalar potential from a single disk at point r_global.
+def phi_disk_at_point(r_global, center, normal, Q, a, b, sigma=None, r_res=150):
 
-    :params:
-    r_global, center: the coordinates of the field point and center of the disk, respectively.
-    normal: a matrix (3) representing the normal vector of the disk's aligned plane.
-    Q: the disk's charge
-    a, b: the inner, outer rho values of the washer
-    _sigma: a list containing either None, or the disk's sigma scalar.
-    r_res: the number of points to create in the linspace of a and b.
+    if sigma is None:
+        sigma = Q / (np.pi * (b**2 - a**2))
 
-    :returns:
-    The scalar potential at the point inputted.
-    """
-    # COLLECT FACTORS
-    #   calculate sigma
-    #   stored externally. If it's empty/none, then calculate and populate it.
-    #   make this a single item list so that it will be mutuable.
-    if not _sigma:
-        _sigma.append(Q / (np.pi * (b ** 2 - a ** 2)))
-    sigma = _sigma[0] # update internal sigma variable with the stored value.
-
-    #   get the local rho linspace
     R = np.linspace(a, b, r_res)
 
-    # RUN INTEGRAL
-    #   Build rotation matrix to align disk normal with +z
+    # Rotate field point into disk frame
     Rmat = rotation_matrix_from_vectors(normal, np.array([0, 0, 1]))
     r_local = Rmat @ (r_global - center)
 
     rho = np.linalg.norm(r_local[:2])
     z = r_local[2]
-    if rho == 0 and z == 0:
-        return 0  # avoid singularity
 
-    #   collect modulus for elliptical integral
-    k2 = 4 * R[:, None] * rho / ((R[:, None] + rho)**2 + z**2)
+    if rho == 0 and z == 0:
+        return 0.0
+
+    # Elliptic-integral kernel (1-D!)
+    k2 = 4 * R * rho / ((R + rho)**2 + z**2)
     k2 = np.clip(k2, 0, 1 - 1e-12)
+
     K = ellipk(k2)
 
-    denom = np.sqrt((R[:, None] + rho)**2 + z**2)
-    integrand = R[:, None] * K / denom
-    result = simpson(integrand, R, axis=0)
-    phi_val = sigma / (2 * epsilon_0) * result
+    denom = np.sqrt((R + rho)**2 + z**2)
+    integrand = R * K / denom
 
-    return phi_val.item()
+    result = simpson(integrand, R)
+
+    return sigma / (2 * epsilon_0) * result
 
 def total_phi(r_point):
-    """Sum scalar potentials from all 6 disks at point r."""
-    return sum(phi_disk_at_point(r_point, d["center"], d["normal"]) for d in disks)
+    """Sum scalar potentials from all disks at point r."""
+    return sum(
+        phi_disk_at_point(
+            r_point,
+            d["center"],
+            d["normal"],
+            d["Q"],
+            d["a"],
+            d["b"]
+        )
+        for d in disks
+    )
+
 
 def washer_phi_from_collection(points, inners, collection, normals, sigmas, r_res=150):
     """
@@ -124,14 +117,13 @@ if __name__ == "__main__":
 
     # Define six disks: center and normal
     disks = [
-        {"center": np.array([offset, 0, 0]), "normal": np.array([-1, 0, 0])},  # +x
-        {"center": np.array([-offset, 0, 0]), "normal": np.array([1, 0, 0])},  # -x
-        {"center": np.array([0, offset, 0]), "normal": np.array([0, -1, 0])},  # +y
-        {"center": np.array([0, -offset, 0]), "normal": np.array([0, 1, 0])},  # -y
-        {"center": np.array([0, 0, offset]), "normal": np.array([0, 0, -1])},  # +z
-        {"center": np.array([0, 0, -offset]), "normal": np.array([0, 0, 1])},  # -z
+        {"center": np.array([offset, 0, 0]), "normal": np.array([-1, 0, 0]), "Q": Q, "a": a, "b": b},
+        {"center": np.array([-offset, 0, 0]), "normal": np.array([1, 0, 0]), "Q": Q, "a": a, "b": b},
+        {"center": np.array([0, offset, 0]), "normal": np.array([0, -1, 0]), "Q": Q, "a": a, "b": b},
+        {"center": np.array([0, -offset, 0]), "normal": np.array([0, 1, 0]), "Q": Q, "a": a, "b": b},
+        {"center": np.array([0, 0, offset]), "normal": np.array([0, 0, -1]), "Q": Q, "a": a, "b": b},
+        {"center": np.array([0, 0, -offset]), "normal": np.array([0, 0, 1]), "Q": Q, "a": a, "b": b},
     ]
-
 
     # Grid (xz-plane slice at y = 0)
     x = np.linspace(-1.5, 1.5, 100)
