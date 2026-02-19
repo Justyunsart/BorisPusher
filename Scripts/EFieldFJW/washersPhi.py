@@ -10,6 +10,9 @@ import numpy as np
 from scipy.constants import epsilon_0
 from scipy.special import ellipk
 from numba import njit
+import matplotlib.pyplot as plt
+from matplotlib.colors import Normalize
+
 
 # ============================================================
 # Rotation Utilities (unchanged physics)
@@ -142,8 +145,6 @@ def phi_disk_fast(r_global, disk, rho_grid, z_grid, kernel):
 # ============================================================
 
 if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    from matplotlib.colors import Normalize
 
     # ------------------------------------------------------------
     # Washer parameters
@@ -210,52 +211,86 @@ if __name__ == "__main__":
     Ex = -dphi_dx
     Ez = -dphi_dz
 
-    # ------------------------------------------------------------
-    # Compute log|E| with physical floor at -10
-    # ------------------------------------------------------------
-    Emag = np.sqrt(Ex**2 + Ez**2)
+# ============================================================
+# Compute |E| and log scale (same treatment as before)
+# ============================================================
+Emag = np.sqrt(Ex**2 + Ez**2)
 
-    floor = np.exp(-10)        # corresponds to log|E| = -10
-    Emag = np.maximum(Emag, floor)
+floor = np.exp(-10)            # prevents log singularities
+Emag  = np.maximum(Emag, floor)
 
-    logE = np.log(Emag)
+logE = np.log(Emag)
+norm = Normalize(vmin=-10, vmax=np.max(logE))
 
-    norm = Normalize(vmin=-10, vmax=np.max(logE))
+# ============================================================
+# Extract Centerline |E|(0,0,z) from Existing Grid
+# (no extra field solves needed)
+# ============================================================
 
-    # ------------------------------------------------------------
-    # Plot Streamlines Colored by log|E|
-    # ------------------------------------------------------------
-    plt.figure(figsize=(10,8))
+# Find x-index closest to x = 0
+ix0 = np.argmin(np.abs(x - 0.0))
 
-    strm = plt.streamplot(
-        X, Z, Ex, Ez,
-        color=logE,
-        cmap='plasma',
-        norm=norm,
-        density=1.4,
-        linewidth=1
-    )
+z_line = z.copy()
+Eline  = Emag[:, ix0]          # slice along z at x ≈ 0
 
-    plt.colorbar(strm.lines, label=r'$\log|\vec{E}|$')
-    plt.title("Electric Field Streamlines from Six Inward-Facing Annular Washers")
-    plt.xlabel('x (m)')
-    plt.ylabel('z (m)')
-    plt.axis('equal')
-    plt.grid(True)
+# ============================================================
+# Create Side-by-Side Figure
+# ============================================================
+fig, (ax1, ax2) = plt.subplots(
+    1, 2, figsize=(13,5),
+    gridspec_kw={'width_ratios':[1.25, 1]}
+)
 
-    # ------------------------------------------------------------
-    # Draw Washer Cross-Sections (same geometry as before)
-    # ------------------------------------------------------------
-    c = offset
+# ------------------------------------------------------------
+# LEFT PANEL — Electric Field Streamlines (XZ plane)
+# ------------------------------------------------------------
+strm = ax1.streamplot(
+    X, Z, Ex, Ez,
+    color=logE,
+    cmap='plasma',
+    norm=norm,
+    density=1.4,
+    linewidth=1
+)
 
-    plt.plot([a,b],[ c, c], color='green', linewidth=6)
-    plt.plot([a,b],[-c,-c], color='green', linewidth=6)
-    plt.plot([-a,-b],[ c, c], color='green', linewidth=6)
-    plt.plot([-a,-b],[-c,-c], color='green', linewidth=6)
+cbar = fig.colorbar(strm.lines, ax=ax1)
+cbar.set_label(r'$\log|\vec{E}|$')
 
-    plt.plot([ c, c],[ a, b], color='green', linewidth=6)
-    plt.plot([ c, c],[-a,-b], color='green', linewidth=6)
-    plt.plot([-c,-c],[ a, b], color='green', linewidth=6)
-    plt.plot([-c,-c],[-a,-b], color='green', linewidth=6)
+ax1.set_title("Electric Field Structure (XZ Plane)")
+ax1.set_xlabel('x (m)')
+ax1.set_ylabel('z (m)')
+ax1.set_aspect('equal')
+ax1.grid(True)
 
-    plt.show()
+# Draw washer cross-sections (same geometry markers)
+c = offset
+ax1.plot([a,b],[ c, c],'green',lw=6)
+ax1.plot([a,b],[-c,-c],'green',lw=6)
+ax1.plot([-a,-b],[ c, c],'green',lw=6)
+ax1.plot([-a,-b],[-c,-c],'green',lw=6)
+
+ax1.plot([ c, c],[ a, b],'green',lw=6)
+ax1.plot([ c, c],[-a,-b],'green',lw=6)
+ax1.plot([-c,-c],[ a, b],'green',lw=6)
+ax1.plot([-c,-c],[-a,-b],'green',lw=6)
+
+# ------------------------------------------------------------
+# RIGHT PANEL — Centerline |E|(0,0,z) Line-Out
+# ------------------------------------------------------------
+ax2.plot(z_line, Eline, color='navy', lw=2)
+ax2.set_title("On-Axis Electric Field Magnitude")
+ax2.set_xlabel('z (m)')
+ax2.set_ylabel(r'$|\vec{E}(0,0,z)|$')
+ax2.grid(True)
+
+# Optional logarithmic view (helps see cusp behavior)
+ax2b = ax2.twinx()
+ax2b.plot(z_line, np.log(np.maximum(Eline,1e-30)),
+          color='darkred', ls='--', lw=1.5)
+ax2b.set_ylabel(r'$\log|\vec{E}|$', color='darkred')
+ax2b.tick_params(axis='y', colors='darkred')
+
+# ------------------------------------------------------------
+plt.tight_layout()
+plt.show()
+

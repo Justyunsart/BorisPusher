@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="code updates">
-      <change afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/washersPhi_3D_Gemini.py" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="code speedups and 3D visualization added w/  pyvista">
+      <change afterPath="$PROJECT_DIR$/Scripts/BFieldFJW/flatcoilsVecPot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/washersPhi.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/washersPhi.py" afterDir="false" />
     </list>
@@ -48,12 +48,12 @@
     &quot;assignee&quot;: &quot;fwessel&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Justyunsart/BorisPusher.git",
-    "accountId": "fff6eeb4-227a-453c-af8f-f2634b53e2d8"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Justyunsart/BorisPusher.git&quot;,
+    &quot;accountId&quot;: &quot;fff6eeb4-227a-453c-af8f-f2634b53e2d8&quot;
   }
-}]]></component>
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -108,6 +108,7 @@
     "Python.field_graph.executor": "Run",
     "Python.file_write_speed.executor": "Run",
     "Python.find_user_docs.executor": "Run",
+    "Python.flatcoilsVecPot.executor": "Run",
     "Python.funcs.executor": "Run",
     "Python.fwysr_2.executor": "Run",
     "Python.fwysr_2_graphs.executor": "Run",
@@ -187,11 +188,11 @@
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/../BorisPuser" />
       <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
       <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/" />
       <recent name="$PROJECT_DIR$/Scripts/EFieldFJW" />
-      <recent name="C:\Users\yoonr\Documents\BorisPusher\Scripts\Gui_tkinter\widgets" />
-      <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\system\imgs" />
     </key>
   </component>
   <component name="RunManager">
@@ -294,22 +295,7 @@
       <workItem from="1771268246414" duration="2759000" />
       <workItem from="1771284696191" duration="937000" />
       <workItem from="1771285675513" duration="19420000" />
-    </task>
-    <task id="LOCAL-00036" summary="added 'np.empty(0).sum()' in EfieldX inside magpy4c1_01.py to test whether numpy's backend multithreading could cause e_field differences on the same system.&#10;&#10;e_field differences on different systems are currently theorized to be because of floating point rounding and is separate from this.">
-      <option name="closed" value="true" />
-      <created>1750118836208</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1750118836208</updated>
-    </task>
-    <task id="LOCAL-00037" summary="added 'np.empty(0).sum()' in EfieldX inside magpy4c1_01.py to test whether numpy's backend multithreading could cause e_field differences on the same system.&#10;&#10;e_field differences on different systems are currently theorized to be because of floating point rounding and is separate from this.">
-      <option name="closed" value="true" />
-      <created>1750118843236</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1750118843236</updated>
+      <workItem from="1771460160367" duration="5959000" />
     </task>
     <task id="LOCAL-00038" summary="added a bob_e debug logger test to compare values across systems">
       <option name="closed" value="true" />
@@ -687,7 +673,23 @@
       <option name="project" value="LOCAL" />
       <updated>1771295631293</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="code speedups and 3D visualization added w/  pyvista">
+      <option name="closed" value="true" />
+      <created>1771460241485</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1771460241485</updated>
+    </task>
+    <task id="LOCAL-00086" summary="code speedups and 3D visualization added w/  pyvista">
+      <option name="closed" value="true" />
+      <created>1771460262390</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1771460262390</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -705,7 +707,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added a rotation viewer in the testing folder" />
     <MESSAGE value="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook" />
     <MESSAGE value="changed to the more appealing field GUI." />
     <MESSAGE value="partly implemented the disk e method to program" />
@@ -730,7 +731,8 @@
     <MESSAGE value="Trajectory comparison scripts: HDF5 data in a Hexahedron" />
     <MESSAGE value="added file1 and file2 selection windows and changed the plotted diff trajectory to represent the magnitude of the difference between trajectories." />
     <MESSAGE value="code updates" />
-    <option name="LAST_COMMIT_MESSAGE" value="code updates" />
+    <MESSAGE value="code speedups and 3D visualization added w/  pyvista" />
+    <option name="LAST_COMMIT_MESSAGE" value="code speedups and 3D visualization added w/  pyvista" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -795,12 +797,13 @@
     <SUITE FILE_PATH="coverage/BorisPusher$collection_rotations.coverage" NAME="collection_rotations Coverage Results" MODIFIED="1749607727545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />
     <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version3.coverage" NAME="Efield3DRing_Version3 Coverage Results" MODIFIED="1750290780658" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EField FJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$washerPotential.coverage" NAME="washerPotential Coverage Results" MODIFIED="1753829636024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$plotTrajectory.coverage" NAME="plotTrajectory Coverage Results" MODIFIED="1758835282109" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$bob_e.coverage" NAME="bob_e Coverage Results" MODIFIED="1753250526625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/RETerry" />
-    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi.coverage" NAME="washersPhi Coverage Results" MODIFIED="1771357816056" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$plotTrajectory.coverage" NAME="plotTrajectory Coverage Results" MODIFIED="1758835282109" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi.coverage" NAME="washersPhi Coverage Results" MODIFIED="1771463535826" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$washerPhiVectorized.coverage" NAME="washerPhiVectorized Coverage Results" MODIFIED="1771286050021" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$polarSpace.coverage" NAME="polarSpace Coverage Results" MODIFIED="1749600138185" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Alg" />
     <SUITE FILE_PATH="coverage/BorisPusher$efieldring_4.coverage" NAME="efieldring_4 Coverage Results" MODIFIED="1750722954315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$flatcoilsVecPot.coverage" NAME="flatcoilsVecPot Coverage Results" MODIFIED="1771463545312" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/BFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$3d_mesh.coverage" NAME="3d_mesh Coverage Results" MODIFIED="1752722841920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/grid" />
     <SUITE FILE_PATH="coverage/BorisPusher$TiltSpindle.coverage" NAME="TiltSpindle Coverage Results" MODIFIED="1752551555286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="D:/CDriveDownloads" />
     <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods_Impl.coverage" NAME="FieldMethods_Impl Coverage Results" MODIFIED="1750118600099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
