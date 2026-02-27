@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="code speedups and 3D visualization added w/  pyvista">
-      <change afterPath="$PROJECT_DIR$/Scripts/BFieldFJW/flatcoilsVecPot.py" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="code plots modified with subplots to plot lineouts for the field magnitude and gradients.">
+      <change afterPath="$PROJECT_DIR$/Scripts/ExBFJW/MEC_ExB_solver.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/washersPhi.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/EFieldFJW/washersPhi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/BFieldFJW/flatcoilsVecPot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/washersPhi.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,112 +68,112 @@
     <option name="showLibraryContents" value="true" />
     <option name="sortKey" value="BY_TIME_DESCENDING" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.Python tests in e_graphing.py.executor": "Run",
-    "Python tests.Python tests in e_test.py.executor": "Run",
-    "Python tests.Python tests in e_things.py.executor": "Run",
-    "Python tests.Python tests in graphs.py.executor": "Run",
-    "Python.3DDisk.executor": "Run",
-    "Python.3DRing.executor": "Run",
-    "Python.3d_mesh.executor": "Run",
-    "Python.6washersPhiFast.executor": "Run",
-    "Python.Bob_e_Circle_Config.executor": "Run",
-    "Python.BorisGui.executor": "Run",
-    "Python.BorisPusher.executor": "Run",
-    "Python.CurrentGuiClasses.executor": "Run",
-    "Python.Efield3DRing_Version2.executor": "Run",
-    "Python.Efield3DRing_Version3.executor": "Run",
-    "Python.FieldMethods.executor": "Run",
-    "Python.FieldMethods_Impl.executor": "Run",
-    "Python.GuiEntryHelpers.executor": "Run",
-    "Python.MakeCurrent.executor": "Run",
-    "Python.PlottingWindow.executor": "Run",
-    "Python.TextInputTest.executor": "Run",
-    "Python.TiltSpindle.executor": "Run",
-    "Python.TiltSpindle_stream.executor": "Run",
-    "Python.analyticEfield3.executor": "Run",
-    "Python.app_window_sizing.executor": "Run",
-    "Python.bob_e.executor": "Run",
-    "Python.bob_e_rounding_test.executor": "Run",
-    "Python.chatGPT.executor": "Run",
-    "Python.chatHDF5.executor": "Run",
-    "Python.collection_rotations.executor": "Run",
-    "Python.configs.executor": "Run",
-    "Python.cubeCorners.executor": "Run",
-    "Python.diff.executor": "Run",
-    "Python.dt_np.executor": "Run",
-    "Python.e_graphing.executor": "Run",
-    "Python.e_things.executor": "Run",
-    "Python.efieldring_4.executor": "Run",
-    "Python.field_graph.executor": "Run",
-    "Python.file_write_speed.executor": "Run",
-    "Python.find_user_docs.executor": "Run",
-    "Python.flatcoilsVecPot.executor": "Run",
-    "Python.funcs.executor": "Run",
-    "Python.fwysr_2.executor": "Run",
-    "Python.fwysr_2_graphs.executor": "Run",
-    "Python.fwysr_e_1.executor": "Run",
-    "Python.get_documents_path_win.executor": "Run",
-    "Python.graph_2.executor": "Run",
-    "Python.graph_cross.executor": "Run",
-    "Python.graphs.executor": "Run",
-    "Python.grid_interpolation_comparison.executor": "Run",
-    "Python.integrals.executor": "Run",
-    "Python.magpy4c1_01.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.menu_bar (1).executor": "Run",
-    "Python.menu_bar.executor": "Run",
-    "Python.multiprocessing_gui_freezing.executor": "Run",
-    "Python.output_file_structure.executor": "Run",
-    "Python.plotFile.executor": "Run",
-    "Python.plotHDF5.executor": "Run",
-    "Python.plotHDF5data.executor": "Run",
-    "Python.plotTrajectory.executor": "Run",
-    "Python.polarSpace.executor": "Run",
-    "Python.precision_error.executor": "Run",
-    "Python.read_last_used_binary.executor": "Run",
-    "Python.rotation_viewer.executor": "Run",
-    "Python.state_dict_main.executor": "Run",
-    "Python.state_file_handling.executor": "Run",
-    "Python.streamlines3Dring.executor": "Run",
-    "Python.test.executor": "Run",
-    "Python.txt_file_inputs.executor": "Run",
-    "Python.txt_file_inputs2.executor": "Run",
-    "Python.txt_file_inputs3.executor": "Run",
-    "Python.washerEfield.executor": "Run",
-    "Python.washerPhiVectorized.executor": "Run",
-    "Python.washerPotential.executor": "Run",
-    "Python.washer_potential_method_implementation.executor": "Run",
-    "Python.washersOnCube.executor": "Run",
-    "Python.washersOnCube2.executor": "Run",
-    "Python.washersPhi.executor": "Run",
-    "Python.washersPhi_new.executor": "Run",
-    "Python.washersPhi_speedOptimized.executor": "Run",
-    "Python.washersPhi_vectorized.executor": "Run",
-    "Python.widget.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/Users/fwessel/Python/fusion/BorisPusher/Scripts/EFieldFJW/PlottingHDF5",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "aDefault",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.Python tests in e_graphing.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in e_test.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in e_things.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in graphs.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.3DDisk.executor&quot;: &quot;Run&quot;,
+    &quot;Python.3DRing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.3d_mesh.executor&quot;: &quot;Run&quot;,
+    &quot;Python.6washersPhiFast.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Bob_e_Circle_Config.executor&quot;: &quot;Run&quot;,
+    &quot;Python.BorisGui.executor&quot;: &quot;Run&quot;,
+    &quot;Python.BorisPusher.executor&quot;: &quot;Run&quot;,
+    &quot;Python.CurrentGuiClasses.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Efield3DRing_Version2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Efield3DRing_Version3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FieldMethods.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FieldMethods_Impl.executor&quot;: &quot;Run&quot;,
+    &quot;Python.GuiEntryHelpers.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MakeCurrent.executor&quot;: &quot;Run&quot;,
+    &quot;Python.PlottingWindow.executor&quot;: &quot;Run&quot;,
+    &quot;Python.TextInputTest.executor&quot;: &quot;Run&quot;,
+    &quot;Python.TiltSpindle.executor&quot;: &quot;Run&quot;,
+    &quot;Python.TiltSpindle_stream.executor&quot;: &quot;Run&quot;,
+    &quot;Python.analyticEfield3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app_window_sizing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.bob_e.executor&quot;: &quot;Run&quot;,
+    &quot;Python.bob_e_rounding_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.chatGPT.executor&quot;: &quot;Run&quot;,
+    &quot;Python.chatHDF5.executor&quot;: &quot;Run&quot;,
+    &quot;Python.collection_rotations.executor&quot;: &quot;Run&quot;,
+    &quot;Python.configs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.cubeCorners.executor&quot;: &quot;Run&quot;,
+    &quot;Python.diff.executor&quot;: &quot;Run&quot;,
+    &quot;Python.dt_np.executor&quot;: &quot;Run&quot;,
+    &quot;Python.e_graphing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.e_things.executor&quot;: &quot;Run&quot;,
+    &quot;Python.efieldring_4.executor&quot;: &quot;Run&quot;,
+    &quot;Python.field_graph.executor&quot;: &quot;Run&quot;,
+    &quot;Python.file_write_speed.executor&quot;: &quot;Run&quot;,
+    &quot;Python.find_user_docs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flatcoilsVecPot.executor&quot;: &quot;Run&quot;,
+    &quot;Python.funcs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.fwysr_2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.fwysr_2_graphs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.fwysr_e_1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.get_documents_path_win.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graph_2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graph_cross.executor&quot;: &quot;Run&quot;,
+    &quot;Python.graphs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.grid_interpolation_comparison.executor&quot;: &quot;Run&quot;,
+    &quot;Python.integrals.executor&quot;: &quot;Run&quot;,
+    &quot;Python.magpy4c1_01.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_bar.executor&quot;: &quot;Run&quot;,
+    &quot;Python.multiprocessing_gui_freezing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.output_file_structure.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotFile.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotHDF5.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotHDF5data.executor&quot;: &quot;Run&quot;,
+    &quot;Python.plotTrajectory.executor&quot;: &quot;Run&quot;,
+    &quot;Python.polarSpace.executor&quot;: &quot;Run&quot;,
+    &quot;Python.precision_error.executor&quot;: &quot;Run&quot;,
+    &quot;Python.read_last_used_binary.executor&quot;: &quot;Run&quot;,
+    &quot;Python.rotation_viewer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.state_dict_main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.state_file_handling.executor&quot;: &quot;Run&quot;,
+    &quot;Python.streamlines3Dring.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.txt_file_inputs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.txt_file_inputs2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.txt_file_inputs3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washerEfield.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washerPhiVectorized.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washerPotential.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washer_potential_method_implementation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersOnCube.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersOnCube2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersPhi.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersPhi_new.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersPhi_speedOptimized.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersPhi_vectorized.executor&quot;: &quot;Run&quot;,
+    &quot;Python.widget.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/fwessel/Python/fusion/BorisPusher/Scripts/EFieldFJW/PlottingHDF5&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings module-name="BorisPusher" is-module-sdk="true">
@@ -188,11 +189,11 @@
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Scripts/ExB FJW" />
+      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/../BorisPuser" />
       <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
-      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/" />
-      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW" />
     </key>
   </component>
   <component name="RunManager">
@@ -295,15 +296,8 @@
       <workItem from="1771268246414" duration="2759000" />
       <workItem from="1771284696191" duration="937000" />
       <workItem from="1771285675513" duration="19420000" />
-      <workItem from="1771460160367" duration="5959000" />
-    </task>
-    <task id="LOCAL-00038" summary="added a bob_e debug logger test to compare values across systems">
-      <option name="closed" value="true" />
-      <created>1750196638608</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1750196638608</updated>
+      <workItem from="1771460160367" duration="14784000" />
+      <workItem from="1772230606126" duration="55000" />
     </task>
     <task id="LOCAL-00039" summary="changed rho comparison from == to math.isclose when checking if value is 0">
       <option name="closed" value="true" />
@@ -689,7 +683,15 @@
       <option name="project" value="LOCAL" />
       <updated>1771460262390</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary="code plots modified with subplots to plot lineouts for the field magnitude and gradients.">
+      <option name="closed" value="true" />
+      <created>1771466442805</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1771466442805</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -707,7 +709,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook" />
     <MESSAGE value="changed to the more appealing field GUI." />
     <MESSAGE value="partly implemented the disk e method to program" />
     <MESSAGE value="tentative implementation of the disk_e method" />
@@ -732,7 +733,8 @@
     <MESSAGE value="added file1 and file2 selection windows and changed the plotted diff trajectory to represent the magnitude of the difference between trajectories." />
     <MESSAGE value="code updates" />
     <MESSAGE value="code speedups and 3D visualization added w/  pyvista" />
-    <option name="LAST_COMMIT_MESSAGE" value="code speedups and 3D visualization added w/  pyvista" />
+    <MESSAGE value="code plots modified with subplots to plot lineouts for the field magnitude and gradients." />
+    <option name="LAST_COMMIT_MESSAGE" value="code plots modified with subplots to plot lineouts for the field magnitude and gradients." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -799,11 +801,11 @@
     <SUITE FILE_PATH="coverage/BorisPusher$washerPotential.coverage" NAME="washerPotential Coverage Results" MODIFIED="1753829636024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$bob_e.coverage" NAME="bob_e Coverage Results" MODIFIED="1753250526625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/RETerry" />
     <SUITE FILE_PATH="coverage/BorisPusher$plotTrajectory.coverage" NAME="plotTrajectory Coverage Results" MODIFIED="1758835282109" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi.coverage" NAME="washersPhi Coverage Results" MODIFIED="1771463535826" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi.coverage" NAME="washersPhi Coverage Results" MODIFIED="1771541743317" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$washerPhiVectorized.coverage" NAME="washerPhiVectorized Coverage Results" MODIFIED="1771286050021" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$polarSpace.coverage" NAME="polarSpace Coverage Results" MODIFIED="1749600138185" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Alg" />
     <SUITE FILE_PATH="coverage/BorisPusher$efieldring_4.coverage" NAME="efieldring_4 Coverage Results" MODIFIED="1750722954315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$flatcoilsVecPot.coverage" NAME="flatcoilsVecPot Coverage Results" MODIFIED="1771463545312" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/BFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$flatcoilsVecPot.coverage" NAME="flatcoilsVecPot Coverage Results" MODIFIED="1771541760606" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$3d_mesh.coverage" NAME="3d_mesh Coverage Results" MODIFIED="1752722841920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/grid" />
     <SUITE FILE_PATH="coverage/BorisPusher$TiltSpindle.coverage" NAME="TiltSpindle Coverage Results" MODIFIED="1752551555286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="D:/CDriveDownloads" />
     <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods_Impl.coverage" NAME="FieldMethods_Impl Coverage Results" MODIFIED="1750118600099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
