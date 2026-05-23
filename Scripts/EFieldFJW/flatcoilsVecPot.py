@@ -91,10 +91,10 @@ def A_coil_global(r_global, coil):
 # Main solver function
 # ============================================================
 
-def compute_B_field():
+def compute_B_field(a, b):
     """Compute Bx, By, Bz, Bmag on XZ plane, plus centerline |B|."""
 
-    a, b = 0.05, 0.95
+    # a, b = 0.05, 0.95
     offset = 1.0
     turns = 10
     I = 1e6  # 1 MA per turn
@@ -138,27 +138,11 @@ def compute_B_field():
     Bz = dAy_dx
     Bmag = np.sqrt(Bx ** 2 + By ** 2 + Bz ** 2)
 
-    # Centerline |B| along x=y=0
-    z_line = np.linspace(-1.5, 1.5, 400)
-    Bline = np.zeros_like(z_line)
-    h = 1e-4
+    # Extract on-axis Bz directly from grid
+    ix0 = np.argmin(np.abs(x))  # index nearest x=0
 
-    def A_at(pt):
-        val = np.zeros(3)
-        for coil in coils:
-            val += A_coil_global(pt, coil)
-        return val
-
-    for k, z0 in enumerate(z_line):
-        r = np.array([0.0, 0.0, z0])
-        Ax1 = A_at(r + np.array([h, 0, 0]))
-        Ax2 = A_at(r - np.array([h, 0, 0]))
-        Az1 = A_at(r + np.array([0, 0, h]))
-        Az2 = A_at(r - np.array([0, 0, h]))
-        dA_dz = (Az1 - Az2) / (2 * h)
-        dA_dx = (Ax1 - Ax2) / (2 * h)
-        B = np.array([-dA_dz[1], dA_dz[0] - dA_dx[2], dA_dx[1]])
-        Bline[k] = np.linalg.norm(B)
+    z_line = z.copy()
+    Bline = Bz[:, ix0]
 
     return X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline
     # return X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline
@@ -169,48 +153,114 @@ def compute_B_field():
 # ============================================================
 
 if __name__ == "__main__":
-    X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline = compute_B_field()
 
-    floor = np.exp(-10)
-    Bmag_plot = np.maximum(Bmag, floor)
-    logB = np.log(Bmag_plot)
-    norm = Normalize(vmin=-10, vmax=np.max(logB))
+    geometries = [
+        (0.05, 0.95),
+        (0.15, 0.85),
+        (0.25, 0.75),
+    ]
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5), gridspec_kw={'width_ratios': [1.25, 1]})
+    # =========================================================
+    # Create ONE figure with 3 rows x 2 columns
+    # =========================================================
 
-    # Streamlines
-    strm = ax1.streamplot(X, Z, Bx, Bz, color=logB, cmap='plasma', norm=norm, density=1.4, linewidth=1)
-    cbar = fig.colorbar(strm.lines, ax=ax1)
-    cbar.set_label(r'$\log|\vec{B}|$ (T)')
-    ax1.set_title("Magnetic Field Structure (XZ Plane)")
-    ax1.set_xlabel("x (m)");
-    ax1.set_ylabel("z (m)")
-    ax1.set_aspect('equal');
-    ax1.grid(True)
+    fig, axes = plt.subplots(
+        3,
+        2,
+        figsize=(13, 16),
+        gridspec_kw={'width_ratios': [1.25, 1]},
+        constrained_layout=True
+    )
 
-    # Draw coils
-    offset = 1.0
-    a, b = 0.05, 0.95
-    ax1.plot([a, b], [offset, offset], 'k', lw=5)
-    ax1.plot([a, b], [-offset, -offset], 'k', lw=5)
-    ax1.plot([-a, -b], [offset, offset], 'k', lw=5)
-    ax1.plot([-a, -b], [-offset, -offset], 'k', lw=5)
-    ax1.plot([offset, offset], [a, b], 'k', lw=5)
-    ax1.plot([offset, offset], [-a, -b], 'k', lw=5)
-    ax1.plot([-offset, -offset], [a, b], 'k', lw=5)
-    ax1.plot([-offset, -offset], [-a, -b], 'k', lw=5)
+    # =========================================================
+    # Loop over geometries
+    # =========================================================
 
-    # Centerline |B|
-    ax2.plot(z_line, Bline, color='navy', lw=2)
-    ax2.set_title("On-Axis Magnetic Field Magnitude")
-    ax2.set_xlabel("z (m)");
-    ax2.set_ylabel(r'$|\vec{B}(0,0,z)|$ (T)')
-    ax2.grid(True)
+    for row, (a, b) in enumerate(geometries):
 
-    ax2b = ax2.twinx()
-    ax2b.plot(z_line, np.log(np.maximum(Bline, 1e-30)), color='darkred', ls='--', lw=1.5)
-    ax2b.set_ylabel(r'$\log|\vec{B}|$', color='darkred')
-    ax2b.tick_params(axis='y', colors='darkred')
+        ax1 = axes[row, 0]
+        ax2 = axes[row, 1]
 
-    plt.tight_layout()
+        X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline = compute_B_field(a, b)
+
+        floor = np.exp(-6)
+        Bmag_plot = np.maximum(Bmag, floor)
+        logB = np.log(Bmag_plot)
+
+        # first plot lower limit forced to -4
+        if row == 0:
+            norm = Normalize(vmin=-4, vmax=np.max(logB))
+        else:
+            norm = Normalize(vmin=-6, vmax=np.max(logB))
+
+        # =====================================================
+        # Streamlines
+        # =====================================================
+
+        strm = ax1.streamplot(
+            X, Z,
+            Bx, Bz,
+            color=logB,
+            cmap='plasma',
+            norm=norm,
+            density=1.4,
+            linewidth=1
+        )
+
+        cbar = fig.colorbar(strm.lines, ax=ax1)
+        cbar.set_label(r'$\log|\vec{B}|$ (T)')
+
+        ax1.set_title(
+            f"Magnetic Field Structure\n"
+            f"a={a:.2f} m, b={b:.2f} m"
+        )
+
+        ax1.set_xlabel("x (m)")
+        ax1.set_ylabel("z (m)")
+        ax1.set_aspect('equal')
+        ax1.grid(True)
+
+        # =====================================================
+        # Draw coils
+        # =====================================================
+
+        offset = 1.0
+
+        ax1.plot([a, b], [offset, offset], 'k', lw=5)
+        ax1.plot([a, b], [-offset, -offset], 'k', lw=5)
+
+        ax1.plot([-a, -b], [offset, offset], 'k', lw=5)
+        ax1.plot([-a, -b], [-offset, -offset], 'k', lw=5)
+
+        ax1.plot([offset, offset], [a, b], 'k', lw=5)
+        ax1.plot([offset, offset], [-a, -b], 'k', lw=5)
+
+        ax1.plot([-offset, -offset], [a, b], 'k', lw=5)
+        ax1.plot([-offset, -offset], [-a, -b], 'k', lw=5)
+
+        # =====================================================
+        # On-axis Bz
+        # =====================================================
+
+        ax2.plot(z_line, Bline, color='navy', lw=2)
+
+        ax2.set_title("On-Axis Axial Magnetic Field")
+        ax2.set_xlabel("z (m)")
+        ax2.set_ylabel(r'$B_z(0,0,z)$ (T)')
+        ax2.grid(True)
+
+        # log overlay
+        ax2b = ax2.twinx()
+
+        ax2b.plot(
+            z_line,
+            np.log(np.maximum(np.abs(Bline), 1e-30)),
+            color='darkred',
+            ls='--',
+            lw=1.5
+        )
+
+        ax2b.set_ylabel(r'$\log |B_z|$', color='darkred')
+        ax2b.tick_params(axis='y', colors='darkred')
+
     plt.show()
