@@ -94,7 +94,6 @@ def A_coil_global(r_global, coil):
 def compute_B_field(a, b):
     """Compute Bx, By, Bz, Bmag on XZ plane, plus centerline |B|."""
 
-    # a, b = 0.05, 0.95
     offset = 1.0
     turns = 10
     I = 1e6  # 1 MA per turn
@@ -123,7 +122,7 @@ def compute_B_field(a, b):
             r = np.array([X[i, j], 0.0, Z[i, j]])
             A[i, j] = sum(A_coil_global(r, coil) for coil in coils)
 
-    dx = x[1] - x[0];
+    dx = x[1] - x[0]
     dz = z[1] - z[0]
     Ax, Ay, Az = A[:, :, 0], A[:, :, 1], A[:, :, 2]
 
@@ -144,8 +143,23 @@ def compute_B_field(a, b):
     z_line = z.copy()
     Bline = Bz[:, ix0]
 
-    return X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline
-    # return X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline
+    # =========================================================
+    # Diagonal line-out: x = z, y = 0 from (-1.5,-1.5) to (1.5,1.5)
+    # =========================================================
+
+    n_line = len(x)
+    t = np.linspace(-1.5, 1.5, n_line)
+
+    Bdiag_x = np.zeros_like(t)
+    Bdiag_z = np.zeros_like(t)
+
+    for k, val in enumerate(t):
+        ix = np.argmin(np.abs(x - val))
+        iz = np.argmin(np.abs(z - val))
+        Bdiag_x[k] = Bx[iz, ix]
+        Bdiag_z[k] = Bz[iz, ix]
+
+    return X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline, t, Bdiag_x, Bdiag_z
 
 
 # ============================================================
@@ -157,18 +171,19 @@ if __name__ == "__main__":
     geometries = [
         (0.05, 0.95),
         (0.15, 0.85),
-        (0.25, 0.75),
+        # (0.25, 0.75),
+        (0.05, 0.75)
     ]
 
     # =========================================================
-    # Create ONE figure with 3 rows x 2 columns
+    # Create ONE figure with 3 rows x 3 columns
     # =========================================================
 
     fig, axes = plt.subplots(
         3,
-        2,
-        figsize=(13, 16),
-        gridspec_kw={'width_ratios': [1.25, 1]},
+        3,
+        figsize=(19, 16),
+        gridspec_kw={'width_ratios': [1.1, 1.1, 1]},
         constrained_layout=True
     )
 
@@ -180,87 +195,125 @@ if __name__ == "__main__":
 
         ax1 = axes[row, 0]
         ax2 = axes[row, 1]
+        ax3 = axes[row, 2]
 
-        X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline = compute_B_field(a, b)
+        X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline, t, Bdiag_x, Bdiag_z = compute_B_field(a, b)
 
-        floor = np.exp(-6)
-        Bmag_plot = np.maximum(Bmag, floor)
-        logB = np.log(Bmag_plot)
+        # =====================================================
+        # COLUMN 1: Streamlines
+        # =====================================================
 
-        # first plot lower limit forced to -4
+        floor_ax1 = np.exp(-6)
+        Bmag_plot_ax1 = np.maximum(Bmag, floor_ax1)
+        logB_ax1 = np.log(Bmag_plot_ax1)
+
         if row == 0:
-            norm = Normalize(vmin=-4, vmax=np.max(logB))
+            norm_ax1 = Normalize(vmin=-4, vmax=np.max(logB_ax1))
         else:
-            norm = Normalize(vmin=-6, vmax=np.max(logB))
-
-        # =====================================================
-        # Streamlines
-        # =====================================================
+            norm_ax1 = Normalize(vmin=-6, vmax=np.max(logB_ax1))
 
         strm = ax1.streamplot(
             X, Z,
             Bx, Bz,
-            color=logB,
+            color=logB_ax1,
             cmap='plasma',
-            norm=norm,
+            norm=norm_ax1,
             density=1.4,
             linewidth=1
         )
 
-        cbar = fig.colorbar(strm.lines, ax=ax1)
-        cbar.set_label(r'$\log|\vec{B}|$ (T)')
+        cbar1 = fig.colorbar(strm.lines, ax=ax1)
+        cbar1.set_label(r'$\log|\vec{B}|$ (T)')
 
         ax1.set_title(
             f"Magnetic Field Structure\n"
             f"a={a:.2f} m, b={b:.2f} m"
         )
-
         ax1.set_xlabel("x (m)")
         ax1.set_ylabel("z (m)")
         ax1.set_aspect('equal')
         ax1.grid(True)
 
         # =====================================================
-        # Draw coils
+        # COLUMN 2: Continuous Filled Contours
+        # =====================================================
+
+        ax2.set_facecolor('white')
+
+        floor_ax2 = np.exp(-2)
+        Bmag_plot_ax2 = np.maximum(Bmag, floor_ax2)
+        logB_ax2 = np.log(Bmag_plot_ax2)
+
+        norm_ax2 = Normalize(vmin=-6, vmax=np.max(logB_ax2))
+
+        cf = ax2.contourf(
+            X, Z,
+            logB_ax2,
+            levels=50,
+            cmap='plasma',
+            norm=norm_ax2
+        )
+
+        # Sparse line overlay for visual reference & labeling
+        cs = ax2.contour(
+            X, Z,
+            logB_ax2,
+            levels=6,
+            colors='white',
+            alpha=0.5,
+            linewidths=0.8
+        )
+        ax2.clabel(cs, inline=True, fontsize=7, fmt='%.2f')
+
+        cbar2 = fig.colorbar(cf, ax=ax2)
+        cbar2.set_label(r'$\log |\vec{B}|$')
+
+        ax2.set_title("Constant-|B| Contours")
+        ax2.set_xlabel("x (m)")
+        ax2.set_ylabel("z (m)")
+        ax2.set_aspect('equal')
+        ax2.grid(True)
+
+        # =====================================================
+        # Draw Coils on 2D Plots (Columns 1 & 2)
         # =====================================================
 
         offset = 1.0
-
-        ax1.plot([a, b], [offset, offset], 'k', lw=5)
-        ax1.plot([a, b], [-offset, -offset], 'k', lw=5)
-
-        ax1.plot([-a, -b], [offset, offset], 'k', lw=5)
-        ax1.plot([-a, -b], [-offset, -offset], 'k', lw=5)
-
-        ax1.plot([offset, offset], [a, b], 'k', lw=5)
-        ax1.plot([offset, offset], [-a, -b], 'k', lw=5)
-
-        ax1.plot([-offset, -offset], [a, b], 'k', lw=5)
-        ax1.plot([-offset, -offset], [-a, -b], 'k', lw=5)
+        for ax in [ax1, ax2]:
+            ax.plot([a, b], [offset, offset], 'k', lw=5)
+            ax.plot([a, b], [-offset, -offset], 'k', lw=5)
+            ax.plot([-a, -b], [offset, offset], 'k', lw=5)
+            ax.plot([-a, -b], [-offset, -offset], 'k', lw=5)
+            ax.plot([offset, offset], [a, b], 'k', lw=5)
+            ax.plot([offset, offset], [-a, -b], 'k', lw=5)
+            ax.plot([-offset, -offset], [a, b], 'k', lw=5)
+            ax.plot([-offset, -offset], [-a, -b], 'k', lw=5)
 
         # =====================================================
-        # On-axis Bz
+        # COLUMN 3: Line-out Profiles (On-Axis and Diagonal Components)
         # =====================================================
 
-        ax2.plot(z_line, Bline, color='navy', lw=2)
+        # Primary Y-axis: Linear Profiles
+        ax3.plot(z_line, Bline, color='navy', lw=2, label="On-Axis $B_z$")
+        ax3.plot(t, Bdiag_x, color='forestgreen', lw=1.5, ls='-.', label="Diagonal $B_x$")
+        ax3.plot(t, Bdiag_z, color='teal', lw=1.5, ls=':', label="Diagonal $B_z$")
 
-        ax2.set_title("On-Axis Axial Magnetic Field")
-        ax2.set_xlabel("z (m)")
-        ax2.set_ylabel(r'$B_z(0,0,z)$ (T)')
-        ax2.grid(True)
+        ax3.set_title("Magnetic Field Profiles")
+        ax3.set_xlabel("Coordinate Position (m)")
+        ax3.set_ylabel("Field Strength (T)")
+        ax3.grid(True)
+        ax3.legend(loc='upper right')
 
-        # log overlay
-        ax2b = ax2.twinx()
-
-        ax2b.plot(
+        # Secondary Y-axis: Log-scaled On-Axis Bz overlay
+        ax3b = ax3.twinx()
+        ax3b.plot(
             z_line,
             np.log(np.maximum(np.abs(Bline), 1e-30)),
             color='darkred',
             ls='--',
             lw=1.5
         )
-
-        ax2b.set_ylabel(r'$\log |B_z|$', color='darkred')
-        ax2b.tick_params(axis='y', colors='darkred')
+        ax3b.set_ylabel(r'$\log |B_z|$', color='darkred')
+        ax3b.tick_params(axis='y', colors='darkred')
 
     plt.show()
