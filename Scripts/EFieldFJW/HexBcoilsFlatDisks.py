@@ -111,18 +111,18 @@ def plot_3d_solid_disk(ax, center, normal, a, b, colormap_name='copper', flat_co
 
 if __name__ == "__main__":
     # Given problem parameters
-    a = 0.1       # Inner radius (m)
-    b = 0.9       # Outer radius (m)
-    offset = 1.0  # Distance from origin to each face center
+    a = 0.15       # Inner radius (m)
+    b = 0.85       # Outer radius (m)
+    L = 1.0  # offset distance from origin to each face center
 
     # Hexahedron faces definitions: (Center Position, Normal Vector, Axis Default Color)
     face_definitions = [
-        ([offset, 0, 0], [1, 0, 0], 'cm.copper'),      # +X Face
-        ([-offset, 0, 0], [-1, 0, 0], 'cm.copper'),    # -X Face
-        ([0, offset, 0], [0, 1, 0], 'cm.copper'),  # +Y Face
-        ([0, -offset, 0], [0, -1, 0], 'cm.copper'),# -Y Face
-        ([0, 0, offset], [0, 0, 1], 'cm.copper'),         # +Z Face
-        ([0, 0, -offset], [0, 0, -1], 'cm.copper'),       # -Z Face
+        ([L, 0, 0], [1, 0, 0], 'cm.copper'),      # +X Face
+        ([-L, 0, 0], [-1, 0, 0], 'cm.copper'),    # -X Face
+        ([0, L, 0], [0, 1, 0], 'cm.copper'),  # +Y Face
+        ([0, -L, 0], [0, -1, 0], 'cm.copper'),# -Y Face
+        ([0, 0, L], [0, 0, 1], 'cm.copper'),         # +Z Face
+        ([0, 0, -L], [0, 0, -1], 'cm.copper'),       # -Z Face
     ]
 
     # Initialize 3D plotting canvas
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     # ============================================================
 
     # Draw a reference bounding box framework around the hexahedron structure
-    r_box = [-offset, offset]
+    r_box = [-L, L]
     for s, e in [([s, y, z], [e, y, z]) for s in r_box for e in r_box for y in r_box for z in r_box if s != e] + \
                [([x, s, z], [x, e, z]) for x in r_box for s in r_box for e in r_box for z in r_box if s != e] + \
                [([x, y, s], [x, y, e]) for x in r_box for y in r_box for s in r_box for e in r_box if s != e]:
@@ -158,8 +158,8 @@ if __name__ == "__main__":
     ax.set_zlabel("Z (m)", fontsize=11, labelpad=10)
 
     ax.set_title(
-        f"3D Hexahedron Face Coils (Solid Disks)\n"
-        f"Inner Radius $a$ = {a}m, Outer Radius $b$ = {b}m",
+        f"Hexahedral, Face Mounted Magnet Coils\n"
+        f"Offset $L$ = {L} m, Inner & Outer Radii $a$ = {a} m, $b$ = {b} m",
         fontsize=14,
         pad=20
     )

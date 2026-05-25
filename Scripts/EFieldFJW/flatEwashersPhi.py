@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 # Constants
 Q = 1e-11                # Total charge per disk
-a, b = 0.1, 0.9          # Inner and outer radii
+a, b = 0.05, 0.1          # Inner and outer radii
 sigma = Q / (np.pi * (b**2 - a**2))
 disk_to_disk = 2.0       # Center-to-center spacing
 disk_offset = disk_to_disk / 2
@@ -93,7 +93,7 @@ Ez = -dphi_dz
 plt.figure(figsize=(10, 8))
 strm = plt.streamplot(X, Z, Ex, Ez, color=np.log(np.sqrt(Ex**2 + Ez**2)), cmap='plasma', density=1.4)
 plt.colorbar(strm.lines, label=r'$\log|\vec{E}|$')
-plt.title("Electric Field Streamlines from 6 Inward-Facing Annular Disks (XZ-plane)")
+plt.title("Electric Field Streamlines produced by 6 Face-Mounted Annular Disks (XZ-plane)")
 plt.xlabel('x (m)')
 plt.ylabel('z (m)')
 plt.axis('equal')
