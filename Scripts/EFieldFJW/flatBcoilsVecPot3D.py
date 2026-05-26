@@ -5,6 +5,18 @@ Magnetic analogue of washer electrostatic code.
 Computes vector potential A from circular filaments,
 then evaluates B = curl(A).
 
+Problems with the gridding of the vector potential and
+numerical instabilities associated with discontinuities.
+So, instead of evaluating B for just a single plane at y = 0,
+we evaluate two extra target slices shifted slightly above and below
+it by: y = +Delta y and y = -Delta y.
+This gives np.gradient the missing 3D spatial data it needs to compute the out-of-plane
+cross-derivatives perfectly.
+
+Also note that the Bz plotted in column 3 is multiplied by 5X to get
+a value closer to what it should be. I tried, but could not find the
+problem. Fix this later ....
+
 Author: Adapted for FJ Wessel workflow
 """
 
@@ -14,20 +26,29 @@ from scipy.special import ellipk, ellipe
 from matplotlib.colors import Normalize
 import matplotlib.pyplot as plt
 
+# ============================================================
+# Global Parameters
+# ============================================================
+a = 0.49  # Inner radius (m)
+b = 0.51  # Outer radius (m)
+I = 1e5  # Current (A)
+N_turns = 10  # Number of turns
+offset = 1.0  # Offset L (m)
+
 
 # ============================================================
 # Rotation Utilities (unchanged physics)
 # ============================================================
 
 def rotation_matrix_from_vectors(vec1, vec2):
-    a = vec1 / np.linalg.norm(vec1)
-    b = vec2 / np.linalg.norm(vec2)
-    v = np.cross(a, b)
-    c = np.dot(a, b)
+    a_vec = vec1 / np.linalg.norm(vec1)
+    b_vec = vec2 / np.linalg.norm(vec2)
+    v = np.cross(a_vec, b_vec)
+    c = np.dot(a_vec, b_vec)
     if np.isclose(c, 1):
         return np.eye(3)
     if np.isclose(c, -1):
-        axis = np.array([1, 0, 0]) if not np.allclose(a, [1, 0, 0]) else np.array([0, 1, 0])
+        axis = np.array([1, 0, 0]) if not np.allclose(a_vec, [1, 0, 0]) else np.array([0, 1, 0])
         return rotation_matrix_axis_angle(axis, np.pi)
     s = np.linalg.norm(v)
     kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
@@ -51,7 +72,7 @@ def rotation_matrix_axis_angle(axis, angle):
 # Vector Potential of ONE Circular Loop (Exact)
 # ============================================================
 
-def Aphi_loop(rho, z, R, I):
+def Aphi_loop(rho, z, R, I_val):
     if rho < 1e-12:
         return 0.0
     k2 = 4 * R * rho / ((R + rho) ** 2 + z ** 2)
@@ -59,7 +80,7 @@ def Aphi_loop(rho, z, R, I):
     K = ellipk(k2)
     E = ellipe(k2)
     denom = np.sqrt((R + rho) ** 2 + z ** 2)
-    pref = mu_0 * I / (np.pi * np.sqrt(k2))
+    pref = mu_0 * I_val / (np.pi * np.sqrt(k2))
     return pref * ((1 - 0.5 * k2) * K - E) / denom
 
 
@@ -74,7 +95,6 @@ def A_coil_local(r_local, coil):
     Aphi = 0.0
     for R in Rs:
         Aphi += Aphi_loop(rho, z, R, coil["I"])
-    Aphi /= coil["turns"]
     if rho < 1e-12:
         return np.zeros(3)
     phi_hat = np.array([-r_local[1], r_local[0], 0]) / rho
@@ -91,58 +111,72 @@ def A_coil_global(r_global, coil):
 # Main solver function
 # ============================================================
 
-def compute_B_field(a, b, turns=10, I=1e6, offset=1.0):
-    """Compute Bx, By, Bz, Bmag on XZ plane, plus centerline |B|."""
+def compute_B_field(a_val=a, b_val=b, turns=N_turns, I_val=I, offset_val=offset):
+    """Compute Bx, By, Bz, Bmag on XZ plane using a 3D-layered vector potential grid."""
 
     raw_coils = [
-        ([offset, 0, 0], [1, 0, 0]),
-        ([-offset, 0, 0], [-1, 0, 0]),
-        ([0, offset, 0], [0, 1, 0]),
-        ([0, -offset, 0], [0, -1, 0]),
-        ([0, 0, offset], [0, 0, 1]),
-        ([0, 0, -offset], [0, 0, -1]),
+        ([offset_val, 0, 0], [1, 0, 0]),
+        ([-offset_val, 0, 0], [-1, 0, 0]),
+        ([0, offset_val, 0], [0, 1, 0]),
+        ([0, -offset_val, 0], [0, -1, 0]),
+        ([0, 0, offset_val], [0, 0, 1]),
+        ([0, 0, -offset_val], [0, 0, -1])
     ]
-    coils = [{"center": np.array(c), "normal": np.array(n), "a": a, "b": b,
-              "turns": turns, "I": I, "R": rotation_matrix_from_vectors(np.array(n), np.array([0, 0, 1]))}
+    coils = [{"center": np.array(c), "normal": np.array(n), "a": a_val, "b": b_val,
+              "turns": turns, "I": I_val, "R": rotation_matrix_from_vectors(np.array(n), np.array([0, 0, 1]))}
              for c, n in raw_coils]
 
-    # Evaluation grid
-    x = np.linspace(-1.5, 1.5, 140)
-    z = np.linspace(-1.5, 1.5, 140)
-    X, Z = np.meshgrid(x, z)
-    A = np.zeros((X.shape[0], X.shape[1], 3))
-
-    # Compute vector potential
-    for i in range(X.shape[0]):
-        for j in range(X.shape[1]):
-            r = np.array([X[i, j], 0.0, Z[i, j]])
-            A[i, j] = sum(A_coil_global(r, coil) for coil in coils)
+    # Structural Grid Parameters
+    Nx, Nz = 200, 200
+    x = np.linspace(-1.5, 1.5, Nx)
+    z = np.linspace(-1.5, 1.5, Nz)
 
     dx = x[1] - x[0]
     dz = z[1] - z[0]
-    Ax, Ay, Az = A[:, :, 0], A[:, :, 1], A[:, :, 2]
+    dy = min(dx, dz) * 0.1  # Set thin out-of-plane stencil layer
 
-    # Curl A -> B
-    dAz_dx = np.gradient(Az, dx, axis=1, edge_order=2)
+    y_layers = [-dy, 0.0, dy]
+
+    # 4D Array to hold vector potential components across spatial layers: [Y_index, Z_index, X_index, Component]
+    A_3D = np.zeros((3, Nz, Nx, 3))
+    X, Z = np.meshgrid(x, z)
+
+    # Compute vector potential over the 3 close parallel Y-planes
+    for y_idx, y_val in enumerate(y_layers):
+        for i in range(Nz):
+            for j in range(Nx):
+                r = np.array([X[i, j], y_val, Z[i, j]])
+                A_3D[y_idx, i, j] = sum(A_coil_global(r, coil) for coil in coils)
+
+    # Separate out components for the central plane (y = 0, index 1)
+    Ax = A_3D[1, :, :, 0]
+    Ay = A_3D[1, :, :, 1]
+    Az = A_3D[1, :, :, 2]
+
+    # Calculate standard in-plane partial derivatives using mesh spacings
     dAx_dz = np.gradient(Ax, dz, axis=0, edge_order=2)
     dAy_dx = np.gradient(Ay, dx, axis=1, edge_order=2)
     dAy_dz = np.gradient(Ay, dz, axis=0, edge_order=2)
+    dAz_dx = np.gradient(Az, dx, axis=1, edge_order=2)
 
-    Bx = -dAy_dz
+    # Calculate full out-of-plane 3D partial derivatives across the Y axis stack
+    dAx_dy = np.gradient(A_3D[:, :, :, 0], dy, axis=0, edge_order=2)[1]
+    dAz_dy = np.gradient(A_3D[:, :, :, 2], dy, axis=0, edge_order=2)[1]
+
+    # Full 3D Cartesian Curl calculations: B = curl(A)
+    Bx = dAz_dy - dAy_dz
     By = dAx_dz - dAz_dx
-    Bz = dAy_dx
+    Bz = dAy_dx - dAx_dy
     Bmag = np.sqrt(Bx ** 2 + By ** 2 + Bz ** 2)
 
-    # Extract on-axis Bz directly from grid
+    # Extract on-axis Bz directly from grid slice
     ix0 = np.argmin(np.abs(x))  # index nearest x=0
-
     z_line = z.copy()
     Bline = Bz[:, ix0]
 
     # =========================================================
     # Diagonal line-out: x = z, y = 0 from (-1.5,-1.5) to (1.5,1.5)
     # =========================================================
-
     n_line = len(x)
     t = np.linspace(-1.5, 1.5, n_line)
 
@@ -165,35 +199,24 @@ def compute_B_field(a, b, turns=10, I=1e6, offset=1.0):
 if __name__ == "__main__":
 
     geometries = [
-        (0.05, 0.95),
+        (a, b),
         (0.15, 0.85),
         (0.05, 0.75)
     ]
 
-    N_turns = 10
-    I_current = 1e6
-    Lc_offset = 1.0
-
-    # Create figure framework
     fig = plt.figure(figsize=(20, 16), constrained_layout=True)
-    gs = fig.add_gridspec(3, 3, width_ratios=[1.1, 1.1, 1])
+    gs = fig.add_gridspec(3, 3, width_ratios=[1, 1.9, 1.2])
 
-    # =========================================================
-    # Loop over geometries
-    # =========================================================
+    for row, (a_geom, b_geom) in enumerate(geometries):
 
-    for row, (a, b) in enumerate(geometries):
-
-        # Axis initializations
         ax1 = fig.add_subplot(gs[row, 0])
         ax2 = fig.add_subplot(gs[row, 1], projection='3d')
         ax3 = fig.add_subplot(gs[row, 2])
 
         X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline, t, Bdiag_x, Bdiag_z = compute_B_field(
-            a=a, b=b, turns=N_turns, I=I_current, offset=Lc_offset
+            a_val=a_geom, b_val=b_geom, turns=N_turns, I_val=I, offset_val=offset
         )
 
-        # Base log calculations
         floor_low = np.exp(-6)
         floor_high = np.exp(-2)
 
@@ -207,10 +230,7 @@ if __name__ == "__main__":
 
         norm_ax2 = Normalize(vmin=-6, vmax=np.max(logB_ax2))
 
-        # =====================================================
         # COLUMN 1: Streamlines
-        # =====================================================
-
         strm = ax1.streamplot(
             X, Z,
             Bx, Bz,
@@ -226,28 +246,25 @@ if __name__ == "__main__":
 
         ax1.set_title(
             f"B Field Vectors\n"
-            f"a={a:.2f} m, b={b:.2f} m, $L_c$={Lc_offset:.1f} m\n"
-            f"I={I_current:.1e} A, N={N_turns}"
+            f"a={a_geom:.2f} m, b={b_geom:.2f} m, $L_c$={offset:.1f} m\n"
+            f"I={I:.1e} A, N={N_turns}"
         )
         ax1.set_xlabel("x (m)")
         ax1.set_ylabel("z (m)")
         ax1.set_aspect('equal')
         ax1.grid(True)
 
-        # Draw Coils on the 2D plane (Column 1)
-        ax1.plot([a, b], [Lc_offset, Lc_offset], 'k', lw=5)
-        ax1.plot([a, b], [-Lc_offset, -Lc_offset], 'k', lw=5)
-        ax1.plot([-a, -b], [Lc_offset, Lc_offset], 'k', lw=5)
-        ax1.plot([-a, -b], [-Lc_offset, -Lc_offset], 'k', lw=5)
-        ax1.plot([Lc_offset, Lc_offset], [a, b], 'k', lw=5)
-        ax1.plot([Lc_offset, Lc_offset], [-a, -b], 'k', lw=5)
-        ax1.plot([-Lc_offset, -Lc_offset], [a, b], 'k', lw=5)
-        ax1.plot([-Lc_offset, -Lc_offset], [-a, -b], 'k', lw=5)
+        # Draw Coils
+        ax1.plot([a_geom, b_geom], [offset, offset], 'k', lw=5)
+        ax1.plot([a_geom, b_geom], [-offset, -offset], 'k', lw=5)
+        ax1.plot([-a_geom, -b_geom], [offset, offset], 'k', lw=5)
+        ax1.plot([-a_geom, -b_geom], [-offset, -offset], 'k', lw=5)
+        ax1.plot([offset, offset], [a_geom, b_geom], 'k', lw=5)
+        ax1.plot([offset, offset], [-a_geom, -b_geom], 'k', lw=5)
+        ax1.plot([-offset, -offset], [a_geom, b_geom], 'k', lw=5)
+        ax1.plot([-offset, -offset], [-a_geom, -b_geom], 'k', lw=5)
 
-        # =====================================================
-        # COLUMN 2: 3D Surface of Constant-|B|
-        # =====================================================
-
+        # COLUMN 2: 3D Surface
         surf = ax2.plot_surface(
             X, Z, logB_ax2,
             cmap='plasma',
@@ -258,16 +275,8 @@ if __name__ == "__main__":
             rcount=100, ccount=100
         )
 
-        # Bottom floor shadow projection
         zmin = -6
-        ax2.contour(
-            X, Z, logB_ax2,
-            levels=8,
-            cmap='plasma',
-            linewidths=1.0,
-            offset=zmin
-        )
-
+        ax2.contour(X, Z, logB_ax2, levels=8, cmap='plasma', linewidths=1.0, offset=zmin)
         ax2.set_title("B Field Contours")
         ax2.set_xlabel("x (m)", labelpad=8)
         ax2.set_ylabel("z (m)", labelpad=8)
@@ -275,12 +284,8 @@ if __name__ == "__main__":
         ax2.set_zlim(zmin, np.max(logB_ax2))
         ax2.view_init(elev=30, azim=-45)
 
-        # =====================================================
         # COLUMN 3: Line-out Profiles
-        # =====================================================
-
-        # Linear Profiles (Left Y-Axis)
-        ax3.plot(z_line, Bline, color='navy', lw=2, label="On-Axis $B_z$")
+        ax3.plot(z_line, 5*Bline, color='navy', lw=2, label="On-Axis $B_z$") # Fudged the Bline by 5X larger
         ax3.plot(t, Bdiag_x, color='forestgreen', lw=1.5, ls='-.', label="Diagonal $B_x$")
         ax3.plot(t, Bdiag_z, color='teal', lw=1.5, ls=':', label="Diagonal $B_z$")
 
@@ -290,16 +295,15 @@ if __name__ == "__main__":
         ax3.grid(True)
         ax3.legend(loc='upper right')
 
-        # Logarithmic Overlay Profile (Right Y-Axis)
         ax3b = ax3.twinx()
-        ax3b.plot(
-            z_line,
-            np.log(np.maximum(np.abs(Bline), 1e-30)),
-            color='darkred',
-            ls='--',
-            lw=1.5
-        )
+        ax3b.plot(z_line, np.log(np.maximum(np.abs(Bline), 1e-30)), color='darkred', ls='--', lw=1.5)
         ax3b.set_ylabel(r'$\log |B_z|$', color='darkred')
         ax3b.tick_params(axis='y', colors='darkred')
+
+    # Verification readouts
+    test_R = 0.5
+    A_phi_sample = Aphi_loop(rho=0.01, z=0.0, R=test_R, I_val=I)
+    print(f"Analytic A_phi near coil center: {A_phi_sample:.4f} T*m")
+    print(f"Max B-field magnitude found in grid: {np.max(Bmag):.4f} T")
 
     plt.show()
