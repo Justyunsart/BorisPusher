@@ -1,7 +1,7 @@
 """
 3-D Hexahedron Solid Disk Coil Visualizer
 Generates 6 solid annular disks positioned on the faces of a cube
-using an elegant metallic colormap gradient.
+using an enhanced high-visibility colormap gradient.
 
 Author: Adapted for FJ Wessel workflow layout
 """
@@ -11,19 +11,29 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 
 # ============================================================
+# Global Parameters
+# ============================================================
+# a = 0.48       # Inner radius (m)
+a = 0.15      # Inner radius (m)
+# b = 0.52       # Outer radius (m)
+b = 0.85       # Outer radius (m)
+L = 1.0        # Offset distance from origin to each face center
+
+
+# ============================================================
 # Rotation Utilities for 3D Space
 # ============================================================
 
 def rotation_matrix_from_vectors(vec1, vec2):
     """Returns a rotation matrix that maps vec1 to vec2."""
-    a = vec1 / np.linalg.norm(vec1)
-    b = vec2 / np.linalg.norm(vec2)
-    v = np.cross(a, b)
-    c = np.dot(a, b)
+    a_vec = vec1 / np.linalg.norm(vec1)
+    b_vec = vec2 / np.linalg.norm(vec2)
+    v = np.cross(a_vec, b_vec)
+    c = np.dot(a_vec, b_vec)
     if np.isclose(c, 1):
         return np.eye(3)
     if np.isclose(c, -1):
-        axis = np.array([1, 0, 0]) if not np.allclose(a, [1, 0, 0]) else np.array([0, 1, 0])
+        axis = np.array([1, 0, 0]) if not np.allclose(a_vec, [1, 0, 0]) else np.array([0, 1, 0])
         return rotation_matrix_axis_angle(axis, np.pi)
     s = np.linalg.norm(v)
     kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
@@ -48,13 +58,13 @@ def rotation_matrix_axis_angle(axis, angle):
 # 3D Solid Disk Mesh Generation
 # ============================================================
 
-def plot_3d_solid_disk(ax, center, normal, a, b, colormap_name='copper', flat_color=None, r_pts=30, theta_pts=100):
+def plot_3d_solid_disk(ax, center, normal, a_rad, b_rad, colormap_name='plasma', flat_color=None, r_pts=30, theta_pts=100):
     """
     Generates a 2D coordinate mesh for an annular disk, rotates/translates it,
     and plots it as a solid 3D surface object with custom coloring.
     """
     # Create a 2D grid for radius (a to b) and angle (0 to 2pi)
-    r_vals = np.linspace(a, b, r_pts)
+    r_vals = np.linspace(a_rad, b_rad, r_pts)
     theta_vals = np.linspace(0, 2 * np.pi, theta_pts)
     R_mesh, Theta_mesh = np.meshgrid(r_vals, theta_vals)
 
@@ -84,23 +94,24 @@ def plot_3d_solid_disk(ax, center, normal, a, b, colormap_name='copper', flat_co
         ax.plot_surface(
             X_global, Y_global, Z_global,
             color=flat_color,
-            alpha=0.6,
+            alpha=0.95,           # Increased visibility/opacity
             shade=True,
             linewidth=0,
             antialiased=True
         )
     else:
         # Radial gradient colormap style
-        norm = plt.Normalize(vmin=a, vmax=b)
-        cmap = cm.get_cmap(colormap_name)
+        norm = plt.Normalize(vmin=a_rad, vmax=b_rad)
+        cmap = plt.get_cmap(colormap_name)
         facecolors = cmap(norm(R_mesh))
 
         ax.plot_surface(
             X_global, Y_global, Z_global,
             facecolors=facecolors,
-            alpha=0.8,            # 0.8 allows clear transparency through the center holes
-            shade=True,           # Retains 3D shadows over the gradient color
-            linewidth=0,
+            alpha=0.95,  # Keeps the layout highly opaque
+            shade=False,  # Keeps the colors bright instead of shadowy
+            linewidth=0,  # <-- CHANGE THIS TO 0 (Removes the line thickness)
+            edgecolor='none',  # <-- CHANGE THIS TO 'none' (Removes the black borders)
             antialiased=True
         )
 
@@ -110,19 +121,15 @@ def plot_3d_solid_disk(ax, center, normal, a, b, colormap_name='copper', flat_co
 # ============================================================
 
 if __name__ == "__main__":
-    # Given problem parameters
-    a = 0.15       # Inner radius (m)
-    b = 0.85       # Outer radius (m)
-    L = 1.0  # offset distance from origin to each face center
 
-    # Hexahedron faces definitions: (Center Position, Normal Vector, Axis Default Color)
+    # Hexahedron faces definitions: Using 'plasma' for supreme vibrant contrast
     face_definitions = [
-        ([L, 0, 0], [1, 0, 0], 'cm.copper'),      # +X Face
-        ([-L, 0, 0], [-1, 0, 0], 'cm.copper'),    # -X Face
-        ([0, L, 0], [0, 1, 0], 'cm.copper'),  # +Y Face
-        ([0, -L, 0], [0, -1, 0], 'cm.copper'),# -Y Face
-        ([0, 0, L], [0, 0, 1], 'cm.copper'),         # +Z Face
-        ([0, 0, -L], [0, 0, -1], 'cm.copper'),       # -Z Face
+        ([L, 0, 0], [1, 0, 0], 'inferno'),       # +X Face
+        ([-L, 0, 0], [-1, 0, 0], 'inferno'),     # -X Face
+        ([0, L, 0], [0, 1, 0], 'inferno'),       # +Y Face
+        ([0, -L, 0], [0, -1, 0], 'inferno'),     # -Y Face
+        ([0, 0, L], [0, 0, 1], 'inferno'),       # +Z Face
+        ([0, 0, -L], [0, 0, -1], 'inferno'),      # -Z Face
     ]
 
     # Initialize 3D plotting canvas
@@ -130,12 +137,8 @@ if __name__ == "__main__":
     ax = fig.add_subplot(111, projection='3d')
 
     # Loop over all 6 faces of the hexahedron and render them as solid surfaces
-    for center, normal, axis_color in face_definitions:
-        # OPTION A: Radiant copper gradient style (Default)
-        plot_3d_solid_disk(ax, center, normal, a, b, colormap_name='copper')
-
-        # OPTION B: Un-comment the line below to use distinct axis flat colors instead
-        # plot_3d_solid_disk(ax, center, normal, a, b, flat_color=axis_color)
+    for center, normal, cmap_choice in face_definitions:
+        plot_3d_solid_disk(ax, center, normal, a, b, colormap_name=cmap_choice)
 
     # ============================================================
     # Aesthetics & Boundary Configuration
