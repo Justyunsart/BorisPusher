@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 # Constants
 Q = 1e-11                # Total charge per disk
-a, b = 0.05, 0.1          # Inner and outer radii
+a, b = 0.05, 0.15          # Inner and outer radii
 sigma = Q / (np.pi * (b**2 - a**2))
 disk_to_disk = 2.0       # Center-to-center spacing
 disk_offset = disk_to_disk / 2
