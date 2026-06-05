@@ -29,8 +29,10 @@ import matplotlib.pyplot as plt
 # ============================================================
 # Global Parameters
 # ============================================================
-a = 0.49  # Inner radius (m)
-b = 0.51  # Outer radius (m)
+a = 0.15  # Inner radius (m)
+# a = 0.49  # Inner radius (m)
+b = 0.85  # Outer radius (m)
+# b = 0.51  # Outer radius (m)
 I = 1e5  # Current (A)
 N_turns = 10  # Number of turns
 offset = 1.0  # Offset L (m)
@@ -199,9 +201,9 @@ def compute_B_field(a_val=a, b_val=b, turns=N_turns, I_val=I, offset_val=offset)
 if __name__ == "__main__":
 
     geometries = [
-        (a, b),
-        (0.15, 0.85),
-        (0.05, 0.75)
+        (a, b)
+        # (0.15, 0.85),
+        # (0.05, 0.75)
     ]
 
     fig = plt.figure(figsize=(20, 16), constrained_layout=True)
