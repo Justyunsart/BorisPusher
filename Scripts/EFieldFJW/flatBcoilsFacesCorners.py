@@ -174,7 +174,9 @@ seeds = np.vstack([seed_u.ravel(), seed_v.ravel()]).T
 fig1, ax1 = plt.subplots(figsize=(11, 11))
 B_mag1 = np.sqrt(Bx_p1**2 + By_p1**2)
 
-ax1.contourf(U, V, B_mag1, levels=50, cmap='plasma', alpha=0.2)
+contour1 = ax1.contourf(U, V, B_mag1, levels=50, cmap='plasma', alpha=0.2)
+cbar = fig1.colorbar(contour1, ax=ax1, shrink=0.85, pad=0.03)
+cbar.set_label(r'Field Intensity $|\mathbf{B}_{\mathrm{diff}}|$ [Tesla]', fontsize=11)
 ax1.streamplot(U, V, Bx_p1, By_p1, color='#2c3e50', linewidth=1.1,
               density=2.0, arrowstyle='->', arrowsize=0.9, start_points=seeds)
 
@@ -203,7 +205,9 @@ ax1.grid(True, linestyle=':', alpha=0.3)
 fig2, ax2 = plt.subplots(figsize=(11, 11))
 B_mag2 = np.sqrt(Bu_p2 ** 2 + Bv_p2 ** 2)
 
-ax2.contourf(U, V, B_mag2, levels=50, cmap='plasma', alpha=0.2)
+contour2 = ax2.contourf(U, V, B_mag2, levels=50, cmap='plasma', alpha=0.2)
+cbar = fig1.colorbar(contour2, ax=ax2, shrink=0.85, pad=0.03)
+cbar.set_label(r'Field Intensity $|\mathbf{B}_{\mathrm{diff}}|$ [Tesla]', fontsize=11)
 ax2.streamplot(U, V, Bu_p2, Bv_p2, color='#2c3e50', linewidth=1.1,
                density=2.0, arrowstyle='->', arrowsize=0.9, start_points=seeds)
 

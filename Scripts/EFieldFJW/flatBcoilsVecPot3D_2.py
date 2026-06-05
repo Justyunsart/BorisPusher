@@ -25,7 +25,7 @@ K_face = I_face_total / (b - a)
 
 # 2. Corner Coils (All moments inward / "Anti" configuration)
 c, d = 0.15, 0.50  # Inner and outer radii [m]
-I_corner_total = -5 * 1e5  # N_2 = 5, I_2 = 10^5 A
+I_corner_total = 5 * 1e5  # N_2 = 5, I_2 = 10^5 A
 K_corner = I_corner_total / (d - c)
 
 
