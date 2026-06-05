@@ -62,8 +62,8 @@ fig = plt.figure(figsize=(12, 12))
 ax = fig.add_subplot(111, projection='3d')
 
 arrow_length = 0.35
-color_face = "#2c3e50"  # Solid Navy/Slate for Face Disks
-color_corner = "#e74c3c"  # Solid Crimson for Corner Plugs
+color_face   = "#d97706"   # metallic copper
+color_corner = "#008080"   # dark orange
 
 # 4. Draw Inscribed Dotted Reference Cube
 for edge in cube_edges:
@@ -76,6 +76,8 @@ for norm, center in zip(face_normals, face_centers):
     disk = generate_flat_disk(norm, center, r_face_in, r_face_out, color_face)
     ax.add_collection3d(disk)
 
+    disk.set_alpha(0.75)  # 50% transparency
+
     ax.quiver(center[0], center[1], center[2], -norm[0] * arrow_length, -norm[1] * arrow_length,
               -norm[2] * arrow_length,
               color=color_face, linewidth=2.5, arrow_length_ratio=0.3, zorder=5,
@@ -87,6 +89,8 @@ labeled_c = False
 for norm, center in zip(corner_normals, corner_centers):
     disk = generate_flat_disk(norm, center, r_corner_in, r_corner_out, color_corner)
     ax.add_collection3d(disk)
+
+    disk.set_alpha(0.5)  # 50% transparency
 
     ax.quiver(center[0], center[1], center[2], norm[0] * arrow_length, norm[1] * arrow_length, norm[2] * arrow_length,
               color=color_corner, linewidth=2.0, arrow_length_ratio=0.3, zorder=5,
