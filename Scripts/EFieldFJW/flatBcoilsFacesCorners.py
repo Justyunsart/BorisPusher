@@ -19,14 +19,14 @@ from scipy.integrate import quad
 mu_0 = 4 * np.pi * 1e-7
 
 # 1. Face Coils (All moments outward)
-a, b = 0.2, 0.8  # Inner and outer radii [m]
+a, b = 0.15, 0.8  # Inner and outer radii [m]
 d_face = 1.0  # Distance to face centers [m]
 I_face_total = 10 * 1e5  # N = 10, I = 10^5 A
 K_face = I_face_total / (b - a)
 
 # 2. Corner Coils (All moments inward / "Anti" configuration)
 c, d = 0.15, 0.50  # Inner and outer radii [m]
-I_corner_total = 5 * 1e5  # N_2 = 5, I_2 = 10^5 A
+I_corner_total = 4.5 * 1e5  # balanced flux corners = faces
 K_corner = I_corner_total / (d - c)
 
 
@@ -174,9 +174,9 @@ seeds = np.vstack([seed_u.ravel(), seed_v.ravel()]).T
 fig1, ax1 = plt.subplots(figsize=(11, 11))
 B_mag1 = np.sqrt(Bx_p1**2 + By_p1**2)
 
-contour1 = ax1.contourf(U, V, B_mag1, levels=50, cmap='plasma', alpha=0.2)
+contour1 = ax1.contourf(U, V, B_mag1, levels=50, cmap='plasma', alpha=0.4)
 cbar = fig1.colorbar(contour1, ax=ax1, shrink=0.85, pad=0.03)
-cbar.set_label(r'Field Intensity $|\mathbf{B}_{\mathrm{diff}}|$ [Tesla]', fontsize=11)
+cbar.set_label(r'Field Intensity $|\mathbf{B}|$ [Tesla]', fontsize=11)
 ax1.streamplot(U, V, Bx_p1, By_p1, color='#2c3e50', linewidth=1.1,
               density=2.0, arrowstyle='->', arrowsize=0.9, start_points=seeds)
 
@@ -193,7 +193,7 @@ ax1.plot([-a, -b], [-d_face, -d_face], color='#4b0082', linewidth=5)
 ax1.scatter(0, 0, color='gold', s=150, edgecolors='black', label='Central Null Core (B = 0)', zorder=10)
 ax1.set_xlabel('Global X Axis [m]')
 ax1.set_ylabel('Global Y Axis [m]')
-ax1.set_title('Plot 1: Magnetic Field Lines in the Standard $Z=0$ Midplane', fontsize=11, pad=15)
+ax1.set_title('Plot 1: Magnetic Fields Lines and Contours in the Standard $(X, Y, Z=0)$ Midplane\n(Slicing Directly Through 4 Face Coil Centers)', fontsize=11, pad=15)
 ax1.legend(loc='upper right')
 ax1.set_xlim(-2.2, 2.2)
 ax1.set_ylim(-2.2, 2.2)
@@ -205,9 +205,9 @@ ax1.grid(True, linestyle=':', alpha=0.3)
 fig2, ax2 = plt.subplots(figsize=(11, 11))
 B_mag2 = np.sqrt(Bu_p2 ** 2 + Bv_p2 ** 2)
 
-contour2 = ax2.contourf(U, V, B_mag2, levels=50, cmap='plasma', alpha=0.2)
+contour2 = ax2.contourf(U, V, B_mag2, levels=50, cmap='plasma', alpha=0.4)
 cbar = fig1.colorbar(contour2, ax=ax2, shrink=0.85, pad=0.03)
-cbar.set_label(r'Field Intensity $|\mathbf{B}_{\mathrm{diff}}|$ [Tesla]', fontsize=11)
+cbar.set_label(r'Field Intensity $|\mathbf{B}|$ [Tesla]', fontsize=11)
 ax2.streamplot(U, V, Bu_p2, Bv_p2, color='#2c3e50', linewidth=1.1,
                density=2.0, arrowstyle='->', arrowsize=0.9, start_points=seeds)
 
@@ -245,7 +245,7 @@ ax2.scatter(0, 0, color='gold', s=150, edgecolors='black', label='Central Null C
 ax2.set_xlabel('Rotated Plane Horizontal Axis (X-Z Projection Matrix) [m]')
 ax2.set_ylabel('Rotated Plane Vertical Axis (Global Y Axis) [m]')
 ax2.set_title(
-    'Plot 2: Magnetic Field Lines in the 45-Degree Y-Axis Rotated Slice\n(Slicing Directly Through 4 Corner Anti-Coil Centers)',
+    'Plot 2: Magnetic Field Lines and Contours in the 45-Degree Y-Axis Rotated Slice\n(Slicing Directly Through 4 Corner Anti-Coil Centers)',
     fontsize=11, pad=15)
 ax2.legend(loc='upper right')
 ax2.set_xlim(-2.2, 2.2)
