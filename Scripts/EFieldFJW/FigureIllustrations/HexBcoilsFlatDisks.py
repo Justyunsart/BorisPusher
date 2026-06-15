@@ -13,9 +13,7 @@ import matplotlib.cm as cm
 # ============================================================
 # Global Parameters
 # ============================================================
-# a = 0.48       # Inner radius (m)
 a = 0.15      # Inner radius (m)
-# b = 0.52       # Outer radius (m)
 b = 0.85       # Outer radius (m)
 L = 1.0        # Offset distance from origin to each face center
 
@@ -58,7 +56,7 @@ def rotation_matrix_axis_angle(axis, angle):
 # 3D Solid Disk Mesh Generation
 # ============================================================
 
-def plot_3d_solid_disk(ax, center, normal, a_rad, b_rad, colormap_name='plasma', flat_color=None, r_pts=30, theta_pts=100):
+def plot_3d_solid_disk(ax, center, normal, a_rad, b_rad, colormap_name='copper', flat_color=None, r_pts=30, theta_pts=100):
     """
     Generates a 2D coordinate mesh for an annular disk, rotates/translates it,
     and plots it as a solid 3D surface object with custom coloring.
@@ -94,7 +92,7 @@ def plot_3d_solid_disk(ax, center, normal, a_rad, b_rad, colormap_name='plasma',
         ax.plot_surface(
             X_global, Y_global, Z_global,
             color=flat_color,
-            alpha=0.95,           # Increased visibility/opacity
+            alpha=0.95,
             shade=True,
             linewidth=0,
             antialiased=True
@@ -108,10 +106,10 @@ def plot_3d_solid_disk(ax, center, normal, a_rad, b_rad, colormap_name='plasma',
         ax.plot_surface(
             X_global, Y_global, Z_global,
             facecolors=facecolors,
-            alpha=0.95,  # Keeps the layout highly opaque
-            shade=False,  # Keeps the colors bright instead of shadowy
-            linewidth=0,  # <-- CHANGE THIS TO 0 (Removes the line thickness)
-            edgecolor='none',  # <-- CHANGE THIS TO 'none' (Removes the black borders)
+            alpha=0.90,  # Slightly transparent for clean 3D layering
+            shade=False,
+            linewidth=0,
+            edgecolor='none',
             antialiased=True
         )
 
@@ -122,21 +120,24 @@ def plot_3d_solid_disk(ax, center, normal, a_rad, b_rad, colormap_name='plasma',
 
 if __name__ == "__main__":
 
-    # Hexahedron faces definitions: Using 'plasma' for supreme vibrant contrast
+    # --- CHANGED: Using 'copper' gradient to match the Face Coil theme ---
+    selected_cmap = 'berlin'
+
     face_definitions = [
-        ([L, 0, 0], [1, 0, 0], 'inferno'),       # +X Face
-        ([-L, 0, 0], [-1, 0, 0], 'inferno'),     # -X Face
-        ([0, L, 0], [0, 1, 0], 'inferno'),       # +Y Face
-        ([0, -L, 0], [0, -1, 0], 'inferno'),     # -Y Face
-        ([0, 0, L], [0, 0, 1], 'inferno'),       # +Z Face
-        ([0, 0, -L], [0, 0, -1], 'inferno'),      # -Z Face
+        ([L, 0, 0], [1, 0, 0], selected_cmap),       # +X Face
+        ([-L, 0, 0], [-1, 0, 0], selected_cmap),     # -X Face
+        ([0, L, 0], [0, 1, 0], selected_cmap),       # +Y Face
+        ([0, -L, 0], [0, -1, 0], selected_cmap),     # -Y Face
+        ([0, 0, L], [0, 0, 1], selected_cmap),       # +Z Face
+        ([0, 0, -L], [0, 0, -1], selected_cmap),     # -Z Face
     ]
 
-    # Initialize 3D plotting canvas
-    fig = plt.figure(figsize=(10, 10))
-    ax = fig.add_subplot(111, projection='3d')
+    # Initialize clean white background canvas
+    plt.style.use('seaborn-v0_8-whitegrid' if 'seaborn-v0_8-whitegrid' in plt.style.available else 'default')
+    fig = plt.figure(figsize=(10, 10), facecolor='white')
+    ax = fig.add_subplot(111, projection='3d', facecolor='white')
 
-    # Loop over all 6 faces of the hexahedron and render them as solid surfaces
+    # Loop over all 6 faces of the hexahedron and render them
     for center, normal, cmap_choice in face_definitions:
         plot_3d_solid_disk(ax, center, normal, a, b, colormap_name=cmap_choice)
 
@@ -149,28 +150,38 @@ if __name__ == "__main__":
     for s, e in [([s, y, z], [e, y, z]) for s in r_box for e in r_box for y in r_box for z in r_box if s != e] + \
                [([x, s, z], [x, e, z]) for x in r_box for s in r_box for e in r_box for z in r_box if s != e] + \
                [([x, y, s], [x, y, e]) for x in r_box for y in r_box for s in r_box for e in r_box if s != e]:
-        ax.plot3D(*zip(s, e), color="black", linestyle=":", linewidth=0.8, alpha=0.3)
+        ax.plot3D(*zip(s, e), color="#94A3B8", linestyle="--", linewidth=1.0, alpha=0.4)
 
     # Set spatial axes constraints
     ax.set_xlim([-1.5, 1.5])
     ax.set_ylim([-1.5, 1.5])
     ax.set_zlim([-1.5, 1.5])
 
-    ax.set_xlabel("X (m)", fontsize=11, labelpad=10)
-    ax.set_ylabel("Y (m)", fontsize=11, labelpad=10)
-    ax.set_zlabel("Z (m)", fontsize=11, labelpad=10)
+    ax.set_xlabel("X (m)", fontsize=11, labelpad=10, color="#334155")
+    ax.set_ylabel("Y (m)", fontsize=11, labelpad=10, color="#334155")
+    ax.set_zlabel("Z (m)", fontsize=11, labelpad=10, color="#334155")
 
     ax.set_title(
         f"Hexahedral, Face Mounted Magnet Coils\n"
         f"Offset $L$ = {L} m, Inner & Outer Radii $a$ = {a} m, $b$ = {b} m",
         fontsize=14,
-        pad=20
+        fontweight='bold',
+        pad=20,
+        color="#1E293B"
     )
 
-    # Optimize aspect ratio to avoid distortion of the geometric shapes
+    # --- CRITICAL ASPECT RATIO FIXES ---
     ax.set_aspect('equal')
+    ax.set_box_aspect([1, 1, 1]) # Forces the 3D grid cube to be perfectly square
+
+    # Clean presentation styling for pane faces
+    ax.xaxis.set_pane_color((0.98, 0.98, 0.98, 1.0))
+    ax.yaxis.set_pane_color((0.98, 0.98, 0.98, 1.0))
+    ax.zaxis.set_pane_color((0.98, 0.98, 0.98, 1.0))
+    ax.grid(True, linestyle=':', alpha=0.4, color="#CBD5E1")
 
     # Set default camera view for clean perspective visibility across all axes
-    ax.view_init(elev=25, azim=45)
+    ax.view_init(elev=22, azim=45)
 
+    plt.tight_layout()
     plt.show()
