@@ -4,11 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="code plots modified with subplots to plot lineouts for the field magnitude and gradients.">
-      <change afterPath="$PROJECT_DIR$/Scripts/ExBFJW/MEC_ExB_solver.py" afterDir="false" />
+    <list default="true" id="57ef0201-7891-4192-ad8e-de6d21ff51c2" name="Changes" comment="New updates.">
+      <change afterPath="$PROJECT_DIR$/Scripts/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/BFieldFJW/flatcoilsVecPot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/washersPhi.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/flatBcoilsFacesCorners.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/BFieldFJW/flatBcoilsFacesCorners.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/flatBcoilsFacesCornersDiffField.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/BFieldFJW/flatBcoilsFacesCornersDiffField.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/flatBcoilsVecPot.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/BFieldFJW/flatBcoilsVecPot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/flatBcoilsVecPot3D.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/BFieldFJW/flatBcoilsVecPot3D.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/flatBcoilsVecPot3D_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/BFieldFJW/flatBcoilsVecPot3D_2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/flatMirrorCoilsBiotSavart.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/BFieldFJW/flatMirrorCoilsBiotSavart.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/EFieldFJW/vectorPotential3D.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/BFieldFJW/vectorPotential3D.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/ExBFJW/run_ExB.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/ExBFJW/run_ExB.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2/fwysr_2_graphs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2/fwysr_2_graphs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/calcs/magpy4c1_01.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Scripts/settings/fields/FieldMethods_Impl.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,6 +85,7 @@
     &quot;Python tests.Python tests in graphs.py.executor&quot;: &quot;Run&quot;,
     &quot;Python.3DDisk.executor&quot;: &quot;Run&quot;,
     &quot;Python.3DRing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.3DhexahedralB_CoilDisks.executor&quot;: &quot;Run&quot;,
     &quot;Python.3d_mesh.executor&quot;: &quot;Run&quot;,
     &quot;Python.6washersPhiFast.executor&quot;: &quot;Run&quot;,
     &quot;Python.Bob_e_Circle_Config.executor&quot;: &quot;Run&quot;,
@@ -87,6 +97,9 @@
     &quot;Python.FieldMethods.executor&quot;: &quot;Run&quot;,
     &quot;Python.FieldMethods_Impl.executor&quot;: &quot;Run&quot;,
     &quot;Python.GuiEntryHelpers.executor&quot;: &quot;Run&quot;,
+    &quot;Python.HexBcoilsFlatDisks.executor&quot;: &quot;Run&quot;,
+    &quot;Python.HexBcoilsNturns.executor&quot;: &quot;Run&quot;,
+    &quot;Python.MEC_ExB_solver.executor&quot;: &quot;Run&quot;,
     &quot;Python.MakeCurrent.executor&quot;: &quot;Run&quot;,
     &quot;Python.PlottingWindow.executor&quot;: &quot;Run&quot;,
     &quot;Python.TextInputTest.executor&quot;: &quot;Run&quot;,
@@ -109,7 +122,14 @@
     &quot;Python.field_graph.executor&quot;: &quot;Run&quot;,
     &quot;Python.file_write_speed.executor&quot;: &quot;Run&quot;,
     &quot;Python.find_user_docs.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flatBcoilsBiotSavart.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flatBcoilsVecPot.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flatBcoilsVecPot3D_2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flatEwashersPhi.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flatMirrorCoilsBiotSavart.executor&quot;: &quot;Run&quot;,
     &quot;Python.flatcoilsVecPot.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flatcoilsVecPot2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.flatcoilsVecPot3.executor&quot;: &quot;Run&quot;,
     &quot;Python.funcs.executor&quot;: &quot;Run&quot;,
     &quot;Python.fwysr_2.executor&quot;: &quot;Run&quot;,
     &quot;Python.fwysr_2_graphs.executor&quot;: &quot;Run&quot;,
@@ -119,6 +139,7 @@
     &quot;Python.graph_cross.executor&quot;: &quot;Run&quot;,
     &quot;Python.graphs.executor&quot;: &quot;Run&quot;,
     &quot;Python.grid_interpolation_comparison.executor&quot;: &quot;Run&quot;,
+    &quot;Python.hexahedral_with_cornerCoils.executor&quot;: &quot;Run&quot;,
     &quot;Python.integrals.executor&quot;: &quot;Run&quot;,
     &quot;Python.magpy4c1_01.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
@@ -134,6 +155,7 @@
     &quot;Python.precision_error.executor&quot;: &quot;Run&quot;,
     &quot;Python.read_last_used_binary.executor&quot;: &quot;Run&quot;,
     &quot;Python.rotation_viewer.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_ExB.executor&quot;: &quot;Run&quot;,
     &quot;Python.state_dict_main.executor&quot;: &quot;Run&quot;,
     &quot;Python.state_file_handling.executor&quot;: &quot;Run&quot;,
     &quot;Python.streamlines3Dring.executor&quot;: &quot;Run&quot;,
@@ -148,6 +170,7 @@
     &quot;Python.washersOnCube.executor&quot;: &quot;Run&quot;,
     &quot;Python.washersOnCube2.executor&quot;: &quot;Run&quot;,
     &quot;Python.washersPhi.executor&quot;: &quot;Run&quot;,
+    &quot;Python.washersPhi_3D_Gemini.executor&quot;: &quot;Run&quot;,
     &quot;Python.washersPhi_new.executor&quot;: &quot;Run&quot;,
     &quot;Python.washersPhi_speedOptimized.executor&quot;: &quot;Run&quot;,
     &quot;Python.washersPhi_vectorized.executor&quot;: &quot;Run&quot;,
@@ -162,7 +185,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/fwessel/Python/fusion/BorisPusher/Scripts/EFieldFJW/PlottingHDF5&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/fwessel/PycharmProjects/BorisPusher/Scripts/EFieldFJW&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -184,19 +207,20 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW" />
       <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5" />
       <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
       <recent name="C:\Users\fwessel\PycharmProjects\BorisPusher\Scripts\calcs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Scripts/ExB FJW" />
       <recent name="$PROJECT_DIR$/Scripts/EFieldFJW" />
+      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/FigureIllustrations" />
+      <recent name="$PROJECT_DIR$/Scripts/ExB FJW" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/../BorisPuser" />
-      <recent name="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.flatMirrorCoilsBiotSavart">
     <configuration name="BorisPusher" type="PythonConfigurationType" factoryName="Python">
       <module name="BorisPusher" />
       <option name="ENV_FILES" value="" />
@@ -222,6 +246,135 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Estreamlines3Dring" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/EFieldFJW" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/EFieldFJW/Estreamlines3Dring.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="HexBcoilsFlatDisks" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/EFieldFJW" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/EFieldFJW/FigureIllustrations/HexBcoilsFlatDisks.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="HexBcoilsNturns" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/EFieldFJW/FigureIllustrations" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/EFieldFJW/FigureIllustrations/HexBcoilsNturns.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="flatBcoilsVecPot3D_2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/EFieldFJW" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/BFieldFJW/flatBcoilsVecPot3D_2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="flatMirrorCoilsBiotSavart" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="BorisPusher" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Scripts/EFieldFJW" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Scripts/BFieldFJW/flatMirrorCoilsBiotSavart.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.flatMirrorCoilsBiotSavart" />
+        <item itemvalue="Python.flatBcoilsVecPot3D_2" />
+        <item itemvalue="Python.Estreamlines3Dring" />
+        <item itemvalue="Python.HexBcoilsFlatDisks" />
+        <item itemvalue="Python.HexBcoilsNturns" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -298,158 +451,31 @@
       <workItem from="1771285675513" duration="19420000" />
       <workItem from="1771460160367" duration="14784000" />
       <workItem from="1772230606126" duration="55000" />
-    </task>
-    <task id="LOCAL-00039" summary="changed rho comparison from == to math.isclose when checking if value is 0">
-      <option name="closed" value="true" />
-      <created>1750198080108</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1750198080108</updated>
-    </task>
-    <task id="LOCAL-00040" summary="added abs_tol argument to isclose argument">
-      <option name="closed" value="true" />
-      <created>1750198623807</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1750198623807</updated>
-    </task>
-    <task id="LOCAL-00041" summary="added abs_tol argument to isclose argument again to 1e-5">
-      <option name="closed" value="true" />
-      <created>1750199317829</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1750199317829</updated>
-    </task>
-    <task id="LOCAL-00042" summary="added abs_tol argument to isclose argument again to 1e-10">
-      <option name="closed" value="true" />
-      <created>1750199521670</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1750199521670</updated>
-    </task>
-    <task id="LOCAL-00043" summary="edited the implementation of bob_e used in the program with the math.isclose() logic experimented with in tests.&#10;&#10;The culprit of different values across systems was shown to be due to scipy's rotation functions returning floating point values ~1e-16 instead of 0 on some, while others do return 0. &#10;&#10;While the acutal values of floating point numbers ~1e-16 and 0 are both very small, this large absolute magnitude difference has huge repercussions when plugged into the solution.&#10;&#10;The currently implemented absolute tolerance value of 1e-10 means that any given value greater than 1e-10 will be used as is, while smaller values will always be clamped to 1e-10. This change will ideally cover the entire range of possible variation of values from scipy's rotate, or enough where there is negligible differences between operating systems.">
-      <option name="closed" value="true" />
-      <created>1750200467149</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1750200467149</updated>
-    </task>
-    <task id="LOCAL-00044" summary="another change to the 0 comparison.&#10;Added several numpy array conversions to dtype np.float64 in the orienting point step to ensure that all numbers are using double precision">
-      <option name="closed" value="true" />
-      <created>1750202880314</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1750202880314</updated>
-    </task>
-    <task id="LOCAL-00045" summary="lineout changes to the ring field version 2">
-      <option name="closed" value="true" />
-      <created>1750292510911</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1750292510911</updated>
-    </task>
-    <task id="LOCAL-00046" summary="parity">
-      <option name="closed" value="true" />
-      <created>1750723350504</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1750723350505</updated>
-    </task>
-    <task id="LOCAL-00047" summary="e field now looks at the updated collection">
-      <option name="closed" value="true" />
-      <created>1750885555948</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1750885555948</updated>
-    </task>
-    <task id="LOCAL-00048" summary="e field now looks at the updated collection">
-      <option name="closed" value="true" />
-      <created>1750885570361</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1750885570361</updated>
-    </task>
-    <task id="LOCAL-00049" summary="added new e-field method that is a straightforward implementation of the standard form">
-      <option name="closed" value="true" />
-      <created>1751500351208</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1751500351208</updated>
-    </task>
-    <task id="LOCAL-00050" summary="added a rotation viewer in the testing folder">
-      <option name="closed" value="true" />
-      <created>1751952741068</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1751952741068</updated>
-    </task>
-    <task id="LOCAL-00051" summary="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook">
-      <option name="closed" value="true" />
-      <created>1751932432952</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1751932432952</updated>
-    </task>
-    <task id="LOCAL-00052" summary="added infrastructure to make the coils tab more appealing, visible in the debug tab in the nested notebook">
-      <option name="closed" value="true" />
-      <created>1751932917567</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1751932917567</updated>
-    </task>
-    <task id="LOCAL-00053" summary="changed to the more appealing field GUI.">
-      <option name="closed" value="true" />
-      <created>1752011069248</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1752011069248</updated>
-    </task>
-    <task id="LOCAL-00054" summary="partly implemented the disk e method to program">
-      <option name="closed" value="true" />
-      <created>1752019492705</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1752019492705</updated>
-    </task>
-    <task id="LOCAL-00055" summary="tentative implementation of the disk_e method">
-      <option name="closed" value="true" />
-      <created>1752129637512</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1752129637512</updated>
-    </task>
-    <task id="LOCAL-00056" summary="added tilt spindle">
-      <option name="closed" value="true" />
-      <created>1752561050415</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1752561050415</updated>
-    </task>
-    <task id="LOCAL-00057" summary="parity">
-      <option name="closed" value="true" />
-      <created>1752563607181</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1752563607181</updated>
+      <workItem from="1772233637810" duration="1682000" />
+      <workItem from="1776978136785" duration="94000" />
+      <workItem from="1779050615604" duration="75000" />
+      <workItem from="1779140764135" duration="962000" />
+      <workItem from="1779141773163" duration="2443000" />
+      <workItem from="1779209350861" duration="1949000" />
+      <workItem from="1779394238824" duration="3600000" />
+      <workItem from="1779470893689" duration="3991000" />
+      <workItem from="1779488988329" duration="6495000" />
+      <workItem from="1779500772717" duration="1277000" />
+      <workItem from="1779633171055" duration="23542000" />
+      <workItem from="1779726696563" duration="16258000" />
+      <workItem from="1779813772246" duration="4353000" />
+      <workItem from="1779895022295" duration="609000" />
+      <workItem from="1779999829859" duration="2281000" />
+      <workItem from="1780268245101" duration="2379000" />
+      <workItem from="1780596852738" duration="558000" />
+      <workItem from="1780597832059" duration="14931000" />
+      <workItem from="1780674014382" duration="12497000" />
+      <workItem from="1780706732459" duration="3283000" />
+      <workItem from="1780934132025" duration="10270000" />
+      <workItem from="1781021320176" duration="633000" />
+      <workItem from="1781119807849" duration="14000" />
+      <workItem from="1781539135410" duration="2196000" />
+      <workItem from="1781813737181" duration="4085000" />
     </task>
     <task id="LOCAL-00058" summary="testing and validating a 3d meshgrid as a lookup table">
       <option name="closed" value="true" />
@@ -691,7 +717,159 @@
       <option name="project" value="LOCAL" />
       <updated>1771466442805</updated>
     </task>
-    <option name="localTasksCounter" value="88" />
+    <task id="LOCAL-00088" summary="codes modified to calculate 3D B and E fields using potential functions and subplots that  plot the vector streamlines in 2D and 1D lineouts for the field magnitude and gradients.">
+      <option name="closed" value="true" />
+      <created>1772233738378</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1772233738379</updated>
+    </task>
+    <task id="LOCAL-00089" summary="codes modified to calculate 3D B and E fields using potential functions and subplots that  plot the vector streamlines in 2D and 1D lineouts for the field magnitude and gradients.">
+      <option name="closed" value="true" />
+      <created>1772233767035</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1772233767035</updated>
+    </task>
+    <task id="LOCAL-00090" summary="codes modified to calculate B and E fields using vector and scalar potential functions with subplots for the vector streamlines in 2D including 1D lineouts for the field magnitude and gradients.">
+      <option name="closed" value="true" />
+      <created>1779470976411</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1779470976412</updated>
+    </task>
+    <task id="LOCAL-00091" summary="compute ExB (drift) using codes modified to calculate B and E fields using vector and scalar potential functions with subplots for the vector streamlines in 2D including 1D lineouts for the field magnitude and gradients.">
+      <option name="closed" value="true" />
+      <created>1779471664688</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1779471664688</updated>
+    </task>
+    <task id="LOCAL-00092" summary="B(x,y,z) fields in XZ plane calculated from Vector Potential A(x,y,z) for flat magnet coils of variable width plotted on single sheet.">
+      <option name="closed" value="true" />
+      <created>1779494897575</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1779494897575</updated>
+    </task>
+    <task id="LOCAL-00093" summary="B(x,y,z) fields in XZ plane calculated from Vector Potential A(x,y,z) for flat magnet coils of variable width plotted on single sheet. Added second column with contour plots and finished lineout plots.">
+      <option name="closed" value="true" />
+      <created>1779644967274</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1779644967274</updated>
+    </task>
+    <task id="LOCAL-00094" summary="B(x,y,z) fields in XZ plane calculated from Vector Potential A(x,y,z) for flat magnet coils of variable width plotted on single sheet. Added second column with contour plots and finished lineout plots.">
+      <option name="closed" value="true" />
+      <created>1779652382984</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1779652382984</updated>
+    </task>
+    <task id="LOCAL-00095" summary="B(x,y,z) fields in XZ plane calculated from Vector Potential A(x,y,z) for flat magnet coils of variable width plotted on single sheet. Added second column with contour plots and finished lineout plots.">
+      <option name="closed" value="true" />
+      <created>1779656403296</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1779656403297</updated>
+    </task>
+    <task id="LOCAL-00096" summary="Enhancements to Vector Potential B field scripts. Also adding 3D visualizations">
+      <option name="closed" value="true" />
+      <created>1779667390766</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1779667390766</updated>
+    </task>
+    <task id="LOCAL-00097" summary="Visualizer used to create illustrations for radially thick hexahedral coils.">
+      <option name="closed" value="true" />
+      <created>1779818049465</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1779818049465</updated>
+    </task>
+    <task id="LOCAL-00098" summary="Improvements to the  B field calculations. One with Biot Savart and the other using the  vector potential. More stable with a multi-plane implementation to reduce instabilities. Still does not seem to properly calculate the field intensity in the cusp.">
+      <option name="closed" value="true" />
+      <created>1779818226933</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1779818226933</updated>
+    </task>
+    <task id="LOCAL-00099" summary="Adding various cusp coil illustrations. Not possible to get perfect diametrical uniformity. Try to use Hexahedron coils with corner coils.">
+      <option name="closed" value="true" />
+      <created>1780617218558</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1780617218558</updated>
+    </task>
+    <task id="LOCAL-00100" summary="Adding Hexahedron coils with corner coils.">
+      <option name="closed" value="true" />
+      <created>1780684220207</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1780684220207</updated>
+    </task>
+    <task id="LOCAL-00101" summary="Adding Hexahedron coils with corner coils.">
+      <option name="closed" value="true" />
+      <created>1780690902179</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1780690902179</updated>
+    </task>
+    <task id="LOCAL-00102" summary="Adding Hexahedron coils with corner coils.">
+      <option name="closed" value="true" />
+      <created>1780690920921</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1780690920921</updated>
+    </task>
+    <task id="LOCAL-00103" summary="Adding visualizations for the Hexahedral (face) and Octohedral (corner) coils.">
+      <option name="closed" value="true" />
+      <created>1780707916555</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1780707916555</updated>
+    </task>
+    <task id="LOCAL-00104" summary="Adding visualizations for the Hexahedral (face) and Octohedral (corner) coils.">
+      <option name="closed" value="true" />
+      <created>1780709474420</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1780709474420</updated>
+    </task>
+    <task id="LOCAL-00105" summary="Adding visualizations for the Hexahedral (face) and Octohedral (corner) coils.">
+      <option name="closed" value="true" />
+      <created>1781539185679</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1781539185679</updated>
+    </task>
+    <task id="LOCAL-00106" summary="New updates.">
+      <option name="closed" value="true" />
+      <created>1781820070315</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1781820070316</updated>
+    </task>
+    <option name="localTasksCounter" value="107" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -709,18 +887,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="changed to the more appealing field GUI." />
-    <MESSAGE value="partly implemented the disk e method to program" />
-    <MESSAGE value="tentative implementation of the disk_e method" />
-    <MESSAGE value="added tilt spindle" />
-    <MESSAGE value="parity" />
-    <MESSAGE value="added grid precomputation for b" />
-    <MESSAGE value="partly implementing gridding for e" />
-    <MESSAGE value="implemented gridding for bob_e&#10;need to check the should_overwrite detection for false positives" />
-    <MESSAGE value="testing and validating a 3d meshgrid as a lookup table" />
-    <MESSAGE value="fixed local e not accessed in magpy4c1_01.py" />
-    <MESSAGE value="clean up terminal outputs" />
-    <MESSAGE value="changed logic for restoring last used parameters" />
     <MESSAGE value="amended read_last_used for the CurrentEntryTable class to only run when initializing as the active tab. &#10;&#10;Fixed an issue where the Bob_e_Circle_Config class that holds the table widget was not getting the dir_name parameter supplied, causing it to always use the default value" />
     <MESSAGE value="- split up opengui() into a class w/ several functions split into different files for readability&#10;&#10;- changed information handling from reading tempfiles to dataclasses to allow IDE-side parameter exposure and dynamic parameter swapping.&#10;&#10;- Added scrollbar to the fields selection tab&#10;&#10;- Tentative implementation of diagnostic graph page. &#10;&#10;* right now, only bob_e graphs are implemented in this new system." />
     <MESSAGE value="adjustments to widget reading data" />
@@ -734,7 +900,19 @@
     <MESSAGE value="code updates" />
     <MESSAGE value="code speedups and 3D visualization added w/  pyvista" />
     <MESSAGE value="code plots modified with subplots to plot lineouts for the field magnitude and gradients." />
-    <option name="LAST_COMMIT_MESSAGE" value="code plots modified with subplots to plot lineouts for the field magnitude and gradients." />
+    <MESSAGE value="codes modified to calculate 3D B and E fields using potential functions and subplots that  plot the vector streamlines in 2D and 1D lineouts for the field magnitude and gradients." />
+    <MESSAGE value="codes modified to calculate B and E fields using vector and scalar potential functions with subplots for the vector streamlines in 2D including 1D lineouts for the field magnitude and gradients." />
+    <MESSAGE value="compute ExB (drift) using codes modified to calculate B and E fields using vector and scalar potential functions with subplots for the vector streamlines in 2D including 1D lineouts for the field magnitude and gradients." />
+    <MESSAGE value="B(x,y,z) fields in XZ plane calculated from Vector Potential A(x,y,z) for flat magnet coils of variable width plotted on single sheet." />
+    <MESSAGE value="B(x,y,z) fields in XZ plane calculated from Vector Potential A(x,y,z) for flat magnet coils of variable width plotted on single sheet. Added second column with contour plots and finished lineout plots." />
+    <MESSAGE value="Enhancements to Vector Potential B field scripts. Also adding 3D visualizations" />
+    <MESSAGE value="Visualizer used to create illustrations for radially thick hexahedral coils." />
+    <MESSAGE value="Improvements to the  B field calculations. One with Biot Savart and the other using the  vector potential. More stable with a multi-plane implementation to reduce instabilities. Still does not seem to properly calculate the field intensity in the cusp." />
+    <MESSAGE value="Adding various cusp coil illustrations. Not possible to get perfect diametrical uniformity. Try to use Hexahedron coils with corner coils." />
+    <MESSAGE value="Adding Hexahedron coils with corner coils." />
+    <MESSAGE value="Adding visualizations for the Hexahedral (face) and Octohedral (corner) coils." />
+    <MESSAGE value="New updates." />
+    <option name="LAST_COMMIT_MESSAGE" value="New updates." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -767,7 +945,7 @@
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Scripts/EFieldFJW/streamlines3Dring.py</url>
+          <url>file://$PROJECT_DIR$/Scripts/EFieldFJW/Estreamlines3Dring.py</url>
           <line>76</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
@@ -788,47 +966,58 @@
     <SUITE FILE_PATH="coverage/BorisPusher$widget.coverage" NAME="widget Coverage Results" MODIFIED="1752008272508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/notebook" />
     <SUITE FILE_PATH="coverage/BorisPusher$precision_error.coverage" NAME="precision_error Coverage Results" MODIFIED="1751930233649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
     <SUITE FILE_PATH="coverage/BorisPusher$e_graphing.coverage" NAME="e_graphing Coverage Results" MODIFIED="1751495005656" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
+    <SUITE FILE_PATH="coverage/BorisPusher$MEC_ExB_solver.coverage" NAME="MEC_ExB_solver Coverage Results" MODIFIED="1779652003038" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/ExBFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$Bob_e_Circle_Config.coverage" NAME="Bob_e_Circle_Config Coverage Results" MODIFIED="1749076833519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
-    <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods.coverage" NAME="FieldMethods Coverage Results" MODIFIED="1749678464994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
+    <SUITE FILE_PATH="coverage/BorisPusher$test.coverage" NAME="test Coverage Results" MODIFIED="1779645211907" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$3DRing.coverage" NAME="3DRing Coverage Results" MODIFIED="1751932238118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$6washersPhiFast.coverage" NAME="6washersPhiFast Coverage Results" MODIFIED="1757461835154" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods.coverage" NAME="FieldMethods Coverage Results" MODIFIED="1749678464994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
     <SUITE FILE_PATH="coverage/BorisPusher$BorisPusher.coverage" NAME="BorisPusher Coverage Results" MODIFIED="1771268102295" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/BorisPusher$6washersPhiFast.coverage" NAME="6washersPhiFast Coverage Results" MODIFIED="1779657479455" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$hexahedral_with_cornerCoils.coverage" NAME="hexahedral_with_cornerCoils Coverage Results" MODIFIED="1780685172211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/FigureIllustrations" />
     <SUITE FILE_PATH="coverage/BorisPusher$MakeCurrent.coverage" NAME="MakeCurrent Coverage Results" MODIFIED="1758666131237" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
     <SUITE FILE_PATH="coverage/BorisPusher$configs.coverage" NAME="configs Coverage Results" MODIFIED="1747264446248" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings" />
     <SUITE FILE_PATH="coverage/BorisPusher$rotation_viewer.coverage" NAME="rotation_viewer Coverage Results" MODIFIED="1751952643732" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />
     <SUITE FILE_PATH="coverage/BorisPusher$collection_rotations.coverage" NAME="collection_rotations Coverage Results" MODIFIED="1749607727545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/magpylib" />
+    <SUITE FILE_PATH="coverage/BorisPusher$flatcoilsVecPot2.coverage" NAME="flatcoilsVecPot2 Coverage Results" MODIFIED="1779643889622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version3.coverage" NAME="Efield3DRing_Version3 Coverage Results" MODIFIED="1750290780658" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/EField FJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$washerPotential.coverage" NAME="washerPotential Coverage Results" MODIFIED="1753829636024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$bob_e.coverage" NAME="bob_e Coverage Results" MODIFIED="1753250526625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/RETerry" />
     <SUITE FILE_PATH="coverage/BorisPusher$plotTrajectory.coverage" NAME="plotTrajectory Coverage Results" MODIFIED="1758835282109" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi.coverage" NAME="washersPhi Coverage Results" MODIFIED="1771541743317" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi.coverage" NAME="washersPhi Coverage Results" MODIFIED="1780270533201" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$washerPhiVectorized.coverage" NAME="washerPhiVectorized Coverage Results" MODIFIED="1771286050021" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$3DhexahedralB_CoilDisks.coverage" NAME="3DhexahedralB_CoilDisks Coverage Results" MODIFIED="1779662232110" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$polarSpace.coverage" NAME="polarSpace Coverage Results" MODIFIED="1749600138185" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Alg" />
-    <SUITE FILE_PATH="coverage/BorisPusher$efieldring_4.coverage" NAME="efieldring_4 Coverage Results" MODIFIED="1750722954315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$flatcoilsVecPot.coverage" NAME="flatcoilsVecPot Coverage Results" MODIFIED="1771541760606" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$efieldring_4.coverage" NAME="efieldring_4 Coverage Results" MODIFIED="1779645178363" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$flatcoilsVecPot.coverage" NAME="flatcoilsVecPot Coverage Results" MODIFIED="1779638362500" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$3d_mesh.coverage" NAME="3d_mesh Coverage Results" MODIFIED="1752722841920" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/grid" />
     <SUITE FILE_PATH="coverage/BorisPusher$TiltSpindle.coverage" NAME="TiltSpindle Coverage Results" MODIFIED="1752551555286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="D:/CDriveDownloads" />
     <SUITE FILE_PATH="coverage/BorisPusher$FieldMethods_Impl.coverage" NAME="FieldMethods_Impl Coverage Results" MODIFIED="1750118600099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/settings/fields" />
     <SUITE FILE_PATH="coverage/BorisPusher$GuiEntryHelpers.coverage" NAME="GuiEntryHelpers Coverage Results" MODIFIED="1752119203471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/funcs" />
+    <SUITE FILE_PATH="coverage/BorisPusher$flatBcoilsBiotSavart.coverage" NAME="flatMirrorCoilsBiotSavart Coverage Results" MODIFIED="1781539756556" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$bob_e_rounding_test.coverage" NAME="bob_e_rounding_test Coverage Results" MODIFIED="1750711108470" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi_3D_Gemini.coverage" NAME="washersPhi_3D_Gemini Coverage Results" MODIFIED="1779645046872" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$washersPhi_speedOptimized.coverage" NAME="washersPhi_speedOptimized Coverage Results" MODIFIED="1771363098600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$washerEfield.coverage" NAME="washerEfield Coverage Results" MODIFIED="1771267221997" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1771268113343" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$flatBcoilsVecPot3D_2.coverage" NAME="flatBcoilsVecPot3D_2 Coverage Results" MODIFIED="1781539311798" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$main.coverage" NAME="main Coverage Results" MODIFIED="1779140788608" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washerEfield.coverage" NAME="washerEfield Coverage Results" MODIFIED="1779645328688" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$PlottingWindow.coverage" NAME="PlottingWindow Coverage Results" MODIFIED="1752733391801" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
+    <SUITE FILE_PATH="coverage/BorisPusher$HexBcoilsFlatDisks.coverage" NAME="HexBcoilsFlatDisks Coverage Results" MODIFIED="1780957052866" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar__1_.coverage" NAME="menu_bar (1) Coverage Results" MODIFIED="1747270065103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets/menubar" />
     <SUITE FILE_PATH="coverage/BorisPusher$find_user_docs.coverage" NAME="find_user_docs Coverage Results" MODIFIED="1749507660617" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/output_write_read" />
     <SUITE FILE_PATH="coverage/BorisPusher$chatGPT.coverage" NAME="chatGPT Coverage Results" MODIFIED="1758842248560" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$multiprocessing_gui_freezing.coverage" NAME="multiprocessing_gui_freezing Coverage Results" MODIFIED="1747273380034" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
+    <SUITE FILE_PATH="coverage/BorisPusher$run_ExB.coverage" NAME="run_ExB Coverage Results" MODIFIED="1779657456086" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/ExBFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$graph_cross.coverage" NAME="graph_cross Coverage Results" MODIFIED="1753166529941" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
-    <SUITE FILE_PATH="coverage/BorisPusher$cubeCorners.coverage" NAME="cubeCorners Coverage Results" MODIFIED="1758839666790" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$cubeCorners.coverage" NAME="cubeCorners Coverage Results" MODIFIED="1779645438802" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$.coverage" NAME=" Coverage Results" MODIFIED="1750900498689" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/Bob_e" />
     <SUITE FILE_PATH="coverage/BorisPusher$3DDisk.coverage" NAME="3DDisk Coverage Results" MODIFIED="1751932250386" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$streamlines3Dring.coverage" NAME="streamlines3Dring Coverage Results" MODIFIED="1751490292112" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$streamlines3Dring.coverage" NAME="streamlines3Dring Coverage Results" MODIFIED="1781539244249" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$grid_interpolation_comparison.coverage" NAME="grid_interpolation_comparison Coverage Results" MODIFIED="1752729299747" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/grid" />
     <SUITE FILE_PATH="coverage/BorisPusher$graphs.coverage" NAME="graphs Coverage Results" MODIFIED="1751324543195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_1" />
     <SUITE FILE_PATH="coverage/BorisPusher$washer_potential_method_implementation.coverage" NAME="washer_potential_method_implementation Coverage Results" MODIFIED="1753831623961" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$plotHDF5data.coverage" NAME="plotHDF5data Coverage Results" MODIFIED="1758820541798" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$CurrentGuiClasses.coverage" NAME="CurrentGuiClasses Coverage Results" MODIFIED="1752118166059" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
+    <SUITE FILE_PATH="coverage/BorisPusher$HexBcoilsNturns.coverage" NAME="HexBcoilsNturns Coverage Results" MODIFIED="1780947487052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/FigureIllustrations" />
     <SUITE FILE_PATH="coverage/BorisPusher$BorisGui.coverage" NAME="BorisGui Coverage Results" MODIFIED="1752004719466" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter" />
     <SUITE FILE_PATH="coverage/BorisPusher$integrals.coverage" NAME="integrals Coverage Results" MODIFIED="1750890576133" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr" />
     <SUITE FILE_PATH="coverage/BorisPusher$output_file_structure.coverage" NAME="output_file_structure Coverage Results" MODIFIED="1747949379891" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/hdf5" />
@@ -840,7 +1029,8 @@
     <SUITE FILE_PATH="coverage/BorisPusher$get_documents_path_win.coverage" NAME="get_documents_path_win Coverage Results" MODIFIED="1749587148422" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files/windows" />
     <SUITE FILE_PATH="coverage/BorisPusher$fwysr_2_graphs.coverage" NAME="fwysr_2_graphs Coverage Results" MODIFIED="1751493976052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests/fields/fwysr_2" />
     <SUITE FILE_PATH="coverage/BorisPusher$plotFile.coverage" NAME="plotHDF5data Coverage Results" MODIFIED="1758667950674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
-    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi_vectorized.coverage" NAME="washersPhi_vectorized Coverage Results" MODIFIED="1771286309770" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$washersPhi_vectorized.coverage" NAME="washersPhi_vectorized Coverage Results" MODIFIED="1779645128187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$flatBcoilsVecPot.coverage" NAME="flatBcoilsVecPot Coverage Results" MODIFIED="1779655636229" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$dt_np.coverage" NAME="dt_np Coverage Results" MODIFIED="1748382025060" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$chatHDF5.coverage" NAME="chatHDF5 Coverage Results" MODIFIED="1758839201901" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$fwysr_e_1.coverage" NAME="fwysr_e_1 Coverage Results" MODIFIED="1751932280187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
@@ -849,8 +1039,10 @@
     <SUITE FILE_PATH="coverage/BorisPusher$file_write_speed.coverage" NAME="file_write_speed Coverage Results" MODIFIED="1749603520912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$e_things.coverage" NAME="e_things Coverage Results" MODIFIED="1771202296275" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Tests" />
     <SUITE FILE_PATH="coverage/BorisPusher$plotHDF5.coverage" NAME="plotHDF5 Coverage Results" MODIFIED="1758666047967" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW/PlottingHDF5dataFJW" />
+    <SUITE FILE_PATH="coverage/BorisPusher$flatcoilsVecPot3.coverage" NAME="flatcoilsVecPot3 Coverage Results" MODIFIED="1779639030493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$Efield3DRing_Version2.coverage" NAME="Efield3DRing_Version2 Coverage Results" MODIFIED="1750722829601" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
     <SUITE FILE_PATH="coverage/BorisPusher$menu_bar.coverage" NAME="menu_bar Coverage Results" MODIFIED="1747259073002" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/Gui_tkinter/widgets" />
     <SUITE FILE_PATH="coverage/BorisPusher$funcs.coverage" NAME="funcs Coverage Results" MODIFIED="1749681885095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/files" />
+    <SUITE FILE_PATH="coverage/BorisPusher$flatEwashersPhi.coverage" NAME="flatEwashersPhi Coverage Results" MODIFIED="1780269029649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Scripts/EFieldFJW" />
   </component>
 </project>
