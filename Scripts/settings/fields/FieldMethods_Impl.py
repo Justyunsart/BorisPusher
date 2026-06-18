@@ -17,7 +17,7 @@ import mpmath as mp
 
 from system.temp_file_names import param_keys
 from EFieldFJW.efieldring_4 import fwysr_e
-from EFieldFJW.streamlines3Dring import compute_field
+from EFieldFJW.Estreamlines3Dring import compute_field
 
 ##############
 # BASE CLASS #

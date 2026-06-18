@@ -40,7 +40,7 @@ from settings.configs.funcs.config_reader import runtime_configs
 from calcs.magpy4c1_manager_queue_datatype import Manager_Data
 
 from EFieldFJW.efieldring_4 import fwysr_e
-from EFieldFJW.streamlines3Dring import compute_field
+from EFieldFJW.Estreamlines3Dring import compute_field
 from scipy.interpolate import RegularGridInterpolator
 
 from system.state_dict_main import AppConfig

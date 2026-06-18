@@ -5,7 +5,7 @@ from magpylib import Collection
 from magpylib.current import Circle
 import matplotlib as mpl
 from Alg.polarSpace import toCyl, toCart
-from EFieldFJW.streamlines3Dring import compute_field
+from EFieldFJW.Estreamlines3Dring import compute_field
 
 # Create testing collection
 c1 = Circle(position=np.array([0, 0, 0]), diameter=2, current=1e-11)

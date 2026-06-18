@@ -28,23 +28,28 @@ if SCRIPT_DIR not in sys.path:
 try:
     from washersPhi import compute_E_field
 except ModuleNotFoundError:
-    raise ModuleNotFoundError(f"Cannot import 'compute_E_field' from washersPhi.py. "
-                              f"Check that {SCRIPT_DIR}/washersPhi.py exists.")
+    raise ModuleNotFoundError(f"Cannot import 'compute_E_field' from flatEwashersPhi.py. "
+                              f"Check that {SCRIPT_DIR}/flatEwashersPhi.py exists.")
 
 try:
-    from flatcoilsVecPot import compute_B_field
+    from flatBcoilsVecPot import compute_B_field
 except ModuleNotFoundError:
-    raise ModuleNotFoundError(f"Cannot import 'compute_B_field' from flatcoilsVecPot.py. "
-                              f"Check that {SCRIPT_DIR}/flatcoilsVecPot.py exists.")
+    raise ModuleNotFoundError(f"Cannot import 'compute_B_field' from flatBcoilsVecPot.py. "
+                              f"Check that {SCRIPT_DIR}/flatBcoilsVecPot.py exists.")
 
 # ============================================================
 # Compute fields
 # ============================================================
 print("Computing electric field...")
-X, Z, Ex, Ez = compute_E_field()   # y=0 plane
+# washersPhi returns 7 items: X, Z, x, z, Ex, Ez, phi
+X, Z, _, _, Ex, _, Ez = compute_E_field()
 
 print("Computing magnetic field...")
-_, _, Bx, Bz = compute_B_field()   # y=0 plane
+a, b = 0.25, 0.75
+
+# flatBcoilsVecPot returns 13 items:
+# X, Z, x, z, Bx, By, Bz, Bmag, z_line, Bline, t, Bdiag_x, Bdiag_z
+_, _, _, _, Bx, _, Bz, _, _, _, _, _, _ = compute_B_field(a, b)
 
 # ============================================================
 # Compute E×B in XZ-plane slice (y=0)
@@ -72,49 +77,50 @@ z_line = Z[:,0]
 ExB_line = ExB_mag[:, ix0]
 
 # ============================================================
-# Create side-by-side figure
+# Create side-by-side figure for E and B Fields
 # ============================================================
-fig, (ax1, ax2) = plt.subplots(
-    1, 2, figsize=(13,5),
-    gridspec_kw={'width_ratios':[1.25, 1]}
-)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+# Calculate magnitudes for log-color scaling
+Emag = np.sqrt(Ex**2 + Ez**2)
+Bmag = np.sqrt(Bx**2 + Bz**2)
+
+logE = np.log(np.maximum(Emag, np.exp(-10)))
+logB = np.log(np.maximum(Bmag, np.exp(-10)))
 
 # -----------------------------
-# LEFT PANEL — Streamlines (XZ plane)
+# LEFT PANEL — Electric Field Lines (XZ plane)
 # -----------------------------
-strm = ax1.streamplot(
-    X, Z, ExB_y*0+1, ExB_y,   # pseudo vector: all along y (vertical in 2D)
-    color=logExB,
+strm1 = ax1.streamplot(
+    X, Z, Ex, Ez,
+    color=logE,
     cmap='plasma',
-    norm=norm,
     density=1.4,
     linewidth=1
 )
-
-cbar = fig.colorbar(strm.lines, ax=ax1)
-cbar.set_label(r'$\log|\vec{E}\times\vec{B}|$')
-
-ax1.set_title("E×B Streamlines (XZ Plane, y=0)")
+fig.colorbar(strm1.lines, ax=ax1, label=r'$\log|\vec{E}|$')
+ax1.set_title("Electric Field lines (XZ Plane, y=0)")
 ax1.set_xlabel("x (m)")
 ax1.set_ylabel("z (m)")
 ax1.set_aspect('equal')
 ax1.grid(True)
 
 # -----------------------------
-# RIGHT PANEL — Centerline |E×B|(0,0,z)
+# RIGHT PANEL — Magnetic Field Lines (XZ plane)
 # -----------------------------
-ax2.plot(z_line, ExB_line, color='navy', lw=2)
-ax2.set_title("On-Axis E×B Magnitude")
-ax2.set_xlabel("z (m)")
-ax2.set_ylabel(r'$|\vec{E}\times\vec{B}|$')
+strm2 = ax2.streamplot(
+    X, Z, Bx, Bz,
+    color=logB,
+    cmap='viridis',  # Different colormap to distinguish fields
+    density=1.4,
+    linewidth=1
+)
+fig.colorbar(strm2.lines, ax=ax2, label=r'$\log|\vec{B}|$')
+ax2.set_title("Magnetic Field Lines (XZ Plane, y=0)")
+ax2.set_xlabel("x (m)")
+ax2.set_ylabel("z (m)")
+ax2.set_aspect('equal')
 ax2.grid(True)
-
-# Optional log-scale twin axis
-ax2b = ax2.twinx()
-ax2b.plot(z_line, np.log(np.maximum(ExB_line,1e-30)),
-          color='darkred', ls='--', lw=1.5)
-ax2b.set_ylabel(r'$\log|\vec{E}\times\vec{B}|$', color='darkred')
-ax2b.tick_params(axis='y', colors='darkred')
 
 plt.tight_layout()
 plt.show()
