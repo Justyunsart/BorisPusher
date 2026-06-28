@@ -1,17 +1,5 @@
-'''
-Calculates the total plasma beta parameter, based on:
-p_total = p_electrons + p_ions
-and
-p_mag = (B ** 2) / (2 * mu_0)
-FJW 6.28.26
-'''
-import numpy as np
-
-
-def calculate_plasma_beta(B, n_e, T_e, n_i, T_i, T_in_ev=True):
-    """
-    Calculates the total plasma beta (ratio of kinetic pressure to magnetic pressure).
-
+"""    Calculates the total plasma beta (ratio of kinetic pressure to magnetic pressure), based on:
+    p_total = p_electrons + p_ions and p_mag = (B ** 2) / (2 * mu_0)
     Parameters:
     -----------
     B : float
@@ -32,7 +20,11 @@ def calculate_plasma_beta(B, n_e, T_e, n_i, T_i, T_in_ev=True):
     --------
     beta : float
         The dimensionless total plasma beta parameter.
-    """
+    FJW 6.28.26
+"""
+import numpy as np
+
+def calculate_plasma_beta(B, n_e, T_e, n_i, T_i, T_in_ev=True):
     # Physical Constants (SI Units)
     mu_0 = 4 * np.pi * 1e-7  # Vacuum permeability [H/m]
     k_B = 1.380649e-23  # Boltzmann constant [J/K]
@@ -60,7 +52,6 @@ def calculate_plasma_beta(B, n_e, T_e, n_i, T_i, T_in_ev=True):
     beta = p_total / p_mag
 
     return beta
-
 
 # --- Example Usage ---
 if __name__ == "__main__":
