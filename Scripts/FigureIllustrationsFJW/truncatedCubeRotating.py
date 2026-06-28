@@ -67,6 +67,8 @@ ax = fig.add_subplot(111, projection='3d')
 ax.set_xlim([-1.2, 1.2])
 ax.set_ylim([-1.2, 1.2])
 ax.set_zlim([-1.2, 1.2])
+# ADD THIS LINE: Forces the 3D bounding box to be a perfect cube
+ax.set_box_aspect([1, 1, 1])
 ax.axis('off')
 
 # Initialize the 3D Poly3DCollection
