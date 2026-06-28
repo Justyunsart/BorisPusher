@@ -76,14 +76,14 @@ def rotation_matrix_axis_angle(axis, angle):
 
 def Aphi_loop(rho, z, R, I_val):
     if rho < 1e-12:
-        return 0.0
+        rho = 1e-12
     k2 = 4 * R * rho / ((R + rho) ** 2 + z ** 2)
     k2 = np.clip(k2, 0, 1 - 1e-12)
     K = ellipk(k2)
     E = ellipe(k2)
-    denom = np.sqrt((R + rho) ** 2 + z ** 2)
-    pref = mu_0 * I_val / (np.pi * np.sqrt(k2))
-    return pref * ((1 - 0.5 * k2) * K - E) / denom
+    pref = mu_0 * I / (np.pi * np.sqrt(k2 + 1e-12))
+    Aphi = pref * np.sqrt(R / rho) * ((1 - 0.5*k2) * K - E)
+    return Aphi
 
 
 # ============================================================
